@@ -8,13 +8,15 @@ import { useTheme } from '@/hooks/useTheme';
 interface HeatmapPreviewProps {
   imageUrl: string | null;
   heatmapUrl: string | null;
+  /** Label shown over a real heatmap (e.g. what the overlay means). */
+  caption?: string;
 }
 
 /**
  * Shows the Grad-CAM overlay when the backend sends `heatmapUrl`.
  * Until then: original image (if any) + a clearly labelled placeholder.
  */
-export function HeatmapPreview({ imageUrl, heatmapUrl }: HeatmapPreviewProps) {
+export function HeatmapPreview({ imageUrl, heatmapUrl, caption }: HeatmapPreviewProps) {
   const { colors } = useTheme();
   const source = heatmapUrl ?? imageUrl;
   return (
@@ -24,10 +26,10 @@ export function HeatmapPreview({ imageUrl, heatmapUrl }: HeatmapPreviewProps) {
       ) : (
         <Ionicons name="body-outline" size={48} color={colors.textSubtle} />
       )}
-      {!heatmapUrl && (
+      {(!heatmapUrl || caption) && (
         <View style={[styles.label, { backgroundColor: colors.overlay }]}>
           <AppText variant="caption" style={styles.labelText}>
-            Grad-CAM heatmap placeholder
+            {heatmapUrl ? caption : 'Grad-CAM heatmap placeholder'}
           </AppText>
         </View>
       )}
@@ -37,6 +39,6 @@ export function HeatmapPreview({ imageUrl, heatmapUrl }: HeatmapPreviewProps) {
 
 const styles = StyleSheet.create({
   frame: { aspectRatio: 1, borderRadius: radius.lg, overflow: 'hidden', alignItems: 'center', justifyContent: 'center' },
-  label: { position: 'absolute', bottom: spacing.sm, paddingHorizontal: spacing.sm, paddingVertical: spacing.xs, borderRadius: radius.sm },
+  label: { position: 'absolute', bottom: spacing.sm, marginHorizontal: spacing.sm, paddingHorizontal: spacing.sm, paddingVertical: spacing.xs, borderRadius: radius.sm },
   labelText: { color: '#FFFFFF' },
 });

@@ -7,6 +7,8 @@
  *
  * Handles: base URL, JSON, timeouts, HTTP errors (→ ApiError), multipart uploads.
  */
+import { Platform } from 'react-native';
+
 import { API_BASE_URL, API_TIMEOUT_MS } from '@/constants/config';
 import type { HttpMethod, JsonValue, UploadFile } from '@/types';
 
@@ -62,10 +64,7 @@ async function request<T>(
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), options.timeoutMs ?? API_TIMEOUT_MS);
 
-  const headers: Record<string, string> = { Accept: 'application/json', ...options.headers };
-  if (options.isJson) headers['Content-Type'] = 'application/json';
-  const token = getAuthToken ? await getAuthToken() : null;
-  if (token) headers.Authorization = `Bearer ${token}`;
+  const headers = await buildHeaders(options);
 
   try {
     const response = await fetch(buildUrl(path, options.params), {
@@ -80,10 +79,58 @@ async function request<T>(
   } catch (error) {
     if (error instanceof ApiError) throw error;
     const aborted = error instanceof Error && error.name === 'AbortError';
-    throw new ApiError(aborted ? 'Request timed out' : 'Network request failed', 0);
+    throw networkError(method, buildUrl(path, options.params), aborted ? 'timeout' : String(error));
   } finally {
     clearTimeout(timeout);
   }
+}
+
+async function buildHeaders(options: RequestOptions & { isJson?: boolean }): Promise<Record<string, string>> {
+  const headers: Record<string, string> = { Accept: 'application/json', ...options.headers };
+  if (options.isJson) headers['Content-Type'] = 'application/json';
+  const token = getAuthToken ? await getAuthToken() : null;
+  if (token) headers.Authorization = `Bearer ${token}`;
+  return headers;
+}
+
+/** status 0 = the request never got an HTTP response (offline, wrong URL, timeout, client error). */
+function networkError(method: string, url: string, reason: string): ApiError {
+  if (__DEV__) {
+    // Shows up in the Metro terminal — the URL the phone actually tried and the raw error.
+    console.warn(`[api] ${method} ${url} failed:`, reason);
+  }
+  return new ApiError(reason === 'timeout' ? 'Request timed out' : 'Network request failed', 0);
+}
+
+/**
+ * Native multipart upload via React Native's XMLHttpRequest.
+ * Since SDK 52+ the global `fetch` is expo/fetch, which rejects RN-style `{ uri, name, type }`
+ * FormData parts ("Unsupported FormDataPart implementation"). RN's XHR streams the file from its uri.
+ */
+async function uploadNative<T>(path: string, form: FormData, options: RequestOptions = {}): Promise<T> {
+  const url = buildUrl(path, options.params);
+  const headers = await buildHeaders(options); // no Content-Type: XHR adds the multipart boundary
+  return new Promise<T>((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', url);
+    Object.entries(headers).forEach(([key, value]) => xhr.setRequestHeader(key, value));
+    xhr.timeout = options.timeoutMs ?? API_TIMEOUT_MS;
+    xhr.onload = () => {
+      let data: unknown = null;
+      if (xhr.responseText) {
+        try {
+          data = JSON.parse(xhr.responseText) as unknown;
+        } catch {
+          data = xhr.responseText;
+        }
+      }
+      if (xhr.status >= 200 && xhr.status < 300) resolve(data as T);
+      else reject(new ApiError(extractErrorMessage(data, xhr.status), xhr.status, data));
+    };
+    xhr.onerror = () => reject(networkError('POST', url, 'XHR network error'));
+    xhr.ontimeout = () => reject(networkError('POST', url, 'timeout'));
+    xhr.send(form);
+  });
 }
 
 export const apiClient = {
@@ -108,9 +155,10 @@ export const apiClient = {
   /**
    * multipart/form-data upload (e.g. an image for a FastAPI `UploadFile` param).
    * `files` keys must match the FastAPI parameter names.
-   * Do NOT set Content-Type yourself — fetch adds the multipart boundary.
+   * Do NOT set Content-Type yourself — the multipart boundary is added automatically.
+   * Web: fetch + Blob. iOS/Android: XMLHttpRequest with `{ uri, name, type }` parts.
    */
-  upload<T>(
+  async upload<T>(
     path: string,
     files: Record<string, UploadFile>,
     fields: Record<string, string> = {},
@@ -118,10 +166,17 @@ export const apiClient = {
   ): Promise<T> {
     const form = new FormData();
     Object.entries(fields).forEach(([key, value]) => form.append(key, value));
+    if (Platform.OS === 'web') {
+      // Browsers need a real Blob (the picker gives a blob:/data: URI).
+      for (const [key, file] of Object.entries(files)) {
+        form.append(key, await (await fetch(file.uri)).blob(), file.name);
+      }
+      return request<T>('POST', path, form, options);
+    }
     Object.entries(files).forEach(([key, file]) => {
       // React Native's FormData accepts { uri, name, type } objects for files.
       form.append(key, { uri: file.uri, name: file.name, type: file.type } as unknown as Blob);
     });
-    return request<T>('POST', path, form, options);
+    return uploadNative<T>(path, form, options);
   },
 };

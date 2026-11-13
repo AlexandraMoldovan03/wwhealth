@@ -86,6 +86,17 @@ Fields: `file` (JPEG/PNG/WEBP chest X-ray). Response: `XrayAnalysis`
   "isDemo": false, "disclaimer": "Not a medical device…" }
 ```
 
+### `POST /api/ai/lung/analyze` — LungVision (real model), multipart
+Fields: `file` (JPEG/PNG chest X-ray, max 10 MB, min 64×64 px). The image is processed in memory and **not stored**.
+Model: DenseNet121 + `Linear(1024, 1)` trained on PneumoniaMNIST (`ai/notebooks/LungVision_Training.ipynb`).
+`score` = sigmoid output (positive class = pneumonia), **not a clinical probability**; flagged when `score >= 0.3`.
+Errors: `415` wrong type · `413` too large · `400` not a valid/usable image · `503` model or ML deps missing (never a fake result).
+```json
+{ "score": 0.0713, "threshold": 0.3, "aboveThreshold": false, "label": "Not flagged (experimental)",
+  "heatmapPngBase64": "iVBOR…", "modelVersion": "lungvision-densenet121-pneumoniamnist-v1",
+  "processingTimeMs": 284, "isExperimental": true, "disclaimer": "Educational prototype, not a medical device…" }
+```
+
 ### `POST /api/v1/access/grant` — patient
 Request: `{ "scopes": ["profile", "xrays"], "ttlMinutes": 15 }` (ttl capped by `ACCESS_TOKEN_MAX_TTL_MINUTES`)
 Response:

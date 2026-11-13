@@ -14,6 +14,9 @@ export const realApi: WWHealthApi = {
 
   analyzeXray: (file) => apiClient.upload(ENDPOINTS.xrayAnalyze, { file }),
 
+  // Model + Grad-CAM run on CPU; the first call also loads the model.
+  analyzeLung: (file) => apiClient.upload(ENDPOINTS.lungAnalyze, { file }, {}, { timeoutMs: 60_000 }),
+
   grantAccess: (request) =>
     apiClient.post(ENDPOINTS.accessGrant, { scopes: request.scopes, ttlMinutes: request.ttlMinutes }),
 

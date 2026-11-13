@@ -96,6 +96,14 @@ export const mockApi: WWHealthApi = {
     return result;
   },
 
+  // No simulated LungVision scores: the real model only runs on the backend.
+  async analyzeLung() {
+    await delay(MOCK_DELAY_MS);
+    throw new Error(
+      'LungVision needs the backend model. Set EXPO_PUBLIC_USE_MOCKS=false in .env, start the backend and restart Expo.',
+    );
+  },
+
   async grantAccess({ scopes, ttlMinutes }) {
     await delay(MOCK_DELAY_MS);
     const token = DEMO_ACCESS_TOKEN; // fixed in MOCK mode so the doctor flow is easy to demo

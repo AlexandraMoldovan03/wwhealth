@@ -26,6 +26,8 @@ class Settings(BaseSettings):
     elevenlabs_voice_id: str = ""
 
     use_ai_model: bool = False
+    # LungVision checkpoint (never shipped in the Expo app). Relative paths are resolved from backend/.
+    lungvision_weights_path: Path = BACKEND_DIR / "models" / "lungvision_best.pth"
     access_token_max_ttl_minutes: int = 240
 
     @property

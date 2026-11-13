@@ -22,6 +22,19 @@ uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 `--host 0.0.0.0` lets a phone on the same Wi-Fi reach it. In the mobile `.env` set
 `EXPO_PUBLIC_API_BASE_URL=http://<your-LAN-IP>:8000` and `EXPO_PUBLIC_USE_MOCKS=false`.
 
+## LungVision (real model)
+
+`POST /api/ai/lung/analyze` runs DenseNet121 + Grad-CAM on the server (`app/ml/lungvision/`).
+
+```bash
+pip install -r requirements-ml.txt            # torch, torchvision, grad-cam, pillow
+# put the checkpoint at backend/models/lungvision_best.pth (git-ignored, never in the Expo app)
+pytest tests/test_lungvision.py
+```
+
+Without the checkpoint or torch the endpoint answers `503` (the rest of the API still works).
+The old `/api/v1/xray/analyze` demo endpoint is unchanged.
+
 ## Structure
 
 ```

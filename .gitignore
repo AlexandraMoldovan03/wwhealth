@@ -52,5 +52,6 @@ backend/.env
 # AI weights & datasets (share via Drive / Hugging Face)
 ai/models/*.pt
 ai/models/*.pth
+backend/models/*.pth
 ai/data/*
 !ai/data/.gitkeep

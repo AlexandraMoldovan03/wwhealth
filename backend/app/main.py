@@ -3,7 +3,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.router import api_v1
-from app.api.routes import health
+from app.api.routes import health, lung
 from app.core.config import settings
 
 app = FastAPI(title=settings.app_name, version=settings.version)
@@ -17,3 +17,4 @@ app.add_middleware(
 
 app.include_router(health.router)
 app.include_router(api_v1)
+app.include_router(lung.router)  # POST /api/ai/lung/analyze

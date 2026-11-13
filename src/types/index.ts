@@ -3,6 +3,7 @@ export * from './auth';
 export * from './feature';
 export * from './history';
 export * from './icons';
+export * from './lungvision';
 export * from './medical';
 export * from './theme';
 export * from './wwhealthApi';

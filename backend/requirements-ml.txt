@@ -1,0 +1,7 @@
+# LungVision (POST /api/ai/lung/analyze). Optional: the rest of the API runs without these.
+#   pip install -r requirements-ml.txt
+torch>=2.3
+torchvision>=0.18
+grad-cam>=1.5        # pytorch-grad-cam (pulls opencv)
+pillow>=10
+numpy>=1.26
