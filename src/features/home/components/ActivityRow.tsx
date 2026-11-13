@@ -11,11 +11,11 @@ export function ActivityRow({ item }: { item: ActivityItem }) {
       <IconBadge icon={item.icon} size={40} />
       <View style={styles.text}>
         <AppText variant="subheading">{item.title}</AppText>
-        <AppText variant="caption" color="textMuted" numberOfLines={1}>
+        <AppText variant="caption" numberOfLines={1}>
           {item.subtitle}
         </AppText>
       </View>
-      <AppText variant="caption" color="textSubtle">
+      <AppText variant="caption" color="primary" style={styles.when}>
         {formatRelativeTime(item.date)}
       </AppText>
     </View>
@@ -25,4 +25,5 @@ export function ActivityRow({ item }: { item: ActivityItem }) {
 const styles = StyleSheet.create({
   row: { flexDirection: 'row', alignItems: 'center', gap: spacing.md, paddingVertical: spacing.sm },
   text: { flex: 1, gap: spacing.xxs },
+  when: { fontWeight: '700' },
 });

@@ -26,7 +26,7 @@ export function PatientDashboardScreen() {
   ];
 
   return (
-    <ScreenContainer>
+    <ScreenContainer showLungs>
       <WelcomeHeader name={firstName} />
 
       <View style={styles.stats}>
@@ -52,8 +52,7 @@ export function PatientDashboardScreen() {
       <View style={styles.section}>
         <SectionHeader
           title="Recent activity"
-          subtitle="Demo data"
-          actionLabel="Medical history"
+          actionLabel="View all"
           onActionPress={() => router.navigate('/history')}
         />
         <AppCard>

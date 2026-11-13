@@ -10,14 +10,19 @@ export interface AppCardProps extends PropsWithChildren {
   style?: StyleProp<ViewStyle>;
   padded?: boolean;
   accessibilityLabel?: string;
+  /** 'hero' = dark teal filled card with a stronger shadow (e.g. Medical Passport). */
+  tone?: 'default' | 'hero';
 }
 
-export function AppCard({ children, onPress, style, padded = true, accessibilityLabel }: AppCardProps) {
+export function AppCard({ children, onPress, style, padded = true, accessibilityLabel, tone = 'default' }: AppCardProps) {
   const { colors, isDark } = useTheme();
+  const isHero = tone === 'hero';
   const cardStyle = [
     styles.card,
-    { backgroundColor: colors.surface, borderColor: colors.border },
-    !isDark && shadows.card,
+    isHero
+      ? { backgroundColor: colors.hero, borderColor: colors.hero, borderRadius: radius.xl, ...shadows.hero }
+      : { backgroundColor: colors.surface, borderColor: colors.border },
+    !isHero && !isDark && shadows.card,
     padded && styles.padded,
   ];
 
@@ -36,6 +41,6 @@ export function AppCard({ children, onPress, style, padded = true, accessibility
 }
 
 const styles = StyleSheet.create({
-  card: { borderRadius: radius.lg, borderWidth: StyleSheet.hairlineWidth },
+  card: { borderRadius: radius.lg, borderWidth: 1 },
   padded: { padding: spacing.md },
 });

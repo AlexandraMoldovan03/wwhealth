@@ -17,8 +17,10 @@ export function QuickActionGrid({ actions }: { actions: QuickAction[] }) {
         >
           <IconBadge icon={action.icon} />
           <View style={styles.text}>
-            <AppText variant="subheading">{action.title}</AppText>
-            <AppText variant="caption" color="textMuted">
+            <AppText variant="subheading" style={styles.title} numberOfLines={2}>
+              {action.title}
+            </AppText>
+            <AppText variant="caption" style={styles.subtitle} numberOfLines={2}>
               {action.subtitle}
             </AppText>
           </View>
@@ -30,7 +32,9 @@ export function QuickActionGrid({ actions }: { actions: QuickAction[] }) {
 
 const styles = StyleSheet.create({
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.md },
-  // Two columns: each card takes ~half the row minus the gap.
-  item: { flexBasis: '46%', flexGrow: 1, gap: spacing.md },
-  text: { gap: spacing.xxs },
+  // Two columns: each card takes ~half the row minus the gap. Icon on the left, text on the right.
+  item: { flexBasis: '46%', flexGrow: 1, flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
+  text: { flex: 1, minWidth: 0, gap: spacing.xxs },
+  title: { fontSize: 14, lineHeight: 18 },
+  subtitle: { fontSize: 12, lineHeight: 16 },
 });

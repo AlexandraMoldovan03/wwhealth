@@ -8,6 +8,7 @@ export * from './EmptyState';
 export * from './ErrorState';
 export * from './IconBadge';
 export * from './LoadingState';
+export * from './ScreenBackground';
 export * from './ScreenContainer';
 export * from './SectionHeader';
 export * from './ImagePickerArea';

@@ -1,9 +1,8 @@
 import { StyleSheet, View } from 'react-native';
 
-import { AppText, Badge } from '@/components/ui';
+import { AppText } from '@/components/ui';
 import { APP_INFO } from '@/constants/config';
 import { spacing } from '@/constants/theme';
-import { useTheme } from '@/hooks/useTheme';
 
 function getGreeting(hour: number): string {
   if (hour < 12) return 'Good morning';
@@ -12,18 +11,23 @@ function getGreeting(hour: number): string {
 }
 
 export function WelcomeHeader({ name }: { name: string }) {
-  const { colors } = useTheme();
   return (
     <View style={styles.container}>
-      <Badge label={APP_INFO.name} color={colors.primary} />
-      <AppText variant="display">
-        {getGreeting(new Date().getHours())}, {name} 👋
+      <AppText variant="display" align="center" style={styles.brand}>
+        {APP_INFO.name}
       </AppText>
-      <AppText color="textMuted">{APP_INFO.fullName} — your health record, in your pocket.</AppText>
+      <View style={styles.greeting}>
+        <AppText variant="heading">
+          {getGreeting(new Date().getHours())}, {name}
+        </AppText>
+        <AppText variant="caption">Here is your health overview.</AppText>
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { gap: spacing.sm, paddingTop: spacing.sm },
+  container: { gap: spacing.md, paddingTop: spacing.sm },
+  brand: { paddingVertical: spacing.sm },
+  greeting: { gap: spacing.xxs },
 });

@@ -7,8 +7,21 @@
 
 /** Raw palette. Only referenced inside this file. */
 const palette = {
-  brand: '#0F766E', // ← primary colour of the whole app (WWHealth teal)
+  brand: '#09675A', // ← primary colour of the whole app (WWHealth deep teal)
   brandDark: '#2DD4BF', // brighter variant used in dark mode
+  brandActive: '#0F766E', // active tab / links
+
+  mint50: '#F5FEFA', // card tint
+  mint100: '#E0FFF3', // screen background (light)
+  mint200: '#C2F0E3', // wave decoration (light)
+  mint300: '#CDEFE4', // card borders
+  mintText: '#4F6F6A', // muted text on mint
+  mintSubtle: '#A3B1C2', // inactive tab / placeholder / icons
+  ink: '#153F55', // body text on mint
+
+  night900: '#16262F', // screen background (dark)
+  night800: '#1F2F3C', // card surface (dark)
+  night700: '#2A3E4C', // borders (dark)
   accent: '#2563EB',
 
   white: '#FFFFFF',
@@ -52,20 +65,27 @@ export interface ThemeColors {
   info: string;
   tabBar: string;
   overlay: string;
+  /** Dark filled hero card (e.g. "Medical Passport"). */
+  hero: string;
+  onHero: string;
+  /** Translucent pill button that sits on the hero card. */
+  heroPill: string;
+  /** Decorative wave / lungs artwork behind screens. */
+  decoration: string;
 }
 
 export const lightColors: ThemeColors = {
   primary: palette.brand,
-  primaryMuted: 'rgba(15, 118, 110, 0.12)',
+  primaryMuted: 'rgba(9, 103, 90, 0.10)',
   onPrimary: palette.white,
   accent: palette.accent,
-  background: palette.gray50,
+  background: palette.mint100,
   surface: palette.white,
-  surfaceAlt: palette.gray100,
-  border: palette.gray200,
-  text: palette.gray900,
-  textMuted: palette.gray500,
-  textSubtle: palette.gray400,
+  surfaceAlt: palette.mint50,
+  border: palette.mint300,
+  text: palette.ink,
+  textMuted: palette.mintText,
+  textSubtle: palette.mintSubtle,
   success: palette.green,
   warning: palette.amber,
   danger: palette.red,
@@ -73,6 +93,10 @@ export const lightColors: ThemeColors = {
   info: palette.blue,
   tabBar: palette.white,
   overlay: 'rgba(15, 23, 42, 0.5)',
+  hero: palette.brand,
+  onHero: palette.white,
+  heroPill: 'rgba(255, 255, 255, 0.78)',
+  decoration: palette.mint200,
 };
 
 export const darkColors: ThemeColors = {
@@ -80,10 +104,10 @@ export const darkColors: ThemeColors = {
   primaryMuted: 'rgba(45, 212, 191, 0.16)',
   onPrimary: palette.gray950,
   accent: palette.accent,
-  background: palette.gray950,
-  surface: palette.gray900,
-  surfaceAlt: palette.gray800,
-  border: palette.gray800,
+  background: palette.night900,
+  surface: palette.night800,
+  surfaceAlt: palette.night900,
+  border: palette.night700,
   text: palette.gray50,
   textMuted: palette.gray400,
   textSubtle: palette.gray500,
@@ -92,8 +116,12 @@ export const darkColors: ThemeColors = {
   danger: palette.red,
   onDanger: palette.white,
   info: palette.blue,
-  tabBar: palette.gray900,
+  tabBar: palette.night800,
   overlay: 'rgba(0, 0, 0, 0.6)',
+  hero: palette.brand,
+  onHero: palette.white,
+  heroPill: 'rgba(255, 255, 255, 0.18)',
+  decoration: '#1F4B52',
 };
 
 /** Spacing scale (4pt grid). Use `spacing.md` instead of `16`. */
@@ -154,6 +182,14 @@ export const shadows = {
     shadowOpacity: 0.06,
     shadowRadius: 12,
     elevation: 2,
+  },
+  /** Stronger drop shadow under the dark hero card. */
+  hero: {
+    shadowColor: palette.brand,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.28,
+    shadowRadius: 16,
+    elevation: 6,
   },
 } as const;
 

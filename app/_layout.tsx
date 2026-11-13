@@ -23,7 +23,7 @@ function RootNavigator() {
         ...base.colors,
         primary: colors.primary,
         background: colors.background,
-        card: colors.surface,
+        card: colors.background,
         text: colors.text,
         border: colors.border,
       },
@@ -36,8 +36,9 @@ function RootNavigator() {
       <Stack
         screenOptions={{
           headerTintColor: colors.primary,
-          headerTitleStyle: { color: colors.text },
-          headerStyle: { backgroundColor: colors.surface },
+          headerTitleStyle: { color: colors.primary, fontWeight: '700' },
+          headerStyle: { backgroundColor: colors.background },
+          headerShadowVisible: false,
           contentStyle: { backgroundColor: colors.background },
           headerBackButtonDisplayMode: 'minimal',
         }}
