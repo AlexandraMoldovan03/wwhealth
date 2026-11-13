@@ -23,6 +23,9 @@ export const TABS: TabConfig[] = [
 
 /** `name` = route file path inside app/ without extension. */
 export const STACK_SCREENS: { name: string; title: string }[] = [
+  // Auth
+  { name: 'login', title: 'Sign in' },
+  { name: 'register', title: 'Create account' },
   { name: 'history/[id]', title: 'Details' },
   // Patient
   { name: 'patient/profile', title: 'Medical Profile' },

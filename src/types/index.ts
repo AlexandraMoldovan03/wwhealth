@@ -1,4 +1,5 @@
 export * from './api';
+export * from './auth';
 export * from './feature';
 export * from './history';
 export * from './icons';

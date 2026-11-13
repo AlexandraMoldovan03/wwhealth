@@ -34,6 +34,14 @@ export function SettingsScreen() {
       <AppText variant="title">Settings</AppText>
 
       <View style={styles.section}>
+        <SectionHeader title="Account" />
+        <AppCard>
+          <SettingsRow icon="log-in-outline" title="Sign in" onPress={() => router.push('/login')} />
+          <SettingsRow icon="person-add-outline" title="Create account" onPress={() => router.push('/register')} />
+        </AppCard>
+      </View>
+
+      <View style={styles.section}>
         <SectionHeader title="Appearance" />
         <AppCard style={styles.card}>
           <AppText variant="caption" color="textMuted">
