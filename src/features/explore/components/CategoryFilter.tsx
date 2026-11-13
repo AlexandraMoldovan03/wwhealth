@@ -8,10 +8,12 @@ interface CategoryFilterProps<T extends string> {
   options: readonly T[];
   value: T;
   onChange: (value: T) => void;
+  /** Optional display label (defaults to the value itself). */
+  getLabel?: (value: T) => string;
 }
 
 /** Horizontal row of selectable chips. */
-export function CategoryFilter<T extends string>({ options, value, onChange }: CategoryFilterProps<T>) {
+export function CategoryFilter<T extends string>({ options, value, onChange, getLabel }: CategoryFilterProps<T>) {
   const { colors } = useTheme();
   return (
     <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.row}>
@@ -29,7 +31,7 @@ export function CategoryFilter<T extends string>({ options, value, onChange }: C
             ]}
           >
             <AppText variant="caption" color={active ? 'onPrimary' : 'text'} style={styles.label}>
-              {option}
+              {getLabel ? getLabel(option) : option}
             </AppText>
           </Pressable>
         );

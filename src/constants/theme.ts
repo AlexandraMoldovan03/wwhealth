@@ -7,9 +7,9 @@
 
 /** Raw palette. Only referenced inside this file. */
 const palette = {
-  brand: '#6366F1', // ← primary colour of the whole app (indigo)
-  brandDark: '#818CF8', // brighter variant used in dark mode
-  accent: '#14B8A6',
+  brand: '#0F766E', // ← primary colour of the whole app (WWHealth teal)
+  brandDark: '#2DD4BF', // brighter variant used in dark mode
+  accent: '#2563EB',
 
   white: '#FFFFFF',
   black: '#000000',
@@ -56,7 +56,7 @@ export interface ThemeColors {
 
 export const lightColors: ThemeColors = {
   primary: palette.brand,
-  primaryMuted: 'rgba(99, 102, 241, 0.12)',
+  primaryMuted: 'rgba(15, 118, 110, 0.12)',
   onPrimary: palette.white,
   accent: palette.accent,
   background: palette.gray50,
@@ -77,7 +77,7 @@ export const lightColors: ThemeColors = {
 
 export const darkColors: ThemeColors = {
   primary: palette.brandDark,
-  primaryMuted: 'rgba(129, 140, 248, 0.16)',
+  primaryMuted: 'rgba(45, 212, 191, 0.16)',
   onPrimary: palette.gray950,
   accent: palette.accent,
   background: palette.gray950,

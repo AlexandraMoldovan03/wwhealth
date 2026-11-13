@@ -14,17 +14,17 @@ export function HeroCard() {
       <View style={styles.row}>
         <View style={styles.text}>
           <AppText variant="heading" color="onPrimary">
-            Try AI Image Analysis
+            LungVision AI
           </AppText>
           <AppText variant="caption" color="onPrimary" style={styles.subtitle}>
-            Pick a photo and see a simulated result. Swap in your FastAPI model later.
+            Upload a chest X-ray and get a DenseNet121 + Grad-CAM analysis (DEMO results for now).
           </AppText>
         </View>
         <Ionicons name="sparkles" size={36} color={colors.onPrimary} />
       </View>
       <View style={styles.buttonWrap}>
         <AppButton
-          title="Start analysis"
+          title="Analyze X-ray"
           icon="arrow-forward"
           variant="inverse"
           size="sm"

@@ -7,6 +7,7 @@ import { DarkTheme, DefaultTheme, Stack, ThemeProvider as NavigationThemeProvide
 import { StatusBar } from 'expo-status-bar';
 import { useMemo } from 'react';
 
+import { STACK_SCREENS } from '@/constants/navigation';
 import { ThemeProvider } from '@/context/ThemeContext';
 import { useTheme } from '@/hooks/useTheme';
 
@@ -42,8 +43,9 @@ function RootNavigator() {
         }}
       >
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="history/[id]" options={{ title: 'Details' }} />
-        <Stack.Screen name="+not-found" options={{ title: 'Not found' }} />
+        {STACK_SCREENS.map((screen) => (
+          <Stack.Screen key={screen.name} name={screen.name} options={{ title: screen.title }} />
+        ))}
       </Stack>
     </NavigationThemeProvider>
   );

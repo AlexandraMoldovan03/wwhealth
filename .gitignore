@@ -41,3 +41,16 @@ yarn-error.*
 /android
 
 .env
+
+# Python (backend/ and ai/)
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+backend/.env
+
+# AI weights & datasets (share via Drive / Hugging Face)
+ai/models/*.pt
+ai/models/*.pth
+ai/data/*
+!ai/data/.gitkeep

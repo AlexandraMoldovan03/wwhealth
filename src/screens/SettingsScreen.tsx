@@ -1,13 +1,14 @@
+import { router } from 'expo-router';
 import { useState } from 'react';
 import { Alert, StyleSheet, Switch, View } from 'react-native';
 
 import { AppCard, AppText, ScreenContainer, SectionHeader } from '@/components/ui';
-import { API_BASE_URL, APP_INFO, USE_MOCK_API } from '@/constants/config';
+import { API_BASE_URL, APP_INFO, USE_MOCKS } from '@/constants/config';
 import { spacing } from '@/constants/theme';
 import { SettingsRow } from '@/features/settings/components/SettingsRow';
 import { ThemeSelector } from '@/features/settings/components/ThemeSelector';
 import { useTheme } from '@/hooks/useTheme';
-import { checkBackendHealth } from '@/services/healthService';
+import { realApi } from '@/services/api/realApi';
 import { getErrorMessage } from '@/utils/errors';
 
 export function SettingsScreen() {
@@ -18,8 +19,9 @@ export function SettingsScreen() {
   const testConnection = async () => {
     setChecking(true);
     try {
-      const res = await checkBackendHealth();
-      Alert.alert('Backend reachable', `Status: ${res.status}`);
+      // Always hits the real backend, even in MOCK mode.
+      const res = await realApi.health();
+      Alert.alert('Backend reachable', `Status: ${res.status} · v${res.version}`);
     } catch (err) {
       Alert.alert('Connection failed', getErrorMessage(err));
     } finally {
@@ -63,7 +65,7 @@ export function SettingsScreen() {
         <SectionHeader title="Backend" subtitle="Configured in .env → src/constants/config.ts" />
         <AppCard>
           <SettingsRow icon="server-outline" title="API URL" value={API_BASE_URL} />
-          <SettingsRow icon="flask-outline" title="Data source" value={USE_MOCK_API ? 'Mock (demo)' : 'Live API'} />
+          <SettingsRow icon="flask-outline" title="Data source" value={USE_MOCKS ? 'MOCK (demo data)' : 'API (FastAPI)'} />
           <SettingsRow
             icon="pulse-outline"
             title={checking ? 'Checking…' : 'Test connection'}
@@ -73,10 +75,20 @@ export function SettingsScreen() {
       </View>
 
       <View style={styles.section}>
-        <SectionHeader title="Future configuration" subtitle="Placeholders for your hackathon features" />
+        <SectionHeader title="Role" subtitle="Demo switch until Auth0 roles are implemented" />
         <AppCard>
-          <SettingsRow icon="hardware-chip-outline" title="AI model" value="demo-model-v0" />
-          <SettingsRow icon="person-circle-outline" title="Account (Supabase)" value="Not connected" />
+          <SettingsRow icon="person-outline" title="Patient area" value="Tabs" />
+          <SettingsRow icon="medkit-outline" title="Doctor Dashboard" onPress={() => router.push('/doctor')} />
+        </AppCard>
+      </View>
+
+      <View style={styles.section}>
+        <SectionHeader title="Integrations" subtitle="Configured on the backend — not in the app" />
+        <AppCard>
+          <SettingsRow icon="shield-checkmark-outline" title="Auth0 login" value="Not connected" />
+          <SettingsRow icon="scan-outline" title="LungVision model" value="DenseNet121 (demo)" />
+          <SettingsRow icon="sparkles-outline" title="Gemini extraction" value="Backend" />
+          <SettingsRow icon="volume-high-outline" title="ElevenLabs voice" value="Backend" />
         </AppCard>
       </View>
 

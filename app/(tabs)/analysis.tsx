@@ -1,2 +1,2 @@
-// Route "/analysis" → src/screens/AnalysisScreen.tsx
-export { AnalysisScreen as default } from '@/screens/AnalysisScreen';
+// Route "/analysis" → LungVision AI. UI: src/screens/patient/LungVisionScreen.tsx
+export { LungVisionScreen as default } from '@/screens/patient/LungVisionScreen';

@@ -19,7 +19,7 @@ export function WelcomeHeader({ name }: { name: string }) {
       <AppText variant="display">
         {getGreeting(new Date().getHours())}, {name} 👋
       </AppText>
-      <AppText color="textMuted">Build your AI-powered idea on top of this template.</AppText>
+      <AppText color="textMuted">{APP_INFO.fullName} — your health record, in your pocket.</AppText>
     </View>
   );
 }

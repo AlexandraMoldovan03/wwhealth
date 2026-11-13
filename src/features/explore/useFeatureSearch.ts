@@ -3,7 +3,7 @@ import { useMemo, useState } from 'react';
 import type { Feature, FeatureCategory } from '@/types';
 import { filterByQuery } from '@/utils/search';
 
-export const CATEGORY_OPTIONS = ['All', 'AI', 'Vision', 'Data', 'Integration'] as const satisfies readonly (
+export const CATEGORY_OPTIONS = ['All', 'Patient', 'Doctor', 'AI'] as const satisfies readonly (
   | 'All'
   | FeatureCategory
 )[];

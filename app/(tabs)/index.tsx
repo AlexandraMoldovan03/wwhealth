@@ -1,2 +1,2 @@
-// Route "/" → Home tab. The UI lives in src/screens/HomeScreen.tsx.
-export { HomeScreen as default } from '@/screens/HomeScreen';
+// Route "/" → Patient Dashboard. UI: src/screens/patient/PatientDashboardScreen.tsx
+export { PatientDashboardScreen as default } from '@/screens/patient/PatientDashboardScreen';

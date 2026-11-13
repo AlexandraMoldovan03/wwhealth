@@ -2,7 +2,7 @@ import type { Href } from 'expo-router';
 
 import type { IconName } from './icons';
 
-export type FeatureCategory = 'AI' | 'Vision' | 'Data' | 'Integration';
+export type FeatureCategory = 'Patient' | 'Doctor' | 'AI';
 
 export interface Feature {
   id: string;
@@ -10,7 +10,7 @@ export interface Feature {
   description: string;
   icon: IconName;
   category: FeatureCategory;
-  /** Optional screen to open when the card is pressed. */
+  /** Screen to open when the card is pressed. */
   route?: Href;
   isAvailable: boolean;
 }
