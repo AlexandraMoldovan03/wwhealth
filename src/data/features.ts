@@ -1,0 +1,71 @@
+/** DEMO DATA — cards shown on Explore. Add an object here to add a card. */
+import type { Feature } from '@/types';
+
+export const FEATURES: Feature[] = [
+  {
+    id: 'image-analysis',
+    title: 'Image Analysis',
+    description: 'Pick a photo and get labels with confidence scores.',
+    icon: 'scan-outline',
+    category: 'Vision',
+    route: '/analysis',
+    isAvailable: true,
+  },
+  {
+    id: 'history',
+    title: 'Analysis History',
+    description: 'Browse previous analyses and their details.',
+    icon: 'time-outline',
+    category: 'Data',
+    route: '/history',
+    isAvailable: true,
+  },
+  {
+    id: 'object-detection',
+    title: 'Object Detection',
+    description: 'Bounding boxes around objects in real time.',
+    icon: 'cube-outline',
+    category: 'Vision',
+    isAvailable: false,
+  },
+  {
+    id: 'text-recognition',
+    title: 'Text Recognition (OCR)',
+    description: 'Extract text from documents and signs.',
+    icon: 'document-text-outline',
+    category: 'Vision',
+    isAvailable: false,
+  },
+  {
+    id: 'chat-assistant',
+    title: 'AI Assistant',
+    description: 'Conversational assistant powered by an LLM.',
+    icon: 'chatbubbles-outline',
+    category: 'AI',
+    isAvailable: false,
+  },
+  {
+    id: 'predictions',
+    title: 'ML Predictions',
+    description: 'Send tabular data to a model and get predictions.',
+    icon: 'analytics-outline',
+    category: 'Data',
+    isAvailable: false,
+  },
+  {
+    id: 'supabase',
+    title: 'Supabase Sync',
+    description: 'Store users and results in a Postgres database.',
+    icon: 'server-outline',
+    category: 'Integration',
+    isAvailable: false,
+  },
+  {
+    id: 'external-api',
+    title: 'External APIs',
+    description: 'Weather, maps, payments or any REST service.',
+    icon: 'globe-outline',
+    category: 'Integration',
+    isAvailable: false,
+  },
+];
