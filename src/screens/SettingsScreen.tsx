@@ -5,6 +5,8 @@ import { Alert, StyleSheet, Switch, View } from 'react-native';
 import { AppCard, AppText, ScreenContainer, SectionHeader } from '@/components/ui';
 import { API_BASE_URL, APP_INFO, USE_MOCKS } from '@/constants/config';
 import { spacing } from '@/constants/theme';
+import { logout } from '@/features/auth/authService';
+import { useSession } from '@/features/auth/sessionStore';
 import { SettingsRow } from '@/features/settings/components/SettingsRow';
 import { ThemeSelector } from '@/features/settings/components/ThemeSelector';
 import { useTheme } from '@/hooks/useTheme';
@@ -13,6 +15,7 @@ import { getErrorMessage } from '@/utils/errors';
 
 export function SettingsScreen() {
   const { colors } = useTheme();
+  const { user, isAuthenticated } = useSession();
   const [notifications, setNotifications] = useState(true);
   const [checking, setChecking] = useState(false);
 
@@ -36,8 +39,21 @@ export function SettingsScreen() {
       <View style={styles.section}>
         <SectionHeader title="Account" />
         <AppCard>
-          <SettingsRow icon="log-in-outline" title="Sign in" onPress={() => router.push('/login')} />
-          <SettingsRow icon="person-add-outline" title="Create account" onPress={() => router.push('/register')} />
+          {isAuthenticated ? (
+            <>
+              <SettingsRow
+                icon="person-circle-outline"
+                title={user?.fullName || 'Signed in'}
+                value={user?.role === 'doctor' ? 'Doctor' : 'Patient'}
+              />
+              <SettingsRow icon="log-out-outline" title="Sign out" onPress={() => void logout()} />
+            </>
+          ) : (
+            <>
+              <SettingsRow icon="log-in-outline" title="Sign in" onPress={() => router.push('/login')} />
+              <SettingsRow icon="person-add-outline" title="Create account" onPress={() => router.push('/register')} />
+            </>
+          )}
         </AppCard>
       </View>
 

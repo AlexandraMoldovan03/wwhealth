@@ -21,6 +21,16 @@ const auth0Plugin: [string, { domain: string; customScheme: string }] = [
   { domain: auth0Domain, customScheme: AUTH0_CUSTOM_SCHEME },
 ];
 
+/**
+ * com.auth0.android:auth0 (pulled in by react-native-auth0) declares
+ * minSdkVersion 26, while Expo's default is 24. Android 8.0+ covers virtually
+ * every device in use, so raising the floor is the supported fix.
+ */
+const buildPropertiesPlugin: [string, { android: { minSdkVersion: number } }] = [
+  'expo-build-properties',
+  { android: { minSdkVersion: 26 } },
+];
+
 export default ({ config }: ConfigContext): ExpoConfig => ({
   // app.json provides the required fields (name, slug, …).
   ...(config as ExpoConfig),
@@ -29,5 +39,6 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       Array.isArray(plugin) ? plugin[0] !== 'react-native-auth0' : plugin !== 'react-native-auth0',
     ),
     auth0Plugin,
+    buildPropertiesPlugin,
   ],
 });

@@ -127,10 +127,22 @@ let webRedirectHandled = false;
 
 /** On web, exchange the `?code=…` in the URL for tokens and clean the address bar. */
 async function completeWebRedirect(client: Auth0): Promise<void> {
+  if (Platform.OS !== 'web' || typeof window === 'undefined') return;
+
+  // Auth0 can come back with ?error=… (denied login, bad audience, …).
+  const params = new URLSearchParams(window.location.search);
+  if (params.has('error')) {
+    const detail = params.get('error_description') ?? params.get('error') ?? 'unknown error';
+    window.history.replaceState({}, document.title, window.location.pathname);
+    throw new Error(`Auth0: ${detail}`);
+  }
+
   if (webRedirectHandled || !isWebRedirect()) return;
   webRedirectHandled = true;
   try {
-    await client.webAuth.handleRedirectCallback();
+    console.warn('[auth] exchanging Auth0 redirect code…');
+    const result = await client.webAuth.handleRedirectCallback();
+    console.warn('[auth] redirect exchange result:', result);
     window.history.replaceState({}, document.title, window.location.pathname);
   } catch (e) {
     webRedirectHandled = false;
@@ -146,9 +158,12 @@ export async function restoreSession() {
   try {
     const client = getClient();
     await completeWebRedirect(client);
-    if (await client.credentialsManager.hasValidCredentials()) {
+    const valid = await client.credentialsManager.hasValidCredentials();
+    console.warn('[auth] has valid credentials?', valid);
+    if (valid) {
       const c = await client.credentialsManager.getCredentials(undefined, 60, apiParameters());
-      toResponse(c.idToken, c.accessToken);
+      const res = toResponse(c.idToken, c.accessToken);
+      console.warn('[auth] restored session for', res.user.id, res.user.role);
     }
   } catch (e) {
     console.warn('[auth] could not restore session:', e);
@@ -159,14 +174,24 @@ export async function restoreSession() {
 export async function logout() {
   try {
     const client = getClient();
+
+    // Clear local tokens FIRST: a failed remote logout must never leave the user signed in.
     try {
-      await client.webAuth.clearSession({}, NATIVE_OPTIONS);
-    } catch {
-      /* user cancelled the logout page */
+      await client.credentialsManager.clearCredentials();
+    } catch (e) {
+      console.warn('[auth] could not clear stored credentials:', e);
     }
-    await client.credentialsManager.clearCredentials();
-  } catch (e) {
-    console.warn('[auth] could not clear Auth0 session:', e);
+    setSession(null);
+
+    // Best effort: also end the Auth0 SSO session. On web this redirects to /v2/logout
+    // and back to the app, so it must run after the local cleanup.
+    try {
+      const returnToUrl =
+        Platform.OS === 'web' && typeof window !== 'undefined' ? window.location.origin : undefined;
+      await client.webAuth.clearSession(returnToUrl ? { returnToUrl } : {}, NATIVE_OPTIONS);
+    } catch (e) {
+      console.warn('[auth] could not clear Auth0 session:', e);
+    }
   } finally {
     setSession(null);
   }

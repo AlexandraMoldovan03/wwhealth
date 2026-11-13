@@ -29,18 +29,20 @@ export const APP_INFO = {
 export const MEDICAL_DISCLAIMER =
   'DEMO — not a medical device. AI output must be reviewed by a qualified clinician.';
 
-/** Trim quotes/whitespace and strip the protocol — the SDK wants only the hostname. */
-const clean = (value: string | undefined) =>
-  (value ?? '')
-    .trim()
-    .replace(/^["']|["']$/g, '')
-    .replace(/^https?:\/\//, '')
-    .replace(/\/+$/, '');
+/** Trim quotes/whitespace (all env values). */
+const clean = (value: string | undefined) => (value ?? '').trim().replace(/^["']|["']$/g, '');
+
+/** The SDK wants only the hostname — no protocol, no trailing slash. */
+const cleanHost = (value: string | undefined) =>
+  clean(value).replace(/^https?:\/\//, '').replace(/\/+$/, '');
+
+/** Keep the full URL (including protocol) but drop whitespace/quotes/trailing slash. */
+const cleanUrl = (value: string | undefined) => clean(value).replace(/\/+$/, '');
 
 export const AUTH0 = {
-  domain: clean(process.env.EXPO_PUBLIC_AUTH0_DOMAIN),
+  domain: cleanHost(process.env.EXPO_PUBLIC_AUTH0_DOMAIN),
   clientId: clean(process.env.EXPO_PUBLIC_AUTH0_CLIENT_ID),
-  audience: clean(process.env.EXPO_PUBLIC_AUTH0_AUDIENCE),
+  audience: cleanUrl(process.env.EXPO_PUBLIC_AUTH0_AUDIENCE),
   /** Must match the `customScheme` in app.config.ts. */
   customScheme: 'wwhealth',
   roleClaim: 'https://wwhealth.app/role',
