@@ -1,0 +1,10 @@
+fastapi>=0.115,<1
+uvicorn[standard]>=0.30
+pydantic-settings>=2.4
+python-multipart>=0.0.9
+sqlalchemy>=2.0
+psycopg[binary]>=3.2
+# Added later by the backend dev when integrating:
+# google-genai        (Gemini)
+# elevenlabs          (voice)
+# python-jose / pyjwt (Auth0 JWT validation)

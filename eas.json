@@ -1,0 +1,35 @@
+{
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk"
+      },
+      "env": {
+        "EXPO_PUBLIC_USE_MOCKS": "true",
+        "EXPO_PUBLIC_AUTH0_DOMAIN": "dev-yyd1ief4qs01bett.us.auth0.com",
+        "EXPO_PUBLIC_AUTH0_CLIENT_ID": "95cMumtZge4DwannqTdZ2NnNeuLrDqZ0",
+        "EXPO_PUBLIC_AUTH0_AUDIENCE": "https://dev-yyd1ief4qs01bett.us.auth0.com/me/"
+      }
+    },
+    "preview": {
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk"
+      },
+      "env": {
+        "EXPO_PUBLIC_USE_MOCKS": "true",
+        "EXPO_PUBLIC_AUTH0_DOMAIN": "dev-yyd1ief4qs01bett.us.auth0.com",
+        "EXPO_PUBLIC_AUTH0_CLIENT_ID": "95cMumtZge4DwannqTdZ2NnNeuLrDqZ0",
+        "EXPO_PUBLIC_AUTH0_AUDIENCE": "https://dev-yyd1ief4qs01bett.us.auth0.com/me/"
+      }
+    },
+    "production": {
+      "autoIncrement": true
+    }
+  },
+  "submit": {
+    "production": {}
+  }
+}
