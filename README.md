@@ -6,7 +6,7 @@ analyses (DenseNet121 + Grad-CAM), and share them temporarily with a doctor thro
 
 | Part | Folder | Stack | Owner |
 |---|---|---|---|
-| Mobile app | repo root (`app/`, `src/`) | React Native, Expo SDK 58 (Expo Go), TypeScript, Expo Router | Developer 2 |
+| Mobile app | repo root (`app/`, `frontend/`) | React Native, Expo SDK 58 (Expo Go), TypeScript, Expo Router | Developer 2 |
 | Backend | `backend/` | FastAPI, PostgreSQL, Auth0, Gemini, ElevenLabs | Developer 3 |
 | AI | `ai/` | PyTorch, DenseNet121, Grad-CAM | Developer 1 |
 
@@ -53,20 +53,21 @@ Doctor area: Home → "Open Doctor Dashboard" or Settings → Role. Demo access 
 
 | I want to… | Go to |
 |---|---|
-| Change the patient dashboard | `src/screens/patient/PatientDashboardScreen.tsx` |
-| Add a page | file in `app/` + screen in `src/screens/` → [HOW_TO_ADD_FEATURE.md](docs/HOW_TO_ADD_FEATURE.md) |
-| Change colours / spacing / fonts | `src/constants/theme.ts` |
-| Tabs and header titles | `src/constants/navigation.ts` |
-| Call the backend | `api` from `src/services/backend.ts` (real: `services/api/realApi.ts`, mock: `services/mock/mockApi.ts`) |
-| Contract types | `src/types/medical.ts` |
-| Mock data | `src/data/mockPatient.ts` |
-| Reusable UI | `src/components/ui/` |
+| Change the patient dashboard | `frontend/screens/patient/dashboard/PatientDashboardScreen.tsx` |
+| Add a page | file in `app/` + screen in `frontend/screens/<role>/<feature>/` → [HOW_TO_ADD_FEATURE.md](docs/HOW_TO_ADD_FEATURE.md) |
+| Change colours / spacing / fonts | `frontend/design-system/theme.ts` |
+| Tabs and header titles | `frontend/config/navigation.ts` |
+| Call the backend | `api` from `frontend/services/backend.ts` (real: `services/api/realApi.ts`, mock: `services/mock/mockApi.ts`) |
+| Contract types | `frontend/types/medical.ts` |
+| Mock data | `frontend/services/mock/mockPatient.ts` |
+| Reusable UI | `frontend/design-system/components/` |
+| Full file map | [docs/PROJECT_MAP.md](docs/PROJECT_MAP.md) |
 
 ## Structure
 
 ```
 app/            Expo Router routes (tabs, patient/*, doctor/*)
-src/            mobile code: screens, components, features, services, hooks, constants, types, data, utils
+frontend/       mobile code: screens/{patient,doctor,auth,shared}, design-system, services, i18n, hooks, types, utils
 assets/         images, icons
 backend/        FastAPI (routes, schemas, services, db)
 ai/             DenseNet121 training, Grad-CAM, evaluation, inference (predict_xray)

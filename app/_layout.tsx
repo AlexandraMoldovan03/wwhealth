@@ -10,11 +10,11 @@ import { StatusBar } from 'expo-status-bar';
 import { useEffect, useMemo } from 'react';
 
 import '@/i18n'; // initialises i18next before any screen renders
-import { STACK_SCREENS } from '@/constants/navigation';
-import { fonts } from '@/constants/theme';
-import { ThemeProvider } from '@/context/ThemeContext';
-import { useSignedIn } from '@/features/auth/useSignedIn';
-import { useTheme } from '@/hooks/useTheme';
+import { STACK_SCREENS } from '@/config/navigation';
+import { fonts } from '@/design-system/theme';
+import { ThemeProvider } from '@/design-system/ThemeContext';
+import { useSignedIn } from '@/services/auth/useSignedIn';
+import { useTheme } from '@/design-system/useTheme';
 import { useTranslation } from 'react-i18next';
 
 /** With Supabase configured, every screen except Login / Register needs a session. */

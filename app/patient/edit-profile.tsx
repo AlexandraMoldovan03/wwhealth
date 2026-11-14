@@ -1,1 +1,1 @@
-export { EditProfileScreen as default } from '@/screens/patient/EditProfileScreen';
+export { EditProfileScreen as default } from '@/screens/patient/medical-profile';

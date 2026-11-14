@@ -129,6 +129,16 @@ def ocr_image(content: bytes) -> str:
     return result.stdout
 
 
+# Tesseract often reads the caret of "10^3/µL" as "1", "%", "°" or "*" ("1013/uL", "10%3/uL") or drops it
+# ("106/uL"), which made the whole line unparseable. Only these count-per-volume units are restored; the value
+# itself is never touched and every OCR value still needs manual confirmation.
+OCR_POWER_UNIT_RE = re.compile(r"(?<![\d.,])10(?:[\^%°*]|1)?(3|6|9|12)\s*/\s*((?:[uµμm]?[lL])\b|mm3\b)")
+
+
+def fix_ocr_units(text: str) -> str:
+    return OCR_POWER_UNIT_RE.sub(lambda m: f"10^{m.group(1)}/{m.group(2)}", text)
+
+
 def pdf_page_images(content: bytes) -> list[bytes]:
     """Embedded page images of a scanned PDF (one per page usually) — no rasteriser needed."""
     reader = PdfReader(io.BytesIO(content))
@@ -157,6 +167,8 @@ def extract(content: bytes, mime_type: str) -> dict:
     elif can_ocr:
         text = ocr_image(content)
         method = "ocr" if text.strip() else "none"
+    if method == "ocr":
+        text = fix_ocr_units(text)
     values = parse_lab_values(text)
     if method == "ocr":
         for v in values:

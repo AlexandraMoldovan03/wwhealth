@@ -1,4 +1,4 @@
-"""Emergency Medical Passport — mirror of src/types/emergency.ts (mobile)."""
+"""Emergency Medical Passport — mirror of frontend/types/emergency.ts (mobile)."""
 from typing import Literal
 
 from pydantic import Field

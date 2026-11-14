@@ -1,12 +1,12 @@
-/** BOTTOM TABS — tab list (per role) lives in src/constants/navigation.ts. */
+/** BOTTOM TABS — tab list (per role) lives in frontend/config/navigation.ts. */
 import { Redirect } from 'expo-router';
 import { Tabs } from 'expo-router/js-tabs';
 
-import { AppTabBar } from '@/components/navigation/AppTabBar';
-import { TABS } from '@/constants/navigation';
-import { useRole } from '@/features/auth/useCurrentUser';
-import { useSignedIn } from '@/features/auth/useSignedIn';
-import { useTheme } from '@/hooks/useTheme';
+import { AppTabBar } from '@/design-system/AppTabBar';
+import { TABS } from '@/config/navigation';
+import { useRole } from '@/services/auth/useCurrentUser';
+import { useSignedIn } from '@/services/auth/useSignedIn';
+import { useTheme } from '@/design-system/useTheme';
 import { useTranslation } from 'react-i18next';
 
 export default function TabsLayout() {

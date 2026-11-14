@@ -3,7 +3,7 @@
 ```
 ┌────────────────────────┐      HTTPS / JSON (camelCase)      ┌──────────────────────────────┐
 │  Mobile app (Expo)     │  ───────────────────────────────▶  │  Backend (FastAPI)  backend/ │
-│  repo root: app/, src/ │   Authorization: Bearer <Auth0>    │                              │
+│  repo root: app/, frontend/│   Authorization: Bearer <Auth0>    │                              │
 │                        │   multipart for images/documents   │  routes → services → db      │
 │  MOCK mode: no backend │  ◀───────────────────────────────  │                              │
 └──────────┬─────────────┘                                    └──┬───────┬────────┬───────┬──┘
@@ -18,7 +18,7 @@
   holds secrets (`backend/.env`). The app only knows `EXPO_PUBLIC_API_BASE_URL`.
 - **The model runs inside the backend process** as a Python import: `xray_service.py` →
   `ai/inference/predict.py::predict_xray(image_bytes)`. No separate model server needed for the hackathon.
-- **Contract first:** `docs/API_CONTRACT.md` ⇄ `src/types/medical.ts` ⇄ `backend/app/schemas/`.
+- **Contract first:** `docs/API_CONTRACT.md` ⇄ `frontend/types/medical.ts` ⇄ `backend/app/schemas/`.
   Change all three together, in the same PR when possible.
 
 ## Main flows

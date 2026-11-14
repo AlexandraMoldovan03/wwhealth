@@ -1,6 +1,7 @@
+from datetime import date
 from typing import Literal
 
-from pydantic import Field
+from pydantic import Field, field_validator
 
 from app.schemas.base import CamelModel
 
@@ -58,6 +59,20 @@ class ExtractedLabValue(CamelModel):
     measured_at: str | None = Field(default=None, pattern=ISO_DATE)
     # Extraction only (never stored): OCR or incomplete line → must be confirmed manually.
     needs_review: bool = False
+
+    @field_validator("measured_at")
+    @classmethod
+    def _real_past_date(cls, v: str | None) -> str | None:
+        """A real calendar day between 1990-01-01 and today (same rule as the DB check + the app)."""
+        if v is None:
+            return v
+        try:
+            d = date.fromisoformat(v)
+        except ValueError as exc:
+            raise ValueError("Invalid date") from exc
+        if not date(1990, 1, 1) <= d <= date.today():
+            raise ValueError("Date must be between 1990-01-01 and today")
+        return v
 
 
 class LabExtractionResponse(CamelModel):

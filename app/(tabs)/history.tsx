@@ -1,2 +1,2 @@
-// Route "/history" → Medical History. UI: src/screens/patient/MedicalHistoryScreen.tsx
-export { MedicalHistoryScreen as default } from '@/screens/patient/MedicalHistoryScreen';
+// Route "/history" → Medical History. UI: frontend/screens/patient/timeline/MedicalHistoryScreen.tsx
+export { MedicalHistoryScreen as default } from '@/screens/patient/timeline';

@@ -132,3 +132,78 @@ def test_missing_migration_is_a_clear_503(supabase_mode, monkeypatch):  # noqa: 
     monkeypatch.setattr(supabase_repo, "get_lab_values", boom)
     res = supabase_mode.get("/api/v1/documents/11111111-1111-1111-1111-111111111111/lab-values", headers=auth(make_token()))
     assert res.status_code == 503 and "not set up" in res.json()["detail"]
+
+
+def test_ocr_power_of_ten_units_are_restored(monkeypatch):
+    """Tesseract reads "10^3/µL" as "1013/uL" / "10%3/uL"; the line must not be lost (value untouched)."""
+    fix = lab_extraction.fix_ocr_units
+    assert fix("Leucocite 6,1 1013/uL 4,0 - 10,0") == "Leucocite 6,1 10^3/uL 4,0 - 10,0"
+    assert fix("Leucocite 6,1 10%3/uL") == "Leucocite 6,1 10^3/uL"
+    assert fix("Hematii 4,5 1012/L") == "Hematii 4,5 10^12/L"
+    assert fix("Glicemie 1013 mg/dL") == "Glicemie 1013 mg/dL"  # a value, not a unit → unchanged
+    monkeypatch.setattr(lab_extraction, "ocr_available", lambda: True)
+    monkeypatch.setattr(lab_extraction, "ocr_image", lambda _c: "Leucocite 6,1 1013/uL 4,0 - 10,0\n")
+    [v] = upload(png_bytes(), "photo.png", "image/png").json()["values"]
+    assert (v["value"], v["unit"], v["needsReview"]) == ("6,1", "10^3/uL", True)
+
+
+def test_analysis_date_must_be_a_real_past_day(monkeypatch):
+    monkeypatch.setattr(lab_extraction, "_demo_values", {})
+    for bad in ("2026-13-45", "2026-02-30", "2999-01-01", "1980-05-01"):
+        res = client.put("/api/v1/documents/doc_1/lab-values",
+                         json={"values": [{"name": "Glicemie", "value": "98", "measuredAt": bad}]})
+        assert res.status_code == 422, bad
+    assert lab_extraction._demo_values == {}  # nothing stored
+
+
+class _Res:
+    def __init__(self, status: int, body: dict | None = None):
+        self.status_code, self._body = status, body or {}
+
+    def json(self):
+        return self._body
+
+
+def _fake_supabase(monkeypatch, insert_responses: list[_Res], previous: list[dict]):
+    calls = []
+
+    def fake(method, url, user, *, expected=(200,), **kw):
+        calls.append((method, kw.get("json")))
+        if method == "GET" and "medical_documents" in url:
+            return _Res(200, [{"id": "x"}])
+        if method == "POST":
+            return insert_responses.pop(0)
+        return _Res(204)
+
+    monkeypatch.setattr(supabase_repo, "_request", fake)
+    monkeypatch.setattr(supabase_repo, "get_lab_values", lambda _u, _d: previous)
+    return calls
+
+
+DOC = "11111111-1111-1111-1111-111111111111"
+
+
+def test_save_drops_date_only_when_column_is_missing(monkeypatch):
+    from app.core.security import CurrentUser
+
+    user = CurrentUser(id="u1", role="patient")
+    missing = _Res(400, {"code": "PGRST204", "message": "Could not find the 'measured_at' column"})
+    calls = _fake_supabase(monkeypatch, [missing, _Res(201)], previous=[])
+    supabase_repo.save_lab_values(user, DOC, [{"name": "Glicemie", "value": "98", "measured_at": "2026-10-01"}])
+    posts = [body for m, body in calls if m == "POST"]
+    assert "measured_at" in posts[0][0] and "measured_at" not in posts[1][0]
+
+
+def test_failed_save_restores_previous_values(monkeypatch):
+    import pytest
+
+    from app.core.security import CurrentUser
+
+    user = CurrentUser(id="u1", role="patient")
+    previous = [{"name": "Glicemie", "value": "98", "unit": "mg/dL"}]
+    other_error = _Res(400, {"code": "23514", "message": "check constraint"})
+    calls = _fake_supabase(monkeypatch, [other_error, _Res(201)], previous=previous)
+    with pytest.raises(supabase_repo.SupabaseError):
+        supabase_repo.save_lab_values(user, DOC, [{"name": "Glicemie", "value": "105"}])
+    posts = [body for m, body in calls if m == "POST"]
+    assert len(posts) == 2 and posts[1][0]["value"] == "98"  # old values put back, not silently lost

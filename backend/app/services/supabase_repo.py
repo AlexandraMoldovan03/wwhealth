@@ -276,15 +276,39 @@ LAB_FIELDS = "name,value,unit,reference_range,source_line"
 LAB_DATE_FIELD = "measured_at"
 
 
+def _missing_date_column(res: httpx.Response) -> bool:
+    """True only when PostgREST says the `measured_at` column does not exist (migration not applied)."""
+    if res.status_code != 400:
+        return False
+    try:
+        body = res.json()
+    except ValueError:
+        return False
+    return body.get("code") in ("PGRST204", "42703") and LAB_DATE_FIELD in str(body.get("message", ""))
+
+
 def _lab_get(user: CurrentUser, params: dict, fields: str) -> list[dict]:
-    """GET document_lab_values; retries without `measured_at` if the column does not exist yet."""
-    for select in (f"{fields},{LAB_DATE_FIELD}", fields):
-        res = _request("GET", _rest("document_lab_values"), user, expected=(200, 400, 404), params={**params, "select": select})
-        if res.status_code == 404:
-            raise LabStorageUnavailable("Lab values storage not set up")
-        if res.status_code == 200:
-            return res.json()
-    raise SupabaseError("Database error (400)")
+    """GET document_lab_values; retries without `measured_at` only if that column does not exist yet."""
+    res = _request("GET", _rest("document_lab_values"), user, expected=(200, 400, 404),
+                   params={**params, "select": f"{fields},{LAB_DATE_FIELD}"})
+    if _missing_date_column(res):
+        res = _request("GET", _rest("document_lab_values"), user, expected=(200, 404), params={**params, "select": fields})
+    if res.status_code == 404:
+        raise LabStorageUnavailable("Lab values storage not set up")
+    if res.status_code != 200:
+        raise SupabaseError(f"Database error ({res.status_code})")
+    return res.json()
+
+
+def _insert_lab_rows(user: CurrentUser, rows: list[dict]) -> None:
+    res = _request("POST", _rest("document_lab_values"), user, expected=(201, 400), json=rows,
+                   headers={"Prefer": "return=minimal"})
+    if _missing_date_column(res):  # migration 20261114000200 not applied → store without the date
+        rows = [{k: v for k, v in row.items() if k != LAB_DATE_FIELD} for row in rows]
+        res = _request("POST", _rest("document_lab_values"), user, expected=(201, 400), json=rows,
+                       headers={"Prefer": "return=minimal"})
+    if res.status_code != 201:
+        raise SupabaseError(f"Database error ({res.status_code})")
 
 
 def get_lab_values(user: CurrentUser, document_id: str) -> list[dict]:
@@ -312,21 +336,24 @@ def save_lab_values(user: CurrentUser, document_id: str, values: list[dict]) -> 
     owned = _request("GET", _rest("medical_documents"), user, params={"id": f"eq.{document_id}", "select": "id"}).json()
     if not owned:
         return None
+    previous = get_lab_values(user, document_id)  # restored if the new values cannot be stored
     res = _request("DELETE", _rest("document_lab_values"), user, expected=(200, 204, 404),
                    params={"document_id": f"eq.{document_id}"})
     if res.status_code == 404:
         raise LabStorageUnavailable("Lab values storage not set up")
     if values:
         stored = ("name", "value", "unit", "reference_range", "source_line", LAB_DATE_FIELD)
-        rows = [{"user_id": user.id, "document_id": document_id, "position": i, **{k: v.get(k) for k in stored}}
-                for i, v in enumerate(values)]
-        res = _request("POST", _rest("document_lab_values"), user, expected=(201, 400), json=rows,
-                       headers={"Prefer": "return=minimal"})
-        if res.status_code == 400:  # `measured_at` column missing → store without the date
-            for row in rows:
-                row.pop(LAB_DATE_FIELD, None)
-            _request("POST", _rest("document_lab_values"), user, expected=(201,), json=rows,
-                     headers={"Prefer": "return=minimal"})
+
+        def to_rows(items: list[dict]) -> list[dict]:
+            return [{"user_id": user.id, "document_id": document_id, "position": i, **{k: v.get(k) for k in stored}}
+                    for i, v in enumerate(items)]
+
+        try:
+            _insert_lab_rows(user, to_rows(values))
+        except SupabaseError:
+            if previous:
+                _insert_lab_rows(user, to_rows(previous))
+            raise
     return get_lab_values(user, document_id)
 
 

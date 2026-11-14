@@ -1,1 +1,1 @@
-export { EmergencyPassportScreen as default } from '@/screens/patient/EmergencyPassportScreen';
+export { EmergencyPassportScreen as default } from '@/screens/patient/emergency-passport';
