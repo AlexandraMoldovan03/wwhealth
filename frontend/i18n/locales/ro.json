@@ -81,7 +81,7 @@
     "explore": "Explorează",
     "analysis": "LungVision",
     "history": "Istoric",
-    "settings": "Profil",
+    "settings": "Setări",
     "scan": "Scanează QR",
     "access": "Accesări",
     "patients": "Pacienți",
@@ -248,6 +248,7 @@
       }
     },
     "emergencyQr": "Generează QR de urgență",
+    "openEmergencyQr": "Deschide QR-ul de urgență",
     "headline": "Sănătatea ta, liniștit, într-un singur loc",
     "emergency": {
       "title": "Pașaport de urgență",

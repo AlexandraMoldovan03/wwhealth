@@ -14,6 +14,10 @@ class EmergencyTokenResponse(CamelModel):
     ttl_seconds: int
 
 
+class EmergencyTokenStatus(CamelModel):
+    status: Literal["active", "used", "revoked", "expired", "not_found"]
+
+
 class EmergencyRedeemRequest(CamelModel):
     token: str = Field(min_length=10, max_length=200)  # raw token or the full QR payload
 
