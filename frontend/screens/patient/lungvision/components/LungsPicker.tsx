@@ -1,10 +1,10 @@
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet } from 'react-native';
 import Animated, {
   cancelAnimation,
+  FadeIn,
   useAnimatedStyle,
   useReducedMotion,
   useSharedValue,
-  withRepeat,
   Easing,
   withTiming,
 } from 'react-native-reanimated';
@@ -85,7 +85,6 @@ const right = makeLobe(1);
 export function LungsPicker({ onReveal }: { onReveal: () => void }) {
   const { t } = useTranslation();
   const reducedMotion = useReducedMotion();
-  const breath = useSharedValue(0);
   const pulse = useSharedValue(0);
   const started = useRef(false);
   const [isBursting, setIsBursting] = useState(false);
@@ -97,19 +96,13 @@ export function LungsPicker({ onReveal }: { onReveal: () => void }) {
     transform: [{ translateY: -14 * pulse.value }],
   }));
 
-  useEffect(() => {
-    if (reducedMotion) return;
-    breath.set(withRepeat(withTiming(1, { duration: 2700 }), -1, true));
-    return () => cancelAnimation(breath);
-  }, [breath, reducedMotion]);
-
   const leftStyle = useAnimatedStyle(() => ({
     transform: [{ translateX: -5 * pulse.value }, { rotate: `${-3 * pulse.value}deg` },
-      { scale: 1 + .044 * breath.value + .09 * pulse.value }],
+      { scale: 1 + .09 * pulse.value }],
   }));
   const rightStyle = useAnimatedStyle(() => ({
     transform: [{ translateX: 5 * pulse.value }, { rotate: `${3 * pulse.value}deg` },
-      { scale: 1 + .038 * breath.value + .09 * pulse.value }],
+      { scale: 1 + .09 * pulse.value }],
   }));
 
   return (
@@ -131,7 +124,7 @@ export function LungsPicker({ onReveal }: { onReveal: () => void }) {
         }));
       }}
     >
-      <View pointerEvents="none" style={styles.pair}>
+      <Animated.View entering={FadeIn.duration(300)} pointerEvents="none" style={styles.pair}>
         <Animated.View style={[StyleSheet.absoluteFill, airwayStyle]}>
           <Svg width="100%" height="100%" viewBox="0 0 280 188">
             <Path d={airway} fill="#98DFD1" />
@@ -144,7 +137,7 @@ export function LungsPicker({ onReveal }: { onReveal: () => void }) {
             ))}
           </Animated.View>
         ))}
-      </View>
+      </Animated.View>
     </Pressable>
   );
 }

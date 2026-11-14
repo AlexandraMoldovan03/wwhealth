@@ -5,7 +5,7 @@ import { StyleSheet, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Animated from 'react-native-reanimated';
 
-import { AppButton, AppText, Badge, DemoNotice, ErrorState, GradientCard, ImagePickerArea, LoadingState, ScreenContainer, popIn } from '@/design-system';
+import { AppButton, AppText, Badge, DemoNotice, ErrorState, GradientCard, ImagePickerArea, LoadingState, ScreenContainer, fadeIn } from '@/design-system';
 import { USE_MOCKS } from '@/config/config';
 import { gradients, spacing } from '@/design-system/theme';
 import { LungsPicker } from './components/LungsPicker';
@@ -52,7 +52,7 @@ export function LungVisionScreen() {
 
       {showResult && result && (
         <>
-          <Animated.View entering={popIn}>
+          <Animated.View entering={fadeIn()}>
             <LungResultCard result={result} imageUri={imageUri} />
           </Animated.View>
           <AppButton title={t('lung.analyzeAnother')} variant="outline" icon="refresh" fullWidth onPress={() => { setShowSources(false); reset(); }} />
@@ -62,7 +62,13 @@ export function LungVisionScreen() {
       {!showResult && (
         <>
           {imageUri ? (
-            <ImagePickerArea imageUri={imageUri} onPress={pickFromLibrary} title={t('lung.select')} hint={t('lung.selectHint')} />
+            <ImagePickerArea
+              imageUri={imageUri}
+              onPress={pickFromLibrary}
+              onRemove={() => { setShowSources(false); reset(); }}
+              title={t('lung.select')}
+              hint={t('lung.selectHint')}
+            />
           ) : focused && !showSources ? (
             <View>
               <LungsPicker onReveal={() => setShowSources(true)} />
@@ -74,7 +80,7 @@ export function LungVisionScreen() {
           ) : null}
 
           {(showSources || imageUri) && (
-            <Animated.View entering={popIn} style={styles.actions}>
+            <Animated.View entering={fadeIn()} style={styles.actions}>
             <View style={styles.flex}>
               <AppButton title={t('lung.gallery')} icon="images-outline" variant="outline" fullWidth onPress={pickFromLibrary} />
             </View>

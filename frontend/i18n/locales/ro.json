@@ -538,6 +538,7 @@
     "select": "Selectează o imagine",
     "hint": "Atinge pentru a alege din galerie",
     "change": "Schimbă imaginea",
+    "remove": "Șterge imaginea",
     "selectA11y": "Selectează imaginea"
   },
   "notFound": {

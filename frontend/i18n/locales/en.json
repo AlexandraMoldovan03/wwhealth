@@ -538,6 +538,7 @@
     "select": "Select an image",
     "hint": "Tap to choose from your gallery",
     "change": "Change image",
+    "remove": "Remove image",
     "selectA11y": "Select image"
   },
   "notFound": {

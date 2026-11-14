@@ -37,19 +37,43 @@ export function useBrandLogoSize() {
   return { width: w, height: w / LAYERS[isDark ? 'dark' : 'light'].logoRatio };
 }
 
-export function AppBackground({ showLogo = false }: { showLogo?: boolean }) {
-  const { width, height } = useWindowDimensions();
+export function BrandWordmark() {
   const insets = useSafeAreaInsets();
-  const { colors, isDark } = useTheme();
+  const { isDark } = useTheme();
   const logo = useBrandLogoSize();
+  const layers = LAYERS[isDark ? 'dark' : 'light'];
+  const { width } = useWindowDimensions();
+  const contentLeft = Math.max(0, (width - sizes.maxContentWidth) / 2) + spacing.lg - 4;
+
+  return (
+    <View
+      pointerEvents="none"
+      accessibilityRole="image"
+      accessibilityLabel="WWHealth"
+      style={[
+        styles.wordmark,
+        {
+          top: insets.top + spacing.sm,
+          left: contentLeft,
+          width: logo.width,
+          height: logo.height,
+        },
+      ]}
+    >
+      <Image source={layers.logo} style={styles.logoImage} resizeMode="contain" accessibilityIgnoresInvertColors />
+    </View>
+  );
+}
+
+export function AppBackground() {
+  const { width, height } = useWindowDimensions();
+  const { colors, isDark } = useTheme();
   const layers = LAYERS[isDark ? 'dark' : 'light'];
 
   const lungsW = clamp(width * 0.36, 110, 230);
   // Waves span the full width; on wide or short windows only their lower part shows (max ~40% of the height).
   const wavesH = width / WAVES_RATIO;
   const wavesBox = Math.min(wavesH, height * 0.4);
-  // Same left edge as the (max-width, centred) content column.
-  const contentLeft = Math.max(0, (width - sizes.maxContentWidth) / 2) + spacing.lg - 4;
 
   return (
     <View pointerEvents="none" style={StyleSheet.absoluteFill}>
@@ -61,17 +85,9 @@ export function AppBackground({ showLogo = false }: { showLogo?: boolean }) {
       {/* Under a navigation header the lungs sit among the first rows of content, so they stay faint there. */}
       <Image
         source={layers.lungs}
-        style={[styles.lungs, { width: lungsW, height: lungsW / LUNGS_RATIO, opacity: showLogo ? 1 : 0.35 }]}
+        style={[styles.lungs, { width: lungsW, height: lungsW / LUNGS_RATIO, opacity: 0.35 }]}
         resizeMode="contain"
       />
-      {showLogo && (
-        <Image
-          source={layers.logo}
-          style={[styles.logo, { top: insets.top + spacing.sm, left: contentLeft, width: logo.width, height: logo.height }]}
-          resizeMode="contain"
-          accessibilityIgnoresInvertColors
-        />
-      )}
     </View>
   );
 }
@@ -80,5 +96,10 @@ const styles = StyleSheet.create({
   waves: { position: 'absolute', left: 0, right: 0, bottom: 0, overflow: 'hidden', justifyContent: 'flex-end' },
   fade: { position: 'absolute', top: 0, left: 0, right: 0 },
   lungs: { position: 'absolute', top: 0, right: 0 },
-  logo: { position: 'absolute' },
+  wordmark: {
+    position: 'absolute',
+    zIndex: 10,
+    justifyContent: 'center',
+  },
+  logoImage: { width: '100%', height: '100%' },
 });

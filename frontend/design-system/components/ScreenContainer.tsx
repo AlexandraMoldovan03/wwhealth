@@ -9,7 +9,7 @@ import { useTheme } from '@/design-system/useTheme';
 import { HelpButton } from '@/help/HelpButton';
 import type { HelpTopic } from '@/help/helpRegistry';
 
-import { AppBackground, useBrandLogoSize } from './AppBackground';
+import { AppBackground, BrandWordmark, useBrandLogoSize } from './AppBackground';
 
 export interface ScreenContainerProps extends PropsWithChildren {
   /** Wrap content in a ScrollView (default true). Use false for FlatList screens. */
@@ -49,7 +49,7 @@ export function ScreenContainer({
 
   return (
     <View style={[styles.safe, { backgroundColor: colors.background }]}>
-      <AppBackground showLogo={brand} />
+      <AppBackground />
       <SafeAreaView edges={edges} style={styles.safe}>
         {scroll ? (
           <ScrollView
@@ -64,6 +64,7 @@ export function ScreenContainer({
           <View style={[inner, styles.flex]}>{children}</View>
         )}
       </SafeAreaView>
+      {brand && <BrandWordmark />}
       {help && brand && (
         <View
           style={[
