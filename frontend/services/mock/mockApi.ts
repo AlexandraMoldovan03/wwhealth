@@ -22,6 +22,7 @@ import type {
 import { createId, delay } from '@/utils/async';
 
 import { ApiError } from '@/services/api/ApiError';
+import { mockSmartCare } from './mockSmartCare';
 
 /** Deep copy (JSON-safe data only). */
 const clone = <T,>(value: T): T => JSON.parse(JSON.stringify(value)) as T;
@@ -436,4 +437,6 @@ export const mockApi: WWHealthApi = {
     const labs = has('labs') ? await mockApi.listLabValues() : null;
     return { ...known, status: 'ok', summary: mockSummary(has('profile') ? clone(db) : null, documents, labs), documents, labs };
   },
+
+  ...mockSmartCare,
 };

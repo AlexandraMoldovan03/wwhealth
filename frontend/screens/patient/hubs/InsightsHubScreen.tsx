@@ -35,6 +35,27 @@ export function InsightsHubScreen() {
       <HubHeader step={t('journey.understand.title')} title={t('hubs.insights.title')} subtitle={t('hubs.insights.subtitle')} />
 
       <View style={styles.section}>
+        <SectionHeader title={t('hubs.insights.careTitle')} subtitle={t('hubs.insights.careSubtitle')} />
+        <ListRow
+          icon="medkit-outline"
+          iconColor={colors.accent}
+          title={t('hubs.insights.care')}
+          subtitle={t('hubs.insights.careHint')}
+          right={<DataOriginBadge origin="ai" />}
+          enterIndex={1}
+          onPress={() => router.push('/patient/smart-care')}
+        />
+        <ListRow
+          icon="search-outline"
+          iconColor={colors.primary}
+          title={t('hubs.insights.specialties')}
+          subtitle={t('hubs.insights.specialtiesHint')}
+          enterIndex={1}
+          onPress={() => router.push('/patient/specialties')}
+        />
+      </View>
+
+      <View style={styles.section}>
         <SectionHeader title={t('hubs.insights.summaryTitle')} subtitle={t('hubs.insights.summarySubtitle')} />
         <ListRow
           icon="sparkles-outline"

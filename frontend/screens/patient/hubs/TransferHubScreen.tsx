@@ -45,6 +45,14 @@ export function TransferHubScreen() {
           onPress={() => router.push('/patient/doctor-access')}
         />
         <ListRow
+          icon="calendar-outline"
+          iconColor={colors.primary}
+          title={t('hubs.transfer.appointments')}
+          subtitle={t('hubs.transfer.appointmentsHint')}
+          enterIndex={3}
+          onPress={() => router.push('/patient/appointments')}
+        />
+        <ListRow
           icon="reader-outline"
           iconColor={colors.primary}
           title={t('hubs.transfer.summary')}

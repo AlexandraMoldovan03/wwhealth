@@ -62,4 +62,24 @@ export const realApi: WWHealthApi = {
   getPatientIntelligence: (patientId) => apiClient.get(ENDPOINTS.aiPatient(patientId)),
   generatePatientIntelligence: (patientId, language) =>
     apiClient.post(ENDPOINTS.aiPatientGenerate(patientId), { language }, { timeoutMs: AI_TIMEOUT_MS }),
+
+  listSpecialties: (query, language) => apiClient.get(ENDPOINTS.careSpecialties, { params: { q: query, lang: language } }),
+  transcribeSymptoms: (file) =>
+    apiClient.upload(ENDPOINTS.careTranscribe, { file }, { elevenlabsConsent: 'true' }, { timeoutMs: 150_000 }),
+  triageSymptoms: (request) =>
+    apiClient.post(ENDPOINTS.careTriage, JSON.parse(JSON.stringify(request)) as JsonValue, { timeoutMs: AI_TIMEOUT_MS }),
+  listSpecialtyDoctors: (specialtyId) => apiClient.get(ENDPOINTS.careSpecialtyDoctors(specialtyId)),
+  listDoctorSlots: (doctorId) => apiClient.get(ENDPOINTS.careDoctorSlots(doctorId)),
+  requestAppointment: (request, language) =>
+    apiClient.post(ENDPOINTS.careAppointments, JSON.parse(JSON.stringify(request)) as JsonValue, { params: { lang: language } }),
+  listMyAppointments: (language) => apiClient.get(ENDPOINTS.careAppointments, { params: { lang: language } }),
+  updateMyAppointment: (appointmentId, action, language) =>
+    apiClient.post(ENDPOINTS.careAppointmentAction(appointmentId), { action }, { params: { lang: language } }),
+  listDoctorAppointments: (language) => apiClient.get(ENDPOINTS.careDoctorAppointments, { params: { lang: language } }),
+  respondAppointment: (appointmentId, action, language) =>
+    apiClient.post(ENDPOINTS.careDoctorRespond(appointmentId), JSON.parse(JSON.stringify(action)) as JsonValue, { params: { lang: language } }),
+  listMyAvailability: () => apiClient.get(ENDPOINTS.careAvailability),
+  listMyFreeSlots: () => apiClient.get(ENDPOINTS.careFreeSlots),
+  addAvailability: (request) => apiClient.post(ENDPOINTS.careAvailability, JSON.parse(JSON.stringify(request)) as JsonValue),
+  deleteAvailability: (slotId) => apiClient.delete(ENDPOINTS.careAvailabilitySlot(slotId)),
 };

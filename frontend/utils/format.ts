@@ -47,3 +47,19 @@ export function formatFileSize(bytes: number): string {
   if (bytes >= 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
   return `${Math.max(1, Math.round(bytes / 1024))} KB`;
 }
+
+/** "14:30" in the device's locale. */
+export function formatTime(iso: string): string {
+  return new Date(iso).toLocaleTimeString(currentLocale(), { hour: '2-digit', minute: '2-digit' });
+}
+
+/** "lun., 17 nov." — day heading for a list of time slots. */
+export function formatDay(iso: string): string {
+  return new Date(iso).toLocaleDateString(currentLocale(), { weekday: 'short', day: 'numeric', month: 'short' });
+}
+
+/** Local calendar day key (yyyy-mm-dd) used to group slots by day. */
+export function localDayKey(iso: string): string {
+  const d = new Date(iso);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}

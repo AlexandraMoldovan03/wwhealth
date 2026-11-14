@@ -43,6 +43,8 @@ Rutele (URL-urile) sunt în `app/`; fiecare fișier de rută doar importă un ec
 | `patient/emergency` — Emergency Passport (QR) | `patient/emergency-passport/` |
 | `patient/doctor-access`, `patient/grant-access`, `patient/summary` — Acces medici + rezumat | `patient/doctor-access/` |
 | `patient/intelligence`, `doctor/patient/[id]/intelligence` — AI Medical Intelligence (Gemini) | `patient/intelligence/`, `doctor/patient-access/` |
+| `patient/smart-care`, `patient/specialties`, `patient/specialty/[id]`, `patient/book/[doctorId]`, `patient/appointments` — Smart Care (specialitate + programare) | `patient/smart-care/` |
+| `doctor/appointments` — cereri de programare + disponibilitate | `doctor/appointments/` |
 | `patient/profile`, `patient/edit-profile` | `patient/medical-profile/` |
 | `patient/documents`, `patient/upload-document`, `patient/document/[id]` | `patient/documents/` |
 | `patient/lab-review/[id]`, `patient/lab-trend` — analize | `patient/lab-results/` |

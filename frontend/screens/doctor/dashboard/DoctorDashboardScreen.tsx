@@ -27,6 +27,8 @@ import { formatDateTime } from '@/utils/format';
 import { useTranslation } from 'react-i18next';
 
 const listPatients = () => api.listDoctorPatients();
+// Only the number of pending requests is used here (names are language-independent).
+const listAppointments = () => api.listDoctorAppointments('en');
 const isToday = (iso: string) => new Date(iso).toDateString() === new Date().toDateString();
 
 /**
@@ -40,6 +42,8 @@ export function DoctorDashboardScreen({ inTab = false }: { inTab?: boolean }) {
   const accesses = useAsync(api.getMyEmergencyAccesses, { refetchOnFocus: true });
   const patients = useAsync(listPatients, { refetchOnFocus: true });
   const identity = useAsync(api.getDoctorIdentity);
+  const appointments = useAsync(listAppointments, { refetchOnFocus: true });
+  const pending = appointments.data?.filter((a) => a.status === 'requested').length;
 
   const events = accesses.data;
   const viewed = events?.filter((e) => e.event === 'viewed');
@@ -83,6 +87,16 @@ export function DoctorDashboardScreen({ inTab = false }: { inTab?: boolean }) {
           accessibilityHint={t('doctor.scanPatientQrHint')}
         />
       </GradientCard>
+
+      <ListRow
+        icon="calendar-outline"
+        iconColor={colors.primary}
+        title={t('care.doctor.entry')}
+        subtitle={pending ? t('care.doctor.pending', { count: pending }) : t('care.doctor.entryHint')}
+        right={pending ? <Badge label={String(pending)} color={colors.warning} /> : undefined}
+        enterIndex={2}
+        onPress={() => router.push('/doctor/appointments')}
+      />
 
       <View style={styles.section}>
         <SectionHeader title={t('doctor.stats.title')} />

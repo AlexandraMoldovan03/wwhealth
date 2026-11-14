@@ -573,3 +573,80 @@ def ai_summary_save(user: CurrentUser, content: dict, scopes: list[str], model: 
 def ai_summary_delete(user: CurrentUser) -> None:
     _ai(_request("DELETE", _rest("ai_medical_summaries"), user, expected=(200, 204, 404),
                  params={"patient_id": f"eq.{user.id}"}))
+
+
+# ─────────────────────────────────────────────────────────── Smart Care: specialties, calendar, appointments
+# (migration 20261117000000). Writes to appointments only through security-definer RPCs; availability through RLS
+# (a doctor manages only their own slots). Every call runs with the caller's own token.
+
+class SmartCareUnavailable(FeatureNotSetUp):
+    """Appointment tables / functions missing (migration 20261117000000 not applied) → 503."""
+
+
+def _care_rpc(name: str, user: CurrentUser, body: dict) -> object:
+    res = _request("POST", f"{_base()}/rest/v1/rpc/{name}", user, expected=(200, 404), json=body)
+    if res.status_code == 404:
+        raise SmartCareUnavailable("Appointments are not set up yet")
+    return res.json()
+
+
+def specialty_doctors(user: CurrentUser, specialty_id: str) -> list[dict]:
+    return _care_rpc("specialty_doctors", user, {"p_specialty": specialty_id})  # type: ignore[return-value]
+
+
+def doctor_free_slots(user: CurrentUser, doctor_id: str, days: int) -> list[dict]:
+    if not UUID_RE.match(doctor_id):
+        return []
+    return _care_rpc("doctor_free_slots", user, {"p_doctor": doctor_id, "p_days": days})  # type: ignore[return-value]
+
+
+def request_appointment(user: CurrentUser, slot_id: str, specialty_id: str | None, note: str | None) -> dict:
+    if not UUID_RE.match(slot_id):
+        return {"status": "doctor_not_found"}
+    return _care_rpc("request_appointment", user, {"p_slot_id": slot_id, "p_specialty": specialty_id, "p_note": note})  # type: ignore[return-value]
+
+
+def respond_appointment(user: CurrentUser, appointment_id: str, action: str, slot_id: str | None, note: str | None) -> dict:
+    if not UUID_RE.match(appointment_id) or (slot_id and not UUID_RE.match(slot_id)):
+        return {"status": "not_found"}
+    return _care_rpc("respond_appointment", user, {"p_id": appointment_id, "p_action": action, "p_slot_id": slot_id, "p_note": note})  # type: ignore[return-value]
+
+
+def patient_update_appointment(user: CurrentUser, appointment_id: str, action: str) -> dict:
+    if not UUID_RE.match(appointment_id):
+        return {"status": "not_found"}
+    return _care_rpc("patient_update_appointment", user, {"p_id": appointment_id, "p_action": action})  # type: ignore[return-value]
+
+
+def my_appointments(user: CurrentUser) -> list[dict]:
+    return _care_rpc("my_appointments", user, {}) or []  # type: ignore[return-value]
+
+
+def availability_list(user: CurrentUser) -> list[dict]:
+    res = _request("GET", _rest("doctor_availability"), user, expected=(200, 404), params={
+        "select": "id,starts_at,ends_at", "doctor_id": f"eq.{user.id}",
+        "starts_at": f"gt.{datetime.now(UTC).isoformat()}", "order": "starts_at", "limit": "300"})
+    if res.status_code == 404:
+        raise SmartCareUnavailable("Appointments are not set up yet")
+    return res.json()
+
+
+def availability_add(user: CurrentUser, slots: list[tuple[str, str]]) -> int:
+    rows = [{"doctor_id": user.id, "starts_at": s, "ends_at": e} for s, e in slots]
+    res = _request("POST", _rest("doctor_availability"), user, expected=(201, 404, 409),
+                   params={"on_conflict": "doctor_id,starts_at"},
+                   headers={"Prefer": "resolution=ignore-duplicates,return=representation"}, json=rows)
+    if res.status_code == 404:
+        raise SmartCareUnavailable("Appointments are not set up yet")
+    return len(res.json()) if res.status_code == 201 else 0
+
+
+def availability_delete(user: CurrentUser, slot_id: str) -> bool:
+    if not UUID_RE.match(slot_id):
+        return False
+    res = _request("DELETE", _rest("doctor_availability"), user, expected=(200, 404),
+                   params={"id": f"eq.{slot_id}", "doctor_id": f"eq.{user.id}"},
+                   headers={"Prefer": "return=representation"})
+    if res.status_code == 404:
+        raise SmartCareUnavailable("Appointments are not set up yet")
+    return bool(res.json())

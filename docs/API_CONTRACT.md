@@ -182,6 +182,35 @@ built from) · `POST /patients/{id}/generate` (granted sections only, needs the 
 Errors: 403 no consent / access, 429 rate limit (`AI_SUMMARY_PER_USER_PER_HOUR`, default 6), 503 not configured,
 504 Gemini timeout, 502 invalid Gemini answer. `PATCH /patients/me` also accepts `surgeries: [{ name, date?, notes? }]`.
 
+### Smart Care — `/api/v1/smart-care` (migration `20261117000000_smart_care_appointments.sql`)
+Specialty recommendation (optional AI) + booking with verified doctors. Specialty ids come only from the backend
+catalog (`backend/app/services/specialty_catalog.py`, same ids seeded in `medical_specialties`).
+
+Patient:
+- `GET /specialties?q=&lang=ro|en` → `[{ id, name }]` — manual search, no AI.
+- `POST /transcribe` (multipart `file`, `elevenlabsConsent=true`) → `{ transcript, language, isDemo }` — ElevenLabs only,
+  no Gemini; 422 without consent, 503 without `ELEVENLABS_API_KEY` (demo text only in demo mode).
+- `POST /triage` `{ symptoms, source: text|voice, confirmed: true, useHistory, answers: [{question, answer}] (≤3), language }` →
+  `TriageResult { status: ok|emergency|no_consent|not_configured|failed, aiUsed, historyUsed, symptomSummary,
+  specialties: [{id, name, reason}] (≤3), reasoning, clarificationQuestions (≤3), warningSigns, recommendedNextStep,
+  emergency: { level: call_112|urgent, codes } | null, discarded }`. Order: emergency regex rules (no AI; `call_112` →
+  Gemini is never called) → AI consent (same as `/intelligence/consent`) → `GEMINI_API_KEY` → Gemini strict schema →
+  filter (catalog ids only, no diagnosis / percentages / scores / treatment). History (only with `useHistory`): active
+  conditions, allergies, active medication names — no name. 422 when `confirmed` is false, 429 rate limit.
+- `GET /specialties/{id}/doctors` → `[{ id, fullName, doctorCode, nextSlot, freeSlots }]` (verified doctors, 14 days).
+- `GET /doctors/{id}/slots?days=14` → `[{ id, startsAt, endsAt }]` free slots only.
+- `POST /appointments?lang=` `{ slotId, specialtyId?, note? }` → `Appointment` (201) · 409 slot taken · 403 not a patient.
+- `GET /appointments?lang=` · `POST /appointments/{id}/action` `{ action: accept_proposal|decline_proposal|cancel }`.
+
+Doctor (role `doctor`): `GET /doctor/appointments` · `POST /doctor/appointments/{id}/respond`
+`{ action: accept|reject|propose, slotId? (propose), note? }` · `GET /doctor/availability` (own future slots) ·
+`GET /doctor/free-slots` · `POST /doctor/availability` `{ startsAt, endsAt (ISO with timezone, ≤12 h), slotMinutes:
+15|20|30|45|60 }` → `{ added }` · `DELETE /doctor/availability/{slotId}`.
+
+`Appointment { id, patientId, doctorId, patientName (doctor only), doctorName, specialtyId, specialtyName, startsAt,
+endsAt, status: requested|proposed|confirmed|rejected|cancelled, proposedStartsAt, proposedEndsAt, patientNote,
+doctorNote, createdAt, updatedAt }`. 503 when the migration is not applied.
+
 ### `POST /api/v1/voice/summary` — doctor
 Request: `{ "patientId": "pat_demo_001", "language": "en" }` (`en` | `ro`)
 Response: `{ "text": "Maria Ionescu, born …", "audioUrl": "https://…/summary.mp3", "isDemo": false }`

@@ -1,18 +1,25 @@
 """
 Gemini via the Google Gen AI SDK — server side only (GEMINI_API_KEY from backend/.env, never sent to the app).
 
-Structured output (JSON schema of GeminiDraft) + strict Pydantic validation. Timeout, no retries, and
-NOTHING of the prompt or the answer is logged (only the error type / HTTP status).
+Structured output (JSON schema) + strict Pydantic validation. Timeout per attempt; a temporary Gemini error
+(HTTP 500 / 502 / 503 / 504, "model overloaded") is retried twice with a short pause. NOTHING of the prompt or the
+answer is logged (only the error type / HTTP status).
 """
+import json
 import logging
+import time
+from collections.abc import Callable
 
 import httpx
-from pydantic import ValidationError
+from typing import TypeVar
+
+from pydantic import BaseModel, ValidationError
 
 from app.core.config import settings
 from app.schemas.intelligence import GeminiDraft
 
 log = logging.getLogger("wwhealth.ai")
+M = TypeVar("M", bound=BaseModel)
 DEFAULT_MODEL = "gemini-3.5-flash-lite"
 
 SYSTEM_INSTRUCTION = """You organise a patient's EXISTING medical record for a clinician. You receive a JSON list of facts,
@@ -44,7 +51,15 @@ class GeminiRateLimited(Exception):
 
 
 class GeminiFailed(Exception):
-    pass
+    """reason: busy (Gemini overloaded / 5xx after retries) · invalid (answer not in the schema) · error (other)."""
+
+    def __init__(self, reason: str = "error"):
+        super().__init__(reason)
+        self.reason = reason
+
+
+TRANSIENT_CODES = {500, 502, 503, 504}
+RETRY_DELAYS = (1.0, 2.5)
 
 
 def model_name() -> str:
@@ -55,8 +70,26 @@ def configured() -> bool:
     return bool(settings.gemini_api_key)
 
 
-def generate_draft(facts_json: str, language: str) -> GeminiDraft:
-    """Blocking call (run it in a thread). Raises one of the exceptions above; never logs medical content."""
+# Gemini's structured-output schema rejects length / count limits ("400 INVALID_ARGUMENT"). They are removed from the
+# schema SENT to Gemini only; the full Pydantic model (with every limit, extra="forbid") still validates the answer.
+_UNSUPPORTED_SCHEMA_KEYS = {"maxLength", "minLength", "maxItems", "minItems"}
+
+
+def gemini_schema(model: type[BaseModel]) -> dict:
+    def clean(node):
+        if isinstance(node, dict):
+            return {k: clean(v) for k, v in node.items() if k not in _UNSUPPORTED_SCHEMA_KEYS}
+        if isinstance(node, list):
+            return [clean(v) for v in node]
+        return node
+
+    return clean(model.model_json_schema())
+
+
+def generate_structured(model: type[M], system_instruction: str, contents: str, label: str,
+                        repair: Callable[[dict], dict] | None = None) -> M:
+    """Blocking call (run it in a thread). Raises one of the exceptions above; never logs medical content.
+    `repair` may trim an otherwise valid answer (e.g. a list one item too long) before the strict validation."""
     if not configured():
         raise GeminiNotConfigured
     from google import genai  # imported lazily: the rest of the API runs without the SDK
@@ -67,31 +100,45 @@ def generate_draft(facts_json: str, language: str) -> GeminiDraft:
         http_options=types.HttpOptions(timeout=int(settings.gemini_timeout_seconds * 1000)),
     )
     config = types.GenerateContentConfig(
-        system_instruction=SYSTEM_INSTRUCTION.format(language="Romanian" if language == "ro" else "English"),
+        system_instruction=system_instruction,
         response_mime_type="application/json",
-        response_json_schema=GeminiDraft.model_json_schema(),
+        response_json_schema=gemini_schema(model),
         temperature=0.1,
         max_output_tokens=8192,
     )
     try:
-        response = client.models.generate_content(
-            model=model_name(), contents=f"FACTS:\n{facts_json}", config=config,
-        )
-    except (httpx.TimeoutException, TimeoutError) as exc:
-        log.warning("gemini summary: timeout")
-        raise GeminiTimeout from exc
-    except errors.APIError as exc:
-        log.warning("gemini summary: API error %s", getattr(exc, "code", "?"))
-        if getattr(exc, "code", None) == 429:
-            raise GeminiRateLimited from exc
-        raise GeminiFailed from exc
-    except httpx.HTTPError as exc:
-        log.warning("gemini summary: network error %s", type(exc).__name__)
-        raise GeminiFailed from exc
+        for attempt in range(len(RETRY_DELAYS) + 1):
+            try:
+                response = client.models.generate_content(model=model_name(), contents=contents, config=config)
+                break
+            except (httpx.TimeoutException, TimeoutError) as exc:
+                log.warning("gemini %s: timeout", label)
+                raise GeminiTimeout from exc
+            except errors.APIError as exc:
+                code = getattr(exc, "code", None)
+                log.warning("gemini %s: API error %s (attempt %d)", label, code if code is not None else "?", attempt + 1)
+                if code == 429:
+                    raise GeminiRateLimited from exc
+                if code in TRANSIENT_CODES and attempt < len(RETRY_DELAYS):
+                    time.sleep(RETRY_DELAYS[attempt])
+                    continue
+                raise GeminiFailed("busy" if code in TRANSIENT_CODES else "error") from exc
+            except httpx.HTTPError as exc:
+                log.warning("gemini %s: network error %s", label, type(exc).__name__)
+                raise GeminiFailed("error") from exc
     finally:
         client.close()
     try:
-        return GeminiDraft.model_validate_json(response.text or "")
-    except ValidationError as exc:
-        log.warning("gemini summary: response failed schema validation (%d errors)", exc.error_count())
-        raise GeminiFailed from exc
+        data = json.loads(response.text or "")
+        if repair is not None and isinstance(data, dict):
+            data = repair(data)
+        return model.model_validate(data)
+    except (ValidationError, ValueError) as exc:
+        count = exc.error_count() if isinstance(exc, ValidationError) else 1
+        log.warning("gemini %s: response failed schema validation (%d errors)", label, count)
+        raise GeminiFailed("invalid") from exc
+
+
+def generate_draft(facts_json: str, language: str) -> GeminiDraft:
+    system = SYSTEM_INSTRUCTION.format(language="Romanian" if language == "ro" else "English")
+    return generate_structured(GeminiDraft, system, f"FACTS:\n{facts_json}", "summary")

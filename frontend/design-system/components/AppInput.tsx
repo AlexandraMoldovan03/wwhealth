@@ -31,6 +31,7 @@ export function AppInput({ label, icon, error, onClear, value, style, onFocus, o
       <View
         style={[
           styles.field,
+          rest.multiline && styles.fieldMultiline,
           {
             backgroundColor: colors.surface,
             borderColor: error ? colors.danger : focused ? colors.primary : colors.border,
@@ -51,7 +52,7 @@ export function AppInput({ label, icon, error, onClear, value, style, onFocus, o
             setFocused(false);
             onBlur?.(e);
           }}
-          style={[styles.input, { color: colors.text }, style]}
+          style={[styles.input, rest.multiline && styles.inputMultiline, { color: colors.text }, style]}
           {...rest}
         />
         {onClear && !!value && (
@@ -79,5 +80,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: spacing.sm,
   },
+  // Multiline (e.g. symptom description): grows with the text, same look.
+  fieldMultiline: { height: undefined, minHeight: sizes.inputHeight, alignItems: 'flex-start', paddingVertical: spacing.sm },
+  inputMultiline: { height: undefined, textAlignVertical: 'top' },
   input: { flex: 1, fontFamily: typography.body.fontFamily, fontSize: typography.body.fontSize, height: '100%' },
 });

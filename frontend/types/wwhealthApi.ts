@@ -2,6 +2,20 @@ import type { UploadFile } from './api';
 import type { IntakeForm } from './intake';
 import type { AccessOverview, DoctorGrant, DoctorIdentity, DoctorPatient, GrantRequest, MedicalSummary, PatientAccessView, VerifiedDoctor } from './consent';
 import type { AiConsent, IntelligenceView } from './intelligence';
+import type {
+  Appointment,
+  AppointmentRequest,
+  AvailabilityCreate,
+  CareDoctor,
+  DoctorAppointmentAction,
+  Language,
+  PatientAppointmentAction,
+  Slot,
+  Specialty,
+  TriageRequest,
+  TriageResult,
+  Transcript,
+} from './smartCare';
 import type { LabExtractionResponse, LabValueEntry, PatientLabValue } from './labs';
 import type { EmergencyAccessEvent, EmergencyData, EmergencyRedeemRequest, EmergencyTokenResponse } from './emergency';
 import type { LungAnalysis } from './lungvision';
@@ -71,4 +85,25 @@ export interface WWHealthApi {
   getPatientIntelligence(patientId: string): Promise<IntelligenceView>;
   /** Doctor: from the granted sections only; not stored. */
   generatePatientIntelligence(patientId: string, language: 'ro' | 'en'): Promise<IntelligenceView>;
+
+  // Smart Care — specialties (backend catalog), AI recommendation, verified doctors' calendar, appointments
+  listSpecialties(query: string, language: Language): Promise<Specialty[]>;
+  /** Voice → text with ElevenLabs only, after the patient's explicit confirmation. */
+  transcribeSymptoms(file: UploadFile): Promise<Transcript>;
+  /** Emergency rules first (no AI); Gemini only with AI consent. Not stored. */
+  triageSymptoms(request: TriageRequest): Promise<TriageResult>;
+  listSpecialtyDoctors(specialtyId: string): Promise<CareDoctor[]>;
+  listDoctorSlots(doctorId: string): Promise<Slot[]>;
+  requestAppointment(request: AppointmentRequest, language: Language): Promise<Appointment>;
+  listMyAppointments(language: Language): Promise<Appointment[]>;
+  updateMyAppointment(appointmentId: string, action: PatientAppointmentAction, language: Language): Promise<Appointment>;
+  /** Doctor: requests addressed to them. */
+  listDoctorAppointments(language: Language): Promise<Appointment[]>;
+  respondAppointment(appointmentId: string, action: DoctorAppointmentAction, language: Language): Promise<Appointment>;
+  /** Doctor: own future slots (free or booked). */
+  listMyAvailability(): Promise<Slot[]>;
+  /** Doctor: own free slots (to propose another time). */
+  listMyFreeSlots(): Promise<Slot[]>;
+  addAvailability(request: AvailabilityCreate): Promise<{ added: number }>;
+  deleteAvailability(slotId: string): Promise<void>;
 }

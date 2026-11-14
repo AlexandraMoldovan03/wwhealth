@@ -117,7 +117,13 @@
     "doctor/patient/[id]/labs": "Istoric analize",
     "doctor/patient/[id]/document/[docId]": "Document",
     "patient/intelligence": "AI Medical Intelligence",
-    "doctor/patient/[id]/intelligence": "AI Medical Intelligence"
+    "doctor/patient/[id]/intelligence": "AI Medical Intelligence",
+    "patient/smart-care": "Smart Care",
+    "patient/specialties": "Caută o specialitate",
+    "patient/specialty/[id]": "Medici",
+    "patient/book/[doctorId]": "Programare",
+    "patient/appointments": "Programările mele",
+    "doctor/appointments": "Programări"
   },
   "settings": {
     "title": "Profil",
@@ -1151,7 +1157,13 @@
       "xraysCount_one": "{{count}} analiză",
       "xraysCount_few": "{{count}} analize",
       "xraysCount_other": "{{count}} de analize",
-      "xraysEmpty": "Nicio analiză încă."
+      "xraysEmpty": "Nicio analiză încă.",
+      "careTitle": "Smart Care",
+      "careSubtitle": "De la simptome la programare.",
+      "care": "Ce specialitate îmi trebuie?",
+      "careHint": "Descrii simptomele, primești 1–3 specialități și medici cu ore libere.",
+      "specialties": "Caută o specialitate",
+      "specialtiesHint": "Fără AI: alegi direct specialitatea și medicul."
     },
     "transfer": {
       "title": "Transfer & Access",
@@ -1167,7 +1179,9 @@
       "activeGrants_other": "{{count}} de accese active",
       "noGrants": "Niciun medic nu are acces acum.",
       "summary": "Ce vede un medic",
-      "summaryHint": "Rezumatul structurat al dosarului, așa cum îl vede un medic cu toate secțiunile."
+      "summaryHint": "Rezumatul structurat al dosarului, așa cum îl vede un medic cu toate secțiunile.",
+      "appointments": "Programări",
+      "appointmentsHint": "Cererile tale și răspunsurile medicilor."
     },
     "doctorRecords": {
       "title": "Dosare medicale",
@@ -1207,7 +1221,11 @@
       "doctorPatients": "Pacienți autorizați",
       "doctorScan": "Scanează QR",
       "doctorRecords": "Dosare medicale",
-      "accessLog": "Istoric accesări"
+      "accessLog": "Istoric accesări",
+      "smartCare": "Smart Care",
+      "specialties": "Caută o specialitate",
+      "appointments": "Programările mele",
+      "doctorAppointments": "Programări"
     },
     "topics": {
       "home": {
@@ -1622,7 +1640,271 @@
             "a": "Datele nu mai sunt afișate. Fiecare deschidere este verificată pe server."
           }
         ]
+      },
+      "smartCare": {
+        "title": "Smart Care",
+        "intro": "Descrii simptomele și afli la ce specialitate să te programezi, la medici verificați cu ore libere.",
+        "can": [
+          "Scrii sau dictezi simptomele și verifici textul.",
+          "Primești 1–3 specialități din catalogul WWHealth (cu acordul AI).",
+          "Cauți manual orice specialitate, fără AI.",
+          "Trimiți o cerere de programare."
+        ],
+        "steps": [
+          "Descrie ce simți și confirmă textul.",
+          "Răspunde la întrebări, dacă apar (maximum 3).",
+          "Alege o specialitate, un medic și o oră.",
+          "Urmărește răspunsul în Programările mele."
+        ],
+        "faq": [
+          {
+            "q": "Primesc un diagnostic?",
+            "a": "Nu. Primești doar specialități sugerate, fără diagnostic, scoruri sau tratamente."
+          },
+          {
+            "q": "Ce se întâmplă la o urgență?",
+            "a": "Reguli fixe de siguranță (nu AI) recunosc semnele grave și îți arată să suni la 112."
+          },
+          {
+            "q": "Ce date sunt trimise?",
+            "a": "Doar textul confirmat și, dacă alegi, afecțiunile, alergiile și medicația activă — fără nume. Vocea merge doar la ElevenLabs, cu acordul tău."
+          }
+        ]
+      },
+      "appointments": {
+        "title": "Programări",
+        "intro": "Cererile tale de programare și răspunsurile medicilor.",
+        "can": [
+          "Vezi cererile în așteptare și cele confirmate.",
+          "Accepți sau refuzi o oră propusă de medic.",
+          "Anulezi o programare."
+        ],
+        "steps": [
+          "Trimite o cerere din Smart Care sau din căutare.",
+          "Așteaptă răspunsul medicului.",
+          "Dacă medicul propune altă oră, confirm-o sau refuz-o."
+        ],
+        "faq": [
+          {
+            "q": "Medicul îmi vede dosarul?",
+            "a": "Nu automat. Vede numele tău și mesajul. Dosarul îl vede doar dacă îi dai acces din Transfer & Access."
+          }
+        ]
+      },
+      "doctorAppointments": {
+        "title": "Programări (medic)",
+        "intro": "Cererile pacienților și orele tale libere.",
+        "can": [
+          "Accepți, respingi sau propui altă oră.",
+          "Publici intervale libere pentru următoarele 90 de zile.",
+          "Ștergi o oră liberă."
+        ],
+        "steps": [
+          "Publică ore în Disponibilitate.",
+          "Răspunde la cereri în Cereri.",
+          "Pacientul confirmă ora propusă."
+        ],
+        "faq": [
+          {
+            "q": "De ce nu apar în căutare?",
+            "a": "Apari după ce un administrator îți asociază specialitatea și ai ore libere publicate."
+          }
+        ]
       }
     }
+  },
+  "care": {
+    "intro": "Descrie ce simți. Îți sugerăm 1–3 specialități din catalogul WWHealth și medicii verificați cu ore libere. Nu este un diagnostic.",
+    "emergencyNote": "Dacă ai o urgență (durere în piept, nu poți respira, semne de AVC, leșin), sună la 112.",
+    "describeTitle": "Ce simptome ai?",
+    "describeHint": "Scrie sau dictează: ce simți, de când, unde. Poți corecta textul înainte de trimitere.",
+    "placeholder": "Ex.: tusesc de două săptămâni, mai ales noaptea…",
+    "voice": {
+      "title": "Dictează simptomele",
+      "consentText": "Înregistrarea audio este trimisă către ElevenLabs doar pentru transcriere. Textul îl verifici tu; nimic nu se salvează.",
+      "consentLabel": "Sunt de acord ca înregistrarea să fie trimisă către ElevenLabs",
+      "start": "Începe înregistrarea",
+      "again": "Înregistrează din nou",
+      "stop": "Oprește și transcrie",
+      "processing": "Se transcrie înregistrarea…",
+      "demo": "Mod demo: text de exemplu, nu ce ai spus. Verifică-l înainte de trimitere."
+    },
+    "confirmLabel": "Am verificat textul și îl confirm",
+    "confirmHint": "Doar textul confirmat este folosit pentru recomandare.",
+    "confirmHintVoice": "Verifică transcrierea: corectează ce nu a fost înțeles bine.",
+    "historyLabel": "Folosește istoricul meu WWHealth",
+    "historyHint": "Opțional: afecțiunile active, alergiile și medicația activă (fără nume sau date de identificare).",
+    "consent": {
+      "title": "Acord pentru procesare AI (Gemini)",
+      "text": "Pentru recomandarea de specialități, textul confirmat (și istoricul, dacă alegi) este trimis către Gemini. Este același acord ca pentru rezumatul AI; îl poți retrage oricând din AI Insights.",
+      "withoutIt": "Fără acord, regulile de urgență funcționează în continuare și poți căuta manual orice specialitate.",
+      "accept": "Sunt de acord"
+    },
+    "submit": "Recomandă specialități",
+    "confirmFirst": "Confirmă textul de mai sus ca să poți trimite.",
+    "failedTitle": "Recomandarea nu a putut fi generată",
+    "manualSearch": "Caută manual o specialitate",
+    "myAppointments": "Programările mele",
+    "emergency": {
+      "callTitle": "Sună acum la 112",
+      "callText": "Ce ai descris poate fi o urgență. Nu aștepta o programare: sună la 112 sau mergi imediat la cea mai apropiată unitate de primiri urgențe.",
+      "urgentTitle": "Mergi azi la un serviciu de urgență",
+      "urgentText": "Unele simptome trebuie văzute de un medic în aceeași zi. Dacă se agravează, sună la 112. Sugestiile de mai jos nu înlocuiesc consultul de urgență.",
+      "detected": "Semne recunoscute",
+      "call112": "Sună la 112",
+      "rulesNote": "Mesaj generat de reguli fixe de siguranță, nu de AI."
+    },
+    "flags": {
+      "chest_pain": "durere în piept",
+      "breathing": "dificultate severă de respirație",
+      "stroke": "semne de AVC",
+      "unconscious": "pierderea cunoștinței",
+      "seizure": "convulsii",
+      "bleeding": "sângerare abundentă",
+      "anaphylaxis": "umflarea gâtului / feței",
+      "suicidal": "gânduri de a-ți face rău",
+      "meningitis": "febră cu ceafă înțepenită",
+      "severe_abdominal": "durere abdominală foarte puternică",
+      "pregnancy_bleeding": "sângerare în sarcină",
+      "high_fever": "febră de 40 °C sau peste"
+    },
+    "status_noConsent": {
+      "title": "Fără acord AI",
+      "text": "Nu am trimis nimic către Gemini. Acordă acordul de mai sus sau caută manual o specialitate."
+    },
+    "status_notConfigured": {
+      "title": "AI nu este configurat pe server",
+      "text": "Recomandarea AI nu e disponibilă acum. Poți căuta manual orice specialitate și programa direct."
+    },
+    "status_failed": {
+      "title": "AI indisponibil momentan",
+      "text": "Gemini nu a răspuns. Încearcă din nou mai târziu sau caută manual o specialitate."
+    },
+    "result": {
+      "title": "Specialități sugerate",
+      "subtitle": "Din catalogul WWHealth. Alegi tu unde te programezi.",
+      "summary": "Ce ai descris",
+      "historyUsed": "Au fost folosite și datele din istoricul tău WWHealth.",
+      "questionsTitle": "Câteva întrebări",
+      "questionsHint": "Răspunde doar la ce știi; recomandarea se actualizează.",
+      "sendAnswers": "Trimite răspunsurile",
+      "first": "Prima opțiune",
+      "seeDoctors": "Vezi medici și ore libere",
+      "nextStep": "Pasul următor",
+      "warningTitle": "Când să mergi la urgențe",
+      "discarded_one": "{{count}} afirmație AI a fost eliminată (nu respecta regulile de siguranță).",
+      "discarded_few": "{{count}} afirmații AI au fost eliminate (nu respectau regulile de siguranță).",
+      "discarded_other": "{{count}} de afirmații AI au fost eliminate (nu respectau regulile de siguranță).",
+      "disclaimer": "Sugestie AI experimentală, informativă. Nu este un diagnostic, nu indică gravitatea și nu recomandă tratamente."
+    },
+    "search": {
+      "intro": "Caută orice specialitate, fără AI.",
+      "placeholder": "Ex.: cardiologie, piele, ochi",
+      "none": "Nicio specialitate găsită",
+      "noneHint": "Încearcă alt cuvânt sau alege Medicină de familie."
+    },
+    "doctors": {
+      "title": "Medici",
+      "intro": "Medici verificați WWHealth, cu orele libere din următoarele 14 zile.",
+      "noneTitle": "Niciun medic verificat pentru {{name}} deocamdată",
+      "noSlotsTitle": "Medicii pentru {{name}} nu au ore libere în următoarele 14 zile",
+      "noneText": "Poți alege altă specialitate sau un medic de familie, care te poate îndruma mai departe.",
+      "otherSpecialty": "Alege altă specialitate",
+      "familyMedicine": "Vezi medicii de familie",
+      "familyMedicineName": "Medicină de familie",
+      "next_one": "Următoarea oră liberă: {{when}} · {{count}} interval",
+      "next_few": "Următoarea oră liberă: {{when}} · {{count}} intervale",
+      "next_other": "Următoarea oră liberă: {{when}} · {{count}} de intervale",
+      "noSlots": "Fără ore libere în următoarele 14 zile"
+    },
+    "book": {
+      "slotsTitle": "Alege o oră",
+      "slotsHint": "Doar orele libere din calendarul medicului.",
+      "noSlots": "Nicio oră liberă",
+      "noteLabel": "Mesaj pentru medic (opțional)",
+      "notePlaceholder": "Ex.: motivul consultației",
+      "noteHint": "Nu scrie date pe care nu vrei să le vadă medicul. Maximum 500 de caractere.",
+      "submit": "Trimite cererea de programare",
+      "sentTitle": "Cerere trimisă",
+      "sentText": "Medicul o poate accepta, respinge sau îți poate propune altă oră. Vezi răspunsul în Programările mele."
+    },
+    "slot": {
+      "booked": "rezervat"
+    },
+    "status": {
+      "requested": "În așteptare",
+      "proposed": "Oră propusă",
+      "confirmed": "Confirmată",
+      "rejected": "Respinsă",
+      "cancelled": "Anulată"
+    },
+    "appointments": {
+      "doctor": "Medic",
+      "patient": "Pacient",
+      "proposedTime": "Oră propusă",
+      "patientNote": "Mesajul pacientului",
+      "doctorNote": "Mesajul medicului",
+      "new": "Programare nouă",
+      "empty": "Nicio programare încă",
+      "emptyHint": "Descrie simptomele în Smart Care sau caută direct o specialitate.",
+      "active": "Active",
+      "past": "Istoric",
+      "acceptProposal": "Accept ora propusă",
+      "declineProposal": "Refuz",
+      "cancel": "Anulează programarea",
+      "cancelTitle": "Anulezi programarea?",
+      "cancelText": "Ora devine din nou liberă pentru alți pacienți.",
+      "findAnother": "Caută alt medic"
+    },
+    "doctor": {
+      "entry": "Programări",
+      "entryHint": "Cereri de la pacienți și orele tale libere.",
+      "tabs": {
+        "requests": "Cereri",
+        "availability": "Disponibilitate"
+      },
+      "refresh": "Reîmprospătează",
+      "noRequests": "Nicio cerere",
+      "noRequestsHint": "Publică ore libere în Disponibilitate ca pacienții să te poată programa.",
+      "pending_one": "{{count}} cerere în așteptare",
+      "pending_few": "{{count}} cereri în așteptare",
+      "pending_other": "{{count}} de cereri în așteptare",
+      "accept": "Accept",
+      "propose": "Propun altă oră",
+      "reject": "Resping",
+      "rejectTitle": "Respingi cererea?",
+      "rejectText": "Pacientul va vedea că cererea a fost respinsă și poate căuta alt medic.",
+      "others": "Celelalte programări",
+      "privacy": "Vezi doar numele pacientului și mesajul lui. Dosarul medical rămâne accesibil doar cu acordul lui (Transfer & Access).",
+      "proposeHint": "Alege o oră liberă din calendarul tău:",
+      "noFreeSlots": "Nu ai ore libere. Adaugă din Disponibilitate.",
+      "noteLabel": "Mesaj pentru pacient (opțional)",
+      "sendProposal": "Trimite propunerea",
+      "addTitle": "Adaugă ore libere",
+      "day": "Ziua",
+      "from": "De la",
+      "length": "Durată totală",
+      "hours_one": "{{count}} oră",
+      "hours_few": "{{count}} ore",
+      "hours_other": "{{count}} de ore",
+      "slotLength": "Durata unei programări",
+      "publish": "Publică intervalele",
+      "added_one": "{{count}} interval adăugat.",
+      "added_few": "{{count}} intervale adăugate.",
+      "added_other": "{{count}} de intervale adăugate.",
+      "mySlots": "Orele mele",
+      "mySlotsHint": "Atinge o oră ca să o ștergi. Cele rezervate rămân valabile pentru pacient.",
+      "noSlots": "Nicio oră publicată",
+      "noSlotsHint": "Pacienții te văd în căutare doar dacă ai ore libere.",
+      "deleteTitle": "Ștergi această oră?",
+      "delete": "Șterge"
+    },
+    "failure": {
+      "timeout": "Gemini nu a răspuns la timp. Încearcă din nou.",
+      "busy": "Serviciul Gemini este supraaglomerat acum (am reîncercat automat). Încearcă din nou peste un minut.",
+      "invalid": "Gemini a trimis un răspuns care nu respectă formatul cerut, așa că nu l-am afișat. Încearcă din nou.",
+      "error": "Gemini a refuzat cererea. Încearcă din nou; dacă se repetă, verifică cheia GEMINI_API_KEY și modelul din backend/.env."
+    },
+    "retry": "Încearcă din nou"
   }
 }

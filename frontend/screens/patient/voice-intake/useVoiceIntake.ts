@@ -15,10 +15,11 @@ async function recordingFile(uri: string): Promise<UploadFile> {
   return { uri, name: 'symptoms.' + extension, type };
 }
 
-export function useVoiceIntake() {
+/** Records, then uploads with `upload` (default: voice intake form; Smart Care passes transcription only). */
+export function useVoiceIntake<T = IntakeForm>(upload: (file: UploadFile) => Promise<T> = api.analyzeIntake as (file: UploadFile) => Promise<T>) {
   const recorder = useAudioRecorder(RecordingPresets.HIGH_QUALITY);
-  const { run, reset, error: uploadError } = useSubmit(api.analyzeIntake);
-  const [form, setForm] = useState<IntakeForm | null>(null);
+  const { run, reset, error: uploadError } = useSubmit(upload);
+  const [form, setForm] = useState<T | null>(null);
   const [revision, setRevision] = useState(0);
   const [phase, setPhase] = useState<'idle' | 'starting' | 'recording' | 'processing'>('idle');
   const [error, setError] = useState<string | null>(null);

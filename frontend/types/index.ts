@@ -11,3 +11,4 @@ export * from './medical';
 export * from './theme';
 export * from './wwhealthApi';
 export * from './intelligence';
+export * from './smartCare';

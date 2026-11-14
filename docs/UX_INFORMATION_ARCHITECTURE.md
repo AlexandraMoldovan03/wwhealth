@@ -30,6 +30,11 @@ are in place · **Experimental** = AI result, informative only · **Demo** = sam
 | `/patient/xray-results` | `XrayResultsScreen` | Previous LungVision analyses | Experimental |
 | `/patient/intelligence` | `MedicalIntelligenceScreen` | Gemini summary with sources, explicit consent | Needs config (`GEMINI_API_KEY`, migration) |
 | `/patient/intake` | `IntakeScreen` | Voice → transcript (ElevenLabs) → form (Gemini), saved on the device | Needs config (`ELEVENLABS_API_KEY`) |
+| `/patient/smart-care` | `SmartCareScreen` | Symptoms (text / voice → transcript checked by the patient) → emergency rules → 1–3 specialties (Gemini, with consent) → doctors | Needs config (`GEMINI_API_KEY`, `ELEVENLABS_API_KEY` for voice, migration `20261117000000`) |
+| `/patient/specialties` | `SpecialtySearchScreen` | Manual specialty search, no AI | Live (catalog) |
+| `/patient/specialty/[id]` | `SpecialtyDoctorsScreen` | Verified doctors of a specialty with free slots (14 days); empty state with alternatives | Needs migration `20261117000000` |
+| `/patient/book/[doctorId]` | `BookAppointmentScreen` | Pick a free slot, optional note, send a request | Needs migration `20261117000000` |
+| `/patient/appointments` | `AppointmentsScreen` | Requests, proposals to confirm, confirmed, history; cancel | Needs migration `20261117000000` |
 | `/patient/emergency` | `EmergencyPassportScreen` | Single-use 5-minute QR + access audit | Live |
 | `/patient/doctor-access` | `DoctorAccessScreen` | Grants: give / revoke, access history | Live |
 | `/patient/grant-access` | `GrantAccessScreen` | Pick doctor, sections, 1 h / 24 h / 7 days | Live |
@@ -47,6 +52,7 @@ are in place · **Experimental** = AI result, informative only · **Demo** = sam
 | `/scan` | `EmergencyScanScreen` | **Scan QR** of an Emergency Passport | Live |
 | `/files` | `DoctorRecordsScreen` *(new)* | **Medical records**: active consents only, with the shared sections + access log | Live |
 | `/settings` | `SettingsScreen` | **Profile** | Live |
+| `/doctor/appointments` | `DoctorAppointmentsScreen` | Requests (accept / reject / propose another slot) + publish / delete own free slots | Needs migration `20261117000000` |
 | `/access` | `DoctorAccessLogScreen` | Emergency access log | Live (opened from Medical records) |
 | `/doctor/patient/[id]` (+ `documents`, `labs`, `document/[docId]`, `intelligence`) | patient-access screens | Only the granted sections; re-checked on every request | Live |
 | `/doctor`, `/doctor/emergency`, `/doctor/scan`, `/doctor/patient/[id]/lungvision` | legacy routes / redirects | Kept so old links keep working | Redirect |
@@ -66,6 +72,11 @@ are in place · **Experimental** = AI result, informative only · **Demo** = sam
 - **LungVision** — Experimental (DenseNet121 + Grad-CAM). Informative only.
 - **Voice intake** — needs `ELEVENLABS_API_KEY` (+ Gemini). Without the keys the server returns 503 for real
   accounts; the example form is shown only in demo mode.
+- **Smart Care** — emergency rules (regex, RO / EN, negations) run before any AI and show 112 guidance; Gemini only
+  with the AI consent, strict schema, catalog ids only, max 3 specialties and 3 clarification questions, no diagnosis /
+  percentages / scores / treatment (filtered on the server). Voice goes to ElevenLabs only after an explicit switch.
+  Booking: request → doctor accepts / rejects / proposes another slot → patient confirms. Doctors appear once an
+  admin assigns their specialty (`doctor_specialties`) and they publish free slots.
 - **Emergency Passport** — Live: single-use QR, 5 minutes, emergency data only, audited.
 - **Doctor Access & Consent** — Live: per-section, time-limited, revocable, checked on every request.
 - **FHIR** — *not implemented*. There is no FHIR import / export in the app or the backend, so the UI does not
@@ -79,8 +90,8 @@ Patient bottom bar: **Home · My record · AI Insights · Transfer & Access · P
 |---|---|---|
 | Home | — | Emergency Passport (one tap), recommended next step, record checklist, snapshot, journey cards |
 | My record | COLLECT | Medical profile, voice intake, documents (+ upload), lab results, timeline |
-| AI Medical Insights | UNDERSTAND | AI summary (status, consent), LungVision, previous analyses, data-origin legend |
-| Transfer & Access | CONTROL → CONNECT | Emergency Passport, doctor access (active grants), “What a doctor sees” |
+| AI Medical Insights | UNDERSTAND | Smart Care (which specialty + manual search), AI summary (status, consent), LungVision, previous analyses, data-origin legend |
+| Transfer & Access | CONTROL → CONNECT | Emergency Passport, doctor access (active grants), appointments, “What a doctor sees” |
 | Profile | — | Account, appearance, “Show the checklist again”, all features (Explore), backend info, sign out |
 
 Doctor bottom bar: **Dashboard · Authorised patients · Scan QR · Medical records · Profile**

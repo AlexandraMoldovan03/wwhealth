@@ -23,6 +23,9 @@ export type HelpTopic =
   | 'emergency'
   | 'doctorAccess'
   | 'intake'
+  | 'smartCare'
+  | 'appointments'
+  | 'doctorAppointments'
   | 'doctorHome'
   | 'doctorPatients'
   | 'doctorScan'
@@ -54,13 +57,17 @@ const L = {
   doctorScan: { id: 'doctorScan', icon: 'qr-code-outline', route: '/scan' },
   doctorRecords: { id: 'doctorRecords', icon: 'folder-open-outline', route: '/files' },
   accessLog: { id: 'accessLog', icon: 'shield-checkmark-outline', route: '/access' },
+  smartCare: { id: 'smartCare', icon: 'medkit-outline', route: '/patient/smart-care' },
+  specialties: { id: 'specialties', icon: 'search-outline', route: '/patient/specialties' },
+  appointments: { id: 'appointments', icon: 'calendar-outline', route: '/patient/appointments' },
+  doctorAppointments: { id: 'doctorAppointments', icon: 'calendar-outline', route: '/doctor/appointments' },
 } satisfies Record<string, HelpLink>;
 
 export const HELP_LINKS: Record<HelpTopic, HelpLink[]> = {
   home: [L.editProfile, L.upload, L.intelligence, L.emergency],
   records: [L.profile, L.documents, L.timeline, L.intake],
-  insights: [L.intelligence, L.lungvision, L.xrays],
-  transfer: [L.emergency, L.doctorAccess, L.summary],
+  insights: [L.smartCare, L.intelligence, L.lungvision, L.xrays],
+  transfer: [L.emergency, L.doctorAccess, L.appointments, L.summary],
   profile: [L.profile, L.doctorAccess, L.explore],
   medicalProfile: [L.editProfile, L.summary, L.emergency],
   documents: [L.upload, L.timeline, L.intelligence],
@@ -72,7 +79,10 @@ export const HELP_LINKS: Record<HelpTopic, HelpLink[]> = {
   emergency: [L.profile, L.doctorAccess],
   doctorAccess: [L.summary, L.emergency],
   intake: [L.profile, L.timeline],
-  doctorHome: [L.doctorScan, L.doctorPatients, L.doctorRecords],
+  smartCare: [L.specialties, L.appointments, L.intelligence],
+  appointments: [L.smartCare, L.specialties],
+  doctorAppointments: [L.doctorPatients, L.doctorRecords],
+  doctorHome: [L.doctorScan, L.doctorAppointments, L.doctorPatients, L.doctorRecords],
   doctorPatients: [L.doctorRecords, L.doctorScan],
   doctorScan: [L.accessLog, L.doctorPatients],
   doctorRecords: [L.doctorPatients, L.accessLog],

@@ -365,7 +365,9 @@ def test_client_sends_schema_and_parses_valid_json(monkeypatch):
     draft = gemini_client.generate_draft("[]", "en")
     assert draft.overview.source_ids == ["profile:basics"]
     assert seen["config"].response_mime_type == "application/json"
-    assert seen["config"].response_json_schema == GeminiDraft.model_json_schema()
+    assert seen["config"].response_json_schema == gemini_client.gemini_schema(GeminiDraft)
+    # Gemini rejects length / count limits; they stay only in the Pydantic validation.
+    assert "maxLength" not in json.dumps(seen["config"].response_json_schema)
     assert "English" in seen["config"].system_instruction
 
 

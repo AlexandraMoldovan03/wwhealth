@@ -117,7 +117,13 @@
     "doctor/patient/[id]/labs": "Lab history",
     "doctor/patient/[id]/document/[docId]": "Document",
     "patient/intelligence": "AI Medical Intelligence",
-    "doctor/patient/[id]/intelligence": "AI Medical Intelligence"
+    "doctor/patient/[id]/intelligence": "AI Medical Intelligence",
+    "patient/smart-care": "Smart Care",
+    "patient/specialties": "Find a specialty",
+    "patient/specialty/[id]": "Doctors",
+    "patient/book/[doctorId]": "Book",
+    "patient/appointments": "My appointments",
+    "doctor/appointments": "Appointments"
   },
   "settings": {
     "title": "Profile",
@@ -1140,7 +1146,13 @@
       "xrays": "Previous LungVision analyses",
       "xraysCount_one": "{{count}} analysis",
       "xraysCount_other": "{{count}} analyses",
-      "xraysEmpty": "No analyses yet."
+      "xraysEmpty": "No analyses yet.",
+      "careTitle": "Smart Care",
+      "careSubtitle": "From symptoms to an appointment.",
+      "care": "Which specialty do I need?",
+      "careHint": "Describe your symptoms, get 1–3 specialties and doctors with free slots.",
+      "specialties": "Find a specialty",
+      "specialtiesHint": "No AI: pick the specialty and doctor directly."
     },
     "transfer": {
       "title": "Transfer & Access",
@@ -1155,7 +1167,9 @@
       "activeGrants_other": "{{count}} active accesses",
       "noGrants": "No doctor has access right now.",
       "summary": "What a doctor sees",
-      "summaryHint": "The structured summary of your record, as a doctor with every section sees it."
+      "summaryHint": "The structured summary of your record, as a doctor with every section sees it.",
+      "appointments": "Appointments",
+      "appointmentsHint": "Your requests and the doctors' answers."
     },
     "doctorRecords": {
       "title": "Medical records",
@@ -1195,7 +1209,11 @@
       "doctorPatients": "Authorised patients",
       "doctorScan": "Scan QR",
       "doctorRecords": "Medical records",
-      "accessLog": "Access log"
+      "accessLog": "Access log",
+      "smartCare": "Smart Care",
+      "specialties": "Find a specialty",
+      "appointments": "My appointments",
+      "doctorAppointments": "Appointments"
     },
     "topics": {
       "home": {
@@ -1610,7 +1628,266 @@
             "a": "The data is no longer shown. Every opening is checked on the server."
           }
         ]
+      },
+      "smartCare": {
+        "title": "Smart Care",
+        "intro": "Describe your symptoms and find which specialty to book, with verified doctors who have free slots.",
+        "can": [
+          "Type or dictate your symptoms and check the text.",
+          "Get 1–3 specialties from the WWHealth catalog (with AI consent).",
+          "Search any specialty manually, no AI.",
+          "Send a booking request."
+        ],
+        "steps": [
+          "Describe how you feel and confirm the text.",
+          "Answer the questions, if any (up to 3).",
+          "Choose a specialty, a doctor and a time.",
+          "Follow the answer in My appointments."
+        ],
+        "faq": [
+          {
+            "q": "Do I get a diagnosis?",
+            "a": "No. You only get suggested specialties, with no diagnosis, scores or treatment."
+          },
+          {
+            "q": "What about emergencies?",
+            "a": "Fixed safety rules (not AI) recognise serious signs and tell you to call 112."
+          },
+          {
+            "q": "What data is sent?",
+            "a": "Only the confirmed text and, if you choose, active conditions, allergies and medication — no name. Voice goes only to ElevenLabs, with your consent."
+          }
+        ]
+      },
+      "appointments": {
+        "title": "Appointments",
+        "intro": "Your booking requests and the doctors' answers.",
+        "can": [
+          "See pending and confirmed requests.",
+          "Accept or decline a time proposed by the doctor.",
+          "Cancel an appointment."
+        ],
+        "steps": [
+          "Send a request from Smart Care or search.",
+          "Wait for the doctor's answer.",
+          "If the doctor proposes another time, confirm or decline it."
+        ],
+        "faq": [
+          {
+            "q": "Does the doctor see my record?",
+            "a": "Not automatically. They see your name and message. They see your record only if you grant access in Transfer & Access."
+          }
+        ]
+      },
+      "doctorAppointments": {
+        "title": "Appointments (doctor)",
+        "intro": "Patient requests and your free slots.",
+        "can": [
+          "Accept, reject or propose another time.",
+          "Publish free slots for the next 90 days.",
+          "Delete a free slot."
+        ],
+        "steps": [
+          "Publish slots in Availability.",
+          "Answer requests in Requests.",
+          "The patient confirms the proposed time."
+        ],
+        "faq": [
+          {
+            "q": "Why don't I show up in search?",
+            "a": "You show up once an administrator assigns your specialty and you have published free slots."
+          }
+        ]
       }
     }
+  },
+  "care": {
+    "intro": "Describe how you feel. We suggest 1–3 specialties from the WWHealth catalog and verified doctors with free slots. This is not a diagnosis.",
+    "emergencyNote": "In an emergency (chest pain, can't breathe, stroke signs, fainting), call 112.",
+    "describeTitle": "What symptoms do you have?",
+    "describeHint": "Type or dictate: what you feel, since when, where. You can edit the text before sending it.",
+    "placeholder": "E.g. I have been coughing for two weeks, mostly at night…",
+    "voice": {
+      "title": "Dictate your symptoms",
+      "consentText": "The audio recording is sent to ElevenLabs only to transcribe it. You check the text; nothing is saved.",
+      "consentLabel": "I agree that the recording is sent to ElevenLabs",
+      "start": "Start recording",
+      "again": "Record again",
+      "stop": "Stop and transcribe",
+      "processing": "Transcribing the recording…",
+      "demo": "Demo mode: example text, not what you said. Check it before sending."
+    },
+    "confirmLabel": "I checked the text and confirm it",
+    "confirmHint": "Only the confirmed text is used for the recommendation.",
+    "confirmHintVoice": "Check the transcript and fix anything that was misheard.",
+    "historyLabel": "Use my WWHealth history",
+    "historyHint": "Optional: active conditions, allergies and active medication (no name or identifying data).",
+    "consent": {
+      "title": "Consent to AI processing (Gemini)",
+      "text": "For the specialty recommendation, the confirmed text (and your history, if you choose) is sent to Gemini. It is the same consent as for the AI summary; you can withdraw it anytime in AI Insights.",
+      "withoutIt": "Without consent the emergency rules still work and you can search any specialty manually.",
+      "accept": "I agree"
+    },
+    "submit": "Suggest specialties",
+    "confirmFirst": "Confirm the text above to send it.",
+    "failedTitle": "The recommendation could not be generated",
+    "manualSearch": "Search a specialty manually",
+    "myAppointments": "My appointments",
+    "emergency": {
+      "callTitle": "Call 112 now",
+      "callText": "What you described may be an emergency. Don't wait for an appointment: call 112 or go to the nearest emergency department right away.",
+      "urgentTitle": "Get urgent care today",
+      "urgentText": "Some symptoms need a doctor the same day. If they get worse, call 112. The suggestions below do not replace urgent care.",
+      "detected": "Signs recognised",
+      "call112": "Call 112",
+      "rulesNote": "Message from fixed safety rules, not from AI."
+    },
+    "flags": {
+      "chest_pain": "chest pain",
+      "breathing": "severe difficulty breathing",
+      "stroke": "stroke signs",
+      "unconscious": "loss of consciousness",
+      "seizure": "seizure",
+      "bleeding": "heavy bleeding",
+      "anaphylaxis": "throat / face swelling",
+      "suicidal": "thoughts of self-harm",
+      "meningitis": "fever with a stiff neck",
+      "severe_abdominal": "very severe abdominal pain",
+      "pregnancy_bleeding": "bleeding in pregnancy",
+      "high_fever": "fever of 40 °C or more"
+    },
+    "status_noConsent": {
+      "title": "No AI consent",
+      "text": "Nothing was sent to Gemini. Give consent above or search a specialty manually."
+    },
+    "status_notConfigured": {
+      "title": "AI is not configured on the server",
+      "text": "The AI recommendation is not available right now. You can search any specialty and book directly."
+    },
+    "status_failed": {
+      "title": "AI unavailable right now",
+      "text": "Gemini did not answer. Try again later or search a specialty manually."
+    },
+    "result": {
+      "title": "Suggested specialties",
+      "subtitle": "From the WWHealth catalog. You choose where to book.",
+      "summary": "What you described",
+      "historyUsed": "Data from your WWHealth history was used too.",
+      "questionsTitle": "A few questions",
+      "questionsHint": "Answer only what you know; the recommendation is updated.",
+      "sendAnswers": "Send answers",
+      "first": "First option",
+      "seeDoctors": "See doctors and free slots",
+      "nextStep": "Next step",
+      "warningTitle": "When to go to the emergency department",
+      "discarded_one": "{{count}} AI statement was removed (it broke the safety rules).",
+      "discarded_other": "{{count}} AI statements were removed (they broke the safety rules).",
+      "disclaimer": "Experimental AI suggestion, for information only. It is not a diagnosis, does not rate severity and does not recommend treatment."
+    },
+    "search": {
+      "intro": "Search any specialty, no AI involved.",
+      "placeholder": "E.g. cardiology, skin, eyes",
+      "none": "No specialty found",
+      "noneHint": "Try another word or choose Family medicine."
+    },
+    "doctors": {
+      "title": "Doctors",
+      "intro": "Verified WWHealth doctors with their free slots in the next 14 days.",
+      "noneTitle": "No verified doctor for {{name}} yet",
+      "noSlotsTitle": "{{name}} doctors have no free slots in the next 14 days",
+      "noneText": "You can choose another specialty or a family doctor, who can refer you further.",
+      "otherSpecialty": "Choose another specialty",
+      "familyMedicine": "See family doctors",
+      "familyMedicineName": "Family medicine",
+      "next_one": "Next free slot: {{when}} · {{count}} slot",
+      "next_other": "Next free slot: {{when}} · {{count}} slots",
+      "noSlots": "No free slots in the next 14 days"
+    },
+    "book": {
+      "slotsTitle": "Choose a time",
+      "slotsHint": "Only free slots from the doctor's calendar.",
+      "noSlots": "No free slots",
+      "noteLabel": "Message for the doctor (optional)",
+      "notePlaceholder": "E.g. reason for the visit",
+      "noteHint": "Don't write anything you don't want the doctor to see. Up to 500 characters.",
+      "submit": "Send booking request",
+      "sentTitle": "Request sent",
+      "sentText": "The doctor can accept it, reject it or propose another time. See the answer in My appointments."
+    },
+    "slot": {
+      "booked": "booked"
+    },
+    "status": {
+      "requested": "Pending",
+      "proposed": "New time proposed",
+      "confirmed": "Confirmed",
+      "rejected": "Rejected",
+      "cancelled": "Cancelled"
+    },
+    "appointments": {
+      "doctor": "Doctor",
+      "patient": "Patient",
+      "proposedTime": "Proposed time",
+      "patientNote": "Patient's message",
+      "doctorNote": "Doctor's message",
+      "new": "New appointment",
+      "empty": "No appointments yet",
+      "emptyHint": "Describe your symptoms in Smart Care or search a specialty directly.",
+      "active": "Active",
+      "past": "History",
+      "acceptProposal": "Accept the proposed time",
+      "declineProposal": "Decline",
+      "cancel": "Cancel appointment",
+      "cancelTitle": "Cancel the appointment?",
+      "cancelText": "The slot becomes free again for other patients.",
+      "findAnother": "Find another doctor"
+    },
+    "doctor": {
+      "entry": "Appointments",
+      "entryHint": "Patient requests and your free slots.",
+      "tabs": {
+        "requests": "Requests",
+        "availability": "Availability"
+      },
+      "refresh": "Refresh",
+      "noRequests": "No requests",
+      "noRequestsHint": "Publish free slots in Availability so patients can book you.",
+      "pending_one": "{{count}} pending request",
+      "pending_other": "{{count}} pending requests",
+      "accept": "Accept",
+      "propose": "Propose another time",
+      "reject": "Reject",
+      "rejectTitle": "Reject the request?",
+      "rejectText": "The patient will see the request was rejected and can look for another doctor.",
+      "others": "Other appointments",
+      "privacy": "You see only the patient's name and message. Their record stays available only with their consent (Transfer & Access).",
+      "proposeHint": "Choose a free slot from your calendar:",
+      "noFreeSlots": "You have no free slots. Add some in Availability.",
+      "noteLabel": "Message for the patient (optional)",
+      "sendProposal": "Send proposal",
+      "addTitle": "Add free slots",
+      "day": "Day",
+      "from": "From",
+      "length": "Total length",
+      "hours_one": "{{count}} hour",
+      "hours_other": "{{count}} hours",
+      "slotLength": "Length of one appointment",
+      "publish": "Publish slots",
+      "added_one": "{{count}} slot added.",
+      "added_other": "{{count}} slots added.",
+      "mySlots": "My slots",
+      "mySlotsHint": "Tap a slot to delete it. Booked ones stay valid for the patient.",
+      "noSlots": "No slots published",
+      "noSlotsHint": "Patients see you in search only when you have free slots.",
+      "deleteTitle": "Delete this slot?",
+      "delete": "Delete"
+    },
+    "failure": {
+      "timeout": "Gemini did not answer in time. Try again.",
+      "busy": "Gemini is overloaded right now (we retried automatically). Try again in a minute.",
+      "invalid": "Gemini sent an answer that does not match the required format, so it was not shown. Try again.",
+      "error": "Gemini refused the request. Try again; if it keeps happening, check GEMINI_API_KEY and the model in backend/.env."
+    },
+    "retry": "Try again"
   }
 }
