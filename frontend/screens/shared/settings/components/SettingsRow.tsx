@@ -19,9 +19,9 @@ interface SettingsRowProps {
 export function SettingsRow({ icon, title, value, onPress, right }: SettingsRowProps) {
   const { colors } = useTheme();
   const content = (
-    <View style={styles.row}>
-      <IconBadge icon={icon} size={36} />
-      <AppText variant="subheading" style={styles.title}>
+    <View style={[styles.row, { borderBottomColor: colors.border }]}>
+      <IconBadge icon={icon} size={32} />
+      <AppText variant="body" style={styles.title}>
         {title}
       </AppText>
       {value && (
@@ -42,7 +42,7 @@ export function SettingsRow({ icon, title, value, onPress, right }: SettingsRowP
 }
 
 const styles = StyleSheet.create({
-  row: { flexDirection: 'row', alignItems: 'center', gap: spacing.md, paddingVertical: spacing.sm },
+  row: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, paddingVertical: spacing.sm, minHeight: 52, borderBottomWidth: StyleSheet.hairlineWidth },
   title: { flex: 1 },
   value: { maxWidth: '45%' },
 });

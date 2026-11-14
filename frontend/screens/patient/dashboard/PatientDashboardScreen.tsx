@@ -1,8 +1,7 @@
 import { RefreshControl, StyleSheet, View } from 'react-native';
 import Svg, { Defs, RadialGradient, Rect, Stop } from 'react-native-svg';
 
-import { AppText, ErrorState, ScreenContainer, SectionHeader } from '@/design-system';
-import { spacing } from '@/design-system/theme';
+import { AppText, ErrorState, ScreenContainer } from '@/design-system';
 import { useCurrentUser } from '@/services/auth/useCurrentUser';
 import { CareJourneyCard } from '@/screens/patient/care-journey/CareJourneyCard';
 import { JourneyCards } from './components/JourneyCards';
@@ -28,7 +27,8 @@ export function PatientDashboardScreen() {
   const user = useCurrentUser();
   const { data: patient, isLoading, error, reload } = useAsync(api.getMyPatient, { refetchOnFocus: true });
   const progress = useRecordProgress(patient);
-  const name = patient?.fullName || user?.fullName || t('home.there');
+  const fullName = patient?.fullName?.trim() || user?.fullName?.trim() || '';
+  const name = fullName || t('home.there');
 
   return (
     <ScreenContainer help="home" refreshControl={<RefreshControl refreshing={isLoading && !!patient} onRefresh={reload} tintColor={colors.primary} />}>
@@ -52,7 +52,7 @@ export function PatientDashboardScreen() {
         </AppText>
       </View>
 
-      <PassportButton />
+      <PassportButton fullName={fullName} patient={patient} />
       <EmergencyCard enterIndex={1} />
 
       <CareJourneyCard enterIndex={2} />
@@ -70,10 +70,7 @@ export function PatientDashboardScreen() {
         )
       )}
 
-      <View style={styles.section}>
-        <SectionHeader title={t('journey.title')} subtitle={t('journey.subtitle')} />
-        <JourneyCards startIndex={6} />
-      </View>
+      {user && <JourneyCards key={user.id} userId={user.id} startIndex={6} />}
     </ScreenContainer>
   );
 }
@@ -82,5 +79,4 @@ const styles = StyleSheet.create({
   headline: { justifyContent: 'center', minHeight: 52 },
   aura: { position: 'absolute', width: '100%', maxWidth: 390, height: 102, left: 0, top: -25 },
   headlineText: { fontSize: 19, lineHeight: 26 },
-  section: { gap: spacing.md },
 });

@@ -91,6 +91,7 @@
     "records": "My record",
     "insights": "AI Insights",
     "transfer": "Transfer",
+    "family": "Family",
     "files": "Records",
     "doctor": {
       "index": "Dashboard"
@@ -676,6 +677,32 @@
     },
     "timeLeft": "{{time}} left"
   },
+  "family": {
+    "title": "Family QR",
+    "intro": "Add up to 3 family members and keep their emergency QR codes in one place. Each QR is valid for 5 minutes, and a new one is generated every time you press the button.",
+    "add": "Add family member",
+    "addTitle": "New family member",
+    "name": "Full name",
+    "namePlaceholder": "e.g. Maria Popescu",
+    "nameRequired": "Enter the family member's name.",
+    "email": "Email",
+    "emailPlaceholder": "e.g. maria@email.com",
+    "relationship": "Relationship (optional)",
+    "relationshipPlaceholder": "e.g. Mother, father, child",
+    "save": "Add family member",
+    "remove": "Remove {{name}}",
+    "removeAction": "Remove",
+    "removeMessage": "Remove {{name}} and their QR from this device?",
+    "emptyTitle": "No family members yet",
+    "emptyMessage": "Add up to 3 family members to keep their emergency QR codes together.",
+    "limit": "You can add up to {{max}} family members.",
+    "noQr": "No active QR. Generate one to show it in an emergency.",
+    "expired": "The QR expired. Generate a new one to show it again.",
+    "generate": "Generate family QR",
+    "generateNew": "Generate new QR",
+    "qrNote": "Valid for 5 minutes · a new QR replaces this one",
+    "footer": "Demo for now: these QRs are stored only on this device and do not open medical data yet."
+  },
   "roles": {
     "patient": "Patient",
     "doctor": "Doctor"
@@ -1178,6 +1205,7 @@
       "careSubtitle": "From symptoms to an appointment.",
       "care": "Which specialty do I need?",
       "careHint": "Describe your symptoms, get 1–3 specialties and doctors with free slots.",
+      "careAction": "Describe symptoms",
       "specialties": "Find a specialty",
       "specialtiesHint": "No AI: pick the specialty and doctor directly."
     },

@@ -91,6 +91,7 @@
     "records": "Dosarul meu",
     "insights": "AI Insights",
     "transfer": "Transfer",
+    "family": "Familie",
     "files": "Dosare",
     "doctor": {
       "index": "Panou"
@@ -676,6 +677,32 @@
     },
     "timeLeft": "Mai sunt {{time}}"
   },
+  "family": {
+    "title": "QR familiei",
+    "intro": "Adaugă până la 3 membri ai familiei și păstrează QR-urile lor de urgență într-un singur loc. Fiecare QR este valabil 5 minute, iar unul nou este generat de fiecare dată când apeși butonul.",
+    "add": "Adaugă membru al familiei",
+    "addTitle": "Membru nou al familiei",
+    "name": "Nume complet",
+    "namePlaceholder": "ex. Maria Popescu",
+    "nameRequired": "Introdu numele membrului familiei.",
+    "email": "Email",
+    "emailPlaceholder": "ex. maria@email.com",
+    "relationship": "Relație (opțional)",
+    "relationshipPlaceholder": "ex. Mamă, tată, copil",
+    "save": "Adaugă membrul familiei",
+    "remove": "Elimină pe {{name}}",
+    "removeAction": "Elimină",
+    "removeMessage": "Elimini pe {{name}} și QR-ul său de pe acest dispozitiv?",
+    "emptyTitle": "Niciun membru al familiei",
+    "emptyMessage": "Adaugă până la 3 membri ai familiei pentru a păstra QR-urile lor de urgență împreună.",
+    "limit": "Poți adăuga până la {{max}} membri ai familiei.",
+    "noQr": "Niciun QR activ. Generează unul pentru a-l arăta într-o urgență.",
+    "expired": "QR-ul a expirat. Generează unul nou pentru a-l arăta din nou.",
+    "generate": "Generează QR-ul familiei",
+    "generateNew": "Generează QR nou",
+    "qrNote": "Valabil 5 minute · un QR nou îl înlocuiește pe acesta",
+    "footer": "Deocamdată o demonstrație: aceste QR-uri sunt salvate doar pe acest dispozitiv și nu deschid încă date medicale."
+  },
   "roles": {
     "patient": "Pacient",
     "doctor": "Medic"
@@ -1189,6 +1216,7 @@
       "careSubtitle": "De la simptome la programare.",
       "care": "Ce specialitate îmi trebuie?",
       "careHint": "Descrii simptomele, primești 1–3 specialități și medici cu ore libere.",
+      "careAction": "Descrie simptomele",
       "specialties": "Caută o specialitate",
       "specialtiesHint": "Fără AI: alegi direct specialitatea și medicul."
     },

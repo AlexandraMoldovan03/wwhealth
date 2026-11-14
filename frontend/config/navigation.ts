@@ -27,6 +27,7 @@ export const TABS: TabConfig[] = [
   { name: 'records', title: 'My record', icon: 'folder-open-outline', iconFocused: 'folder-open', roles: ['patient'] },
   { name: 'insights', title: 'AI Insights', icon: 'sparkles-outline', iconFocused: 'sparkles', roles: ['patient'] },
   { name: 'transfer', title: 'Transfer & Access', icon: 'swap-horizontal-outline', iconFocused: 'swap-horizontal', roles: ['patient'] },
+  { name: 'family', title: 'Family', icon: 'people-circle-outline', iconFocused: 'people-circle', roles: ['patient'] },
   { name: 'patients', title: 'Patients', icon: 'people-outline', iconFocused: 'people', roles: ['doctor'] },
   { name: 'scan', title: 'Scan QR', icon: 'qr-code-outline', iconFocused: 'qr-code', roles: ['doctor'] },
   { name: 'files', title: 'Records', icon: 'folder-open-outline', iconFocused: 'folder-open', roles: ['doctor'] },

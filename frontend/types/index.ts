@@ -2,6 +2,7 @@ export * from './api';
 export * from './auth';
 export * from './consent';
 export * from './emergency';
+export * from './family';
 export * from './feature';
 export * from './icons';
 export * from './intake';
