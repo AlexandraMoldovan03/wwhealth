@@ -201,8 +201,20 @@ export const mockApi: WWHealthApi = {
   },
   async saveLabValues(documentId, values) {
     await delay(MOCK_DELAY_MS);
-    labValues.set(documentId, values);
-    return values;
+    const stored = values.map(({ needsReview: _review, ...v }) => v);
+    if (stored.length) labValues.set(documentId, stored);
+    else labValues.delete(documentId);
+    return stored;
+  },
+  async extractLabValuesFromDocument() {
+    await delay(MOCK_DELAY_MS);
+    throw new ApiError('Document scanning needs the backend (set EXPO_PUBLIC_USE_MOCKS=false).', 503);
+  },
+  async listLabValues() {
+    return [...labValues.entries()].flatMap(([documentId, values]) => {
+      const doc = db.documents.find((d) => d.id === documentId);
+      return values.map((v) => ({ ...v, documentId, documentTitle: doc?.title ?? null, documentDate: doc?.uploadedAt.slice(0, 10) ?? null }));
+    });
   },
 
   async createEmergencyToken() {

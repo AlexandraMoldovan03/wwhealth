@@ -19,3 +19,4 @@ export * from './GradientCard';
 export * from './Avatar';
 export * from './motion';
 export * from './StatTile';
+export * from './SegmentedControl';

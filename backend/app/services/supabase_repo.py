@@ -272,21 +272,41 @@ class LabStorageUnavailable(SupabaseError):
 
 
 LAB_FIELDS = "name,value,unit,reference_range,source_line"
+# Added by migration 20261114000200 — tolerated when that migration has not been applied yet.
+LAB_DATE_FIELD = "measured_at"
+
+
+def _lab_get(user: CurrentUser, params: dict, fields: str) -> list[dict]:
+    """GET document_lab_values; retries without `measured_at` if the column does not exist yet."""
+    for select in (f"{fields},{LAB_DATE_FIELD}", fields):
+        res = _request("GET", _rest("document_lab_values"), user, expected=(200, 400, 404), params={**params, "select": select})
+        if res.status_code == 404:
+            raise LabStorageUnavailable("Lab values storage not set up")
+        if res.status_code == 200:
+            return res.json()
+    raise SupabaseError("Database error (400)")
 
 
 def get_lab_values(user: CurrentUser, document_id: str) -> list[dict]:
     if not UUID_RE.match(document_id):
         return []
-    res = _request("GET", _rest("document_lab_values"), user, expected=(200, 404), params={
-        "document_id": f"eq.{document_id}", "select": LAB_FIELDS, "order": "position.asc",
-    })
-    if res.status_code == 404:
-        raise LabStorageUnavailable("Lab values storage not set up")
-    return res.json()
+    return _lab_get(user, {"document_id": f"eq.{document_id}", "order": "position.asc"}, LAB_FIELDS)
+
+
+def list_lab_values(user: CurrentUser) -> list[dict]:
+    """All confirmed values of the user (RLS: own rows only) with their document's title and upload date."""
+    rows = _lab_get(user, {"order": "created_at.asc", "limit": "2000"},
+                    f"{LAB_FIELDS},document_id,medical_documents(title,uploaded_at)")
+    out = []
+    for r in rows:
+        doc = r.pop("medical_documents", None) or {}
+        out.append({**r, "document_title": doc.get("title"), "document_date": (doc.get("uploaded_at") or "")[:10] or None})
+    return out
 
 
 def save_lab_values(user: CurrentUser, document_id: str, values: list[dict]) -> list[dict] | None:
-    """Replaces the confirmed values of one of the user's documents. None if the document is not theirs."""
+    """Replaces the confirmed values of one of the user's documents (empty list = delete them).
+    None if the document is not theirs."""
     if not UUID_RE.match(document_id):
         return None
     owned = _request("GET", _rest("medical_documents"), user, params={"id": f"eq.{document_id}", "select": "id"}).json()
@@ -297,9 +317,16 @@ def save_lab_values(user: CurrentUser, document_id: str, values: list[dict]) -> 
     if res.status_code == 404:
         raise LabStorageUnavailable("Lab values storage not set up")
     if values:
-        rows = [{"user_id": user.id, "document_id": document_id, "position": i, **v} for i, v in enumerate(values)]
-        _request("POST", _rest("document_lab_values"), user, expected=(201,), json=rows,
-                 headers={"Prefer": "return=minimal"})
+        stored = ("name", "value", "unit", "reference_range", "source_line", LAB_DATE_FIELD)
+        rows = [{"user_id": user.id, "document_id": document_id, "position": i, **{k: v.get(k) for k in stored}}
+                for i, v in enumerate(values)]
+        res = _request("POST", _rest("document_lab_values"), user, expected=(201, 400), json=rows,
+                       headers={"Prefer": "return=minimal"})
+        if res.status_code == 400:  # `measured_at` column missing → store without the date
+            for row in rows:
+                row.pop(LAB_DATE_FIELD, None)
+            _request("POST", _rest("document_lab_values"), user, expected=(201,), json=rows,
+                     headers={"Prefer": "return=minimal"})
     return get_lab_values(user, document_id)
 
 
@@ -314,6 +341,6 @@ def emergency_doctor_accesses(user: CurrentUser, limit: int = 50) -> list[dict]:
 __all__ = [
     "InvalidDocumentError", "SupabaseAuthError", "SupabaseError",
     "LabStorageUnavailable", "create_emergency_token", "emergency_audit", "emergency_doctor_accesses",
-    "get_lab_values", "save_lab_values", "get_document_file", "get_record", "get_role",
+    "get_lab_values", "list_lab_values", "save_lab_values", "get_document_file", "get_record", "get_role",
     "redeem_emergency_token", "revoke_emergency_token", "store_document", "update_profile",
 ]

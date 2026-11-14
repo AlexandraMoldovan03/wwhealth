@@ -12,6 +12,12 @@ export function formatDateTime(iso: string): string {
   });
 }
 
+/** Calendar date only, e.g. "12 nov. 2026". A plain yyyy-mm-dd is read as a local date (no timezone shift). */
+export function formatDate(iso: string): string {
+  const date = /^\d{4}-\d{2}-\d{2}$/.test(iso) ? new Date(`${iso}T12:00:00`) : new Date(iso);
+  return date.toLocaleDateString(currentLocale(), { day: 'numeric', month: 'short', year: 'numeric' });
+}
+
 /** "just now", "5 min ago", "3 h ago", "2 d ago", or a date. */
 export function formatRelativeTime(iso: string, now: Date = new Date()): string {
   const diffMin = Math.round((now.getTime() - new Date(iso).getTime()) / 60_000);

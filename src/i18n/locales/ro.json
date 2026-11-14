@@ -10,7 +10,8 @@
     "save": "Salvează",
     "cancel": "Anulează",
     "notAvailable": "—",
-    "clear": "Șterge"
+    "clear": "Șterge",
+    "edit": "Editează"
   },
   "auth": {
     "emailPlaceholder": "tu@exemplu.com",
@@ -101,7 +102,9 @@
     "doctor/patient/[id]/documents": "Documentele pacientului",
     "doctor/patient/[id]/lungvision": "Rezultate LungVision",
     "patient/emergency": "Pașaport de urgență",
-    "doctor/emergency": "Scanare de urgență"
+    "doctor/emergency": "Scanare de urgență",
+    "patient/lab-review/[id]": "Valori de laborator",
+    "patient/lab-trend": "Evoluție analiză"
   },
   "settings": {
     "title": "Profil",
@@ -420,7 +423,8 @@
       "allergy": "Alergie",
       "document": "Document",
       "xray": "Radiografie",
-      "visit": "Vizită"
+      "visit": "Vizită",
+      "lab": "Analize"
     },
     "all": "Toate",
     "emptyHint": "Aici apar documentele încărcate, rezultatele LungVision salvate și afecțiunile și medicația ta.",
@@ -428,7 +432,18 @@
       "upload": "Document încărcat",
       "lungvision": "LungVision AI",
       "profile": "Profil medical",
-      "visit": "Vizită"
+      "visit": "Vizită",
+      "scanner": "Valori confirmate de tine"
+    },
+    "views": {
+      "timeline": "Cronologie",
+      "trends": "Analize"
+    },
+    "periods": {
+      "all": "Oricând",
+      "30d": "30 de zile",
+      "6m": "6 luni",
+      "1y": "1 an"
     }
   },
   "xray": {
@@ -587,7 +602,7 @@
     "revoke": "Revocă QR-ul",
     "expired": "Acest QR a expirat sau a fost revocat.",
     "singleUse": "O singură folosire · expiră automat · un QR nou îl anulează pe acesta",
-    "privacyNote": "QR-ul conține doar un cod aleatoriu, fără date medicale. Codul este verificat de serverul WWHealth, iar fiecare accesare apare mai jos.",
+    "privacyNote": "QR-ul conține doar un cod aleatoriu, fără date medicale. Codul este verificat de serverul WWHealth, iar fiecare accesare apare în jurnalul de mai sus.",
     "audit": {
       "title": "Jurnal de accesări",
       "empty": "Nicio activitate încă.",
@@ -684,13 +699,11 @@
     }
   },
   "scanner": {
-    "title": "Scanner valori de laborator (beta)",
-    "intro": "Citește textul unui PDF digital pe serverul WWHealth — nimic nu e trimis altor servicii. Apar doar valorile scrise explicit (nume, valoare, unitate, interval de referință). Verifică fiecare valoare înainte de salvare. Nu este un diagnostic.",
-    "scan": "Citește valorile din PDF",
-    "noText": "PDF-ul nu are strat de text (este scanat). OCR nu este disponibil încă — poți încărca documentul în continuare.",
+    "title": "Scanner valori de laborator",
+    "intro": "Textul este citit pe serverul WWHealth (PDF digital sau OCR local) — nimic nu e trimis altor servicii. Apar doar valorile scrise explicit. Verifică fiecare valoare înainte de salvare. Nu este un diagnostic.",
+    "scan": "Citește valorile din document",
     "noValues": "Nu am găsit valori de laborator explicite. Poți încărca documentul în continuare.",
     "review": "{{count}} valori găsite — verifică, corectează sau elimină:",
-    "imageLimit": "Citirea valorilor funcționează doar pentru PDF-uri digitale. Fotografiile și scanările se salvează fără OCR.",
     "uploadWithValues": "Încarcă + salvează {{count}} valori",
     "saved": "{{count}} valori de laborator salvate.",
     "saveFailed": "Document încărcat, valorile nu au fost salvate",
@@ -700,6 +713,61 @@
     "unit": "Unitate",
     "range": "Referință",
     "source": "Din",
-    "remove": "Elimină {{name}}"
+    "remove": "Elimină {{name}}",
+    "noOcr": "Documentul nu are text digital, iar OCR nu este instalat pe server. Poți încărca documentul în continuare și poți adăuga valorile mai târziu.",
+    "ocrNothing": "Nu am putut citi text din imagine. Încearcă o fotografie mai clară, dreaptă și bine luminată.",
+    "ocrUsed": "Text citit cu OCR — confirmă fiecare valoare comparând-o cu documentul.",
+    "saveFailedShort": "Valorile nu au fost salvate"
+  },
+  "labs": {
+    "flag": {
+      "low": "Sub interval",
+      "high": "Peste interval",
+      "normal": "În interval"
+    },
+    "dateLabel": "Data analizelor (AAAA-LL-ZZ)",
+    "datePlaceholder": "ex. 2026-11-12",
+    "dateInvalid": "Format AAAA-LL-ZZ, o dată reală, nu din viitor",
+    "dateHint": "Data apare în cronologie și în graficele de evoluție.",
+    "dateMissing": "Data nu a fost găsită clar în document. Adaug-o dacă o știi; altfel se folosește data încărcării.",
+    "uncertain": "Valoare incertă — verifică și confirmă",
+    "uncertainHint_one": "{{count}} valoare incertă trebuie confirmată sau eliminată înainte de salvare.",
+    "uncertainHint_few": "{{count}} valori incerte trebuie confirmate sau eliminate înainte de salvare.",
+    "uncertainHint_other": "{{count}} de valori incerte trebuie confirmate sau eliminate înainte de salvare.",
+    "confirm": "Confirm",
+    "reading": "Se citește documentul…",
+    "noValuesTitle": "Nicio valoare",
+    "noValuesText": "Nu există valori de laborator explicite pentru acest document.",
+    "saveConfirmed_one": "Salvează {{count}} valoare confirmată",
+    "saveConfirmed_few": "Salvează {{count}} valori confirmate",
+    "saveConfirmed_other": "Salvează {{count}} de valori confirmate",
+    "deleteAll": "Șterge valorile salvate",
+    "deleteConfirm": "Șterge definitiv",
+    "deleteConfirmText": "Valorile extrase pentru acest document vor fi șterse. Documentul rămâne.",
+    "panelTitle": "Valori de laborator",
+    "panelEmpty": "Citește valorile din acest document și confirmă-le.",
+    "read": "Citește valorile",
+    "measuredOn": "Analize din {{date}}",
+    "reference": "Referință",
+    "eventTitle_one": "Analize de laborator · {{count}} valoare",
+    "eventTitle_few": "Analize de laborator · {{count}} valori",
+    "eventTitle_other": "Analize de laborator · {{count}} de valori",
+    "outsideCount_one": "{{count}} în afara intervalului",
+    "outsideCount_few": "{{count}} în afara intervalului",
+    "outsideCount_other": "{{count}} în afara intervalului",
+    "trendsEmpty": "Nicio analiză salvată",
+    "trendsEmptyHint": "Încarcă un buletin de analize, confirmă valorile și vei vedea aici evoluția lor.",
+    "openTrend": "Deschide evoluția analizei",
+    "measurements_one": "{{count}} măsurătoare",
+    "measurements_few": "{{count}} măsurători",
+    "measurements_other": "{{count}} de măsurători",
+    "trendMissing": "Analiza nu mai există",
+    "unitLabel": "Unitate: {{unit}}",
+    "noUnit": "Fără unitate",
+    "notNumeric": "Valorile nu sunt numerice, așa că nu pot fi reprezentate grafic.",
+    "chartNote": "Graficul include doar valori numerice în aceeași unitate. Zona verde = intervalul de referință din document, când e același la toate măsurătorile.",
+    "allMeasurements": "Toate măsurătorile",
+    "noDate": "Fără dată",
+    "disclaimer": "Comparația cu intervalul de referință nu este un diagnostic. Discută rezultatele cu medicul tău."
   }
 }

@@ -13,13 +13,14 @@ import { useTheme } from '@/hooks/useTheme';
 import { api } from '@/services/backend';
 import type { DocumentType, LabValueEntry } from '@/types';
 import { getErrorMessage } from '@/utils/errors';
-import { LabReviewEditor } from '@/features/documents/components/LabReviewEditor';
+import { LabReviewForm, reviewBlockers } from '@/features/labs/components/LabReviewForm';
+import { prepareLabValues, scanMessage } from '@/features/labs/labUtils';
 import { formatFileSize } from '@/utils/format';
 import { useTranslation } from 'react-i18next';
 
 const TYPE_VALUES = DOCUMENT_TYPES.map((t) => t.value);
 
-/** Upload a PDF or image → POST /api/v1/documents (private storage, no OCR / AI). */
+/** Upload a PDF or image → POST /api/v1/documents; optional local value extraction reviewed before saving. */
 export function UploadDocumentScreen() {
   const { colors } = useTheme();
   const { t } = useTranslation();
@@ -33,6 +34,7 @@ export function UploadDocumentScreen() {
   const [labs, setLabs] = useState<LabValueEntry[] | null>(null);
   const [scanInfo, setScanInfo] = useState<string | null>(null);
   const [scanning, setScanning] = useState(false);
+  const [labDate, setLabDate] = useState('');
   const [labSaveError, setLabSaveError] = useState<string | null>(null);
   const [savedLabs, setSavedLabs] = useState(0);
   const pickedKey = picker.file?.uri;
@@ -42,17 +44,19 @@ export function UploadDocumentScreen() {
     setScannedFor(pickedKey);
     setLabs(null);
     setScanInfo(null);
+    setLabDate('');
   }
 
   const scan = async () => {
-    if (!picker.file?.isPdf) return;
+    if (!picker.file) return;
     setScanning(true);
     setScanInfo(null);
     try {
       const res = await api.extractLabValues(picker.file);
       setScannedFor(picker.file.uri);
       setLabs(res.values);
-      setScanInfo(!res.textFound ? t('scanner.noText') : res.values.length === 0 ? t('scanner.noValues') : null);
+      setLabDate(res.documentDate ?? '');
+      setScanInfo(scanMessage(res, t));
     } catch (err) {
       setScanInfo(getErrorMessage(err));
     } finally {
@@ -60,10 +64,12 @@ export function UploadDocumentScreen() {
     }
   };
 
+  const blockers = reviewBlockers(labs ?? [], labDate);
+
   const upload = async () => {
     if (!picker.file) return;
     const res = await submit.run(picker.file, type, title.trim());
-    const confirmed = (labs ?? []).filter((v) => v.name.trim() && v.value.trim());
+    const confirmed = prepareLabValues(labs ?? [], labDate.trim() || null);
     if (res && confirmed.length) {
       try {
         const saved = await api.saveLabValues(res.document.id, confirmed);
@@ -135,7 +141,7 @@ export function UploadDocumentScreen() {
         </View>
       </View>
 
-      {picker.file?.isPdf ? (
+      {picker.file ? (
         <AppCard style={styles.scanCard} tone="muted">
           <AppText variant="subheading">{t('scanner.title')}</AppText>
           <AppText variant="caption" color="textMuted">
@@ -150,23 +156,17 @@ export function UploadDocumentScreen() {
               <AppText variant="caption" color="textMuted">
                 {t('scanner.review', { count: labs.length })}
               </AppText>
-              <LabReviewEditor values={labs} onChange={setLabs} />
+              <LabReviewForm values={labs} onChange={setLabs} date={labDate} onDateChange={setLabDate} />
             </>
           )}
         </AppCard>
-      ) : (
-        picker.file && (
-          <AppText variant="caption" color="textMuted">
-            {t('scanner.imageLimit')}
-          </AppText>
-        )
-      )}
+      ) : null}
 
       <AppButton
         title={labs && labs.length ? t('scanner.uploadWithValues', { count: labs.length }) : t('upload.upload')}
         icon="cloud-upload-outline"
         fullWidth
-        disabled={!picker.file}
+        disabled={!picker.file || (labs !== null && (blockers.uncertain > 0 || blockers.dateInvalid))}
         loading={submit.isLoading}
         onPress={() => void upload()}
       />

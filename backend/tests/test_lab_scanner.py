@@ -28,6 +28,16 @@ def text_pdf(lines: list[str]) -> bytes:
     return out.encode("latin-1")
 
 
+def png_bytes() -> bytes:
+    from io import BytesIO
+
+    from PIL import Image
+
+    buf = BytesIO()
+    Image.new("L", (40, 20), 255).save(buf, "PNG")
+    return buf.getvalue()
+
+
 def upload(content: bytes, name="lab.pdf", mime="application/pdf"):
     return client.post("/api/v1/documents/extract-labs", files={"file": (name, content, mime)})
 
@@ -44,14 +54,50 @@ def test_digital_pdf_returns_only_explicit_values():
     assert all("flag" not in v for v in body["values"])  # no interpretation
 
 
-def test_pdf_without_text_layer_is_reported_not_guessed():
+def test_pdf_without_text_layer_is_reported_not_guessed(monkeypatch):
+    monkeypatch.setattr(lab_extraction, "ocr_available", lambda: False)
     res = upload(text_pdf([]))
-    assert res.status_code == 200 and res.json() == {"textFound": False, "pageCount": 1, "values": []}
+    assert res.status_code == 200
+    body = res.json()
+    assert body["textFound"] is False and body["values"] == [] and body["method"] == "none"
+    assert body["ocrAvailable"] is False
 
 
-def test_images_and_broken_pdfs_are_rejected():
-    assert upload(b"\x89PNG\r\n\x1a\n" + b"0" * 20, "x.png", "image/png").status_code == 415
+def test_image_without_ocr_engine_says_so(monkeypatch):
+    monkeypatch.setattr(lab_extraction, "ocr_available", lambda: False)
+    res = upload(png_bytes(), "x.png", "image/png")
+    assert res.status_code == 200
+    assert res.json()["ocrAvailable"] is False and res.json()["values"] == []
+
+
+def test_ocr_values_always_need_manual_review(monkeypatch):
+    monkeypatch.setattr(lab_extraction, "ocr_available", lambda: True)
+    monkeypatch.setattr(lab_extraction, "ocr_image",
+                        lambda _c: "Data recoltarii: 03.10.2026\nHemoglobina 13,5 g/dL 12,0 - 16,0\nText fara valori")
+    res = upload(png_bytes(), "x.png", "image/png")
+    body = res.json()
+    assert res.status_code == 200 and body["method"] == "ocr"
+    assert body["documentDate"] == "2026-10-03"
+    assert [v["name"] for v in body["values"]] == ["Hemoglobina"] and body["values"][0]["needsReview"] is True
+
+
+def test_broken_files_and_other_types_are_rejected():
     assert upload(b"%PDF-1.4 garbage").status_code == 422
+    assert upload(b"hello", "x.txt", "text/plain").status_code == 415
+
+
+def test_document_date_only_when_unambiguous():
+    assert lab_extraction.find_document_date("Data recoltare: 12.11.2026\nTiparit 13.11.2026") == "2026-11-12"
+    assert lab_extraction.find_document_date("Buletin 12.11.2026") == "2026-11-12"  # single date
+    assert lab_extraction.find_document_date("12.11.2026\n13.11.2026") is None  # ambiguous → not guessed
+    assert lab_extraction.find_document_date("31.02.2026") is None  # invalid
+    assert lab_extraction.find_document_date("Fara data") is None
+
+
+def test_value_without_unit_needs_review():
+    vals = lab_extraction.parse_lab_values("INR 1,1 0,8 - 1,2\nGlicemie 98 mg/dL 70 - 110")
+    review = {v["name"]: v["needs_review"] for v in vals}
+    assert review == {"INR": True, "Glicemie": False}
 
 
 def test_confirmed_values_are_saved_per_document(monkeypatch):
@@ -61,6 +107,22 @@ def test_confirmed_values_are_saved_per_document(monkeypatch):
     assert res.status_code == 200 and res.json()[0]["name"] == "Glicemie"
     assert client.get("/api/v1/documents/doc_1/lab-values").json()[0]["value"] == "98"
     assert client.get("/api/v1/documents/doc_2/lab-values").json() == []
+
+
+def test_values_keep_date_list_across_documents_and_delete(monkeypatch):
+    monkeypatch.setattr(lab_extraction, "_demo_values", {})
+    v1 = [{"name": "Glicemie", "value": "98", "unit": "mg/dL", "measuredAt": "2026-10-01", "needsReview": True}]
+    v2 = [{"name": "Glicemie", "value": "105", "unit": "mg/dL", "measuredAt": "2026-11-01"}]
+    assert client.put("/api/v1/documents/doc_1/lab-values", json={"values": v1}).status_code == 200
+    assert client.put("/api/v1/documents/doc_2/lab-values", json={"values": v2}).status_code == 200
+    listed = client.get("/api/v1/documents/lab-values").json()
+    assert sorted((v["documentId"], v["value"], v["measuredAt"]) for v in listed) == [
+        ("doc_1", "98", "2026-10-01"), ("doc_2", "105", "2026-11-01")]
+    assert all(v["needsReview"] is False for v in listed)  # review flag is never stored
+    assert client.put("/api/v1/documents/doc_1/lab-values", json={"values": []}).json() == []  # delete
+    assert [v["documentId"] for v in client.get("/api/v1/documents/lab-values").json()] == ["doc_2"]
+    bad = client.put("/api/v1/documents/doc_1/lab-values", json={"values": [{**v2[0], "measuredAt": "12.11.2026"}]})
+    assert bad.status_code == 422
 
 
 def test_missing_migration_is_a_clear_503(supabase_mode, monkeypatch):  # noqa: F811

@@ -12,6 +12,7 @@ from app.schemas.document import (
     ExtractedLabValue,
     LabExtractionResponse,
     LabValuesSave,
+    PatientLabValue,
 )
 from app.services import document_service, document_storage, lab_extraction, supabase_repo
 
@@ -33,19 +34,44 @@ async def analyze(
 UPLOAD_TYPES = {"application/pdf", "image/jpeg", "image/png"}
 
 
+def _run_extraction(content: bytes, mime_type: str) -> LabExtractionResponse:
+    try:
+        result = lab_extraction.extract(content, mime_type)
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail="This file could not be read") from exc
+    return LabExtractionResponse(**{**result, "values": [ExtractedLabValue.model_validate(v) for v in result["values"]]})
+
+
 @router.post("/extract-labs", response_model=LabExtractionResponse)
 async def extract_labs(file: UploadFile = File(...), user: CurrentUser = Depends(get_current_user)) -> LabExtractionResponse:
-    """Digital PDFs only. Text is read locally on this server; nothing is stored or sent elsewhere.
-    Returns only values written explicitly in the document, for the user to verify before saving."""
+    """PDF (text layer, or OCR if scanned) / JPEG / PNG (OCR). Read locally on this server: nothing is stored
+    or sent to another service. Returns only values written explicitly, for the user to verify before saving."""
     _ = user  # authenticated users only
-    content = await read_upload(file, allowed={"application/pdf"})
-    try:
-        text, pages = lab_extraction.extract_text(content)
-    except ValueError as exc:
-        raise HTTPException(status_code=422, detail="This PDF could not be read") from exc
-    values = lab_extraction.parse_lab_values(text)
-    return LabExtractionResponse(text_found=bool(text.strip()), page_count=pages,
-                                 values=[ExtractedLabValue.model_validate(v) for v in values])
+    content = await read_upload(file, allowed=UPLOAD_TYPES)
+    return _run_extraction(content, file.content_type or "")
+
+
+@router.get("/lab-values", response_model=list[PatientLabValue])
+def list_lab_values(user: CurrentUser = Depends(get_current_user)) -> list[PatientLabValue]:
+    """Every value the user confirmed, across documents (Medical Timeline / trends)."""
+    with supabase_errors():
+        rows = supabase_repo.list_lab_values(user) if settings.supabase_enabled else lab_extraction.demo_list(user.id)
+    return [PatientLabValue.model_validate(r) for r in rows]
+
+
+@router.post("/{document_id}/extract-labs", response_model=LabExtractionResponse)
+def extract_labs_from_document(document_id: str, user: CurrentUser = Depends(get_current_user)) -> LabExtractionResponse:
+    """Same extraction for a document the user already uploaded (only their own — 404 otherwise)."""
+    with supabase_errors():
+        if settings.supabase_enabled:
+            found = supabase_repo.get_document_file(user, document_id)
+        else:
+            local = document_storage.get_document_file(user.id, document_id)
+            found = (local[0].read_bytes(), local[1], local[0].name) if local else None
+    if found is None:
+        raise HTTPException(status_code=404, detail="Document not found")
+    content, mime_type, _name = found
+    return _run_extraction(content, mime_type)
 
 
 @router.get("/{document_id}/lab-values", response_model=list[ExtractedLabValue])
@@ -58,7 +84,7 @@ def get_lab_values(document_id: str, user: CurrentUser = Depends(get_current_use
 @router.put("/{document_id}/lab-values", response_model=list[ExtractedLabValue])
 def save_lab_values(document_id: str, body: LabValuesSave, user: CurrentUser = Depends(get_current_user)) -> list[ExtractedLabValue]:
     """Saves the values the user verified / edited (replaces previous ones for that document)."""
-    values = [v.model_dump() for v in body.values]
+    values = [v.model_dump(exclude={"needs_review"}) for v in body.values]
     with supabase_errors():
         if settings.supabase_enabled:
             rows = supabase_repo.save_lab_values(user, document_id, values)

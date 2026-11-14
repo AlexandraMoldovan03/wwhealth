@@ -6,6 +6,8 @@ export const ENDPOINTS = {
   documentsAnalyze: '/api/v1/documents/analyze',
   documentsExtractLabs: '/api/v1/documents/extract-labs',
   documentLabValues: (id: string) => `/api/v1/documents/${encodeURIComponent(id)}/lab-values`,
+  documentExtractLabs: (id: string) => `/api/v1/documents/${encodeURIComponent(id)}/extract-labs`,
+  labValues: '/api/v1/documents/lab-values',
   xrayAnalyze: '/api/v1/xray/analyze',
   lungAnalyze: '/api/ai/lung/analyze',
   accessGrant: '/api/v1/access/grant',

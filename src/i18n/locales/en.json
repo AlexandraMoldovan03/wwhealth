@@ -10,7 +10,8 @@
     "save": "Save",
     "cancel": "Cancel",
     "notAvailable": "—",
-    "clear": "Clear"
+    "clear": "Clear",
+    "edit": "Edit"
   },
   "auth": {
     "emailPlaceholder": "you@example.com",
@@ -101,7 +102,9 @@
     "doctor/patient/[id]/documents": "Patient Documents",
     "doctor/patient/[id]/lungvision": "LungVision Results",
     "patient/emergency": "Emergency Passport",
-    "doctor/emergency": "Emergency scan"
+    "doctor/emergency": "Emergency scan",
+    "patient/lab-review/[id]": "Lab values",
+    "patient/lab-trend": "Lab trend"
   },
   "settings": {
     "title": "Profile",
@@ -420,7 +423,8 @@
       "allergy": "Allergy",
       "document": "Document",
       "xray": "X-ray",
-      "visit": "Visit"
+      "visit": "Visit",
+      "lab": "Lab results"
     },
     "all": "All",
     "emptyHint": "Uploaded documents, saved LungVision results and your conditions and medication appear here.",
@@ -428,7 +432,18 @@
       "upload": "Uploaded document",
       "lungvision": "LungVision AI",
       "profile": "Medical profile",
-      "visit": "Visit"
+      "visit": "Visit",
+      "scanner": "Values you confirmed"
+    },
+    "views": {
+      "timeline": "Timeline",
+      "trends": "Lab trends"
+    },
+    "periods": {
+      "all": "Any time",
+      "30d": "30 days",
+      "6m": "6 months",
+      "1y": "1 year"
     }
   },
   "xray": {
@@ -587,7 +602,7 @@
     "revoke": "Revoke QR",
     "expired": "This QR has expired or was revoked.",
     "singleUse": "Single use · expires automatically · generating a new one cancels this one",
-    "privacyNote": "The QR contains only a random code, no medical data. The code is checked by the WWHealth server, and every access is recorded below.",
+    "privacyNote": "The QR contains only a random code, no medical data. The code is checked by the WWHealth server, and every access is recorded in the log above.",
     "audit": {
       "title": "Access log",
       "empty": "No activity yet.",
@@ -684,13 +699,11 @@
     }
   },
   "scanner": {
-    "title": "Lab value scanner (beta)",
-    "intro": "Reads the text of a digital PDF on the WWHealth server — nothing is sent to other services. Only values written explicitly (name, value, unit, reference range) are shown. Check every value before saving. This is not a diagnosis.",
-    "scan": "Read values from PDF",
-    "noText": "This PDF has no text layer (it is a scan). OCR is not available yet — you can still upload the document.",
+    "title": "Lab value scanner",
+    "intro": "Text is read on the WWHealth server (digital PDF or local OCR) — nothing is sent to other services. Only explicitly written values appear. Check every value before saving. This is not a diagnosis.",
+    "scan": "Read values from the document",
     "noValues": "No explicit lab values found. You can still upload the document.",
     "review": "{{count}} values found — verify, correct or remove them:",
-    "imageLimit": "Lab value reading works only for digital PDFs. Photos and scans are stored without OCR.",
     "uploadWithValues": "Upload + save {{count}} values",
     "saved": "{{count}} lab values saved.",
     "saveFailed": "Document uploaded, values not saved",
@@ -700,6 +713,56 @@
     "unit": "Unit",
     "range": "Reference",
     "source": "From",
-    "remove": "Remove {{name}}"
+    "remove": "Remove {{name}}",
+    "noOcr": "This document has no digital text and OCR is not installed on the server. You can still upload it and add the values later.",
+    "ocrNothing": "No text could be read from the image. Try a sharper, straight, well-lit photo.",
+    "ocrUsed": "Text read with OCR — confirm every value against the document.",
+    "saveFailedShort": "Values were not saved"
+  },
+  "labs": {
+    "flag": {
+      "low": "Below range",
+      "high": "Above range",
+      "normal": "Within range"
+    },
+    "dateLabel": "Analysis date (YYYY-MM-DD)",
+    "datePlaceholder": "e.g. 2026-11-12",
+    "dateInvalid": "Use YYYY-MM-DD, a real date, not in the future",
+    "dateHint": "The date is used in the timeline and the trend charts.",
+    "dateMissing": "No clear date was found in the document. Add it if you know it; otherwise the upload date is used.",
+    "uncertain": "Uncertain value — check and confirm",
+    "uncertainHint_one": "{{count}} uncertain value must be confirmed or removed before saving.",
+    "uncertainHint_other": "{{count}} uncertain values must be confirmed or removed before saving.",
+    "confirm": "Confirm",
+    "reading": "Reading the document…",
+    "noValuesTitle": "No values",
+    "noValuesText": "There are no explicit lab values for this document.",
+    "saveConfirmed_one": "Save {{count}} confirmed value",
+    "saveConfirmed_other": "Save {{count}} confirmed values",
+    "deleteAll": "Delete saved values",
+    "deleteConfirm": "Delete permanently",
+    "deleteConfirmText": "The values extracted for this document will be deleted. The document stays.",
+    "panelTitle": "Lab values",
+    "panelEmpty": "Read the values from this document and confirm them.",
+    "read": "Read values",
+    "measuredOn": "Analyses from {{date}}",
+    "reference": "Reference",
+    "eventTitle_one": "Lab results · {{count}} value",
+    "eventTitle_other": "Lab results · {{count}} values",
+    "outsideCount_one": "{{count}} outside range",
+    "outsideCount_other": "{{count}} outside range",
+    "trendsEmpty": "No saved lab results",
+    "trendsEmptyHint": "Upload a lab report, confirm the values and their evolution will appear here.",
+    "openTrend": "Opens the trend of this analysis",
+    "measurements_one": "{{count}} measurement",
+    "measurements_other": "{{count}} measurements",
+    "trendMissing": "This analysis no longer exists",
+    "unitLabel": "Unit: {{unit}}",
+    "noUnit": "No unit",
+    "notNumeric": "These values are not numeric, so they cannot be charted.",
+    "chartNote": "The chart only includes numeric values in the same unit. Green band = the reference range printed in the document, when identical for every measurement.",
+    "allMeasurements": "All measurements",
+    "noDate": "No date",
+    "disclaimer": "Comparing with the reference range is not a diagnosis. Discuss your results with your doctor."
   }
 }
