@@ -6,14 +6,17 @@ import { Pressable, StyleSheet, View } from 'react-native';
 import { AppText } from '@/design-system';
 import { HtmlScene } from '@/design-system/HtmlScene';
 import { isSceneMessage } from '@/design-system/HtmlScene.types';
-import passport from '@/design-system/html/medical-passport-button';
+import { renderPassport } from '@/design-system/html/medical-passport-button';
 import { spacing } from '@/design-system/theme';
+import type { PatientProfile } from '@/types';
 
-export function PassportButton() {
-  return useIsFocused() ? <PassportScene /> : null;
+type PassportProps = { fullName: string; patient?: PatientProfile | null };
+
+export function PassportButton({ fullName, patient }: PassportProps) {
+  return useIsFocused() ? <PassportScene fullName={fullName} patient={patient} /> : null;
 }
 
-function PassportScene() {
+function PassportScene({ fullName, patient }: PassportProps) {
   const { t } = useTranslation();
   const opened = useRef(false);
   const title = t('home.actions.profile.title');
@@ -28,7 +31,7 @@ function PassportScene() {
   return (
     <View style={styles.card}>
       <HtmlScene
-        html={passport}
+        html={renderPassport(fullName, patient)}
         height={244}
         title={title}
         onMessage={(message) => {

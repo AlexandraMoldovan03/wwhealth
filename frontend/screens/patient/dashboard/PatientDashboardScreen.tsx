@@ -28,7 +28,8 @@ export function PatientDashboardScreen() {
   const user = useCurrentUser();
   const { data: patient, isLoading, error, reload } = useAsync(api.getMyPatient, { refetchOnFocus: true });
   const progress = useRecordProgress(patient);
-  const name = patient?.fullName || user?.fullName || t('home.there');
+  const fullName = patient?.fullName?.trim() || user?.fullName?.trim() || '';
+  const name = fullName || t('home.there');
 
   return (
     <ScreenContainer help="home" refreshControl={<RefreshControl refreshing={isLoading && !!patient} onRefresh={reload} tintColor={colors.primary} />}>
@@ -52,7 +53,7 @@ export function PatientDashboardScreen() {
         </AppText>
       </View>
 
-      <PassportButton />
+      <PassportButton fullName={fullName} patient={patient} />
       <EmergencyCard enterIndex={1} />
 
       <CareJourneyCard enterIndex={2} />
