@@ -16,7 +16,7 @@ from tests.test_supabase_auth import auth, make_token, supabase_mode  # noqa: F4
 
 client = TestClient(app)
 API = "/api/v1/smart-care"
-MIGRATION = Path(__file__).resolve().parents[2] / "supabase/migrations/20261117000000_smart_care_appointments.sql"
+MIGRATION = Path(__file__).resolve().parents[2] / "supabase/migrations/20261117000100_smart_care_appointments.sql"
 
 
 @pytest.fixture(autouse=True)

@@ -22,8 +22,8 @@ export function SpecialtySearchScreen() {
 
   useEffect(() => {
     let alive = true;
-    setError(null);
     const timer = setTimeout(() => {
+      setError(null);
       api
         .listSpecialties(query.trim(), language)
         .then((res) => alive && setItems(res))

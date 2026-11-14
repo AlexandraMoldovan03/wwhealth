@@ -1,6 +1,6 @@
 """
 Medical specialty catalog — controlled by the backend. Gemini may only return ids from this list; anything else is
-dropped. The same ids are seeded into public.medical_specialties (migration 20261117000000) and a test keeps both in
+dropped. The same ids are seeded into public.medical_specialties (migration 20261117000100) and a test keeps both in
 sync. `terms` power the manual (non-AI) search in both languages.
 """
 from dataclasses import dataclass

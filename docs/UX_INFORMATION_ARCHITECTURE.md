@@ -30,11 +30,11 @@ are in place · **Experimental** = AI result, informative only · **Demo** = sam
 | `/patient/xray-results` | `XrayResultsScreen` | Previous LungVision analyses | Experimental |
 | `/patient/intelligence` | `MedicalIntelligenceScreen` | Gemini summary with sources, explicit consent | Needs config (`GEMINI_API_KEY`, migration) |
 | `/patient/intake` | `IntakeScreen` | Voice → transcript (ElevenLabs) → form (Gemini), saved on the device | Needs config (`ELEVENLABS_API_KEY`) |
-| `/patient/smart-care` | `SmartCareScreen` | Symptoms (text / voice → transcript checked by the patient) → emergency rules → 1–3 specialties (Gemini, with consent) → doctors | Needs config (`GEMINI_API_KEY`, `ELEVENLABS_API_KEY` for voice, migration `20261117000000`) |
+| `/patient/smart-care` | `SmartCareScreen` | Symptoms (text / voice → transcript checked by the patient) → emergency rules → 1–3 specialties (Gemini, with consent) → doctors | Needs config (`GEMINI_API_KEY`, `ELEVENLABS_API_KEY` for voice, migration `20261117000100`) |
 | `/patient/specialties` | `SpecialtySearchScreen` | Manual specialty search, no AI | Live (catalog) |
-| `/patient/specialty/[id]` | `SpecialtyDoctorsScreen` | Verified doctors of a specialty with free slots (14 days); empty state with alternatives | Needs migration `20261117000000` |
-| `/patient/book/[doctorId]` | `BookAppointmentScreen` | Pick a free slot, optional note, send a request | Needs migration `20261117000000` |
-| `/patient/appointments` | `AppointmentsScreen` | Requests, proposals to confirm, confirmed, history; cancel | Needs migration `20261117000000` |
+| `/patient/specialty/[id]` | `SpecialtyDoctorsScreen` | Verified doctors of a specialty with free slots (14 days); empty state with alternatives | Needs migration `20261117000100` |
+| `/patient/book/[doctorId]` | `BookAppointmentScreen` | Pick a free slot, optional note, send a request | Needs migration `20261117000100` |
+| `/patient/appointments` | `AppointmentsScreen` | Requests, proposals to confirm, confirmed, history; cancel | Needs migration `20261117000100` |
 | `/patient/emergency` | `EmergencyPassportScreen` | Single-use 5-minute QR + access audit | Live |
 | `/patient/doctor-access` | `DoctorAccessScreen` | Grants: give / revoke, access history | Live |
 | `/patient/grant-access` | `GrantAccessScreen` | Pick doctor, sections, 1 h / 24 h / 7 days | Live |
@@ -52,7 +52,7 @@ are in place · **Experimental** = AI result, informative only · **Demo** = sam
 | `/scan` | `EmergencyScanScreen` | **Scan QR** of an Emergency Passport | Live |
 | `/files` | `DoctorRecordsScreen` *(new)* | **Medical records**: active consents only, with the shared sections + access log | Live |
 | `/settings` | `SettingsScreen` | **Profile** | Live |
-| `/doctor/appointments` | `DoctorAppointmentsScreen` | Requests (accept / reject / propose another slot) + publish / delete own free slots | Needs migration `20261117000000` |
+| `/doctor/appointments` | `DoctorAppointmentsScreen` | Requests (accept / reject / propose another slot) + publish / delete own free slots | Needs migration `20261117000100` |
 | `/access` | `DoctorAccessLogScreen` | Emergency access log | Live (opened from Medical records) |
 | `/doctor/patient/[id]` (+ `documents`, `labs`, `document/[docId]`, `intelligence`) | patient-access screens | Only the granted sections; re-checked on every request | Live |
 | `/doctor`, `/doctor/emergency`, `/doctor/scan`, `/doctor/patient/[id]/lungvision` | legacy routes / redirects | Kept so old links keep working | Redirect |

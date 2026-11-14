@@ -576,11 +576,11 @@ def ai_summary_delete(user: CurrentUser) -> None:
 
 
 # ─────────────────────────────────────────────────────────── Smart Care: specialties, calendar, appointments
-# (migration 20261117000000). Writes to appointments only through security-definer RPCs; availability through RLS
+# (migration 20261117000100). Writes to appointments only through security-definer RPCs; availability through RLS
 # (a doctor manages only their own slots). Every call runs with the caller's own token.
 
 class SmartCareUnavailable(FeatureNotSetUp):
-    """Appointment tables / functions missing (migration 20261117000000 not applied) → 503."""
+    """Appointment tables / functions missing (migration 20261117000100 not applied) → 503."""
 
 
 def _care_rpc(name: str, user: CurrentUser, body: dict) -> object:

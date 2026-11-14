@@ -1643,31 +1643,27 @@
       },
       "smartCare": {
         "title": "Smart Care",
-        "intro": "Descrii simptomele și afli la ce specialitate să te programezi, la medici verificați cu ore libere.",
-        "can": [
-          "Scrii sau dictezi simptomele și verifici textul.",
-          "Primești 1–3 specialități din catalogul WWHealth (cu acordul AI).",
-          "Cauți manual orice specialitate, fără AI.",
-          "Trimiți o cerere de programare."
-        ],
-        "steps": [
-          "Descrie ce simți și confirmă textul.",
-          "Răspunde la întrebări, dacă apar (maximum 3).",
-          "Alege o specialitate, un medic și o oră.",
-          "Urmărește răspunsul în Programările mele."
-        ],
+        "intro": "De la simptome la o cerere de programare.",
         "faq": [
           {
-            "q": "Primesc un diagnostic?",
-            "a": "Nu. Primești doar specialități sugerate, fără diagnostic, scoruri sau tratamente."
+            "q": "Ce face Smart Care?",
+            "a": "Te ajută să alegi o specialitate, să vezi orele libere și să soliciți o programare."
           },
           {
-            "q": "Ce se întâmplă la o urgență?",
-            "a": "Reguli fixe de siguranță (nu AI) recunosc semnele grave și îți arată să suni la 112."
+            "q": "Cum se recomandă specialitatea?",
+            "a": "Cu acordul tău, Gemini folosește simptomele confirmate și eventualele răspunsuri. Dacă apar semne de urgență, urmează îndrumarea afișată."
           },
           {
-            "q": "Ce date sunt trimise?",
-            "a": "Doar textul confirmat și, dacă alegi, afecțiunile, alergiile și medicația activă — fără nume. Vocea merge doar la ElevenLabs, cu acordul tău."
+            "q": "Ce date sunt folosite?",
+            "a": "Textul confirmat și, dacă alegi, afecțiunile, alergiile și medicația activă. Înregistrarea este trimisă separat către ElevenLabs pentru transcriere, cu acordul tău."
+          },
+          {
+            "q": "Cum solicit o programare?",
+            "a": "Alege medicul și ora, verifică detaliile și trimite cererea. Vezi răspunsul în Programările mele."
+          },
+          {
+            "q": "Cum gestionez permisiunile?",
+            "a": "Deschide Permisiuni în Smart Care pentru a retrage acordul AI. Controlezi accesul la microfon în setările dispozitivului."
           }
         ]
       },
@@ -1714,6 +1710,50 @@
     }
   },
   "care": {
+    "flow": {
+      "step": "Pasul {{current}} din 3",
+      "describe": "Cu ce te putem ajuta?",
+      "purpose": "Descrie ce simți ca să afli la ce specialitate te poți adresa.",
+      "continue": "Continuă",
+      "guidance": "Orientare medicală",
+      "recording": "Se înregistrează. Apasă pe stop când ai terminat.",
+      "demoVoice": "Transcrierea live nu este disponibilă. Poți scrie simptomele.",
+      "voiceError": "Transcrierea nu este disponibilă acum. Încearcă din nou sau scrie simptomele.",
+      "microphoneDenied": "Accesul la microfon este oprit. Poți scrie simptomele.",
+      "analyzing": "Se analizează simptomele…",
+      "requestError": "Cererea nu a reușit. Verifică conexiunea și încearcă din nou.",
+      "question": "Întrebarea {{current}} din {{total}}",
+      "skipQuestions": "Păstrează recomandarea inițială",
+      "specialty": "Specialitate recomandată",
+      "hideDetails": "Ascunde detaliile",
+      "details": "Vezi detaliile",
+      "disclaimer": "Recomandarea este orientativă. Diagnosticul se stabilește la consult.",
+      "findDoctor": "Găsește un medic",
+      "unavailable": "Recomandarea nu este disponibilă",
+      "manualFallback": "Poți căuta direct o specialitate.",
+      "reviewConsent": "Verifică acordul AI",
+      "edit": "Editează simptomele",
+      "permissions": "Permisiuni",
+      "audioConsent": "Cu acordul tău, înregistrarea este trimisă către ElevenLabs pentru transcriere. Verifici textul înainte să îl trimiți pentru analiză.",
+      "allowAudio": "Sunt de acord și pornesc microfonul",
+      "mock": "Înregistrarea este indisponibilă în modul demo.",
+      "review": "Confirmă simptomele",
+      "aiConsent": "Cu acordul tău, Gemini primește simptomele confirmate pentru recomandarea specialității. Acordul este comun cu Rezumatul AI. Îl poți retrage aici oricând.",
+      "granted": "Acordul AI este activ.",
+      "confirmText": "Prin continuare, confirmi că textul descrie ce simți.",
+      "analyze": "Confirmă și analizează",
+      "allowAI": "Sunt de acord și confirm textul",
+      "withoutAI": "Confirmă textul și continuă fără AI",
+      "historyPerRequest": "Poți alege să folosești istoricul medical atunci când confirmi simptomele.",
+      "revoke": "Retrage acordul AI",
+      "chooseDoctor": "Alege medicul",
+      "availability": "Vezi orele libere",
+      "reviewBooking": "Verifică programarea",
+      "bookingTime": "De la {{start}} până la {{end}}",
+      "noNote": "Niciun mesaj",
+      "bookingPending": "Medicul va primi cererea și îți va răspunde în Programările mele.",
+      "appointmentDemo": "Medici și intervale de exemplu pentru modul demo."
+    },
     "intro": "Descrie ce simți. Îți sugerăm 1–3 specialități din catalogul WWHealth și medicii verificați cu ore libere. Nu este un diagnostic.",
     "emergencyNote": "Dacă ai o urgență (durere în piept, nu poți respira, semne de AVC, leșin), sună la 112.",
     "describeTitle": "Ce simptome ai?",

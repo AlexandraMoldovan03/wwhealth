@@ -35,9 +35,6 @@ export function EmergencyGuidanceCard({ guidance }: { guidance: EmergencyGuidanc
         fullWidth
         onPress={() => void Linking.openURL('tel:112')}
       />
-      <AppText variant="caption" color="textSubtle">
-        {t('care.emergency.rulesNote')}
-      </AppText>
     </AppCard>
   );
 }

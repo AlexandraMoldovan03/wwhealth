@@ -1631,31 +1631,27 @@
       },
       "smartCare": {
         "title": "Smart Care",
-        "intro": "Describe your symptoms and find which specialty to book, with verified doctors who have free slots.",
-        "can": [
-          "Type or dictate your symptoms and check the text.",
-          "Get 1–3 specialties from the WWHealth catalog (with AI consent).",
-          "Search any specialty manually, no AI.",
-          "Send a booking request."
-        ],
-        "steps": [
-          "Describe how you feel and confirm the text.",
-          "Answer the questions, if any (up to 3).",
-          "Choose a specialty, a doctor and a time.",
-          "Follow the answer in My appointments."
-        ],
+        "intro": "From symptoms to an appointment request.",
         "faq": [
           {
-            "q": "Do I get a diagnosis?",
-            "a": "No. You only get suggested specialties, with no diagnosis, scores or treatment."
+            "q": "What does Smart Care do?",
+            "a": "It helps you choose a specialty, see available times, and request an appointment."
           },
           {
-            "q": "What about emergencies?",
-            "a": "Fixed safety rules (not AI) recognise serious signs and tell you to call 112."
+            "q": "How is the specialty suggested?",
+            "a": "With your permission, Gemini uses your confirmed symptoms and any answers you provide. If urgent signs are detected, follow the guidance shown."
           },
           {
-            "q": "What data is sent?",
-            "a": "Only the confirmed text and, if you choose, active conditions, allergies and medication — no name. Voice goes only to ElevenLabs, with your consent."
+            "q": "What data is used?",
+            "a": "Your confirmed text and, if you opt in, active conditions, allergies, and medications. With separate permission, ElevenLabs receives your recording for transcription."
+          },
+          {
+            "q": "How do I request an appointment?",
+            "a": "Choose a doctor and time, review the details, and send the request. Check My appointments for the response."
+          },
+          {
+            "q": "How do I manage permissions?",
+            "a": "Open Permissions in Smart Care to withdraw AI consent. Control microphone access in your device settings."
           }
         ]
       },
@@ -1702,6 +1698,50 @@
     }
   },
   "care": {
+    "flow": {
+      "step": "Step {{current}} of 3",
+      "describe": "How can we help?",
+      "purpose": "Describe how you feel to find a relevant specialty.",
+      "continue": "Continue",
+      "guidance": "Medical guidance",
+      "recording": "Recording. Tap stop when you’re done.",
+      "demoVoice": "Live transcription is unavailable. You can type your symptoms.",
+      "voiceError": "Voice input is unavailable right now. Try again or type your symptoms.",
+      "microphoneDenied": "Microphone access is off. You can type your symptoms.",
+      "analyzing": "Reviewing your symptoms…",
+      "requestError": "The request failed. Check your connection and try again.",
+      "question": "Question {{current}} of {{total}}",
+      "skipQuestions": "Keep the initial recommendation",
+      "specialty": "Recommended specialty",
+      "hideDetails": "Hide details",
+      "details": "Show details",
+      "disclaimer": "This recommendation is for guidance. A clinician can make a diagnosis.",
+      "findDoctor": "Find a doctor",
+      "unavailable": "Recommendation unavailable",
+      "manualFallback": "You can search for a specialty directly.",
+      "reviewConsent": "Review AI consent",
+      "edit": "Edit symptoms",
+      "permissions": "Permissions",
+      "audioConsent": "With your permission, the recording goes to ElevenLabs for transcription. You review the text before sending it for analysis.",
+      "allowAudio": "I agree and want to start recording",
+      "mock": "Recording is unavailable in demo mode.",
+      "review": "Confirm your symptoms",
+      "aiConsent": "With your consent, Gemini receives your confirmed symptoms to suggest a specialty. This consent also covers AI Summary. You can withdraw it here at any time.",
+      "granted": "AI consent is active.",
+      "confirmText": "By continuing, you confirm that the text describes how you feel.",
+      "analyze": "Confirm and analyze",
+      "allowAI": "I agree and confirm the text",
+      "withoutAI": "Confirm the text and continue without AI",
+      "historyPerRequest": "You can choose to include your medical history when you confirm your symptoms.",
+      "revoke": "Withdraw AI consent",
+      "chooseDoctor": "Choose a doctor",
+      "availability": "View available times",
+      "reviewBooking": "Review appointment",
+      "bookingTime": "From {{start}} to {{end}}",
+      "noNote": "No message",
+      "bookingPending": "The doctor will receive the request and reply in My appointments.",
+      "appointmentDemo": "Sample doctors and times for demo mode."
+    },
     "intro": "Describe how you feel. We suggest 1–3 specialties from the WWHealth catalog and verified doctors with free slots. This is not a diagnosis.",
     "emergencyNote": "In an emergency (chest pain, can't breathe, stroke signs, fainting), call 112.",
     "describeTitle": "What symptoms do you have?",

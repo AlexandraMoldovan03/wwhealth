@@ -182,7 +182,7 @@ built from) · `POST /patients/{id}/generate` (granted sections only, needs the 
 Errors: 403 no consent / access, 429 rate limit (`AI_SUMMARY_PER_USER_PER_HOUR`, default 6), 503 not configured,
 504 Gemini timeout, 502 invalid Gemini answer. `PATCH /patients/me` also accepts `surgeries: [{ name, date?, notes? }]`.
 
-### Smart Care — `/api/v1/smart-care` (migration `20261117000000_smart_care_appointments.sql`)
+### Smart Care — `/api/v1/smart-care` (migration `20261117000100_smart_care_appointments.sql`)
 Specialty recommendation (optional AI) + booking with verified doctors. Specialty ids come only from the backend
 catalog (`backend/app/services/specialty_catalog.py`, same ids seeded in `medical_specialties`).
 

@@ -1,7 +1,7 @@
 """
 Smart Care appointments: verified doctors per specialty, the doctor's published calendar, booking requests.
 
-Supabase: every rule lives in Postgres (migration 20261117000000) — security-definer RPCs for bookings, RLS for the
+Supabase: every rule lives in Postgres (migration 20261117000100) — security-definer RPCs for bookings, RLS for the
 doctor's own availability. Specialties are assigned to doctors by an admin (doctor_specialties).
 Demo (no Supabase): an in-memory store with the same states and rules; a few specialties have no doctor on purpose.
 

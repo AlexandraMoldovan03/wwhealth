@@ -23,6 +23,7 @@ export function useVoiceIntake<T = IntakeForm>(upload: (file: UploadFile) => Pro
   const [revision, setRevision] = useState(0);
   const [phase, setPhase] = useState<'idle' | 'starting' | 'recording' | 'processing'>('idle');
   const [error, setError] = useState<string | null>(null);
+  const [permissionDenied, setPermissionDenied] = useState(false);
   const active = useRef(false);
   const pending = useRef(false);
   const recording = useRef(false);
@@ -45,12 +46,16 @@ export function useVoiceIntake<T = IntakeForm>(upload: (file: UploadFile) => Pro
     if (pending.current || recording.current) return;
     pending.current = true;
     setError(null);
+    setPermissionDenied(false);
     reset();
     setPhase('starting');
     try {
       const permission = await AudioModule.requestRecordingPermissionsAsync();
       if (!active.current) return;
-      if (!permission.granted) throw new Error('Allow microphone access in your device or browser settings.');
+      if (!permission.granted) {
+        setPermissionDenied(true);
+        throw new Error('Allow microphone access in your device or browser settings.');
+      }
       if (Platform.OS !== 'web') {
         await setAudioModeAsync({ allowsRecording: true, playsInSilentMode: true });
         if (!active.current) {
@@ -108,5 +113,5 @@ export function useVoiceIntake<T = IntakeForm>(upload: (file: UploadFile) => Pro
     }
   }
 
-  return { form, revision, phase, start, stop, error: error ?? uploadError };
+  return { form, revision, phase, start, stop, permissionDenied, error: error ?? uploadError };
 }
