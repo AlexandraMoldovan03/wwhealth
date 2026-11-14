@@ -1,0 +1,1965 @@
+{
+  "voiceRecording": {"active":"Recording"},
+  "common": {
+    "email": "Email",
+    "password": "Password",
+    "signIn": "Sign in",
+    "createAccount": "Create account",
+    "or": "or",
+    "retry": "Try again",
+    "loading": "Loading…",
+    "save": "Save",
+    "cancel": "Cancel",
+    "notAvailable": "—",
+    "clear": "Clear",
+    "edit": "Edit",
+    "close": "Close"
+  },
+  "auth": {
+    "emailPlaceholder": "you@example.com",
+    "login": {
+      "title": "Welcome back",
+      "subtitle": "Sign in to access your medical record.",
+      "passwordPlaceholder": "Your password",
+      "forgot": "Forgot password?",
+      "forgotTodo": "Password reset is not available yet.",
+      "failed": "Sign in failed",
+      "noAccount": "Don’t have an account?",
+      "createOne": "Create one",
+      "demo": "DEMO — login is not connected yet. Any email + password works."
+    },
+    "register": {
+      "title": "Create your account",
+      "subtitle": "Your health record, available anywhere in the world.",
+      "fullName": "Full name",
+      "passwordPlaceholder": "At least {{count}} characters",
+      "confirmPassword": "Confirm password",
+      "confirmPlaceholder": "Repeat your password",
+      "passwordsMismatch": "Passwords do not match",
+      "mustAcceptTerms": "You must accept the terms",
+      "terms": "I agree to the Terms of Service and to the processing of my health data (GDPR).",
+      "failed": "Registration failed",
+      "haveAccount": "Already have an account?",
+      "demo": "DEMO — registration is not connected yet. No account is created.",
+      "doctorNote": "New accounts are patient accounts. Doctor accounts are activated by an administrator after verification."
+    },
+    "role": {
+      "label": "I am a",
+      "patient": "Patient",
+      "doctor": "Doctor"
+    },
+    "password": {
+      "show": "Show password",
+      "hide": "Hide password"
+    },
+    "google": {
+      "button": "Continue with Google",
+      "failed": "Google sign-in failed",
+      "signingIn": "Signing you in…",
+      "backToSignIn": "Back to sign in"
+    },
+    "errors": {
+      "rateLimit": "Too many sign-up attempts right now. Please wait a few minutes and try again.",
+      "wrongCredentials": "Wrong email or password.",
+      "emailNotConfirmed": "Confirm your email address first, then sign in.",
+      "alreadyRegistered": "An account with this email already exists. Sign in instead.",
+      "network": "No connection to the server. Check your internet.",
+      "generic": "Something went wrong. Please try again.",
+      "confirmEmail": "Account created. Check your email to confirm it, then sign in.",
+      "googleNotConfigured": "Google sign-in needs Supabase to be configured.",
+      "googleIncomplete": "Google sign-in did not complete. Please try again."
+    }
+  },
+  "validation": {
+    "emailRequired": "Email is required",
+    "emailInvalid": "Enter a valid email address",
+    "passwordRequired": "Password is required",
+    "passwordMin": "At least {{count}} characters",
+    "required": "{{label}} is required"
+  },
+  "tabs": {
+    "index": "Home",
+    "explore": "Explore",
+    "analysis": "LungVision",
+    "history": "Timeline",
+    "settings": "Settings",
+    "scan": "Scan QR",
+    "access": "Accesses",
+    "patients": "Patients",
+    "records": "My record",
+    "insights": "AI Insights",
+    "transfer": "Transfer",
+    "family": "Family",
+    "files": "Records",
+    "doctor": {
+      "index": "Dashboard"
+    }
+  },
+  "screens": {
+    "login": "Sign in",
+    "register": "Create account",
+    "auth/callback": "Signing in",
+    "history/[id]": "Details",
+    "patient/profile": "Medical Profile",
+    "patient/edit-profile": "Edit Medical Profile",
+    "patient/document/[id]": "Document",
+    "patient/documents": "Medical Documents",
+    "patient/upload-document": "Upload Document",
+    "patient/xray-results": "X-ray Results",
+    "doctor/index": "Doctor",
+    "doctor/patient/[id]/index": "Patient Summary",
+    "doctor/patient/[id]/documents": "Patient Documents",
+    "patient/emergency": "Emergency Passport",
+    "doctor/emergency": "Emergency scan",
+    "patient/lab-review/[id]": "Lab values",
+    "patient/lab-trend": "Lab trend",
+    "patient/doctor-access": "Doctor access",
+    "patient/grant-access": "Grant access",
+    "patient/summary": "Medical summary",
+    "doctor/patient/[id]/labs": "Lab history",
+    "doctor/patient/[id]/document/[docId]": "Document",
+    "patient/intelligence": "AI Medical Intelligence",
+    "doctor/patient/[id]/intelligence": "AI Medical Intelligence",
+    "patient/smart-care": "Smart Care",
+    "patient/specialties": "Find a specialty",
+    "patient/specialty/[id]": "Doctors",
+    "patient/book/[doctorId]": "Book",
+    "patient/appointments": "My appointments",
+    "doctor/appointments": "Appointments"
+  },
+  "settings": {
+    "title": "Profile",
+    "account": "Account",
+    "signedIn": "Signed in",
+    "signOut": "Sign out",
+    "appearance": "Appearance",
+    "theme": "Theme",
+    "themeLight": "Light",
+    "themeDark": "Dark",
+    "themeSystem": "System",
+    "language": "Language",
+    "languageSystem": "Phone",
+    "general": "General",
+    "notifications": "Notifications",
+    "backend": "Backend",
+    "backendSubtitle": "Configured in .env → frontend/config/config.ts",
+    "apiUrl": "API URL",
+    "dataSource": "Data source",
+    "dataMock": "MOCK (demo data)",
+    "dataApi": "API (FastAPI)",
+    "checking": "Checking…",
+    "testConnection": "Test connection",
+    "backendOk": "Backend reachable",
+    "connectionFailed": "Connection failed",
+    "role": "Role",
+    "roleSubtitle": "Demo switch — the account role comes from Supabase",
+    "patientArea": "Patient area",
+    "patientAreaValue": "Tabs",
+    "doctorDashboard": "Doctor Dashboard",
+    "integrations": "Integrations",
+    "integrationsSubtitle": "Configured on the backend — not in the app",
+    "supabaseLogin": "Supabase login",
+    "connected": "Connected",
+    "notConfigured": "Not configured (demo)",
+    "lungModel": "LungVision model",
+    "geminiExtraction": "Gemini extraction",
+    "elevenLabs": "ElevenLabs voice",
+    "about": "About",
+    "activeRole": "Active role",
+    "medicalProfile": "Medical profile",
+    "emergencyPassport": "Emergency Passport",
+    "replayOnboarding": "Show the introduction again",
+    "doctorAccess": "Doctor access",
+    "allFeatures": "All features"
+  },
+  "app": {
+    "description": "Your medical record, documents and AI-assisted X-ray insights — shareable with verified doctors through time-limited, revocable consent."
+  },
+  "home": {
+    "passportTap": "Tap the passport to open it",
+    "there": "there",
+    "greeting": {
+      "morning": "Good morning",
+      "afternoon": "Good afternoon",
+      "evening": "Good evening"
+    },
+    "tagline": "your health record, in your pocket.",
+    "stats": {
+      "allergies": "Allergies",
+      "activeDiagnoses": "Active diagnoses",
+      "documents": "Documents",
+      "bloodType": "Blood type"
+    },
+    "quickActions": "Quick actions",
+    "recentActivity": "Recent activity",
+    "demoData": "Demo data",
+    "medicalHistory": "Medical history",
+    "doctorArea": "Doctor area",
+    "doctorAreaSubtitle": "Demo role switch",
+    "openDoctor": "Open Doctor Dashboard",
+    "openDoctorSubtitle": "Scan a patient QR passport",
+    "hero": {
+      "text": "Upload a chest X-ray and get a DenseNet121 + Grad-CAM analysis.",
+      "button": "Analyze X-ray",
+      "kicker": "AI screening"
+    },
+    "actions": {
+      "profile": {
+        "title": "Medical profile",
+        "subtitle": "Allergies, conditions"
+      },
+      "documents": {
+        "title": "Documents",
+        "subtitle": "Upload & view"
+      },
+      "lungvision": {
+        "title": "LungVision AI",
+        "subtitle": "Chest X-ray"
+      },
+      "passport": {
+        "title": "QR Passport",
+        "subtitle": "Share with a doctor"
+      },
+      "emergency": {
+        "title": "Emergency Passport",
+        "subtitle": "5-minute QR for a doctor"
+      },
+      "history": {
+        "title": "Timeline",
+        "subtitle": "Your medical history"
+      },
+      "intelligence": {
+        "title": "AI summary",
+        "subtitle": "Safety first, with sources"
+      },
+      "upload": {
+        "title": "Upload document",
+        "subtitle": "Photo or PDF"
+      },
+      "doctorAccess": {
+        "title": "Share with a doctor",
+        "subtitle": "You choose what and how long"
+      }
+    },
+    "activity": {
+      "a1": {
+        "title": "LungVision analysis",
+        "subtitle": "Chest X-ray · Normal (DEMO)"
+      },
+      "a2": {
+        "title": "Document analysed",
+        "subtitle": "Complete blood count · Gemini (DEMO)"
+      },
+      "a3": {
+        "title": "Passport shared",
+        "subtitle": "Dr. Demo · 15 min access"
+      }
+    },
+    "emergencyQr": "Generate emergency QR",
+    "openEmergencyQr": "Open emergency QR",
+    "headline": "Your health, calmly in one place",
+    "emergency": {
+      "title": "Emergency Passport",
+      "text": "A single-use QR, valid 5 minutes, for a verified doctor."
+    },
+    "snapshot": "Health snapshot",
+    "edit": "Edit",
+    "seeAll": "See all"
+  },
+  "time": {
+    "justNow": "just now",
+    "minAgo": "{{count}} min ago",
+    "hAgo": "{{count}} h ago",
+    "dAgo": "{{count}} d ago"
+  },
+  "explore": {
+    "features": {
+      "dashboard": {
+        "title": "Patient Dashboard",
+        "description": "Overview of your health record."
+      },
+      "profile": {
+        "title": "Medical Profile",
+        "description": "Personal data, allergies, diagnoses, treatments."
+      },
+      "documents": {
+        "title": "Medical Documents",
+        "description": "All your uploaded documents."
+      },
+      "upload": {
+        "title": "Upload Document",
+        "description": "Upload a PDF or a photo of a medical document."
+      },
+      "lungvision": {
+        "title": "LungVision AI",
+        "description": "Chest X-ray analysis with DenseNet121 + Grad-CAM."
+      },
+      "xray-results": {
+        "title": "X-ray Results",
+        "description": "Previous LungVision analyses."
+      },
+      "history": {
+        "title": "Medical History",
+        "description": "Timeline of visits, diagnoses and analyses."
+      },
+      "doctor-dashboard": {
+        "title": "Doctor Dashboard",
+        "description": "Doctor area (demo role)."
+      },
+      "emergency": {
+        "title": "Emergency Passport",
+        "description": "Single-use 5-minute QR: blood type, allergies, conditions, medication."
+      },
+      "emergency-scan": {
+        "title": "Emergency scan",
+        "description": "Scan a patient emergency QR (doctor accounts)."
+      },
+      "doctor-access": {
+        "title": "Doctor access",
+        "description": "Share chosen sections with a verified doctor for 1 hour, 24 hours or 7 days. Revocable anytime."
+      },
+      "summary": {
+        "title": "Medical summary",
+        "description": "Allergies, conditions, medication, latest labs and documents in one place."
+      },
+      "doctor-patients": {
+        "title": "My patients",
+        "description": "Patients who granted you access (doctor accounts)."
+      },
+      "intelligence": {
+        "title": "AI Medical Intelligence",
+        "description": "Gemini summary of your record: safety first, every claim linked to its source. Needs your consent."
+      }
+    },
+    "title": "Explore",
+    "subtitle": "Features available now and ideas to build next.",
+    "search": "Search features…",
+    "comingSoon": "Coming soon — this feature is not available yet.",
+    "noResults": "No features found",
+    "noResultsHint": "Try another search term or category.",
+    "clearFilters": "Clear filters",
+    "soon": "Soon",
+    "categories": {
+      "All": "All",
+      "Patient": "Patient",
+      "Doctor": "Doctor",
+      "AI": "AI"
+    }
+  },
+  "profile": {
+    "name": "Name",
+    "age": "Age",
+    "sex": "Sex",
+    "bloodType": "Blood type",
+    "heightWeight": "Height / weight",
+    "emergencyContact": "Emergency contact",
+    "allergies": "Allergies",
+    "diagnoses": "Diagnoses",
+    "treatments": "Treatments",
+    "noneRecorded": "None recorded",
+    "since": "since {{date}}",
+    "edit": "Edit profile",
+    "surgeries": "Surgeries",
+    "noDate": "Unknown date"
+  },
+  "enums": {
+    "sex": {
+      "female": "female",
+      "male": "male",
+      "other": "other"
+    },
+    "severity": {
+      "mild": "mild",
+      "moderate": "moderate",
+      "severe": "severe"
+    },
+    "diagnosisStatus": {
+      "active": "active",
+      "resolved": "resolved"
+    },
+    "treatment": {
+      "active": "active",
+      "ended": "ended"
+    }
+  },
+  "editProfile": {
+    "unknown": "Unknown",
+    "required": "Required",
+    "allergies": "Allergies",
+    "addAllergy": "Add allergy",
+    "substance": "Substance",
+    "substancePlaceholder": "e.g. Penicillin",
+    "reaction": "Reaction",
+    "reactionPlaceholder": "e.g. Skin rash",
+    "conditions": "Conditions",
+    "addCondition": "Add condition",
+    "condition": "Condition",
+    "conditionPlaceholder": "e.g. Asthma",
+    "medication": "Medication",
+    "addMedication": "Add medication",
+    "medicationName": "Medication",
+    "medicationPlaceholder": "e.g. Budesonide inhaler",
+    "dosage": "Dosage",
+    "frequency": "Frequency",
+    "frequencyPlaceholder": "2x daily",
+    "currentlyTaking": "Currently taking",
+    "fillOrRemove": "Fill in or remove the empty items.",
+    "couldNotSave": "Could not save",
+    "save": "Save profile",
+    "remove": "Remove",
+    "surgeries": "Surgeries",
+    "addSurgery": "Add surgery",
+    "surgeryName": "Procedure",
+    "surgeryPlaceholder": "e.g. Appendectomy",
+    "surgeryDate": "Date (optional)",
+    "surgeryDatePlaceholder": "YYYY, YYYY-MM or YYYY-MM-DD",
+    "surgeryDateInvalid": "Use YYYY, YYYY-MM or YYYY-MM-DD",
+    "surgeryNotes": "Notes (optional)",
+    "surgeryNotesPlaceholder": "e.g. hospital, documented complications"
+  },
+  "documentTypes": {
+    "lab_result": "Lab result",
+    "prescription": "Prescription",
+    "discharge_summary": "Discharge summary",
+    "imaging_report": "Imaging report",
+    "other": "Other"
+  },
+  "documents": {
+    "formatPdf": "PDF",
+    "formatImage": "Image",
+    "empty": "No documents",
+    "emptyHint": "Uploaded documents appear here.",
+    "upload": "Upload document",
+    "extracted": "Extracted data",
+    "diagnoses": "Diagnoses",
+    "allergies": "Allergies",
+    "medications": "Medications",
+    "loadFailed": "The document could not be loaded.",
+    "a11yDocument": "Medical document",
+    "noPdfAndroid": "PDF preview not available on Android",
+    "noPdfAndroidHint": "Open it on iOS or the web for now.",
+    "notFound": "Document not found",
+    "noFile": "No file attached",
+    "noFileHint": "This is a demo entry without an uploaded file."
+  },
+  "upload": {
+    "done": "Document uploaded",
+    "doneText": "“{{title}}” was added to your documents and medical history.",
+    "open": "Open document",
+    "back": "Back to documents",
+    "type": "Document type",
+    "titleLabel": "Title (optional)",
+    "titlePlaceholder": "e.g. Blood test March",
+    "tapToChange": "tap to change",
+    "select": "Select a medical document",
+    "hint": "PDF, JPEG or PNG · max 10 MB",
+    "files": "Files",
+    "gallery": "Gallery",
+    "camera": "Camera",
+    "upload": "Upload",
+    "mockNotice": "MOCK mode: the file stays on this device and is not uploaded.",
+    "privacyNotice": "Stored privately and visible only to your account. No OCR or AI is run.",
+    "errors": {
+      "type": "Only PDF, JPEG and PNG files are supported.",
+      "size": "File is too large (max 10 MB).",
+      "camera": "Camera permission is required to take a photo."
+    }
+  },
+  "history": {
+    "title": "Medical timeline",
+    "subtitle": "Visits, diagnoses, treatments, documents and X-rays.",
+    "loading": "Loading history…",
+    "empty": "No history yet",
+    "notFound": "Event not found",
+    "description": "Description",
+    "openDocument": "Open document",
+    "types": {
+      "diagnosis": "Diagnosis",
+      "treatment": "Treatment",
+      "allergy": "Allergy",
+      "document": "Document",
+      "xray": "X-ray",
+      "visit": "Visit",
+      "lab": "Lab results"
+    },
+    "all": "All",
+    "emptyHint": "Uploaded documents, saved LungVision results and your conditions and medication appear here.",
+    "source": {
+      "upload": "Uploaded document",
+      "lungvision": "LungVision AI",
+      "profile": "Medical profile",
+      "visit": "Visit",
+      "scanner": "Values you confirmed"
+    },
+    "views": {
+      "timeline": "Timeline",
+      "trends": "Lab trends"
+    },
+    "periods": {
+      "all": "Any time",
+      "30d": "30 days",
+      "6m": "6 months",
+      "1y": "1 year"
+    }
+  },
+  "xray": {
+    "empty": "No X-ray results",
+    "analyze": "Analyze an X-ray",
+    "all": "All analyses",
+    "noAnalyses": "No X-ray analyses",
+    "topFinding": "Top finding",
+    "heatmapPlaceholder": "Grad-CAM heatmap placeholder",
+    "noAnalysesHint": "Upload a chest X-ray for an experimental LungVision analysis."
+  },
+  "doctor": {
+    "scanPatientQr": "Scan patient QR",
+    "scanPatientQrHint": "Emergency Passport: blood type, allergies, conditions and medication. Every access is logged.",
+    "greetingName": "Dr. {{name}}",
+    "emergencyAccess": "Emergency access",
+    "heroTitle": "Scan a patient's emergency QR",
+    "stats": {
+      "title": "Your activity",
+      "today": "Opened today",
+      "total": "Opened in total",
+      "denied": "Refused"
+    },
+    "recentAccesses": "Recent accesses",
+    "accessLog": {
+      "title": "Access history",
+      "subtitle": "Every emergency passport you opened or that was refused. Recorded on the server."
+    }
+  },
+  "errors": {
+    "title": "Something went wrong",
+    "generic": "Something went wrong. Please try again.",
+    "network": "The WWHealth server is not responding. Make sure the phone and the Mac are on the same Wi-Fi and the backend is running.",
+    "forbidden": "You are not allowed to do this.",
+    "notFound": "The requested resource was not found.",
+    "invalidData": "The server rejected the data that was sent.",
+    "server": "The server had a problem. Please try again later.",
+    "timeout": "The server is taking too long. Please try again.",
+    "networkFailed": "Network request failed",
+    "status": "Request failed with status {{status}}",
+    "camera": "Camera permission is required to take a photo.",
+    "profileMissing": "Your medical profile has not been initialised in the database. Contact the administrator (profiles row missing)."
+  },
+  "image": {
+    "select": "Select an image",
+    "hint": "Tap to choose from your gallery",
+    "change": "Change image",
+    "remove": "Remove image",
+    "selectA11y": "Select image"
+  },
+  "notFound": {
+    "title": "Page not found",
+    "message": "This screen doesn't exist.",
+    "home": "Go home"
+  },
+  "lung": {
+    "animatePreview": "Tap the lungs to choose an X-ray",
+    "subtitle": "Experimental pneumonia screening with DenseNet121 (trained on PneumoniaMNIST) and Grad-CAM explanations.",
+    "analyzeAnother": "Analyze another X-ray",
+    "select": "Select a chest X-ray",
+    "selectHint": "Frontal (PA/AP) view works best",
+    "gallery": "Gallery",
+    "camera": "Camera",
+    "analyze": "Analyze",
+    "running": "Running the model on the server…",
+    "mockNotice": "MOCK mode: LungVision is disabled because it needs the real model on the backend. Set EXPO_PUBLIC_USE_MOCKS=false.",
+    "notice": "Educational prototype, not a medical device. The image is sent only to your WWHealth backend and is not stored.",
+    "previous": "Previous results",
+    "result": {
+      "positive": {
+        "title": "Possible pneumonia pattern detected",
+        "subtitle": "AI classification: Positive",
+        "explanation": "The AI detected image patterns associated with pneumonia. This is not a confirmed diagnosis."
+      },
+      "negative": {
+        "title": "No pneumonia pattern flagged",
+        "subtitle": "AI classification: Negative",
+        "explanation": "The AI did not flag a pneumonia pattern in this image. This does not rule out pneumonia."
+      },
+      "notice": "Educational prototype, not a medical device. Always have an X-ray reviewed by a qualified clinician.",
+      "score": "AI score",
+      "threshold": " / threshold {{threshold}}",
+      "scoreNote": "The score is the sigmoid output of the classifier, not a validated clinical probability. Images scoring {{threshold}} or higher are classified as positive.",
+      "original": "Original X-ray",
+      "heatmap": "AI Heatmap",
+      "a11yOriginal": "Original chest X-ray",
+      "a11yHeatmap": "Grad-CAM heatmap over the analysed image",
+      "noHeatmap": "The server did not return a heatmap for this image.",
+      "noOriginal": "Original image not available.",
+      "lessInfluence": "Less influence",
+      "moreInfluence": "More influence",
+      "heatmapNote": "Warm colours (red, yellow) mark the regions that influenced the AI's output the most. Grad-CAM shows where the model looked, not where pneumonia is, and it can highlight irrelevant areas. It is drawn on the square, centre-cropped 224×224 image the model analysed.",
+      "originalNote": "Your image exactly as selected. It is not stored on the server.",
+      "technical": "Technical details",
+      "model": "Model",
+      "rawScore": "Raw score",
+      "thresholdLabel": "Threshold",
+      "processingTime": "Processing time",
+      "imageStorage": "Image storage",
+      "notStored": "Not stored"
+    }
+  },
+  "emergency": {
+    "intro": "In an emergency, show this QR to a doctor. It works once, for 5 minutes, and only a verified doctor account can open it.",
+    "sharedTitle": "What the doctor sees",
+    "sharedList": "Blood type · Allergies · Active conditions · Active medication. Nothing else: no name, contacts, documents or history.",
+    "generate": "Generate emergency QR",
+    "generateNew": "Generate a new QR",
+    "revoke": "Revoke QR",
+    "expired": "This QR has expired or was revoked.",
+    "singleUse": "Single use · expires automatically · generating a new one cancels this one",
+    "privacyNote": "The QR contains only a random code, no medical data. The code is checked by the WWHealth server, and every access is recorded in the log above.",
+    "audit": {
+      "title": "Access log",
+      "empty": "No activity yet.",
+      "created": "QR generated",
+      "revoked": "QR revoked",
+      "viewed": "Opened by {{name}}",
+      "denied": "Access refused for {{name}}",
+      "unknownDoctor": "an unknown account",
+      "reasons": {
+        "not_found": "invalid code",
+        "expired": "expired",
+        "used": "already used",
+        "revoked": "revoked",
+        "not_doctor": "not a doctor account"
+      },
+      "emptyHint": "When a doctor opens your passport, it will appear here.",
+      "doctorEmpty": "No accesses yet",
+      "doctorEmptyHint": "Scan a patient's emergency QR to see it here.",
+      "doctor": {
+        "viewed": "Emergency passport opened",
+        "denied": "Access refused",
+        "created": "QR generated",
+        "revoked": "QR revoked"
+      }
+    },
+    "doctorButton": "Emergency scan",
+    "scanIntro": "Scan the patient's emergency QR. You will see only blood type, allergies, active conditions and medication. The access is logged.",
+    "cameraPermission": "Camera access is needed to scan the QR. You can also paste the code below.",
+    "cameraWeb": "Camera scanning works in the mobile app. Paste the code below.",
+    "allowCamera": "Allow camera",
+    "manualLabel": "Emergency code",
+    "manualPlaceholder": "wwhealth://emergency/…",
+    "open": "Open emergency data",
+    "denied": "Access refused",
+    "tryAgain": "Scan again",
+    "scanAnother": "Close and scan another",
+    "bloodType": "Blood type",
+    "allergies": "Allergies",
+    "conditions": "Active conditions",
+    "medications": "Active medication",
+    "noneRecorded": "None recorded",
+    "accessedAt": "Accessed {{date}} · this access is logged",
+    "errors": {
+      "notDoctor": "Only verified doctor accounts can open an emergency passport.",
+      "invalid": "Invalid code. Ask the patient to generate a new QR.",
+      "used": "This QR was already used. Ask the patient to generate a new one.",
+      "expired": "This QR expired or was revoked. Ask the patient to generate a new one."
+    },
+    "timeLeft": "{{time}} left"
+  },
+  "family": {
+    "title": "Family QR",
+    "intro": "Add up to 3 family members and keep their emergency QR codes in one place. Each QR is valid for 5 minutes, and a new one is generated every time you press the button.",
+    "add": "Add family member",
+    "addTitle": "New family member",
+    "name": "Full name",
+    "namePlaceholder": "e.g. Maria Popescu",
+    "nameRequired": "Enter the family member's name.",
+    "relationship": "Relationship (optional)",
+    "relationshipPlaceholder": "e.g. Mother, father, child",
+    "save": "Add family member",
+    "remove": "Remove {{name}}",
+    "removeAction": "Remove",
+    "removeMessage": "Remove {{name}} and their QR from this device?",
+    "emptyTitle": "No family members yet",
+    "emptyMessage": "Add up to 3 family members to keep their emergency QR codes together.",
+    "limit": "You can add up to {{max}} family members.",
+    "noQr": "No active QR. Generate one to show it in an emergency.",
+    "expired": "The QR expired. Generate a new one to show it again.",
+    "generate": "Generate family QR",
+    "generateNew": "Generate new QR",
+    "qrNote": "Valid for 5 minutes · a new QR replaces this one",
+    "footer": "Demo for now: these QRs are stored only on this device and do not open medical data yet."
+  },
+  "roles": {
+    "patient": "Patient",
+    "doctor": "Doctor"
+  },
+  "onboarding": {
+    "skip": "Skip",
+    "back": "Back",
+    "next": "Continue",
+    "save": "Save profile",
+    "start": "Get started",
+    "add": "Add",
+    "remove": "Remove {{item}}",
+    "progress": "Step {{step}} of {{total}}",
+    "patient": {
+      "welcomeTitle": "Welcome",
+      "welcomeText": "Let's set up a minimal medical profile: blood type, allergies, chronic conditions and current medication. It takes a minute. Every step is optional — you can skip and complete it later.",
+      "bloodTitle": "Blood type",
+      "bloodText": "Choose only if you are sure. A doctor may rely on it in an emergency.",
+      "bloodUnknown": "I don't know",
+      "allergiesTitle": "Allergies",
+      "allergiesText": "Add each allergy and how severe it is. Leave empty if you have none.",
+      "allergyLabel": "Allergy",
+      "allergyPlaceholder": "e.g. Penicillin",
+      "severity": "Severity",
+      "conditionsTitle": "Chronic conditions",
+      "conditionsText": "Long-term conditions a doctor should know about.",
+      "conditionLabel": "Condition",
+      "conditionPlaceholder": "e.g. Asthma",
+      "medsTitle": "Current medication",
+      "medsText": "Medicines you take now. Dosage is optional.",
+      "medLabel": "Medicine",
+      "medPlaceholder": "e.g. Salbutamol",
+      "doseLabel": "Dosage (optional)",
+      "dosePlaceholder": "e.g. 100 mcg",
+      "welcomeTitleName": "Welcome, {{name}}"
+    },
+    "doctor": {
+      "s1Title": "Scan the patient's QR",
+      "s1Text": "In an emergency the patient shows a QR that works once, for 5 minutes. Use \"Scan patient QR\" on your dashboard.",
+      "s2Title": "Only what matters",
+      "s2Text": "You see blood type, allergies, active conditions and medication — no documents, contacts or history.",
+      "s3Title": "Every access is logged",
+      "s3Text": "The server records each access; the patient and you can see it in the access history."
+    }
+  },
+  "scanner": {
+    "title": "Lab value scanner",
+    "intro": "Text is read on the WWHealth server (digital PDF or local OCR) — nothing is sent to other services. Only explicitly written values appear. Check every value before saving. This is not a diagnosis.",
+    "scan": "Read values from the document",
+    "noValues": "No explicit lab values found. You can still upload the document.",
+    "review": "{{count}} values found — verify, correct or remove them:",
+    "uploadWithValues": "Upload + save {{count}} values",
+    "saved": "{{count}} lab values saved.",
+    "saveFailed": "Document uploaded, values not saved",
+    "savedValues": "Confirmed lab values ({{count}})",
+    "name": "Test",
+    "value": "Value",
+    "unit": "Unit",
+    "range": "Reference",
+    "source": "From",
+    "remove": "Remove {{name}}",
+    "noOcr": "This document has no digital text and OCR is not installed on the server. You can still upload it and add the values later.",
+    "ocrNothing": "No text could be read from the image. Try a sharper, straight, well-lit photo.",
+    "ocrUsed": "Text read with OCR — confirm every value against the document.",
+    "saveFailedShort": "Values were not saved"
+  },
+  "labs": {
+    "flag": {
+      "low": "Below range",
+      "high": "Above range",
+      "normal": "Within range"
+    },
+    "dateLabel": "Analysis date (YYYY-MM-DD)",
+    "datePlaceholder": "e.g. 2026-11-12",
+    "dateInvalid": "Use YYYY-MM-DD, a real date, not in the future",
+    "dateHint": "The date is used in the timeline and the trend charts.",
+    "dateMissing": "No clear date was found in the document. Add it if you know it; otherwise the upload date is used.",
+    "uncertain": "Uncertain value — check and confirm",
+    "uncertainHint_one": "{{count}} uncertain value must be confirmed or removed before saving.",
+    "uncertainHint_other": "{{count}} uncertain values must be confirmed or removed before saving.",
+    "confirm": "Confirm",
+    "reading": "Reading the document…",
+    "noValuesTitle": "No values",
+    "noValuesText": "There are no explicit lab values for this document.",
+    "saveConfirmed_one": "Save {{count}} confirmed value",
+    "saveConfirmed_other": "Save {{count}} confirmed values",
+    "deleteAll": "Delete saved values",
+    "deleteConfirm": "Delete permanently",
+    "deleteConfirmText": "The values extracted for this document will be deleted. The document stays.",
+    "panelTitle": "Lab values",
+    "panelEmpty": "Read the values from this document and confirm them.",
+    "read": "Read values",
+    "measuredOn": "Analyses from {{date}}",
+    "reference": "Reference",
+    "eventTitle_one": "Lab results · {{count}} value",
+    "eventTitle_other": "Lab results · {{count}} values",
+    "outsideCount_one": "{{count}} outside range",
+    "outsideCount_other": "{{count}} outside range",
+    "trendsEmpty": "No saved lab results",
+    "trendsEmptyHint": "Upload a lab report, confirm the values and their evolution will appear here.",
+    "openTrend": "Opens the trend of this analysis",
+    "measurements_one": "{{count}} measurement",
+    "measurements_other": "{{count}} measurements",
+    "trendMissing": "This analysis no longer exists",
+    "unitLabel": "Unit: {{unit}}",
+    "noUnit": "No unit",
+    "notNumeric": "These values are not numeric, so they cannot be charted.",
+    "chartNote": "The chart only includes numeric values in the same unit. Green band = the reference range printed in the document, when identical for every measurement.",
+    "allMeasurements": "All measurements",
+    "noDate": "No date",
+    "disclaimer": "Comparing with the reference range is not a diagnosis. Discuss your results with your doctor.",
+    "savedTitle": "Lab values confirmed",
+    "backToDocument": "Back to the document"
+  },
+  "consent": {
+    "intro": "Choose a verified doctor, which sections they see and for how long. You can revoke access at any time, effective immediately. The Emergency Passport stays separate.",
+    "grantCta": "Grant a doctor access",
+    "previewSummary": "My medical summary",
+    "previewSummaryHint": "What a doctor sees when you share every section",
+    "active": "Active access",
+    "noActive": "No doctor has access",
+    "noActiveHint": "Your data is visible only to you until you grant access.",
+    "ended": "Ended access",
+    "history": "History",
+    "historyHint": "Grants, revocations, views and denied attempts — recorded on the server.",
+    "noHistory": "No activity yet.",
+    "until": "until {{date}}",
+    "revoke": "Revoke access",
+    "revokeTitle": "Revoke access?",
+    "revokeMessage": "{{doctor}} will no longer see your data, starting now.",
+    "unknownDoctor": "Doctor",
+    "scopes": {
+      "profile": "Medical profile",
+      "documents": "Documents",
+      "labs": "Lab results"
+    },
+    "scopeHints": {
+      "profile": "Basic data, allergies, conditions, current medication",
+      "documents": "Uploaded documents and their files",
+      "labs": "Confirmed lab values and their history"
+    },
+    "status": {
+      "active": "Active",
+      "expired": "Expired",
+      "revoked": "Revoked"
+    },
+    "durations": {
+      "1": "1 hour",
+      "24": "24 hours",
+      "168": "7 days"
+    },
+    "events": {
+      "granted": "Access granted: {{doctor}}",
+      "revoked": "Access revoked: {{doctor}}",
+      "viewed": "{{doctor}} opened your data",
+      "denied": "Access denied for {{doctor}}"
+    },
+    "sections": {
+      "summary": "summary",
+      "profile": "profile",
+      "documents": "documents",
+      "labs": "lab results",
+      "document_file": "document file"
+    },
+    "reasons": {
+      "expired": "access expired",
+      "revoked": "access revoked",
+      "scope": "section not shared",
+      "replaced": "replaced by a new grant",
+      "no_grant": "no access",
+      "not_doctor": "account is not a doctor"
+    },
+    "grant": {
+      "doctor": "Doctor",
+      "doctorHint": "Only doctors verified by an administrator. Search by name or enter the doctor's code (e.g. DR-1A2B3C).",
+      "searchPlaceholder": "Doctor name or code",
+      "noDoctors": "No verified doctor found",
+      "noDoctorsHint": "Check the name or ask the doctor for the code shown in their app.",
+      "verified": "Verified doctor",
+      "sections": "What you share",
+      "sectionsHint": "The doctor sees only the sections you choose.",
+      "duration": "Duration",
+      "confirmText": "{{doctor}} will see: {{sections}}, for {{duration}}.",
+      "submit": "Grant access",
+      "emergencyNote": "The Emergency Passport (5-minute QR) is not affected and gets no extra permissions."
+    },
+    "summary": {
+      "previewIntro": "A structured summary of your saved data. It contains no interpretation, diagnosis or recommendation.",
+      "basics": "Basic data",
+      "dateOfBirth": "Date of birth",
+      "conditions": "Existing conditions",
+      "medication": "Current medication",
+      "labs": "Latest confirmed lab results",
+      "labsHint": "Most recent value for each analysis and unit",
+      "noLabs": "No confirmed lab values.",
+      "range": "range {{range}}",
+      "documents": "Relevant documents",
+      "notShared": "Not shared",
+      "disclaimer": "Values are shown exactly as saved. The summary uses no AI and gives no diagnosis or treatment."
+    },
+    "doctor": {
+      "patientsTitle": "Patients",
+      "patientsSubtitle": "Patients who granted you access. You see only the shared sections, while access is valid.",
+      "searchPlaceholder": "Search by name",
+      "noPatients": "No patients yet",
+      "noPatientsHint": "Patients can grant you access in the app by searching your name or your code.",
+      "noMatch": "No patient with this name",
+      "ended": {
+        "expired": "Access expired on {{date}}",
+        "revoked": "Access revoked on {{date}}"
+      },
+      "thePatient": "the patient",
+      "accessUntil": "Access until {{date}}",
+      "documents": "Documents",
+      "labHistory": "Lab history",
+      "allAnalyses": "All analyses",
+      "documentsNotShared": "The patient did not share their documents.",
+      "labsNotShared": "The patient did not share their lab results.",
+      "backToPatients": "Back to patients",
+      "dashboardTitle": "Patients with access",
+      "dashboardSubtitle": "Granted by the patient, per section, with an expiry",
+      "yourCode": "Your doctor code",
+      "yourCodeHint": "Patients can enter it to grant you access.",
+      "denied": {
+        "none": {
+          "title": "No access",
+          "message": "You don't have this patient's consent. Their data is not available."
+        },
+        "expired": {
+          "title": "Access expired",
+          "message": "The access granted by {{name}} has expired. The patient can grant it again."
+        },
+        "revoked": {
+          "title": "Access revoked",
+          "message": "{{name}} revoked the access. The data is no longer available."
+        },
+        "forbidden": {
+          "title": "Doctors only",
+          "message": "Your account doesn't have the doctor role. The role is assigned by an administrator."
+        }
+      }
+    }
+  },
+  "ai": {
+    "title": "AI Medical Intelligence",
+    "intro": "A summary generated with Google Gemini from your saved data only. Safety-relevant information comes first and every statement has its source. No diagnosis, risk score or treatment advice.",
+    "doctorIntro": "AI summary of the sections the patient shared with you. Every statement links to the original data; check it before any decision.",
+    "doctorEntryHint": "Gemini summary with sources, if the patient consented",
+    "overview": "Overview",
+    "noOverview": "The overview was removed because it could not be linked to real sources. See the cards below.",
+    "generatedAt": "Generated {{date}}",
+    "generate": "Generate summary",
+    "refresh": "Refresh summary",
+    "generating": "Generating the summary… this can take up to 30 seconds.",
+    "failed": "The summary could not be generated",
+    "none": "No summary yet",
+    "noneHint": "Tap “Generate summary”. Only data saved in your profile, documents and lab results is used.",
+    "notConfigured": "AI unavailable",
+    "notConfiguredHint": "Gemini is not configured on the server (GEMINI_API_KEY). No simulated results are shown.",
+    "delete": "Delete summary",
+    "deleteTitle": "Delete the saved summary?",
+    "deleteMessage": "The AI summary will be permanently deleted from the server. Your medical data stays unchanged.",
+    "emptyCategory": "Nothing to show in this category.",
+    "discarded_one": "{{count}} AI statement was removed because no real source supported it.",
+    "discarded_other": "{{count}} AI statements were removed because no real source supported them.",
+    "disclaimer": "Generated automatically from existing data. It is not a diagnosis and does not replace a medical assessment. The data is not used to train any model.",
+    "doctorNoConsent": "The patient has not consented to AI processing",
+    "doctorNoConsentHint": "An AI summary can only be generated after the patient agrees in the app. The non-AI medical summary is still available.",
+    "doctorNone": "No summary available for your access",
+    "doctorNoneHint": "The patient has no saved summary, or it uses sections they did not share with you. You can generate one from the shared sections.",
+    "doctorNotStored": "Generated now from the shared sections. Not saved.",
+    "categories": {
+      "priority": "Priority medical attention",
+      "active": "Active conditions and treatments",
+      "history": "Medical history and procedures",
+      "verify": "Information that needs verification"
+    },
+    "categoryHints": {
+      "priority": "Anaphylaxis or severe allergies and lab values outside their reference range (explicit rules)",
+      "active": "Conditions documented as active and current medication",
+      "history": "Surgeries and other previous results",
+      "verify": "Missing, incomplete or unconfirmed data"
+    },
+    "flags": {
+      "anaphylaxis": "Documented anaphylaxis",
+      "severe_allergy": "Severe allergy",
+      "abnormal_lab": "Outside range"
+    },
+    "origin": {
+      "record": "From the record",
+      "ai": "Verified AI text"
+    },
+    "sourceKinds": {
+      "profile": "Profile",
+      "allergy": "Allergy",
+      "condition": "Condition",
+      "medication": "Medication",
+      "surgery": "Surgery",
+      "lab": "Lab result",
+      "document": "Document"
+    },
+    "missing": {
+      "missing_blood_type": "Blood type is not filled in.",
+      "missing_date_of_birth": "Date of birth is not filled in.",
+      "no_allergies_recorded": "No allergies recorded (confirm if you have none).",
+      "medication_without_dosage": "Medication “{{name}}” has no dosage.",
+      "lab_without_range": "Lab result “{{name}}” has no reference range.",
+      "lab_without_date": "Lab result “{{name}}” has no sampling date.",
+      "profile_not_shared": "The medical profile was not included.",
+      "documents_not_shared": "Documents were not included.",
+      "labs_not_shared": "Lab results were not included."
+    },
+    "consent": {
+      "title": "Consent to AI processing",
+      "what": "For the summary, the WWHealth server sends Google Gemini only minimal facts from your record: age, sex, blood type, allergies, conditions, medication, surgeries, document titles and dates, and confirmed lab values.",
+      "notSent": "Your name, email, date of birth, document files and their full text are not sent. Prompts are not written to logs.",
+      "storage": "Only the latest summary is kept, so you can see when it was generated. You can delete it anytime; withdrawing consent deletes it immediately.",
+      "accept": "I agree",
+      "revoke": "Withdraw consent",
+      "revokeTitle": "Withdraw consent?",
+      "revokeMessage": "Nothing more is sent to Gemini and the saved summary is deleted, for doctors too."
+    }
+  },
+  "origin": {
+    "legendTitle": "Where the data comes from",
+    "confirmed": {
+      "label": "Confirmed",
+      "text": "Entered or checked by you. Safe to rely on."
+    },
+    "extracted": {
+      "label": "Auto-extracted",
+      "text": "Read automatically from a document (OCR / AI). Check it before confirming."
+    },
+    "ai": {
+      "label": "Experimental AI",
+      "text": "AI-generated, informative only. Not a diagnosis and no substitute for a doctor."
+    }
+  },
+  "explain": {
+    "ocr": {
+      "title": "How documents are read (OCR)",
+      "text": "We read lab values from PDFs and photos automatically, on the WWHealth server. You check and confirm every value; only confirmed values enter your record."
+    },
+    "gemini": {
+      "title": "What Gemini does",
+      "text": "Google Gemini writes the AI summary through our server, only after your explicit consent. It gets minimal data — no name, email or full documents — and every statement must cite a source from your record."
+    },
+    "lungvision": {
+      "title": "What LungVision is",
+      "text": "An experimental model (DenseNet121) that analyses chest X-rays and highlights the areas it looked at (Grad-CAM). The result is informative, not a diagnosis."
+    },
+    "qr": {
+      "title": "How the emergency QR works",
+      "text": "You create a single-use QR code valid for 5 minutes. A verified doctor scans it and sees only emergency data: blood type, allergies, conditions, medication. Every access shows up in your history."
+    },
+    "consent": {
+      "title": "You control access",
+      "text": "You choose the doctor, the sections (profile, documents, labs) and how long: 1 hour, 24 hours or 7 days. Revoke anytime; after that the doctor sees nothing."
+    },
+    "voice": {
+      "title": "Voice intake",
+      "text": "Describe your symptoms by voice; the recording is transcribed (ElevenLabs) and turned into a form (Gemini). You review the form."
+    }
+  },
+  "journey": {
+    "title": "How WWHealth works",
+    "subtitle": "Four steps, each with its own section.",
+    "collect": {
+      "title": "Collect",
+      "text": "Profile, documents and lab values in one record."
+    },
+    "understand": {
+      "title": "Understand",
+      "text": "AI summary with sources and LungVision, clearly marked as AI."
+    },
+    "control": {
+      "title": "Control",
+      "text": "You decide who sees what, and for how long."
+    },
+    "connect": {
+      "title": "Connect",
+      "text": "Emergency QR and temporary access for doctors."
+    }
+  },
+  "progress": {
+    "title": "Complete your record",
+    "count": "{{done}} of {{total}} steps",
+    "hide": "Hide",
+    "showAgain": "Show the record checklist on Home",
+    "done": "done",
+    "todo": "to do",
+    "nextStep": "Recommended next step",
+    "steps": {
+      "profile": {
+        "title": "Complete your profile",
+        "why": "Blood type is the first thing a doctor needs in an emergency.",
+        "cta": "Complete profile"
+      },
+      "history": {
+        "title": "Add your medical history",
+        "why": "Allergies, conditions, treatments or surgeries — what a doctor needs to know.",
+        "cta": "Add history"
+      },
+      "document": {
+        "title": "Upload your first document",
+        "why": "A lab result, prescription or discharge summary, as a photo or PDF.",
+        "cta": "Upload a document"
+      },
+      "lab": {
+        "title": "Confirm your first lab result",
+        "why": "Check the values read automatically from a document and confirm them.",
+        "cta": "Open documents"
+      },
+      "ai": {
+        "title": "See your AI summary",
+        "why": "A summary of your record with the source of every statement. Only with your consent.",
+        "cta": "Open AI summary"
+      }
+    },
+    "complete": {
+      "title": "Your record is complete",
+      "why": "Share it temporarily with a doctor or create your emergency QR.",
+      "cta": "Transfer & Access"
+    }
+  },
+  "nextSteps": {
+    "title": "What's next",
+    "labTrends": {
+      "title": "See your lab trends",
+      "text": "Confirmed values appear in your Timeline, with their source document."
+    },
+    "refreshAi": {
+      "title": "Refresh the AI summary",
+      "text": "Include the new data in your summary (with your consent)."
+    },
+    "allDocuments": {
+      "title": "All documents",
+      "text": "Open the document and confirm the values read automatically."
+    },
+    "shareDoctor": {
+      "title": "Share with a doctor",
+      "text": "Temporary access, only to the sections you choose."
+    }
+  },
+  "hubs": {
+    "records": {
+      "folders": { "symptoms": "Describe symptoms", "documents": "Documents and lab results", "history": "Medical history" },
+      "title": "My record",
+      "subtitle": "Everything about your health, gathered in one place.",
+      "aboutYou": "About you",
+      "profile": "Medical profile",
+      "profileCount_one": "{{count}} entry (allergies, conditions, treatments, surgeries)",
+      "profileCount_other": "{{count}} entries (allergies, conditions, treatments, surgeries)",
+      "profileEmpty": "Add allergies, conditions, treatments and surgeries.",
+      "intake": "Voice intake",
+      "intakeHint": "Describe your symptoms by voice; you get a form to review.",
+      "documentsTitle": "Documents & lab results",
+      "documentsSubtitle": "Upload a document, check the values read automatically, confirm them.",
+      "documents": "Medical documents",
+      "documentsCount_one": "{{count}} document",
+      "documentsCount_other": "{{count}} documents",
+      "labs": "Lab results",
+      "labsCount_one": "{{count}} confirmed value from {{docs}} document(s)",
+      "labsCount_other": "{{count}} confirmed values from {{docs}} document(s)",
+      "labsEmpty": "No confirmed values yet. Open a document and confirm its values.",
+      "upload": "Upload a document",
+      "uploadFirst": "Upload your first document",
+      "noDocuments": "No documents yet",
+      "noDocumentsHint": "Upload a lab result, prescription or discharge summary. Lab values are read automatically and you confirm them.",
+      "timelineTitle": "Timeline",
+      "timeline": "Medical history",
+      "timelineCount_one": "{{count}} event in chronological order",
+      "timelineCount_other": "{{count}} events in chronological order",
+      "timelineEmpty": "Events appear here as you complete your record."
+    },
+    "insights": {
+      "title": "AI Medical Insights",
+      "subtitle": "Helps you understand your record. AI results are clearly marked and are not diagnoses.",
+      "summaryTitle": "AI summary",
+      "summarySubtitle": "Safety first, every statement with its source.",
+      "aiLoading": "Checking status…",
+      "aiUnknown": "Open to see the summary status.",
+      "aiNotConfigured": "Not available on the server right now.",
+      "aiNeedsConsent": "Needs your explicit consent before the first summary.",
+      "aiNotGenerated": "Consent given. No summary generated yet.",
+      "aiReady": "Last generated: {{date}}",
+      "imagingTitle": "Imaging",
+      "imagingSubtitle": "Experimental chest X-ray analysis.",
+      "xrays": "Previous LungVision analyses",
+      "xraysCount_one": "{{count}} analysis",
+      "xraysCount_other": "{{count}} analyses",
+      "xraysEmpty": "No analyses yet.",
+      "careTitle": "Smart Care",
+      "careSubtitle": "From symptoms to an appointment.",
+      "care": "Which specialty do I need?",
+      "careHint": "Describe your symptoms, get 1–3 specialties and doctors with free slots.",
+      "specialties": "Find a specialty",
+      "specialtiesHint": "No AI: pick the specialty and doctor directly."
+    },
+    "transfer": {
+      "title": "Transfer & Access",
+      "subtitle": "You decide who sees what, and for how long. Revoke anytime.",
+      "emergencyTitle": "Emergency",
+      "emergencySubtitle": "Vital data, one QR away.",
+      "doctorsTitle": "Doctors",
+      "doctorsSubtitle": "Temporary access, only to the sections you choose.",
+      "doctorAccess": "Doctor access",
+      "doctorAccessHint": "Give or revoke a verified doctor's access.",
+      "activeGrants_one": "{{count}} active access",
+      "activeGrants_other": "{{count}} active accesses",
+      "noGrants": "No doctor has access right now.",
+      "summary": "What a doctor sees",
+      "summaryHint": "The structured summary of your record, as a doctor with every section sees it.",
+      "appointments": "Appointments",
+      "appointmentsHint": "Your requests and the doctors' answers."
+    },
+    "doctorRecords": {
+      "title": "Medical records",
+      "subtitle": "Only what patients allowed, while the consent is valid. Every opening is checked on the server.",
+      "available": "Available now",
+      "empty": "No records available",
+      "emptyHint": "A patient gives you access from their app, using your doctor code. Access expires automatically.",
+      "seePatients": "See authorised patients",
+      "summary": "Summary",
+      "ai": "AI summary",
+      "emergencyTitle": "Emergencies",
+      "emergencySubtitle": "Emergency passports you scanned.",
+      "accessLogHint": "Every passport opened or refused."
+    }
+  },
+  "help": {
+    "open": "Help for this screen",
+    "canDo": "What you can do here",
+    "steps": "Step by step",
+    "faq": "FAQ",
+    "related": "Open",
+    "offline": "This help is built into the app and works offline.",
+    "links": {
+      "profile": "Medical profile",
+      "editProfile": "Edit profile",
+      "documents": "Medical documents",
+      "upload": "Upload document",
+      "timeline": "Medical history",
+      "intake": "Voice intake",
+      "intelligence": "AI summary",
+      "lungvision": "LungVision",
+      "xrays": "Previous LungVision analyses",
+      "emergency": "Emergency Passport",
+      "doctorAccess": "Doctor access",
+      "summary": "What a doctor sees",
+      "explore": "All features",
+      "doctorPatients": "Authorised patients",
+      "doctorScan": "Scan QR",
+      "doctorRecords": "Medical records",
+      "accessLog": "Access log",
+      "smartCare": "Smart Care",
+      "specialties": "Find a specialty",
+      "appointments": "My appointments",
+      "doctorAppointments": "Appointments"
+    },
+    "topics": {
+      "home": {
+    "passportTap": "Tap the passport to open it",
+        "title": "Home",
+        "intro": "Your starting point: what to do next and how complete your record is.",
+        "can": [
+          "Create your emergency QR in one tap.",
+          "See the recommended next step and how complete your record is.",
+          "See what each section is for."
+        ],
+        "steps": [
+          "Follow the “Recommended next step” card.",
+          "Tick off “Complete your record” — it updates itself from your data.",
+          "Use the bottom tabs: My record, AI Insights, Transfer, Profile."
+        ],
+        "faq": [
+          {
+            "q": "Can I hide the checklist?",
+            "a": "Yes, tap “Hide”. Bring it back from Profile → “Show the record checklist on Home”."
+          },
+          {
+            "q": "Where do the numbers come from?",
+            "a": "Only from your real record. We never show made-up data."
+          }
+        ]
+      },
+      "records": {
+        "title": "My record",
+        "intro": "Collect your medical information here: profile, documents, confirmed lab values and history.",
+        "can": [
+          "Complete your medical profile.",
+          "Upload documents and confirm the values read automatically.",
+          "See your history in chronological order.",
+          "Describe symptoms by voice."
+        ],
+        "steps": [
+          "Start with your medical profile.",
+          "Upload a document (photo or PDF).",
+          "Check the extracted values and confirm them.",
+          "Follow the trends in your Timeline."
+        ],
+        "faq": [
+          {
+            "q": "What does “auto-extracted” mean?",
+            "a": "Values read automatically from a document. They enter your record only after you confirm them."
+          }
+        ]
+      },
+      "insights": {
+        "title": "AI Medical Insights",
+        "intro": "AI tools that help you understand your record. They are informative and do not diagnose.",
+        "can": [
+          "Generate an AI summary with the source of every statement.",
+          "Run an experimental LungVision chest X-ray analysis.",
+          "Review previous analyses."
+        ],
+        "steps": [
+          "Open “AI summary” and read which data is sent.",
+          "Give your explicit consent, if you want.",
+          "Generate the summary and check its sources."
+        ],
+        "faq": [
+          {
+            "q": "Does the AI diagnose me?",
+            "a": "No. AI results are marked “Experimental AI” and do not replace a doctor."
+          },
+          {
+            "q": "What data reaches Gemini?",
+            "a": "Only minimal facts from your record — no name, email or full documents — and only with your consent."
+          }
+        ]
+      },
+      "transfer": {
+        "title": "Transfer & Access",
+        "intro": "You control who sees your data and for how long.",
+        "can": [
+          "Create a 5-minute emergency QR.",
+          "Give a verified doctor temporary access.",
+          "Revoke any access at any time.",
+          "See what a doctor sees."
+        ],
+        "steps": [
+          "For emergencies, tap “Generate emergency QR”.",
+          "For a doctor, open “Doctor access” and search for them.",
+          "Pick the sections and duration, then confirm."
+        ],
+        "faq": [
+          {
+            "q": "What happens after I revoke?",
+            "a": "The doctor no longer sees anything from your record, including the saved AI summary."
+          },
+          {
+            "q": "Does the emergency QR give permanent access?",
+            "a": "No. It is single-use, valid for 5 minutes, emergency data only."
+          }
+        ]
+      },
+      "profile": {
+        "title": "Profile",
+        "intro": "Your account, app settings and shortcuts to your record.",
+        "can": [
+          "Change theme and language.",
+          "Open your medical profile and doctor access.",
+          "Show the record checklist again.",
+          "Sign out."
+        ],
+        "steps": [
+          "Pick theme and language under “Appearance”.",
+          "Use “All features” for the full list."
+        ],
+        "faq": [
+          {
+            "q": "Can I change my role (patient / doctor)?",
+            "a": "Not from the app. The role is set on the server."
+          }
+        ]
+      },
+      "medicalProfile": {
+        "title": "Medical profile",
+        "intro": "Your core medical data: blood type, allergies, conditions, treatments and surgeries.",
+        "can": [
+          "See your full profile.",
+          "Edit blood type, allergies, conditions, treatments and surgeries."
+        ],
+        "steps": [
+          "Tap “Edit profile”.",
+          "Add or change information.",
+          "Save."
+        ],
+        "faq": [
+          {
+            "q": "Who sees my profile?",
+            "a": "Only you and doctors you gave access to the Profile section, while that access is valid."
+          }
+        ]
+      },
+      "documents": {
+        "title": "Medical documents",
+        "intro": "Every uploaded document, with the data extracted from it.",
+        "can": [
+          "Upload new documents.",
+          "Open a document and confirm its lab values."
+        ],
+        "steps": [
+          "Tap “Upload document”.",
+          "Open the uploaded document.",
+          "Check the values and confirm them."
+        ],
+        "faq": [
+          {
+            "q": "Are my documents public?",
+            "a": "No. They are private; a doctor sees them only if you shared the Documents section."
+          }
+        ]
+      },
+      "upload": {
+        "title": "Upload document",
+        "intro": "Add a document to your record, as a photo or PDF.",
+        "can": [
+          "Choose the document type and a title.",
+          "For lab results, values are read automatically.",
+          "Confirm the values before they enter your record."
+        ],
+        "steps": [
+          "Choose the file.",
+          "Fill in the title and type.",
+          "Check the values read and confirm."
+        ],
+        "faq": [
+          {
+            "q": "What if a value is read wrong?",
+            "a": "Correct it in the form before confirming."
+          }
+        ]
+      },
+      "timeline": {
+        "title": "Medical history",
+        "intro": "Your record's events in chronological order, and your lab trends.",
+        "can": [
+          "See events by month.",
+          "Open an event's details.",
+          "Follow a lab value over time."
+        ],
+        "steps": [
+          "Choose “Timeline” or “Lab results”.",
+          "Tap an event or a lab value."
+        ],
+        "faq": [
+          {
+            "q": "Why is a lab result missing?",
+            "a": "Only confirmed values appear here. Confirm them from the document."
+          }
+        ]
+      },
+      "labs": {
+        "title": "Lab values",
+        "intro": "Check the values read automatically from a document and confirm them.",
+        "can": [
+          "Correct values, units and ranges.",
+          "Confirm the values.",
+          "Delete the document's saved values."
+        ],
+        "steps": [
+          "Check every row.",
+          "Fill in the test date.",
+          "Tap “Save”."
+        ],
+        "faq": [
+          {
+            "q": "Why can't I save?",
+            "a": "Some values are marked uncertain or the date is invalid. Fix them first."
+          }
+        ]
+      },
+      "lungvision": {
+        "title": "LungVision",
+        "intro": "Experimental chest X-ray analysis (DenseNet121 + Grad-CAM).",
+        "can": [
+          "Upload a chest X-ray.",
+          "See the model's probabilities and the areas it looked at.",
+          "Review previous analyses."
+        ],
+        "steps": [
+          "Choose the X-ray image.",
+          "Start the analysis.",
+          "Read the result together with a doctor."
+        ],
+        "faq": [
+          {
+            "q": "Is the result a diagnosis?",
+            "a": "No. It is an experimental, informative AI result."
+          }
+        ]
+      },
+      "intelligence": {
+        "title": "AI summary",
+        "intro": "A summary of your record written by Gemini, with the source of every statement. Safety information comes first.",
+        "can": [
+          "Give or withdraw consent.",
+          "Generate and refresh the summary.",
+          "Open the sources.",
+          "Delete the saved summary."
+        ],
+        "steps": [
+          "Read which data is sent.",
+          "Give your consent.",
+          "Tap “Generate summary”.",
+          "Check every statement's sources."
+        ],
+        "faq": [
+          {
+            "q": "Is the summary stored?",
+            "a": "Only the latest one. Delete it anytime; withdrawing consent deletes it automatically."
+          },
+          {
+            "q": "Can a doctor see it?",
+            "a": "Only with valid access covering every section it was built from."
+          }
+        ]
+      },
+      "emergency": {
+        "title": "Emergency Passport",
+        "intro": "A single-use QR, valid for 5 minutes, with your emergency data.",
+        "can": [
+          "Create a QR.",
+          "Cancel it before it expires.",
+          "See who accessed it."
+        ],
+        "steps": [
+          "Tap “Generate”.",
+          "Show the QR to the doctor.",
+          "After a scan or 5 minutes, the code stops working."
+        ],
+        "faq": [
+          {
+            "q": "What does the doctor see?",
+            "a": "Blood type, allergies, conditions and medication. Not your documents."
+          }
+        ]
+      },
+      "doctorAccess": {
+        "title": "Doctor access",
+        "intro": "Give and revoke temporary access for verified doctors.",
+        "can": [
+          "Search for a verified doctor.",
+          "Choose sections and duration.",
+          "Revoke access.",
+          "See the access history."
+        ],
+        "steps": [
+          "Tap “Give access”.",
+          "Search the doctor by name or code.",
+          "Pick the sections and duration, then confirm."
+        ],
+        "faq": [
+          {
+            "q": "Can I share only lab results?",
+            "a": "Yes. You choose exactly: profile, documents, labs."
+          }
+        ]
+      },
+      "intake": {
+        "title": "Voice intake",
+        "intro": "Describe your symptoms by speaking; you get a form to review.",
+        "can": [
+          "Record your symptoms in Romanian or English.",
+          "Review and correct the form.",
+          "Save it on this device."
+        ],
+        "steps": [
+          "Tap record and speak.",
+          "Stop the recording.",
+          "Review the form and save."
+        ],
+        "faq": [
+          {
+            "q": "Is the form a diagnosis?",
+            "a": "No. It only organises what you said."
+          }
+        ]
+      },
+      "doctorHome": {
+        "title": "Doctor dashboard",
+        "intro": "Your activity: emergency passports you scanned and patients who gave you access.",
+        "can": [
+          "Scan a patient's emergency QR.",
+          "See your access statistics.",
+          "See your doctor code."
+        ],
+        "steps": [
+          "Tap “Scan patient QR”.",
+          "Open your authorised patients."
+        ],
+        "faq": [
+          {
+            "q": "How does a patient give me access?",
+            "a": "From their app, using your doctor code."
+          }
+        ]
+      },
+      "doctorPatients": {
+        "title": "Authorised patients",
+        "intro": "Patients who gave you access, with the status of each consent.",
+        "can": [
+          "Search for a patient.",
+          "See the sections and expiry date.",
+          "Open the patient's summary."
+        ],
+        "steps": [
+          "Search for the patient.",
+          "Tap their name."
+        ],
+        "faq": [
+          {
+            "q": "Why can't I open a patient?",
+            "a": "The access expired or the patient revoked it."
+          }
+        ]
+      },
+      "doctorScan": {
+        "title": "Scan QR",
+        "intro": "Scan a patient's Emergency Passport.",
+        "can": [
+          "Scan an emergency QR.",
+          "See the patient's emergency data."
+        ],
+        "steps": [
+          "Allow camera access.",
+          "Frame the QR code."
+        ],
+        "faq": [
+          {
+            "q": "Why is the code refused?",
+            "a": "It expired (5 minutes), was already used or was cancelled."
+          }
+        ]
+      },
+      "doctorRecords": {
+        "title": "Medical records",
+        "intro": "Records you can open now, with only the sections allowed.",
+        "can": [
+          "Open a patient's summary, documents or lab results.",
+          "See the AI summary, if the patient allowed it.",
+          "See your emergency access log."
+        ],
+        "steps": [
+          "Choose the patient.",
+          "Open the section you need."
+        ],
+        "faq": [
+          {
+            "q": "Why are a patient's documents missing?",
+            "a": "The patient did not share the Documents section."
+          }
+        ]
+      },
+      "doctorPatient": {
+        "title": "Patient record",
+        "intro": "You see only the sections the patient shared, while the consent is valid.",
+        "can": [
+          "Read the structured summary.",
+          "Open the allowed documents and lab results.",
+          "See the AI summary."
+        ],
+        "steps": [
+          "Check when the access expires.",
+          "Open the available sections."
+        ],
+        "faq": [
+          {
+            "q": "What happens when it expires?",
+            "a": "The data is no longer shown. Every opening is checked on the server."
+          }
+        ]
+      },
+      "smartCare": {
+        "title": "Smart Care",
+        "intro": "From symptoms to an appointment request.",
+        "faq": [
+          {
+            "q": "What does Smart Care do?",
+            "a": "It helps you choose a specialty, see available times, and request an appointment."
+          },
+          {
+            "q": "How is the specialty suggested?",
+            "a": "With your permission, Gemini uses your confirmed symptoms and any answers you provide. If urgent signs are detected, follow the guidance shown."
+          },
+          {
+            "q": "What data is used?",
+            "a": "Your confirmed text and, if you opt in, active conditions, allergies, and medications. With separate permission, ElevenLabs receives your recording for transcription."
+          },
+          {
+            "q": "How do I request an appointment?",
+            "a": "Choose a doctor and time, review the details, and send the request. Check My appointments for the response."
+          },
+          {
+            "q": "How do I manage permissions?",
+            "a": "Open Permissions in Smart Care to withdraw AI consent. Control microphone access in your device settings."
+          }
+        ]
+      },
+      "appointments": {
+        "title": "Appointments",
+        "intro": "Your booking requests and the doctors' answers.",
+        "can": [
+          "See pending and confirmed requests.",
+          "Accept or decline a time proposed by the doctor.",
+          "Cancel an appointment."
+        ],
+        "steps": [
+          "Send a request from Smart Care or search.",
+          "Wait for the doctor's answer.",
+          "If the doctor proposes another time, confirm or decline it."
+        ],
+        "faq": [
+          {
+            "q": "Does the doctor see my record?",
+            "a": "Not automatically. They see your name and message. They see your record only if you grant access in Transfer & Access."
+          }
+        ]
+      },
+      "doctorAppointments": {
+        "title": "Appointments (doctor)",
+        "intro": "Patient requests and your free slots.",
+        "can": [
+          "Accept, reject or propose another time.",
+          "Publish free slots for the next 90 days.",
+          "Delete a free slot."
+        ],
+        "steps": [
+          "Publish slots in Availability.",
+          "Answer requests in Requests.",
+          "The patient confirms the proposed time."
+        ],
+        "faq": [
+          {
+            "q": "Why don't I show up in search?",
+            "a": "You show up once an administrator assigns your specialty and you have published free slots."
+          }
+        ]
+      }
+    }
+  },
+  "care": {
+    "flow": {
+      "step": "Step {{current}} of 3",
+      "describe": "How can we help?",
+      "purpose": "Describe how you feel to find a relevant specialty.",
+      "continue": "Continue",
+      "guidance": "Medical guidance",
+      "recording": "Recording. Tap stop when you’re done.",
+      "demoVoice": "Live transcription is unavailable. You can type your symptoms.",
+      "voiceError": "Voice input is unavailable right now. Try again or type your symptoms.",
+      "microphoneDenied": "Microphone access is off. You can type your symptoms.",
+      "analyzing": "Reviewing your symptoms…",
+      "requestError": "The request failed. Check your connection and try again.",
+      "question": "Question {{current}} of {{total}}",
+      "skipQuestions": "Keep the initial recommendation",
+      "specialty": "Recommended specialty",
+      "hideDetails": "Hide details",
+      "details": "Show details",
+      "disclaimer": "This recommendation is for guidance. A clinician can make a diagnosis.",
+      "findDoctor": "Find a doctor",
+      "unavailable": "Recommendation unavailable",
+      "manualFallback": "You can search for a specialty directly.",
+      "reviewConsent": "Review AI consent",
+      "edit": "Edit symptoms",
+      "permissions": "Permissions",
+      "audioConsent": "With your permission, the recording goes to ElevenLabs for transcription. You review the text before sending it for analysis.",
+      "allowAudio": "I agree and want to start recording",
+      "mock": "Recording is unavailable in demo mode.",
+      "review": "Confirm your symptoms",
+      "aiConsent": "With your consent, Gemini receives your confirmed symptoms to suggest a specialty. This consent also covers AI Summary. You can withdraw it here at any time.",
+      "granted": "AI consent is active.",
+      "confirmText": "By continuing, you confirm that the text describes how you feel.",
+      "analyze": "Confirm and analyze",
+      "allowAI": "I agree and confirm the text",
+      "withoutAI": "Confirm the text and continue without AI",
+      "historyPerRequest": "You can choose to include your medical history when you confirm your symptoms.",
+      "revoke": "Withdraw AI consent",
+      "chooseDoctor": "Choose a doctor",
+      "availability": "View available times",
+      "reviewBooking": "Review appointment",
+      "bookingTime": "From {{start}} to {{end}}",
+      "noNote": "No message",
+      "bookingPending": "The doctor will receive the request and reply in My appointments.",
+      "appointmentDemo": "Sample doctors and times for demo mode."
+    },
+    "intro": "Describe how you feel. We suggest 1–3 specialties from the WWHealth catalog and verified doctors with free slots. This is not a diagnosis.",
+    "emergencyNote": "In an emergency (chest pain, can't breathe, stroke signs, fainting), call 112.",
+    "describeTitle": "What symptoms do you have?",
+    "describeHint": "Type or dictate: what you feel, since when, where. You can edit the text before sending it.",
+    "placeholder": "E.g. I have been coughing for two weeks, mostly at night…",
+    "voice": {
+      "title": "Dictate your symptoms",
+      "consentText": "The audio recording is sent to ElevenLabs only to transcribe it. You check the text; nothing is saved.",
+      "consentLabel": "I agree that the recording is sent to ElevenLabs",
+      "start": "Start recording",
+      "again": "Record again",
+      "stop": "Stop and transcribe",
+      "processing": "Transcribing the recording…",
+      "demo": "Demo mode: example text, not what you said. Check it before sending."
+    },
+    "confirmLabel": "I checked the text and confirm it",
+    "confirmHint": "Only the confirmed text is used for the recommendation.",
+    "confirmHintVoice": "Check the transcript and fix anything that was misheard.",
+    "historyLabel": "Use my WWHealth history",
+    "historyHint": "Optional: active conditions, allergies and active medication (no name or identifying data).",
+    "consent": {
+      "title": "Consent to AI processing (Gemini)",
+      "text": "For the specialty recommendation, the confirmed text (and your history, if you choose) is sent to Gemini. It is the same consent as for the AI summary; you can withdraw it anytime in AI Insights.",
+      "withoutIt": "Without consent the emergency rules still work and you can search any specialty manually.",
+      "accept": "I agree"
+    },
+    "submit": "Suggest specialties",
+    "confirmFirst": "Confirm the text above to send it.",
+    "failedTitle": "The recommendation could not be generated",
+    "manualSearch": "Search a specialty manually",
+    "myAppointments": "My appointments",
+    "emergency": {
+      "callTitle": "Call 112 now",
+      "callText": "What you described may be an emergency. Don't wait for an appointment: call 112 or go to the nearest emergency department right away.",
+      "urgentTitle": "Get urgent care today",
+      "urgentText": "Some symptoms need a doctor the same day. If they get worse, call 112. The suggestions below do not replace urgent care.",
+      "detected": "Signs recognised",
+      "call112": "Call 112",
+      "rulesNote": "Message from fixed safety rules, not from AI."
+    },
+    "flags": {
+      "chest_pain": "chest pain",
+      "breathing": "severe difficulty breathing",
+      "stroke": "stroke signs",
+      "unconscious": "loss of consciousness",
+      "seizure": "seizure",
+      "bleeding": "heavy bleeding",
+      "anaphylaxis": "throat / face swelling",
+      "suicidal": "thoughts of self-harm",
+      "meningitis": "fever with a stiff neck",
+      "severe_abdominal": "very severe abdominal pain",
+      "pregnancy_bleeding": "bleeding in pregnancy",
+      "high_fever": "fever of 40 °C or more"
+    },
+    "status_noConsent": {
+      "title": "No AI consent",
+      "text": "Nothing was sent to Gemini. Give consent above or search a specialty manually."
+    },
+    "status_notConfigured": {
+      "title": "AI is not configured on the server",
+      "text": "The AI recommendation is not available right now. You can search any specialty and book directly."
+    },
+    "status_failed": {
+      "title": "AI unavailable right now",
+      "text": "Gemini did not answer. Try again later or search a specialty manually."
+    },
+    "result": {
+      "title": "Suggested specialties",
+      "subtitle": "From the WWHealth catalog. You choose where to book.",
+      "summary": "What you described",
+      "historyUsed": "Data from your WWHealth history was used too.",
+      "questionsTitle": "A few questions",
+      "questionsHint": "Answer only what you know; the recommendation is updated.",
+      "sendAnswers": "Send answers",
+      "first": "First option",
+      "seeDoctors": "See doctors and free slots",
+      "nextStep": "Next step",
+      "warningTitle": "When to go to the emergency department",
+      "discarded_one": "{{count}} AI statement was removed (it broke the safety rules).",
+      "discarded_other": "{{count}} AI statements were removed (they broke the safety rules).",
+      "disclaimer": "Experimental AI suggestion, for information only. It is not a diagnosis, does not rate severity and does not recommend treatment."
+    },
+    "search": {
+      "intro": "Search any specialty, no AI involved.",
+      "placeholder": "E.g. cardiology, skin, eyes",
+      "none": "No specialty found",
+      "noneHint": "Try another word or choose Family medicine."
+    },
+    "doctors": {
+      "title": "Doctors",
+      "intro": "Verified WWHealth doctors with their free slots in the next 14 days.",
+      "noneTitle": "No verified doctor for {{name}} yet",
+      "noSlotsTitle": "{{name}} doctors have no free slots in the next 14 days",
+      "noneText": "You can choose another specialty or a family doctor, who can refer you further.",
+      "otherSpecialty": "Choose another specialty",
+      "familyMedicine": "See family doctors",
+      "familyMedicineName": "Family medicine",
+      "next_one": "Next free slot: {{when}} · {{count}} slot",
+      "next_other": "Next free slot: {{when}} · {{count}} slots",
+      "noSlots": "No free slots in the next 14 days"
+    },
+    "book": {
+      "slotsTitle": "Choose a time",
+      "slotsHint": "Only free slots from the doctor's calendar.",
+      "noSlots": "No free slots",
+      "noteLabel": "Message for the doctor (optional)",
+      "notePlaceholder": "E.g. reason for the visit",
+      "noteHint": "Don't write anything you don't want the doctor to see. Up to 500 characters.",
+      "submit": "Send booking request",
+      "sentTitle": "Request sent",
+      "sentText": "The doctor can accept it, reject it or propose another time. See the answer in My appointments."
+    },
+    "slot": {
+      "booked": "booked"
+    },
+    "status": {
+      "requested": "Pending",
+      "proposed": "New time proposed",
+      "confirmed": "Confirmed",
+      "rejected": "Rejected",
+      "cancelled": "Cancelled"
+    },
+    "appointments": {
+      "doctor": "Doctor",
+      "patient": "Patient",
+      "proposedTime": "Proposed time",
+      "patientNote": "Patient's message",
+      "doctorNote": "Doctor's message",
+      "new": "New appointment",
+      "empty": "No appointments yet",
+      "emptyHint": "Describe your symptoms in Smart Care or search a specialty directly.",
+      "active": "Active",
+      "past": "History",
+      "acceptProposal": "Accept the proposed time",
+      "declineProposal": "Decline",
+      "cancel": "Cancel appointment",
+      "cancelTitle": "Cancel the appointment?",
+      "cancelText": "The slot becomes free again for other patients.",
+      "findAnother": "Find another doctor"
+    },
+    "doctor": {
+      "entry": "Appointments",
+      "entryHint": "Patient requests and your free slots.",
+      "tabs": {
+        "requests": "Requests",
+        "availability": "Availability"
+      },
+      "refresh": "Refresh",
+      "noRequests": "No requests",
+      "noRequestsHint": "Publish free slots in Availability so patients can book you.",
+      "pending_one": "{{count}} pending request",
+      "pending_other": "{{count}} pending requests",
+      "accept": "Accept",
+      "propose": "Propose another time",
+      "reject": "Reject",
+      "rejectTitle": "Reject the request?",
+      "rejectText": "The patient will see the request was rejected and can look for another doctor.",
+      "others": "Other appointments",
+      "privacy": "You see only the patient's name and message. Their record stays available only with their consent (Transfer & Access).",
+      "proposeHint": "Choose a free slot from your calendar:",
+      "noFreeSlots": "You have no free slots. Add some in Availability.",
+      "noteLabel": "Message for the patient (optional)",
+      "sendProposal": "Send proposal",
+      "addTitle": "Add free slots",
+      "day": "Day",
+      "from": "From",
+      "length": "Total length",
+      "hours_one": "{{count}} hour",
+      "hours_other": "{{count}} hours",
+      "slotLength": "Length of one appointment",
+      "publish": "Publish slots",
+      "added_one": "{{count}} slot added.",
+      "added_other": "{{count}} slots added.",
+      "mySlots": "My slots",
+      "mySlotsHint": "Tap a slot to delete it. Booked ones stay valid for the patient.",
+      "noSlots": "No slots published",
+      "noSlotsHint": "Patients see you in search only when you have free slots.",
+      "deleteTitle": "Delete this slot?",
+      "delete": "Delete"
+    },
+    "failure": {
+      "timeout": "Gemini did not answer in time. Try again.",
+      "busy": "Gemini is overloaded right now (we retried automatically). Try again in a minute.",
+      "invalid": "Gemini sent an answer that does not match the required format, so it was not shown. Try again.",
+      "error": "Gemini refused the request. Try again; if it keeps happening, check GEMINI_API_KEY and the model in backend/.env."
+    },
+    "retry": "Try again"
+  }
+}

@@ -1,0 +1,1982 @@
+{
+  "voiceRecording": {"active":"Se înregistrează"},
+  "common": {
+    "email": "Email",
+    "password": "Parolă",
+    "signIn": "Autentificare",
+    "createAccount": "Creează cont",
+    "or": "sau",
+    "retry": "Încearcă din nou",
+    "loading": "Se încarcă…",
+    "save": "Salvează",
+    "cancel": "Anulează",
+    "notAvailable": "—",
+    "clear": "Șterge",
+    "edit": "Editează",
+    "close": "Închide"
+  },
+  "auth": {
+    "emailPlaceholder": "tu@exemplu.com",
+    "login": {
+      "title": "Bine ai revenit",
+      "subtitle": "Autentifică-te pentru a-ți accesa dosarul medical.",
+      "passwordPlaceholder": "Parola ta",
+      "forgot": "Ai uitat parola?",
+      "forgotTodo": "Resetarea parolei nu este disponibilă încă.",
+      "failed": "Autentificarea a eșuat",
+      "noAccount": "Nu ai cont?",
+      "createOne": "Creează unul",
+      "demo": "DEMO — autentificarea nu este conectată. Orice email și parolă funcționează."
+    },
+    "register": {
+      "title": "Creează-ți contul",
+      "subtitle": "Dosarul tău medical, disponibil oriunde în lume.",
+      "fullName": "Nume complet",
+      "passwordPlaceholder": "Cel puțin {{count}} caractere",
+      "confirmPassword": "Confirmă parola",
+      "confirmPlaceholder": "Repetă parola",
+      "passwordsMismatch": "Parolele nu coincid",
+      "mustAcceptTerms": "Trebuie să accepți termenii",
+      "terms": "Sunt de acord cu Termenii și condițiile și cu prelucrarea datelor mele medicale (GDPR).",
+      "failed": "Înregistrarea a eșuat",
+      "haveAccount": "Ai deja cont?",
+      "demo": "DEMO — înregistrarea nu este conectată. Nu se creează niciun cont.",
+      "doctorNote": "Conturile noi sunt de pacient. Conturile de medic sunt activate de un administrator, după verificare."
+    },
+    "role": {
+      "label": "Sunt",
+      "patient": "Pacient",
+      "doctor": "Medic"
+    },
+    "password": {
+      "show": "Arată parola",
+      "hide": "Ascunde parola"
+    },
+    "google": {
+      "button": "Continuă cu Google",
+      "failed": "Autentificarea cu Google a eșuat",
+      "signingIn": "Te autentificăm…",
+      "backToSignIn": "Înapoi la autentificare"
+    },
+    "errors": {
+      "rateLimit": "Prea multe încercări de înregistrare. Așteaptă câteva minute și încearcă din nou.",
+      "wrongCredentials": "Email sau parolă greșită.",
+      "emailNotConfirmed": "Confirmă mai întâi adresa de email, apoi autentifică-te.",
+      "alreadyRegistered": "Există deja un cont cu acest email. Autentifică-te.",
+      "network": "Nu există conexiune la server. Verifică internetul.",
+      "generic": "Ceva n-a mers bine. Încearcă din nou.",
+      "confirmEmail": "Cont creat. Verifică emailul pentru confirmare, apoi autentifică-te.",
+      "googleNotConfigured": "Autentificarea cu Google necesită configurarea Supabase.",
+      "googleIncomplete": "Autentificarea cu Google nu s-a finalizat. Încearcă din nou."
+    }
+  },
+  "validation": {
+    "emailRequired": "Emailul este obligatoriu",
+    "emailInvalid": "Introdu o adresă de email validă",
+    "passwordRequired": "Parola este obligatorie",
+    "passwordMin": "Cel puțin {{count}} caractere",
+    "required": "Câmpul „{{label}}” este obligatoriu"
+  },
+  "tabs": {
+    "index": "Acasă",
+    "explore": "Explorează",
+    "analysis": "LungVision",
+    "history": "Istoric",
+    "settings": "Setări",
+    "scan": "Scanează QR",
+    "access": "Accesări",
+    "patients": "Pacienți",
+    "records": "Dosarul meu",
+    "insights": "AI Insights",
+    "transfer": "Transfer",
+    "family": "Familie",
+    "files": "Dosare",
+    "doctor": {
+      "index": "Panou"
+    }
+  },
+  "screens": {
+    "login": "Autentificare",
+    "register": "Creează cont",
+    "auth/callback": "Autentificare",
+    "history/[id]": "Detalii",
+    "patient/profile": "Profil medical",
+    "patient/edit-profile": "Editează profilul medical",
+    "patient/document/[id]": "Document",
+    "patient/documents": "Documente medicale",
+    "patient/upload-document": "Încarcă document",
+    "patient/xray-results": "Rezultate radiografii",
+    "doctor/index": "Medic",
+    "doctor/patient/[id]/index": "Rezumat pacient",
+    "doctor/patient/[id]/documents": "Documentele pacientului",
+    "patient/emergency": "Pașaport de urgență",
+    "doctor/emergency": "Scanare de urgență",
+    "patient/lab-review/[id]": "Valori de laborator",
+    "patient/lab-trend": "Evoluție analiză",
+    "patient/doctor-access": "Acces medici",
+    "patient/grant-access": "Acordă acces",
+    "patient/summary": "Rezumat medical",
+    "doctor/patient/[id]/labs": "Istoric analize",
+    "doctor/patient/[id]/document/[docId]": "Document",
+    "patient/intelligence": "AI Medical Intelligence",
+    "doctor/patient/[id]/intelligence": "AI Medical Intelligence",
+    "patient/smart-care": "Smart Care",
+    "patient/specialties": "Caută o specialitate",
+    "patient/specialty/[id]": "Medici",
+    "patient/book/[doctorId]": "Programare",
+    "patient/appointments": "Programările mele",
+    "doctor/appointments": "Programări"
+  },
+  "settings": {
+    "title": "Profil",
+    "account": "Cont",
+    "signedIn": "Autentificat",
+    "signOut": "Deconectare",
+    "appearance": "Aspect",
+    "theme": "Temă",
+    "themeLight": "Luminoasă",
+    "themeDark": "Întunecată",
+    "themeSystem": "Sistem",
+    "language": "Limbă",
+    "languageSystem": "Telefon",
+    "general": "General",
+    "notifications": "Notificări",
+    "backend": "Backend",
+    "backendSubtitle": "Configurat în .env → frontend/config/config.ts",
+    "apiUrl": "URL API",
+    "dataSource": "Sursa datelor",
+    "dataMock": "MOCK (date demo)",
+    "dataApi": "API (FastAPI)",
+    "checking": "Se verifică…",
+    "testConnection": "Testează conexiunea",
+    "backendOk": "Backend accesibil",
+    "connectionFailed": "Conexiunea a eșuat",
+    "role": "Rol",
+    "roleSubtitle": "Comutator demo — rolul contului vine din Supabase",
+    "patientArea": "Zona pacientului",
+    "patientAreaValue": "Taburi",
+    "doctorDashboard": "Panou medic",
+    "integrations": "Integrări",
+    "integrationsSubtitle": "Configurate pe backend — nu în aplicație",
+    "supabaseLogin": "Autentificare Supabase",
+    "connected": "Conectat",
+    "notConfigured": "Neconfigurat (demo)",
+    "lungModel": "Model LungVision",
+    "geminiExtraction": "Extragere Gemini",
+    "elevenLabs": "Voce ElevenLabs",
+    "about": "Despre",
+    "activeRole": "Rol activ",
+    "medicalProfile": "Profil medical",
+    "emergencyPassport": "Pașaport de urgență",
+    "replayOnboarding": "Revezi introducerea",
+    "doctorAccess": "Acces medici",
+    "allFeatures": "Toate funcționalitățile"
+  },
+  "app": {
+    "description": "Dosarul tău medical, documentele și analiza radiografiilor asistată de AI — partajabile cu medici verificați, cu acces limitat în timp și revocabil."
+  },
+  "home": {
+    "passportTap": "Apasă pe pașaport ca să-l deschizi",
+    "there": "acolo",
+    "greeting": {
+      "morning": "Bună dimineața",
+      "afternoon": "Bună ziua",
+      "evening": "Bună seara"
+    },
+    "tagline": "dosarul tău medical, în buzunar.",
+    "stats": {
+      "allergies": "Alergii",
+      "activeDiagnoses": "Afecțiuni active",
+      "documents": "Documente",
+      "bloodType": "Grupă sanguină"
+    },
+    "quickActions": "Acțiuni rapide",
+    "recentActivity": "Activitate recentă",
+    "demoData": "Date demo",
+    "medicalHistory": "Istoric medical",
+    "doctorArea": "Zona medicului",
+    "doctorAreaSubtitle": "Comutator demo de rol",
+    "openDoctor": "Deschide panoul medicului",
+    "openDoctorSubtitle": "Scanează pașaportul QR al unui pacient",
+    "hero": {
+      "text": "Încarcă o radiografie toracică și primește o analiză DenseNet121 + Grad-CAM.",
+      "button": "Analizează radiografia",
+      "kicker": "Screening AI"
+    },
+    "actions": {
+      "profile": {
+        "title": "Profil medical",
+        "subtitle": "Alergii, afecțiuni"
+      },
+      "documents": {
+        "title": "Documente",
+        "subtitle": "Încarcă și vizualizează"
+      },
+      "lungvision": {
+        "title": "LungVision AI",
+        "subtitle": "Radiografie toracică"
+      },
+      "passport": {
+        "title": "Pașaport QR",
+        "subtitle": "Partajează cu un medic"
+      },
+      "emergency": {
+        "title": "Pașaport de urgență",
+        "subtitle": "QR de 5 minute pentru medic"
+      },
+      "history": {
+        "title": "Istoric",
+        "subtitle": "Istoricul tău medical"
+      },
+      "intelligence": {
+        "title": "Rezumat AI",
+        "subtitle": "Siguranța întâi, cu surse"
+      },
+      "upload": {
+        "title": "Încarcă document",
+        "subtitle": "Fotografie sau PDF"
+      },
+      "doctorAccess": {
+        "title": "Partajează cu medicul",
+        "subtitle": "Tu alegi ce și cât timp"
+      }
+    },
+    "activity": {
+      "a1": {
+        "title": "Analiză LungVision",
+        "subtitle": "Radiografie toracică · Normal (DEMO)"
+      },
+      "a2": {
+        "title": "Document analizat",
+        "subtitle": "Hemoleucogramă completă · Gemini (DEMO)"
+      },
+      "a3": {
+        "title": "Pașaport partajat",
+        "subtitle": "Dr. Demo · acces 15 min"
+      }
+    },
+    "emergencyQr": "Generează QR de urgență",
+    "openEmergencyQr": "Deschide QR-ul de urgență",
+    "headline": "Sănătatea ta, liniștit, într-un singur loc",
+    "emergency": {
+      "title": "Pașaport de urgență",
+      "text": "Un QR de unică folosință, valabil 5 minute, pentru un medic verificat."
+    },
+    "snapshot": "Pe scurt",
+    "edit": "Editează",
+    "seeAll": "Vezi tot"
+  },
+  "time": {
+    "justNow": "acum",
+    "minAgo": "acum {{count}} min",
+    "hAgo": "acum {{count}} h",
+    "dAgo": "acum {{count}} z"
+  },
+  "explore": {
+    "features": {
+      "dashboard": {
+        "title": "Panou pacient",
+        "description": "Privire de ansamblu asupra dosarului medical."
+      },
+      "profile": {
+        "title": "Profil medical",
+        "description": "Date personale, alergii, afecțiuni, tratamente."
+      },
+      "documents": {
+        "title": "Documente medicale",
+        "description": "Toate documentele încărcate."
+      },
+      "upload": {
+        "title": "Încarcă document",
+        "description": "Încarcă un PDF sau o fotografie a unui document medical."
+      },
+      "lungvision": {
+        "title": "LungVision AI",
+        "description": "Analiza radiografiilor toracice cu DenseNet121 + Grad-CAM."
+      },
+      "xray-results": {
+        "title": "Rezultate radiografii",
+        "description": "Analize LungVision anterioare."
+      },
+      "history": {
+        "title": "Istoric medical",
+        "description": "Cronologia vizitelor, afecțiunilor și analizelor."
+      },
+      "doctor-dashboard": {
+        "title": "Panou medic",
+        "description": "Zona medicului (rol demo)."
+      },
+      "emergency": {
+        "title": "Pașaport de urgență",
+        "description": "QR de unică folosință, 5 minute: grupă sanguină, alergii, afecțiuni, medicație."
+      },
+      "emergency-scan": {
+        "title": "Scanare de urgență",
+        "description": "Scanează QR-ul de urgență al unui pacient (conturi de medic)."
+      },
+      "doctor-access": {
+        "title": "Acces medici",
+        "description": "Partajează secțiunile alese cu un medic verificat pentru 1 oră, 24 de ore sau 7 zile. Revocabil oricând."
+      },
+      "summary": {
+        "title": "Rezumat medical",
+        "description": "Alergii, afecțiuni, medicație, ultimele analize și documente, într-un singur loc."
+      },
+      "doctor-patients": {
+        "title": "Pacienții mei",
+        "description": "Pacienții care ți-au acordat acces (conturi de medic)."
+      },
+      "intelligence": {
+        "title": "AI Medical Intelligence",
+        "description": "Rezumat Gemini al dosarului tău: siguranța întâi, fiecare afirmație legată de sursa ei. Necesită acordul tău."
+      }
+    },
+    "title": "Explorează",
+    "subtitle": "Funcții disponibile acum și idei pentru viitor.",
+    "search": "Caută funcții…",
+    "comingSoon": "În curând — această funcție nu este încă disponibilă.",
+    "noResults": "Nu s-au găsit funcții",
+    "noResultsHint": "Încearcă alt termen sau altă categorie.",
+    "clearFilters": "Șterge filtrele",
+    "soon": "În curând",
+    "categories": {
+      "All": "Toate",
+      "Patient": "Pacient",
+      "Doctor": "Medic",
+      "AI": "AI"
+    }
+  },
+  "profile": {
+    "name": "Nume",
+    "age": "Vârstă",
+    "sex": "Sex",
+    "bloodType": "Grupă sanguină",
+    "heightWeight": "Înălțime / greutate",
+    "emergencyContact": "Contact de urgență",
+    "allergies": "Alergii",
+    "diagnoses": "Afecțiuni",
+    "treatments": "Tratamente",
+    "noneRecorded": "Nimic înregistrat",
+    "since": "din {{date}}",
+    "edit": "Editează profilul",
+    "surgeries": "Intervenții chirurgicale",
+    "noDate": "Dată necunoscută"
+  },
+  "enums": {
+    "sex": {
+      "female": "feminin",
+      "male": "masculin",
+      "other": "altul"
+    },
+    "severity": {
+      "mild": "ușoară",
+      "moderate": "moderată",
+      "severe": "severă"
+    },
+    "diagnosisStatus": {
+      "active": "activă",
+      "resolved": "rezolvată"
+    },
+    "treatment": {
+      "active": "activ",
+      "ended": "încheiat"
+    }
+  },
+  "editProfile": {
+    "unknown": "Necunoscută",
+    "required": "Obligatoriu",
+    "allergies": "Alergii",
+    "addAllergy": "Adaugă alergie",
+    "substance": "Substanță",
+    "substancePlaceholder": "ex. Penicilină",
+    "reaction": "Reacție",
+    "reactionPlaceholder": "ex. Erupție cutanată",
+    "conditions": "Afecțiuni",
+    "addCondition": "Adaugă afecțiune",
+    "condition": "Afecțiune",
+    "conditionPlaceholder": "ex. Astm",
+    "medication": "Medicație",
+    "addMedication": "Adaugă medicament",
+    "medicationName": "Medicament",
+    "medicationPlaceholder": "ex. Inhalator cu budesonidă",
+    "dosage": "Doză",
+    "frequency": "Frecvență",
+    "frequencyPlaceholder": "de 2 ori pe zi",
+    "currentlyTaking": "Îl iau în prezent",
+    "fillOrRemove": "Completează sau șterge elementele goale.",
+    "couldNotSave": "Nu s-a putut salva",
+    "save": "Salvează profilul",
+    "remove": "Șterge",
+    "surgeries": "Intervenții chirurgicale",
+    "addSurgery": "Adaugă intervenție",
+    "surgeryName": "Intervenție",
+    "surgeryPlaceholder": "ex. Apendicectomie",
+    "surgeryDate": "Data (opțional)",
+    "surgeryDatePlaceholder": "AAAA, AAAA-LL sau AAAA-LL-ZZ",
+    "surgeryDateInvalid": "Folosește formatul AAAA, AAAA-LL sau AAAA-LL-ZZ",
+    "surgeryNotes": "Note (opțional)",
+    "surgeryNotesPlaceholder": "ex. spital, complicații documentate"
+  },
+  "documentTypes": {
+    "lab_result": "Analize de laborator",
+    "prescription": "Rețetă",
+    "discharge_summary": "Bilet de externare",
+    "imaging_report": "Raport imagistic",
+    "other": "Altele"
+  },
+  "documents": {
+    "formatPdf": "PDF",
+    "formatImage": "Imagine",
+    "empty": "Niciun document",
+    "emptyHint": "Documentele încărcate apar aici.",
+    "upload": "Încarcă document",
+    "extracted": "Date extrase",
+    "diagnoses": "Afecțiuni",
+    "allergies": "Alergii",
+    "medications": "Medicamente",
+    "loadFailed": "Documentul nu a putut fi încărcat.",
+    "a11yDocument": "Document medical",
+    "noPdfAndroid": "Previzualizarea PDF nu este disponibilă pe Android",
+    "noPdfAndroidHint": "Deocamdată deschide-l pe iOS sau pe web.",
+    "notFound": "Documentul nu a fost găsit",
+    "noFile": "Niciun fișier atașat",
+    "noFileHint": "Aceasta este o intrare demo fără fișier încărcat."
+  },
+  "upload": {
+    "done": "Document încărcat",
+    "doneText": "„{{title}}” a fost adăugat la documente și în istoricul medical.",
+    "open": "Deschide documentul",
+    "back": "Înapoi la documente",
+    "type": "Tipul documentului",
+    "titleLabel": "Titlu (opțional)",
+    "titlePlaceholder": "ex. Analize sânge martie",
+    "tapToChange": "atinge pentru a schimba",
+    "select": "Selectează un document medical",
+    "hint": "PDF, JPEG sau PNG · max. 10 MB",
+    "files": "Fișiere",
+    "gallery": "Galerie",
+    "camera": "Cameră",
+    "upload": "Încarcă",
+    "mockNotice": "Mod MOCK: fișierul rămâne pe acest dispozitiv și nu este încărcat.",
+    "privacyNotice": "Stocat privat și vizibil doar contului tău. Nu se rulează OCR sau AI.",
+    "errors": {
+      "type": "Sunt acceptate doar fișiere PDF, JPEG și PNG.",
+      "size": "Fișierul este prea mare (max. 10 MB).",
+      "camera": "Este necesară permisiunea camerei pentru a face o fotografie."
+    }
+  },
+  "history": {
+    "title": "Istoric medical",
+    "subtitle": "Vizite, afecțiuni, tratamente, documente și radiografii.",
+    "loading": "Se încarcă istoricul…",
+    "empty": "Niciun eveniment încă",
+    "notFound": "Evenimentul nu a fost găsit",
+    "description": "Descriere",
+    "openDocument": "Deschide documentul",
+    "types": {
+      "diagnosis": "Afecțiune",
+      "treatment": "Tratament",
+      "allergy": "Alergie",
+      "document": "Document",
+      "xray": "Radiografie",
+      "visit": "Vizită",
+      "lab": "Analize"
+    },
+    "all": "Toate",
+    "emptyHint": "Aici apar documentele încărcate, rezultatele LungVision salvate și afecțiunile și medicația ta.",
+    "source": {
+      "upload": "Document încărcat",
+      "lungvision": "LungVision AI",
+      "profile": "Profil medical",
+      "visit": "Vizită",
+      "scanner": "Valori confirmate de tine"
+    },
+    "views": {
+      "timeline": "Cronologie",
+      "trends": "Analize"
+    },
+    "periods": {
+      "all": "Oricând",
+      "30d": "30 de zile",
+      "6m": "6 luni",
+      "1y": "1 an"
+    }
+  },
+  "xray": {
+    "empty": "Niciun rezultat de radiografie",
+    "analyze": "Analizează o radiografie",
+    "all": "Toate analizele",
+    "noAnalyses": "Nicio analiză de radiografie",
+    "topFinding": "Rezultat principal",
+    "heatmapPlaceholder": "Loc rezervat pentru harta Grad-CAM",
+    "noAnalysesHint": "Încarcă o radiografie toracică pentru o analiză experimentală LungVision."
+  },
+  "doctor": {
+    "scanPatientQr": "Scanează QR pacient",
+    "scanPatientQrHint": "Pașaport de urgență: grupă sanguină, alergii, afecțiuni și medicație. Fiecare accesare este înregistrată.",
+    "greetingName": "Dr. {{name}}",
+    "emergencyAccess": "Acces de urgență",
+    "heroTitle": "Scanează QR-ul de urgență al pacientului",
+    "stats": {
+      "title": "Activitatea ta",
+      "today": "Deschise azi",
+      "total": "Deschise în total",
+      "denied": "Refuzate"
+    },
+    "recentAccesses": "Accesări recente",
+    "accessLog": {
+      "title": "Istoric accesări",
+      "subtitle": "Fiecare pașaport de urgență deschis sau refuzat. Înregistrat pe server."
+    }
+  },
+  "errors": {
+    "title": "Ceva n-a mers bine",
+    "generic": "Ceva n-a mers bine. Încearcă din nou.",
+    "network": "Serverul WWHealth nu răspunde. Verifică dacă telefonul și Mac-ul sunt în aceeași rețea Wi-Fi și dacă backend-ul rulează.",
+    "forbidden": "Nu ai permisiunea pentru această acțiune.",
+    "notFound": "Resursa cerută nu a fost găsită.",
+    "invalidData": "Serverul a respins datele trimise.",
+    "server": "Serverul a avut o problemă. Încearcă mai târziu.",
+    "timeout": "Serverul răspunde prea greu. Încearcă din nou.",
+    "networkFailed": "Cererea de rețea a eșuat",
+    "status": "Cererea a eșuat cu statusul {{status}}",
+    "camera": "Este necesară permisiunea camerei pentru a face o fotografie.",
+    "profileMissing": "Profilul tău medical nu a fost inițializat în baza de date. Contactează administratorul (lipsește rândul din profiles)."
+  },
+  "image": {
+    "select": "Selectează o imagine",
+    "hint": "Atinge pentru a alege din galerie",
+    "change": "Schimbă imaginea",
+    "remove": "Șterge imaginea",
+    "selectA11y": "Selectează imaginea"
+  },
+  "notFound": {
+    "title": "Pagina nu a fost găsită",
+    "message": "Acest ecran nu există.",
+    "home": "Mergi acasă"
+  },
+  "lung": {
+    "animatePreview": "Apasă pe plămâni pentru a alege radiografia",
+    "subtitle": "Screening experimental pentru pneumonie cu DenseNet121 (antrenat pe PneumoniaMNIST) și explicații Grad-CAM.",
+    "analyzeAnother": "Analizează altă radiografie",
+    "select": "Selectează o radiografie toracică",
+    "selectHint": "Incidența frontală (PA/AP) funcționează cel mai bine",
+    "gallery": "Galerie",
+    "camera": "Cameră",
+    "analyze": "Analizează",
+    "running": "Modelul rulează pe server…",
+    "mockNotice": "Mod MOCK: LungVision este dezactivat deoarece are nevoie de modelul real pe backend. Setează EXPO_PUBLIC_USE_MOCKS=false.",
+    "notice": "Prototip educațional, nu un dispozitiv medical. Imaginea este trimisă doar către backend-ul WWHealth și nu este stocată.",
+    "previous": "Rezultate anterioare",
+    "result": {
+      "positive": {
+        "title": "Posibil tipar de pneumonie detectat",
+        "subtitle": "Clasificare AI: Pozitiv",
+        "explanation": "AI-ul a detectat tipare de imagine asociate cu pneumonia. Acesta nu este un diagnostic confirmat."
+      },
+      "negative": {
+        "title": "Niciun tipar de pneumonie semnalat",
+        "subtitle": "Clasificare AI: Negativ",
+        "explanation": "AI-ul nu a semnalat un tipar de pneumonie în această imagine. Acest lucru nu exclude pneumonia."
+      },
+      "notice": "Prototip educațional, nu un dispozitiv medical. Cere întotdeauna evaluarea radiografiei de către un medic calificat.",
+      "score": "Scor AI",
+      "threshold": " / prag {{threshold}}",
+      "scoreNote": "Scorul este ieșirea sigmoid a clasificatorului, nu o probabilitate clinică validată. Imaginile cu scor de {{threshold}} sau mai mare sunt clasificate ca pozitive.",
+      "original": "Radiografia originală",
+      "heatmap": "Hartă AI",
+      "a11yOriginal": "Radiografia toracică originală",
+      "a11yHeatmap": "Harta Grad-CAM peste imaginea analizată",
+      "noHeatmap": "Serverul nu a returnat o hartă pentru această imagine.",
+      "noOriginal": "Imaginea originală nu este disponibilă.",
+      "lessInfluence": "Influență mică",
+      "moreInfluence": "Influență mare",
+      "heatmapNote": "Culorile calde (roșu, galben) marchează regiunile care au influențat cel mai mult rezultatul AI. Grad-CAM arată unde s-a uitat modelul, nu unde este pneumonia, și poate evidenția zone irelevante. Este desenată pe imaginea pătrată 224×224, decupată central, analizată de model.",
+      "originalNote": "Imaginea ta exact cum ai selectat-o. Nu este stocată pe server.",
+      "technical": "Detalii tehnice",
+      "model": "Model",
+      "rawScore": "Scor brut",
+      "thresholdLabel": "Prag",
+      "processingTime": "Timp de procesare",
+      "imageStorage": "Stocarea imaginii",
+      "notStored": "Nestocată"
+    }
+  },
+  "emergency": {
+    "intro": "În caz de urgență, arată acest QR unui medic. Funcționează o singură dată, timp de 5 minute, și poate fi deschis doar dintr-un cont de medic verificat.",
+    "sharedTitle": "Ce vede medicul",
+    "sharedList": "Grupa sanguină · Alergii · Afecțiuni active · Medicație activă. Nimic altceva: fără nume, contacte, documente sau istoric.",
+    "generate": "Generează QR de urgență",
+    "generateNew": "Generează un QR nou",
+    "revoke": "Revocă QR-ul",
+    "expired": "Acest QR a expirat sau a fost revocat.",
+    "singleUse": "O singură folosire · expiră automat · un QR nou îl anulează pe acesta",
+    "privacyNote": "QR-ul conține doar un cod aleatoriu, fără date medicale. Codul este verificat de serverul WWHealth, iar fiecare accesare apare în jurnalul de mai sus.",
+    "audit": {
+      "title": "Jurnal de accesări",
+      "empty": "Nicio activitate încă.",
+      "created": "QR generat",
+      "revoked": "QR revocat",
+      "viewed": "Deschis de {{name}}",
+      "denied": "Acces refuzat pentru {{name}}",
+      "unknownDoctor": "un cont necunoscut",
+      "reasons": {
+        "not_found": "cod invalid",
+        "expired": "expirat",
+        "used": "deja folosit",
+        "revoked": "revocat",
+        "not_doctor": "nu este cont de medic"
+      },
+      "emptyHint": "Când un medic îți deschide pașaportul, va apărea aici.",
+      "doctorEmpty": "Nicio accesare încă",
+      "doctorEmptyHint": "Scanează QR-ul de urgență al unui pacient și va apărea aici.",
+      "doctor": {
+        "viewed": "Pașaport de urgență deschis",
+        "denied": "Acces refuzat",
+        "created": "QR generat",
+        "revoked": "QR revocat"
+      }
+    },
+    "doctorButton": "Scanare de urgență",
+    "scanIntro": "Scanează QR-ul de urgență al pacientului. Vei vedea doar grupa sanguină, alergiile, afecțiunile și medicația activă. Accesarea este înregistrată.",
+    "cameraPermission": "Pentru scanare e nevoie de acces la cameră. Poți și lipi codul mai jos.",
+    "cameraWeb": "Scanarea cu camera funcționează în aplicația mobilă. Lipește codul mai jos.",
+    "allowCamera": "Permite camera",
+    "manualLabel": "Cod de urgență",
+    "manualPlaceholder": "wwhealth://emergency/…",
+    "open": "Deschide datele de urgență",
+    "denied": "Acces refuzat",
+    "tryAgain": "Scanează din nou",
+    "scanAnother": "Închide și scanează altul",
+    "bloodType": "Grupa sanguină",
+    "allergies": "Alergii",
+    "conditions": "Afecțiuni active",
+    "medications": "Medicație activă",
+    "noneRecorded": "Nimic înregistrat",
+    "accessedAt": "Accesat {{date}} · accesarea este înregistrată",
+    "errors": {
+      "notDoctor": "Doar conturile de medic verificate pot deschide un pașaport de urgență.",
+      "invalid": "Cod invalid. Roagă pacientul să genereze un QR nou.",
+      "used": "Acest QR a fost deja folosit. Roagă pacientul să genereze unul nou.",
+      "expired": "Acest QR a expirat sau a fost revocat. Roagă pacientul să genereze unul nou."
+    },
+    "timeLeft": "Mai sunt {{time}}"
+  },
+  "family": {
+    "title": "QR familiei",
+    "intro": "Adaugă până la 3 membri ai familiei și păstrează QR-urile lor de urgență într-un singur loc. Fiecare QR este valabil 5 minute, iar unul nou este generat de fiecare dată când apeși butonul.",
+    "add": "Adaugă membru al familiei",
+    "addTitle": "Membru nou al familiei",
+    "name": "Nume complet",
+    "namePlaceholder": "ex. Maria Popescu",
+    "nameRequired": "Introdu numele membrului familiei.",
+    "relationship": "Relație (opțional)",
+    "relationshipPlaceholder": "ex. Mamă, tată, copil",
+    "save": "Adaugă membrul familiei",
+    "remove": "Elimină pe {{name}}",
+    "removeAction": "Elimină",
+    "removeMessage": "Elimini pe {{name}} și QR-ul său de pe acest dispozitiv?",
+    "emptyTitle": "Niciun membru al familiei",
+    "emptyMessage": "Adaugă până la 3 membri ai familiei pentru a păstra QR-urile lor de urgență împreună.",
+    "limit": "Poți adăuga până la {{max}} membri ai familiei.",
+    "noQr": "Niciun QR activ. Generează unul pentru a-l arăta într-o urgență.",
+    "expired": "QR-ul a expirat. Generează unul nou pentru a-l arăta din nou.",
+    "generate": "Generează QR-ul familiei",
+    "generateNew": "Generează QR nou",
+    "qrNote": "Valabil 5 minute · un QR nou îl înlocuiește pe acesta",
+    "footer": "Deocamdată o demonstrație: aceste QR-uri sunt salvate doar pe acest dispozitiv și nu deschid încă date medicale."
+  },
+  "roles": {
+    "patient": "Pacient",
+    "doctor": "Medic"
+  },
+  "onboarding": {
+    "skip": "Sari peste",
+    "back": "Înapoi",
+    "next": "Continuă",
+    "save": "Salvează profilul",
+    "start": "Începe",
+    "add": "Adaugă",
+    "remove": "Elimină {{item}}",
+    "progress": "Pasul {{step}} din {{total}}",
+    "patient": {
+      "welcomeTitle": "Bun venit",
+      "welcomeText": "Hai să completăm un profil medical minimal: grupa sanguină, alergii, afecțiuni cronice și medicația curentă. Durează un minut. Fiecare pas e opțional — poți sări și completa mai târziu.",
+      "bloodTitle": "Grupa sanguină",
+      "bloodText": "Alege doar dacă ești sigur(ă). Un medic se poate baza pe ea în urgență.",
+      "bloodUnknown": "Nu știu",
+      "allergiesTitle": "Alergii",
+      "allergiesText": "Adaugă fiecare alergie și cât de severă este. Lasă gol dacă nu ai.",
+      "allergyLabel": "Alergie",
+      "allergyPlaceholder": "ex. Penicilină",
+      "severity": "Severitate",
+      "conditionsTitle": "Afecțiuni cronice",
+      "conditionsText": "Afecțiuni de lungă durată pe care un medic ar trebui să le știe.",
+      "conditionLabel": "Afecțiune",
+      "conditionPlaceholder": "ex. Astm",
+      "medsTitle": "Medicație curentă",
+      "medsText": "Medicamentele pe care le iei acum. Doza e opțională.",
+      "medLabel": "Medicament",
+      "medPlaceholder": "ex. Salbutamol",
+      "doseLabel": "Doză (opțional)",
+      "dosePlaceholder": "ex. 100 mcg",
+      "welcomeTitleName": "Bun venit, {{name}}"
+    },
+    "doctor": {
+      "s1Title": "Scanează QR-ul pacientului",
+      "s1Text": "În urgență, pacientul îți arată un QR valabil o singură dată, 5 minute. Folosește „Scanează QR pacient” din dashboard.",
+      "s2Title": "Doar ce contează",
+      "s2Text": "Vezi grupa sanguină, alergiile, afecțiunile și medicația activă — fără documente, contacte sau istoric.",
+      "s3Title": "Fiecare accesare e înregistrată",
+      "s3Text": "Serverul înregistrează fiecare accesare; pacientul și tu o vedeți în istoricul accesărilor."
+    }
+  },
+  "scanner": {
+    "title": "Scanner valori de laborator",
+    "intro": "Textul este citit pe serverul WWHealth (PDF digital sau OCR local) — nimic nu e trimis altor servicii. Apar doar valorile scrise explicit. Verifică fiecare valoare înainte de salvare. Nu este un diagnostic.",
+    "scan": "Citește valorile din document",
+    "noValues": "Nu am găsit valori de laborator explicite. Poți încărca documentul în continuare.",
+    "review": "{{count}} valori găsite — verifică, corectează sau elimină:",
+    "uploadWithValues": "Încarcă + salvează {{count}} valori",
+    "saved": "{{count}} valori de laborator salvate.",
+    "saveFailed": "Document încărcat, valorile nu au fost salvate",
+    "savedValues": "Valori de laborator confirmate ({{count}})",
+    "name": "Analiză",
+    "value": "Valoare",
+    "unit": "Unitate",
+    "range": "Referință",
+    "source": "Din",
+    "remove": "Elimină {{name}}",
+    "noOcr": "Documentul nu are text digital, iar OCR nu este instalat pe server. Poți încărca documentul în continuare și poți adăuga valorile mai târziu.",
+    "ocrNothing": "Nu am putut citi text din imagine. Încearcă o fotografie mai clară, dreaptă și bine luminată.",
+    "ocrUsed": "Text citit cu OCR — confirmă fiecare valoare comparând-o cu documentul.",
+    "saveFailedShort": "Valorile nu au fost salvate"
+  },
+  "labs": {
+    "flag": {
+      "low": "Sub interval",
+      "high": "Peste interval",
+      "normal": "În interval"
+    },
+    "dateLabel": "Data analizelor (AAAA-LL-ZZ)",
+    "datePlaceholder": "ex. 2026-11-12",
+    "dateInvalid": "Format AAAA-LL-ZZ, o dată reală, nu din viitor",
+    "dateHint": "Data apare în cronologie și în graficele de evoluție.",
+    "dateMissing": "Data nu a fost găsită clar în document. Adaug-o dacă o știi; altfel se folosește data încărcării.",
+    "uncertain": "Valoare incertă — verifică și confirmă",
+    "uncertainHint_one": "{{count}} valoare incertă trebuie confirmată sau eliminată înainte de salvare.",
+    "uncertainHint_few": "{{count}} valori incerte trebuie confirmate sau eliminate înainte de salvare.",
+    "uncertainHint_other": "{{count}} de valori incerte trebuie confirmate sau eliminate înainte de salvare.",
+    "confirm": "Confirm",
+    "reading": "Se citește documentul…",
+    "noValuesTitle": "Nicio valoare",
+    "noValuesText": "Nu există valori de laborator explicite pentru acest document.",
+    "saveConfirmed_one": "Salvează {{count}} valoare confirmată",
+    "saveConfirmed_few": "Salvează {{count}} valori confirmate",
+    "saveConfirmed_other": "Salvează {{count}} de valori confirmate",
+    "deleteAll": "Șterge valorile salvate",
+    "deleteConfirm": "Șterge definitiv",
+    "deleteConfirmText": "Valorile extrase pentru acest document vor fi șterse. Documentul rămâne.",
+    "panelTitle": "Valori de laborator",
+    "panelEmpty": "Citește valorile din acest document și confirmă-le.",
+    "read": "Citește valorile",
+    "measuredOn": "Analize din {{date}}",
+    "reference": "Referință",
+    "eventTitle_one": "Analize de laborator · {{count}} valoare",
+    "eventTitle_few": "Analize de laborator · {{count}} valori",
+    "eventTitle_other": "Analize de laborator · {{count}} de valori",
+    "outsideCount_one": "{{count}} în afara intervalului",
+    "outsideCount_few": "{{count}} în afara intervalului",
+    "outsideCount_other": "{{count}} în afara intervalului",
+    "trendsEmpty": "Nicio analiză salvată",
+    "trendsEmptyHint": "Încarcă un buletin de analize, confirmă valorile și vei vedea aici evoluția lor.",
+    "openTrend": "Deschide evoluția analizei",
+    "measurements_one": "{{count}} măsurătoare",
+    "measurements_few": "{{count}} măsurători",
+    "measurements_other": "{{count}} de măsurători",
+    "trendMissing": "Analiza nu mai există",
+    "unitLabel": "Unitate: {{unit}}",
+    "noUnit": "Fără unitate",
+    "notNumeric": "Valorile nu sunt numerice, așa că nu pot fi reprezentate grafic.",
+    "chartNote": "Graficul include doar valori numerice în aceeași unitate. Zona verde = intervalul de referință din document, când e același la toate măsurătorile.",
+    "allMeasurements": "Toate măsurătorile",
+    "noDate": "Fără dată",
+    "disclaimer": "Comparația cu intervalul de referință nu este un diagnostic. Discută rezultatele cu medicul tău.",
+    "savedTitle": "Analize confirmate",
+    "backToDocument": "Înapoi la document"
+  },
+  "consent": {
+    "intro": "Alege un medic verificat, ce secțiuni vede și pentru cât timp. Poți revoca accesul oricând, cu efect imediat. Pașaportul de urgență rămâne separat.",
+    "grantCta": "Acordă acces unui medic",
+    "previewSummary": "Rezumatul meu medical",
+    "previewSummaryHint": "Ce vede medicul când partajezi toate secțiunile",
+    "active": "Acces activ",
+    "noActive": "Niciun medic nu are acces",
+    "noActiveHint": "Datele tale sunt vizibile doar ție până acorzi acces.",
+    "ended": "Acces încheiat",
+    "history": "Istoric",
+    "historyHint": "Acordări, revocări, vizualizări și încercări refuzate — înregistrate pe server.",
+    "noHistory": "Nicio activitate încă.",
+    "until": "până la {{date}}",
+    "revoke": "Revocă accesul",
+    "revokeTitle": "Revoci accesul?",
+    "revokeMessage": "{{doctor}} nu va mai putea vedea datele tale, începând de acum.",
+    "unknownDoctor": "Medic",
+    "scopes": {
+      "profile": "Profil medical",
+      "documents": "Documente",
+      "labs": "Analize"
+    },
+    "scopeHints": {
+      "profile": "Date de bază, alergii, afecțiuni, medicație curentă",
+      "documents": "Documentele încărcate și fișierele lor",
+      "labs": "Valorile de laborator confirmate și evoluția lor"
+    },
+    "status": {
+      "active": "Activ",
+      "expired": "Expirat",
+      "revoked": "Revocat"
+    },
+    "durations": {
+      "1": "1 oră",
+      "24": "24 de ore",
+      "168": "7 zile"
+    },
+    "events": {
+      "granted": "Acces acordat: {{doctor}}",
+      "revoked": "Acces revocat: {{doctor}}",
+      "viewed": "{{doctor}} ți-a deschis datele",
+      "denied": "Acces refuzat pentru {{doctor}}"
+    },
+    "sections": {
+      "summary": "rezumat",
+      "profile": "profil",
+      "documents": "documente",
+      "labs": "analize",
+      "document_file": "fișier document"
+    },
+    "reasons": {
+      "expired": "acces expirat",
+      "revoked": "acces revocat",
+      "scope": "secțiune nepartajată",
+      "replaced": "înlocuit de un acces nou",
+      "no_grant": "fără acces",
+      "not_doctor": "cont fără rol de medic"
+    },
+    "grant": {
+      "doctor": "Medic",
+      "doctorHint": "Doar medici verificați de administrator. Caută după nume sau introdu codul medicului (ex. DR-1A2B3C).",
+      "searchPlaceholder": "Nume sau cod medic",
+      "noDoctors": "Niciun medic verificat găsit",
+      "noDoctorsHint": "Verifică numele sau cere-i medicului codul din aplicație.",
+      "verified": "Medic verificat",
+      "sections": "Ce partajezi",
+      "sectionsHint": "Medicul vede doar secțiunile alese.",
+      "duration": "Durată",
+      "confirmText": "{{doctor}} va vedea: {{sections}}, timp de {{duration}}.",
+      "submit": "Acordă accesul",
+      "emergencyNote": "Pașaportul de urgență (QR de 5 minute) nu este afectat și nu primește permisiuni în plus."
+    },
+    "summary": {
+      "previewIntro": "Rezumat structurat din datele tale salvate. Nu conține interpretări, diagnostice sau recomandări.",
+      "basics": "Date de bază",
+      "dateOfBirth": "Data nașterii",
+      "conditions": "Afecțiuni existente",
+      "medication": "Medicație curentă",
+      "labs": "Ultimele analize confirmate",
+      "labsHint": "Ultima valoare pentru fiecare analiză și unitate",
+      "noLabs": "Nicio valoare de laborator confirmată.",
+      "range": "interval {{range}}",
+      "documents": "Documente relevante",
+      "notShared": "Nepartajat",
+      "disclaimer": "Valorile sunt afișate exact cum au fost salvate. Rezumatul nu folosește AI și nu oferă diagnostice sau tratamente."
+    },
+    "doctor": {
+      "patientsTitle": "Pacienți",
+      "patientsSubtitle": "Pacienții care ți-au acordat acces. Vezi doar secțiunile partajate, cât timp accesul e valid.",
+      "searchPlaceholder": "Caută după nume",
+      "noPatients": "Niciun pacient încă",
+      "noPatientsHint": "Pacienții îți pot acorda acces din aplicație, căutându-te după nume sau după codul tău.",
+      "noMatch": "Niciun pacient cu acest nume",
+      "ended": {
+        "expired": "Acces expirat la {{date}}",
+        "revoked": "Acces revocat la {{date}}"
+      },
+      "thePatient": "pacientul",
+      "accessUntil": "Acces până la {{date}}",
+      "documents": "Documente",
+      "labHistory": "Istoric analize",
+      "allAnalyses": "Toate analizele",
+      "documentsNotShared": "Pacientul nu a partajat documentele.",
+      "labsNotShared": "Pacientul nu a partajat analizele.",
+      "backToPatients": "Înapoi la pacienți",
+      "dashboardTitle": "Pacienți cu acces",
+      "dashboardSubtitle": "Acces acordat de pacient, pe secțiuni și cu expirare",
+      "yourCode": "Codul tău de medic",
+      "yourCodeHint": "Pacienții îl pot introduce pentru a-ți acorda acces.",
+      "denied": {
+        "none": {
+          "title": "Fără acces",
+          "message": "Nu ai consimțământul acestui pacient. Datele lui nu sunt disponibile."
+        },
+        "expired": {
+          "title": "Acces expirat",
+          "message": "Accesul acordat de {{name}} a expirat. Pacientul îți poate acorda din nou acces."
+        },
+        "revoked": {
+          "title": "Acces revocat",
+          "message": "{{name}} a revocat accesul. Datele nu mai sunt disponibile."
+        },
+        "forbidden": {
+          "title": "Doar pentru medici",
+          "message": "Contul tău nu are rolul de medic. Rolul este atribuit de un administrator."
+        }
+      }
+    }
+  },
+  "ai": {
+    "title": "AI Medical Intelligence",
+    "intro": "Rezumat generat cu Google Gemini doar din datele tale salvate. Informațiile importante pentru siguranță apar primele, iar fiecare afirmație are sursa ei. Nu oferă diagnostice, scoruri de risc sau recomandări de tratament.",
+    "doctorIntro": "Rezumat AI din secțiunile pe care pacientul ți le-a partajat. Fiecare afirmație trimite la datele originale; verifică-le înainte de orice decizie.",
+    "doctorEntryHint": "Rezumat Gemini cu surse, dacă pacientul a consimțit",
+    "overview": "Sinteză generală",
+    "noOverview": "Sinteza a fost eliminată pentru că nu putea fi legată de surse reale. Vezi cardurile de mai jos.",
+    "generatedAt": "Generat la {{date}}",
+    "generate": "Generează rezumatul",
+    "refresh": "Actualizează rezumatul",
+    "generating": "Se generează rezumatul… poate dura până la 30 de secunde.",
+    "failed": "Rezumatul nu a putut fi generat",
+    "none": "Niciun rezumat încă",
+    "noneHint": "Apasă „Generează rezumatul”. Doar datele salvate în profil, documente și analize sunt folosite.",
+    "notConfigured": "AI indisponibil",
+    "notConfiguredHint": "Gemini nu este configurat pe server (GEMINI_API_KEY). Nu se afișează rezultate simulate.",
+    "delete": "Șterge rezumatul",
+    "deleteTitle": "Ștergi rezumatul salvat?",
+    "deleteMessage": "Rezumatul AI va fi șters definitiv de pe server. Datele tale medicale rămân neschimbate.",
+    "emptyCategory": "Nimic de afișat în această categorie.",
+    "discarded_one": "{{count}} afirmație AI a fost eliminată pentru că nu era susținută de o sursă reală.",
+    "discarded_few": "{{count}} afirmații AI au fost eliminate pentru că nu erau susținute de surse reale.",
+    "discarded_other": "{{count}} de afirmații AI au fost eliminate pentru că nu erau susținute de surse reale.",
+    "disclaimer": "Generat automat din datele existente. Nu este un diagnostic și nu înlocuiește evaluarea medicală. Datele nu sunt folosite pentru antrenarea vreunui model.",
+    "doctorNoConsent": "Pacientul nu a consimțit la procesarea AI",
+    "doctorNoConsentHint": "Rezumatul AI poate fi generat doar după ce pacientul își dă acordul în aplicație. Rezumatul medical fără AI rămâne disponibil.",
+    "doctorNone": "Niciun rezumat disponibil pentru accesul tău",
+    "doctorNoneHint": "Pacientul nu are un rezumat salvat sau acesta folosește secțiuni pe care nu ți le-a partajat. Poți genera unul din secțiunile partajate.",
+    "doctorNotStored": "Rezumat generat acum din secțiunile partajate. Nu se salvează.",
+    "categories": {
+      "priority": "Atenție medicală prioritară",
+      "active": "Afecțiuni active și tratamente",
+      "history": "Istoric medical și intervenții",
+      "verify": "Informații care necesită verificare"
+    },
+    "categoryHints": {
+      "priority": "Alergii cu anafilaxie sau severe și analize în afara intervalului de referință (reguli explicite)",
+      "active": "Afecțiuni documentate ca active și medicația curentă",
+      "history": "Intervenții chirurgicale și alte rezultate anterioare",
+      "verify": "Date lipsă, incomplete sau care trebuie confirmate"
+    },
+    "flags": {
+      "anaphylaxis": "Anafilaxie documentată",
+      "severe_allergy": "Alergie severă",
+      "abnormal_lab": "În afara intervalului"
+    },
+    "origin": {
+      "record": "Din dosar",
+      "ai": "Text AI verificat"
+    },
+    "sourceKinds": {
+      "profile": "Profil",
+      "allergy": "Alergie",
+      "condition": "Afecțiune",
+      "medication": "Medicație",
+      "surgery": "Intervenție",
+      "lab": "Analiză",
+      "document": "Document"
+    },
+    "missing": {
+      "missing_blood_type": "Grupa sanguină nu este completată.",
+      "missing_date_of_birth": "Data nașterii nu este completată.",
+      "no_allergies_recorded": "Nu sunt înregistrate alergii (confirmă dacă nu ai niciuna).",
+      "medication_without_dosage": "Medicamentul „{{name}}” nu are doza completată.",
+      "lab_without_range": "Analiza „{{name}}” nu are interval de referință.",
+      "lab_without_date": "Analiza „{{name}}” nu are data recoltării.",
+      "profile_not_shared": "Profilul medical nu a fost inclus.",
+      "documents_not_shared": "Documentele nu au fost incluse.",
+      "labs_not_shared": "Analizele nu au fost incluse."
+    },
+    "consent": {
+      "title": "Consimțământ pentru procesarea AI",
+      "what": "Pentru rezumat, serverul WWHealth trimite către Google Gemini doar fapte minime din dosarul tău: vârsta, sexul, grupa sanguină, alergii, afecțiuni, medicație, intervenții, titlurile și datele documentelor și valorile analizelor confirmate.",
+      "notSent": "Nu se trimit numele, emailul, data nașterii, fișierele documentelor sau textul lor complet. Prompturile nu sunt salvate în loguri.",
+      "storage": "Se păstrează doar ultimul rezumat, ca să vezi data generării. Îl poți șterge oricând; retragerea consimțământului îl șterge imediat.",
+      "accept": "Sunt de acord",
+      "revoke": "Retrage consimțământul",
+      "revokeTitle": "Retragi consimțământul?",
+      "revokeMessage": "Nu se mai trimite nimic către Gemini, iar rezumatul salvat este șters, inclusiv pentru medici."
+    }
+  },
+  "origin": {
+    "legendTitle": "De unde vin datele",
+    "confirmed": {
+      "label": "Confirmat",
+      "text": "Introdus sau verificat de tine. Aceste date pot fi folosite cu încredere."
+    },
+    "extracted": {
+      "label": "Extras automat",
+      "text": "Citit automat dintr-un document (OCR / AI). Verifică-l înainte să-l confirmi."
+    },
+    "ai": {
+      "label": "AI experimental",
+      "text": "Rezultat generat de AI, informativ. Nu este un diagnostic și nu înlocuiește medicul."
+    }
+  },
+  "explain": {
+    "ocr": {
+      "title": "Cum citim documentele (OCR)",
+      "text": "Din PDF-uri și fotografii citim automat valorile de laborator, pe serverul WWHealth. Tu verifici fiecare valoare și o confirmi; doar valorile confirmate intră în dosar."
+    },
+    "gemini": {
+      "title": "Ce face Gemini",
+      "text": "Google Gemini scrie rezumatul AI prin serverul nostru, doar după acordul tău explicit. Primește date minime, fără nume, email sau documente complete, iar fiecare afirmație trebuie să aibă o sursă din dosar."
+    },
+    "lungvision": {
+      "title": "Ce este LungVision",
+      "text": "Un model experimental (DenseNet121) care analizează radiografii toracice și arată zonele urmărite (Grad-CAM). Rezultatul este informativ, nu un diagnostic."
+    },
+    "qr": {
+      "title": "Cum funcționează QR-ul de urgență",
+      "text": "Generezi un cod QR de unică folosință, valabil 5 minute. Un medic verificat îl scanează și vede doar datele de urgență: grupă sanguină, alergii, afecțiuni, medicație. Fiecare accesare apare în istoricul tău."
+    },
+    "consent": {
+      "title": "Tu controlezi accesul",
+      "text": "Alegi medicul, secțiunile (profil, documente, analize) și durata: 1 oră, 24 de ore sau 7 zile. Poți revoca oricând; după revocare medicul nu mai vede nimic."
+    },
+    "voice": {
+      "title": "Voice intake",
+      "text": "Descrii simptomele cu vocea; înregistrarea e transcrisă (ElevenLabs) și transformată într-un formular (Gemini). Tu verifici formularul."
+    }
+  },
+  "journey": {
+    "title": "Cum funcționează WWHealth",
+    "subtitle": "Patru pași, fiecare cu secțiunea lui.",
+    "collect": {
+      "title": "Colectează",
+      "text": "Profil, documente și analize într-un singur dosar."
+    },
+    "understand": {
+      "title": "Înțelege",
+      "text": "Rezumat AI cu surse și LungVision, marcate clar ca AI."
+    },
+    "control": {
+      "title": "Controlează",
+      "text": "Tu decizi cine vede ce și pentru cât timp."
+    },
+    "connect": {
+      "title": "Conectează",
+      "text": "QR de urgență și acces temporar pentru medici."
+    }
+  },
+  "progress": {
+    "title": "Completează-ți dosarul",
+    "count": "{{done}} din {{total}} pași",
+    "hide": "Ascunde",
+    "showAgain": "Arată ghidul de completare pe Acasă",
+    "done": "finalizat",
+    "todo": "de făcut",
+    "nextStep": "Următorul pas recomandat",
+    "steps": {
+      "profile": {
+        "title": "Completează profilul",
+        "why": "Grupa sanguină este prima informație de care are nevoie un medic într-o urgență.",
+        "cta": "Completează profilul"
+      },
+      "history": {
+        "title": "Adaugă istoricul medical",
+        "why": "Alergii, afecțiuni, tratamente sau intervenții — ce trebuie să știe un medic.",
+        "cta": "Adaugă istoricul"
+      },
+      "document": {
+        "title": "Încarcă primul document",
+        "why": "O analiză, o rețetă sau un bilet de externare, în format foto sau PDF.",
+        "cta": "Încarcă un document"
+      },
+      "lab": {
+        "title": "Confirmă prima analiză",
+        "why": "Verifică valorile citite automat dintr-un document și confirmă-le.",
+        "cta": "Deschide documentele"
+      },
+      "ai": {
+        "title": "Vezi rezumatul AI",
+        "why": "Un rezumat al dosarului, cu sursa fiecărei afirmații. Doar cu acordul tău.",
+        "cta": "Deschide rezumatul AI"
+      }
+    },
+    "complete": {
+      "title": "Dosarul tău e complet",
+      "why": "Îl poți partaja temporar cu un medic sau poți genera QR-ul de urgență.",
+      "cta": "Transfer & Access"
+    }
+  },
+  "nextSteps": {
+    "title": "Ce urmează",
+    "labTrends": {
+      "title": "Vezi evoluția analizelor",
+      "text": "Valorile confirmate apar în Istoric, cu documentul sursă."
+    },
+    "refreshAi": {
+      "title": "Actualizează rezumatul AI",
+      "text": "Include noile date în rezumat (cu acordul tău)."
+    },
+    "allDocuments": {
+      "title": "Toate documentele",
+      "text": "Deschide documentul și confirmă valorile citite automat."
+    },
+    "shareDoctor": {
+      "title": "Partajează cu un medic",
+      "text": "Acces temporar, doar la secțiunile alese de tine."
+    }
+  },
+  "hubs": {
+    "records": {
+      "folders": { "symptoms": "Descrie simptomele", "documents": "Documente și analize", "history": "Istoric medical" },
+      "title": "Dosarul meu",
+      "subtitle": "Tot ce ține de sănătatea ta, adunat într-un singur loc.",
+      "aboutYou": "Despre tine",
+      "profile": "Profil medical",
+      "profileCount_one": "{{count}} înregistrare (alergii, afecțiuni, tratamente, intervenții)",
+      "profileCount_few": "{{count}} înregistrări (alergii, afecțiuni, tratamente, intervenții)",
+      "profileCount_other": "{{count}} de înregistrări (alergii, afecțiuni, tratamente, intervenții)",
+      "profileEmpty": "Adaugă alergii, afecțiuni, tratamente și intervenții.",
+      "intake": "Voice intake",
+      "intakeHint": "Descrie simptomele cu vocea; primești un formular de verificat.",
+      "documentsTitle": "Documente și analize",
+      "documentsSubtitle": "Încarci documentul, verifici valorile citite automat, le confirmi.",
+      "documents": "Documente medicale",
+      "documentsCount_one": "{{count}} document",
+      "documentsCount_few": "{{count}} documente",
+      "documentsCount_other": "{{count}} de documente",
+      "labs": "Analize de laborator",
+      "labsCount_one": "{{count}} valoare confirmată din {{docs}} document(e)",
+      "labsCount_few": "{{count}} valori confirmate din {{docs}} document(e)",
+      "labsCount_other": "{{count}} de valori confirmate din {{docs}} document(e)",
+      "labsEmpty": "Nicio valoare confirmată încă. Deschide un document și confirmă valorile.",
+      "upload": "Încarcă un document",
+      "uploadFirst": "Încarcă primul document",
+      "noDocuments": "Niciun document încă",
+      "noDocumentsHint": "Încarcă o analiză, o rețetă sau un bilet de externare. Valorile de laborator sunt citite automat, iar tu le confirmi.",
+      "timelineTitle": "Istoric",
+      "timeline": "Istoric medical",
+      "timelineCount_one": "{{count}} eveniment în ordine cronologică",
+      "timelineCount_few": "{{count}} evenimente în ordine cronologică",
+      "timelineCount_other": "{{count}} de evenimente în ordine cronologică",
+      "timelineEmpty": "Evenimentele apar aici pe măsură ce completezi dosarul."
+    },
+    "insights": {
+      "title": "AI Medical Insights",
+      "subtitle": "Te ajută să înțelegi dosarul. Rezultatele AI sunt marcate clar și nu sunt diagnostice.",
+      "summaryTitle": "Rezumat AI",
+      "summarySubtitle": "Siguranța întâi, fiecare afirmație cu sursa ei.",
+      "aiLoading": "Se verifică starea…",
+      "aiUnknown": "Deschide pentru a vedea starea rezumatului.",
+      "aiNotConfigured": "Nu este disponibil momentan pe server.",
+      "aiNeedsConsent": "Necesită acordul tău explicit înainte de prima generare.",
+      "aiNotGenerated": "Acord dat. Rezumatul nu a fost generat încă.",
+      "aiReady": "Ultima generare: {{date}}",
+      "imagingTitle": "Imagistică",
+      "imagingSubtitle": "Analiză experimentală a radiografiilor toracice.",
+      "xrays": "Analize LungVision anterioare",
+      "xraysCount_one": "{{count}} analiză",
+      "xraysCount_few": "{{count}} analize",
+      "xraysCount_other": "{{count}} de analize",
+      "xraysEmpty": "Nicio analiză încă.",
+      "careTitle": "Smart Care",
+      "careSubtitle": "De la simptome la programare.",
+      "care": "Ce specialitate îmi trebuie?",
+      "careHint": "Descrii simptomele, primești 1–3 specialități și medici cu ore libere.",
+      "specialties": "Caută o specialitate",
+      "specialtiesHint": "Fără AI: alegi direct specialitatea și medicul."
+    },
+    "transfer": {
+      "title": "Transfer & Access",
+      "subtitle": "Tu decizi cine vede ce, pentru cât timp. Poți revoca oricând.",
+      "emergencyTitle": "Urgență",
+      "emergencySubtitle": "Datele vitale, la un QR distanță.",
+      "doctorsTitle": "Medici",
+      "doctorsSubtitle": "Acces temporar, doar la secțiunile alese.",
+      "doctorAccess": "Acces medici",
+      "doctorAccessHint": "Oferă sau revocă accesul unui medic verificat.",
+      "activeGrants_one": "{{count}} acces activ",
+      "activeGrants_few": "{{count}} accese active",
+      "activeGrants_other": "{{count}} de accese active",
+      "noGrants": "Niciun medic nu are acces acum.",
+      "summary": "Ce vede un medic",
+      "summaryHint": "Rezumatul structurat al dosarului, așa cum îl vede un medic cu toate secțiunile.",
+      "appointments": "Programări",
+      "appointmentsHint": "Cererile tale și răspunsurile medicilor."
+    },
+    "doctorRecords": {
+      "title": "Dosare medicale",
+      "subtitle": "Doar ce ți-au permis pacienții, cât timp acordul este valid. Fiecare deschidere este verificată pe server.",
+      "available": "Disponibile acum",
+      "empty": "Niciun dosar disponibil",
+      "emptyHint": "Un pacient îți oferă acces din aplicația lui, folosind codul tău de medic. Accesul expiră automat.",
+      "seePatients": "Vezi pacienții autorizați",
+      "summary": "Rezumat",
+      "ai": "Rezumat AI",
+      "emergencyTitle": "Urgențe",
+      "emergencySubtitle": "Pașapoartele de urgență scanate de tine.",
+      "accessLogHint": "Fiecare pașaport deschis sau refuzat."
+    }
+  },
+  "help": {
+    "open": "Ajutor pentru acest ecran",
+    "canDo": "Ce poți face aici",
+    "steps": "Pas cu pas",
+    "faq": "Întrebări frecvente",
+    "related": "Deschide",
+    "offline": "Acest ajutor este inclus în aplicație și funcționează și fără internet.",
+    "links": {
+      "profile": "Profil medical",
+      "editProfile": "Editează profilul",
+      "documents": "Documente medicale",
+      "upload": "Încarcă document",
+      "timeline": "Istoric medical",
+      "intake": "Voice intake",
+      "intelligence": "Rezumat AI",
+      "lungvision": "LungVision",
+      "xrays": "Analize LungVision anterioare",
+      "emergency": "Pașaport de urgență",
+      "doctorAccess": "Acces medici",
+      "summary": "Ce vede un medic",
+      "explore": "Toate funcționalitățile",
+      "doctorPatients": "Pacienți autorizați",
+      "doctorScan": "Scanează QR",
+      "doctorRecords": "Dosare medicale",
+      "accessLog": "Istoric accesări",
+      "smartCare": "Smart Care",
+      "specialties": "Caută o specialitate",
+      "appointments": "Programările mele",
+      "doctorAppointments": "Programări"
+    },
+    "topics": {
+      "home": {
+    "passportTap": "Apasă pe pașaport ca să-l deschizi",
+        "title": "Acasă",
+        "intro": "Punctul de plecare: ce ai de făcut mai departe și cât de complet e dosarul.",
+        "can": [
+          "Generezi rapid QR-ul de urgență.",
+          "Vezi următorul pas recomandat și cât de complet e dosarul.",
+          "Afli pe scurt la ce folosește fiecare secțiune."
+        ],
+        "steps": [
+          "Urmează cardul „Următorul pas recomandat”.",
+          "Bifează pașii din „Completează-ți dosarul” — se actualizează singuri, din datele tale.",
+          "Folosește tab-urile de jos: Dosarul meu, AI Insights, Transfer, Profil."
+        ],
+        "faq": [
+          {
+            "q": "Pot ascunde lista de pași?",
+            "a": "Da, apasă „Ascunde”. O poți reafișa din Profil → „Arată ghidul de completare pe Acasă”."
+          },
+          {
+            "q": "De unde vin cifrele?",
+            "a": "Doar din dosarul tău real. Nu afișăm date inventate."
+          }
+        ]
+      },
+      "records": {
+        "title": "Dosarul meu",
+        "intro": "Aici aduni informațiile medicale: profilul, documentele, analizele confirmate și istoricul.",
+        "can": [
+          "Completezi profilul medical.",
+          "Încarci documente și confirmi valorile citite automat.",
+          "Vezi istoricul în ordine cronologică.",
+          "Descrii simptomele cu vocea."
+        ],
+        "steps": [
+          "Începe cu profilul medical.",
+          "Încarcă un document (foto sau PDF).",
+          "Verifică valorile extrase și confirmă-le.",
+          "Urmărește evoluția în Istoric."
+        ],
+        "faq": [
+          {
+            "q": "Ce înseamnă „extras automat”?",
+            "a": "Valori citite automat dintr-un document. Intră în dosar abia după ce le confirmi."
+          }
+        ]
+      },
+      "insights": {
+        "title": "AI Medical Insights",
+        "intro": "Instrumente AI care te ajută să înțelegi dosarul. Sunt informative și nu pun diagnostice.",
+        "can": [
+          "Generezi un rezumat AI cu sursa fiecărei afirmații.",
+          "Analizezi experimental o radiografie toracică cu LungVision.",
+          "Revezi analizele anterioare."
+        ],
+        "steps": [
+          "Deschide „Rezumat AI” și citește ce date se trimit.",
+          "Dă-ți acordul explicit, dacă vrei.",
+          "Generează rezumatul și verifică sursele."
+        ],
+        "faq": [
+          {
+            "q": "AI-ul îmi pune un diagnostic?",
+            "a": "Nu. Rezultatele AI sunt marcate „AI experimental” și nu înlocuiesc medicul."
+          },
+          {
+            "q": "Ce date ajung la Gemini?",
+            "a": "Doar fapte minime din dosar, fără nume, email sau documente complete, și doar cu acordul tău."
+          }
+        ]
+      },
+      "transfer": {
+        "title": "Transfer & Access",
+        "intro": "Controlezi cine vede datele tale și pentru cât timp.",
+        "can": [
+          "Generezi un QR de urgență de 5 minute.",
+          "Oferi acces temporar unui medic verificat.",
+          "Revoci oricând un acces.",
+          "Vezi ce vede un medic."
+        ],
+        "steps": [
+          "Pentru urgențe, apasă „Generează QR de urgență”.",
+          "Pentru un medic, deschide „Acces medici” și caută-l.",
+          "Alege secțiunile și durata, apoi confirmă."
+        ],
+        "faq": [
+          {
+            "q": "Ce se întâmplă după revocare?",
+            "a": "Medicul nu mai vede nimic din dosar, nici rezumatul AI salvat."
+          },
+          {
+            "q": "QR-ul de urgență dă acces permanent?",
+            "a": "Nu. E de unică folosință, valabil 5 minute, doar cu datele de urgență."
+          }
+        ]
+      },
+      "profile": {
+        "title": "Profil",
+        "intro": "Contul tău, setările aplicației și scurtături către dosar.",
+        "can": [
+          "Schimbi tema și limba.",
+          "Deschizi profilul medical și accesul medicilor.",
+          "Reafișezi ghidul de completare.",
+          "Te deconectezi."
+        ],
+        "steps": [
+          "Alege tema și limba în „Aspect”.",
+          "Folosește „Toate funcționalitățile” pentru lista completă."
+        ],
+        "faq": [
+          {
+            "q": "Pot schimba rolul (pacient / medic)?",
+            "a": "Nu din aplicație. Rolul este setat pe server."
+          }
+        ]
+      },
+      "medicalProfile": {
+        "title": "Profil medical",
+        "intro": "Datele medicale de bază: grupă sanguină, alergii, afecțiuni, tratamente și intervenții.",
+        "can": [
+          "Vezi profilul complet.",
+          "Editezi grupa sanguină, alergiile, afecțiunile, tratamentele și intervențiile."
+        ],
+        "steps": [
+          "Apasă „Editează profilul”.",
+          "Adaugă sau modifică informațiile.",
+          "Salvează."
+        ],
+        "faq": [
+          {
+            "q": "Cine vede profilul?",
+            "a": "Doar tu și medicii cărora le-ai dat acces la secțiunea Profil, cât timp accesul e valid."
+          }
+        ]
+      },
+      "documents": {
+        "title": "Documente medicale",
+        "intro": "Toate documentele încărcate, cu datele extrase din ele.",
+        "can": [
+          "Încarci documente noi.",
+          "Deschizi un document și confirmi valorile de laborator."
+        ],
+        "steps": [
+          "Apasă „Încarcă document”.",
+          "Deschide documentul încărcat.",
+          "Verifică valorile și confirmă-le."
+        ],
+        "faq": [
+          {
+            "q": "Sunt documentele publice?",
+            "a": "Nu. Sunt private; un medic le vede doar dacă i-ai dat acces la Documente."
+          }
+        ]
+      },
+      "upload": {
+        "title": "Încarcă document",
+        "intro": "Adaugi un document în dosar, ca fotografie sau PDF.",
+        "can": [
+          "Alegi tipul documentului și un titlu.",
+          "Pentru analize, valorile sunt citite automat.",
+          "Confirmi valorile înainte să intre în dosar."
+        ],
+        "steps": [
+          "Alege fișierul.",
+          "Completează titlul și tipul.",
+          "Verifică valorile citite și confirmă."
+        ],
+        "faq": [
+          {
+            "q": "Ce fac dacă o valoare e citită greșit?",
+            "a": "Corecteaz-o în formular înainte de confirmare."
+          }
+        ]
+      },
+      "timeline": {
+        "title": "Istoric medical",
+        "intro": "Evenimentele dosarului în ordine cronologică și evoluția analizelor.",
+        "can": [
+          "Vezi evenimentele pe luni.",
+          "Deschizi detaliile unui eveniment.",
+          "Urmărești evoluția unei analize în timp."
+        ],
+        "steps": [
+          "Alege „Cronologie” sau „Analize”.",
+          "Apasă pe un eveniment sau pe o analiză."
+        ],
+        "faq": [
+          {
+            "q": "De ce nu apare o analiză?",
+            "a": "Doar valorile confirmate apar aici. Confirmă-le din document."
+          }
+        ]
+      },
+      "labs": {
+        "title": "Valori de laborator",
+        "intro": "Verifici valorile citite automat dintr-un document și le confirmi.",
+        "can": [
+          "Corectezi valori, unități și intervale.",
+          "Confirmi valorile.",
+          "Ștergi valorile salvate ale documentului."
+        ],
+        "steps": [
+          "Verifică fiecare rând.",
+          "Completează data analizei.",
+          "Apasă „Salvează”."
+        ],
+        "faq": [
+          {
+            "q": "De ce nu pot salva?",
+            "a": "Unele valori sunt marcate ca nesigure sau data e invalidă. Corectează-le întâi."
+          }
+        ]
+      },
+      "lungvision": {
+        "title": "LungVision",
+        "intro": "Analiză experimentală a radiografiilor toracice (DenseNet121 + Grad-CAM).",
+        "can": [
+          "Încarci o radiografie toracică.",
+          "Vezi probabilitățile modelului și zonele urmărite.",
+          "Revezi analizele anterioare."
+        ],
+        "steps": [
+          "Alege imaginea radiografiei.",
+          "Pornește analiza.",
+          "Citește rezultatul împreună cu un medic."
+        ],
+        "faq": [
+          {
+            "q": "Rezultatul este un diagnostic?",
+            "a": "Nu. Este un rezultat AI experimental, informativ."
+          }
+        ]
+      },
+      "intelligence": {
+        "title": "Rezumat AI",
+        "intro": "Un rezumat al dosarului, scris de Gemini, cu sursa fiecărei afirmații. Informațiile de siguranță apar primele.",
+        "can": [
+          "Îți dai sau îți retragi acordul.",
+          "Generezi și actualizezi rezumatul.",
+          "Deschizi sursele.",
+          "Ștergi rezumatul salvat."
+        ],
+        "steps": [
+          "Citește ce date se trimit.",
+          "Dă-ți acordul.",
+          "Apasă „Generează rezumatul”.",
+          "Verifică sursele fiecărei afirmații."
+        ],
+        "faq": [
+          {
+            "q": "Se păstrează rezumatul?",
+            "a": "Se păstrează doar ultimul rezumat. Îl poți șterge oricând; retragerea acordului îl șterge automat."
+          },
+          {
+            "q": "Un medic vede rezumatul?",
+            "a": "Doar cu un acces valid care acoperă toate secțiunile din care a fost generat."
+          }
+        ]
+      },
+      "emergency": {
+        "title": "Pașaport de urgență",
+        "intro": "Un QR de unică folosință, valabil 5 minute, cu datele de urgență.",
+        "can": [
+          "Generezi un QR.",
+          "Îl anulezi înainte să expire.",
+          "Vezi cine l-a accesat."
+        ],
+        "steps": [
+          "Apasă „Generează”.",
+          "Arată QR-ul medicului.",
+          "După scanare sau 5 minute, codul nu mai funcționează."
+        ],
+        "faq": [
+          {
+            "q": "Ce vede medicul?",
+            "a": "Grupa sanguină, alergiile, afecțiunile și medicația. Nu documentele."
+          }
+        ]
+      },
+      "doctorAccess": {
+        "title": "Acces medici",
+        "intro": "Oferi și revoci acces temporar medicilor verificați.",
+        "can": [
+          "Cauți un medic verificat.",
+          "Alegi secțiunile și durata.",
+          "Revoci accesul.",
+          "Vezi istoricul accesărilor."
+        ],
+        "steps": [
+          "Apasă „Oferă acces”.",
+          "Caută medicul după nume sau cod.",
+          "Alege secțiunile și durata, apoi confirmă."
+        ],
+        "faq": [
+          {
+            "q": "Pot da acces doar la analize?",
+            "a": "Da. Alegi exact secțiunile: profil, documente, analize."
+          }
+        ]
+      },
+      "intake": {
+        "title": "Voice intake",
+        "intro": "Descrii simptomele vorbind; primești un formular de verificat.",
+        "can": [
+          "Înregistrezi simptomele în română sau engleză.",
+          "Verifici și corectezi formularul.",
+          "Îl salvezi pe acest dispozitiv."
+        ],
+        "steps": [
+          "Apasă butonul de înregistrare și vorbește.",
+          "Oprește înregistrarea.",
+          "Verifică formularul și salvează."
+        ],
+        "faq": [
+          {
+            "q": "Formularul e un diagnostic?",
+            "a": "Nu. Organizează doar ce ai spus."
+          }
+        ]
+      },
+      "doctorHome": {
+        "title": "Panou medic",
+        "intro": "Activitatea ta: pașapoarte de urgență scanate și pacienți care ți-au dat acces.",
+        "can": [
+          "Scanezi QR-ul de urgență al unui pacient.",
+          "Vezi statisticile accesărilor tale.",
+          "Vezi codul tău de medic."
+        ],
+        "steps": [
+          "Apasă „Scanează QR pacient”.",
+          "Deschide pacienții autorizați."
+        ],
+        "faq": [
+          {
+            "q": "Cum îmi dă un pacient acces?",
+            "a": "Din aplicația lui, folosind codul tău de medic."
+          }
+        ]
+      },
+      "doctorPatients": {
+        "title": "Pacienți autorizați",
+        "intro": "Pacienții care ți-au dat acces, cu starea fiecărui acord.",
+        "can": [
+          "Cauți un pacient.",
+          "Vezi secțiunile și data expirării.",
+          "Deschizi rezumatul pacientului."
+        ],
+        "steps": [
+          "Caută pacientul.",
+          "Apasă pe numele lui."
+        ],
+        "faq": [
+          {
+            "q": "De ce nu pot deschide un pacient?",
+            "a": "Accesul a expirat sau a fost revocat de pacient."
+          }
+        ]
+      },
+      "doctorScan": {
+        "title": "Scanează QR",
+        "intro": "Scanezi pașaportul de urgență al unui pacient.",
+        "can": [
+          "Scanezi un QR de urgență.",
+          "Vezi datele de urgență ale pacientului."
+        ],
+        "steps": [
+          "Permite accesul la cameră.",
+          "Încadrează codul QR."
+        ],
+        "faq": [
+          {
+            "q": "De ce e refuzat codul?",
+            "a": "Codul a expirat (5 minute), a fost deja folosit sau anulat."
+          }
+        ]
+      },
+      "doctorRecords": {
+        "title": "Dosare medicale",
+        "intro": "Dosarele pe care le poți deschide acum, doar cu secțiunile permise.",
+        "can": [
+          "Deschizi rezumatul, documentele sau analizele unui pacient.",
+          "Vezi rezumatul AI, dacă pacientul a permis.",
+          "Vezi istoricul accesărilor de urgență."
+        ],
+        "steps": [
+          "Alege pacientul.",
+          "Deschide secțiunea dorită."
+        ],
+        "faq": [
+          {
+            "q": "De ce lipsesc documentele unui pacient?",
+            "a": "Pacientul nu a partajat secțiunea Documente."
+          }
+        ]
+      },
+      "doctorPatient": {
+        "title": "Dosarul pacientului",
+        "intro": "Vezi doar secțiunile partajate de pacient, cât timp acordul e valid.",
+        "can": [
+          "Citești rezumatul structurat.",
+          "Deschizi documentele și analizele permise.",
+          "Vezi rezumatul AI."
+        ],
+        "steps": [
+          "Verifică data expirării accesului.",
+          "Deschide secțiunile disponibile."
+        ],
+        "faq": [
+          {
+            "q": "Ce se întâmplă la expirare?",
+            "a": "Datele nu mai sunt afișate. Fiecare deschidere este verificată pe server."
+          }
+        ]
+      },
+      "smartCare": {
+        "title": "Smart Care",
+        "intro": "De la simptome la o cerere de programare.",
+        "faq": [
+          {
+            "q": "Ce face Smart Care?",
+            "a": "Te ajută să alegi o specialitate, să vezi orele libere și să soliciți o programare."
+          },
+          {
+            "q": "Cum se recomandă specialitatea?",
+            "a": "Cu acordul tău, Gemini folosește simptomele confirmate și eventualele răspunsuri. Dacă apar semne de urgență, urmează îndrumarea afișată."
+          },
+          {
+            "q": "Ce date sunt folosite?",
+            "a": "Textul confirmat și, dacă alegi, afecțiunile, alergiile și medicația activă. Înregistrarea este trimisă separat către ElevenLabs pentru transcriere, cu acordul tău."
+          },
+          {
+            "q": "Cum solicit o programare?",
+            "a": "Alege medicul și ora, verifică detaliile și trimite cererea. Vezi răspunsul în Programările mele."
+          },
+          {
+            "q": "Cum gestionez permisiunile?",
+            "a": "Deschide Permisiuni în Smart Care pentru a retrage acordul AI. Controlezi accesul la microfon în setările dispozitivului."
+          }
+        ]
+      },
+      "appointments": {
+        "title": "Programări",
+        "intro": "Cererile tale de programare și răspunsurile medicilor.",
+        "can": [
+          "Vezi cererile în așteptare și cele confirmate.",
+          "Accepți sau refuzi o oră propusă de medic.",
+          "Anulezi o programare."
+        ],
+        "steps": [
+          "Trimite o cerere din Smart Care sau din căutare.",
+          "Așteaptă răspunsul medicului.",
+          "Dacă medicul propune altă oră, confirm-o sau refuz-o."
+        ],
+        "faq": [
+          {
+            "q": "Medicul îmi vede dosarul?",
+            "a": "Nu automat. Vede numele tău și mesajul. Dosarul îl vede doar dacă îi dai acces din Transfer & Access."
+          }
+        ]
+      },
+      "doctorAppointments": {
+        "title": "Programări (medic)",
+        "intro": "Cererile pacienților și orele tale libere.",
+        "can": [
+          "Accepți, respingi sau propui altă oră.",
+          "Publici intervale libere pentru următoarele 90 de zile.",
+          "Ștergi o oră liberă."
+        ],
+        "steps": [
+          "Publică ore în Disponibilitate.",
+          "Răspunde la cereri în Cereri.",
+          "Pacientul confirmă ora propusă."
+        ],
+        "faq": [
+          {
+            "q": "De ce nu apar în căutare?",
+            "a": "Apari după ce un administrator îți asociază specialitatea și ai ore libere publicate."
+          }
+        ]
+      }
+    }
+  },
+  "care": {
+    "flow": {
+      "step": "Pasul {{current}} din 3",
+      "describe": "Cu ce te putem ajuta?",
+      "purpose": "Descrie ce simți ca să afli la ce specialitate te poți adresa.",
+      "continue": "Continuă",
+      "guidance": "Orientare medicală",
+      "recording": "Se înregistrează. Apasă pe stop când ai terminat.",
+      "demoVoice": "Transcrierea live nu este disponibilă. Poți scrie simptomele.",
+      "voiceError": "Transcrierea nu este disponibilă acum. Încearcă din nou sau scrie simptomele.",
+      "microphoneDenied": "Accesul la microfon este oprit. Poți scrie simptomele.",
+      "analyzing": "Se analizează simptomele…",
+      "requestError": "Cererea nu a reușit. Verifică conexiunea și încearcă din nou.",
+      "question": "Întrebarea {{current}} din {{total}}",
+      "skipQuestions": "Păstrează recomandarea inițială",
+      "specialty": "Specialitate recomandată",
+      "hideDetails": "Ascunde detaliile",
+      "details": "Vezi detaliile",
+      "disclaimer": "Recomandarea este orientativă. Diagnosticul se stabilește la consult.",
+      "findDoctor": "Găsește un medic",
+      "unavailable": "Recomandarea nu este disponibilă",
+      "manualFallback": "Poți căuta direct o specialitate.",
+      "reviewConsent": "Verifică acordul AI",
+      "edit": "Editează simptomele",
+      "permissions": "Permisiuni",
+      "audioConsent": "Cu acordul tău, înregistrarea este trimisă către ElevenLabs pentru transcriere. Verifici textul înainte să îl trimiți pentru analiză.",
+      "allowAudio": "Sunt de acord și pornesc microfonul",
+      "mock": "Înregistrarea este indisponibilă în modul demo.",
+      "review": "Confirmă simptomele",
+      "aiConsent": "Cu acordul tău, Gemini primește simptomele confirmate pentru recomandarea specialității. Acordul este comun cu Rezumatul AI. Îl poți retrage aici oricând.",
+      "granted": "Acordul AI este activ.",
+      "confirmText": "Prin continuare, confirmi că textul descrie ce simți.",
+      "analyze": "Confirmă și analizează",
+      "allowAI": "Sunt de acord și confirm textul",
+      "withoutAI": "Confirmă textul și continuă fără AI",
+      "historyPerRequest": "Poți alege să folosești istoricul medical atunci când confirmi simptomele.",
+      "revoke": "Retrage acordul AI",
+      "chooseDoctor": "Alege medicul",
+      "availability": "Vezi orele libere",
+      "reviewBooking": "Verifică programarea",
+      "bookingTime": "De la {{start}} până la {{end}}",
+      "noNote": "Niciun mesaj",
+      "bookingPending": "Medicul va primi cererea și îți va răspunde în Programările mele.",
+      "appointmentDemo": "Medici și intervale de exemplu pentru modul demo."
+    },
+    "intro": "Descrie ce simți. Îți sugerăm 1–3 specialități din catalogul WWHealth și medicii verificați cu ore libere. Nu este un diagnostic.",
+    "emergencyNote": "Dacă ai o urgență (durere în piept, nu poți respira, semne de AVC, leșin), sună la 112.",
+    "describeTitle": "Ce simptome ai?",
+    "describeHint": "Scrie sau dictează: ce simți, de când, unde. Poți corecta textul înainte de trimitere.",
+    "placeholder": "Ex.: tusesc de două săptămâni, mai ales noaptea…",
+    "voice": {
+      "title": "Dictează simptomele",
+      "consentText": "Înregistrarea audio este trimisă către ElevenLabs doar pentru transcriere. Textul îl verifici tu; nimic nu se salvează.",
+      "consentLabel": "Sunt de acord ca înregistrarea să fie trimisă către ElevenLabs",
+      "start": "Începe înregistrarea",
+      "again": "Înregistrează din nou",
+      "stop": "Oprește și transcrie",
+      "processing": "Se transcrie înregistrarea…",
+      "demo": "Mod demo: text de exemplu, nu ce ai spus. Verifică-l înainte de trimitere."
+    },
+    "confirmLabel": "Am verificat textul și îl confirm",
+    "confirmHint": "Doar textul confirmat este folosit pentru recomandare.",
+    "confirmHintVoice": "Verifică transcrierea: corectează ce nu a fost înțeles bine.",
+    "historyLabel": "Folosește istoricul meu WWHealth",
+    "historyHint": "Opțional: afecțiunile active, alergiile și medicația activă (fără nume sau date de identificare).",
+    "consent": {
+      "title": "Acord pentru procesare AI (Gemini)",
+      "text": "Pentru recomandarea de specialități, textul confirmat (și istoricul, dacă alegi) este trimis către Gemini. Este același acord ca pentru rezumatul AI; îl poți retrage oricând din AI Insights.",
+      "withoutIt": "Fără acord, regulile de urgență funcționează în continuare și poți căuta manual orice specialitate.",
+      "accept": "Sunt de acord"
+    },
+    "submit": "Recomandă specialități",
+    "confirmFirst": "Confirmă textul de mai sus ca să poți trimite.",
+    "failedTitle": "Recomandarea nu a putut fi generată",
+    "manualSearch": "Caută manual o specialitate",
+    "myAppointments": "Programările mele",
+    "emergency": {
+      "callTitle": "Sună acum la 112",
+      "callText": "Ce ai descris poate fi o urgență. Nu aștepta o programare: sună la 112 sau mergi imediat la cea mai apropiată unitate de primiri urgențe.",
+      "urgentTitle": "Mergi azi la un serviciu de urgență",
+      "urgentText": "Unele simptome trebuie văzute de un medic în aceeași zi. Dacă se agravează, sună la 112. Sugestiile de mai jos nu înlocuiesc consultul de urgență.",
+      "detected": "Semne recunoscute",
+      "call112": "Sună la 112",
+      "rulesNote": "Mesaj generat de reguli fixe de siguranță, nu de AI."
+    },
+    "flags": {
+      "chest_pain": "durere în piept",
+      "breathing": "dificultate severă de respirație",
+      "stroke": "semne de AVC",
+      "unconscious": "pierderea cunoștinței",
+      "seizure": "convulsii",
+      "bleeding": "sângerare abundentă",
+      "anaphylaxis": "umflarea gâtului / feței",
+      "suicidal": "gânduri de a-ți face rău",
+      "meningitis": "febră cu ceafă înțepenită",
+      "severe_abdominal": "durere abdominală foarte puternică",
+      "pregnancy_bleeding": "sângerare în sarcină",
+      "high_fever": "febră de 40 °C sau peste"
+    },
+    "status_noConsent": {
+      "title": "Fără acord AI",
+      "text": "Nu am trimis nimic către Gemini. Acordă acordul de mai sus sau caută manual o specialitate."
+    },
+    "status_notConfigured": {
+      "title": "AI nu este configurat pe server",
+      "text": "Recomandarea AI nu e disponibilă acum. Poți căuta manual orice specialitate și programa direct."
+    },
+    "status_failed": {
+      "title": "AI indisponibil momentan",
+      "text": "Gemini nu a răspuns. Încearcă din nou mai târziu sau caută manual o specialitate."
+    },
+    "result": {
+      "title": "Specialități sugerate",
+      "subtitle": "Din catalogul WWHealth. Alegi tu unde te programezi.",
+      "summary": "Ce ai descris",
+      "historyUsed": "Au fost folosite și datele din istoricul tău WWHealth.",
+      "questionsTitle": "Câteva întrebări",
+      "questionsHint": "Răspunde doar la ce știi; recomandarea se actualizează.",
+      "sendAnswers": "Trimite răspunsurile",
+      "first": "Prima opțiune",
+      "seeDoctors": "Vezi medici și ore libere",
+      "nextStep": "Pasul următor",
+      "warningTitle": "Când să mergi la urgențe",
+      "discarded_one": "{{count}} afirmație AI a fost eliminată (nu respecta regulile de siguranță).",
+      "discarded_few": "{{count}} afirmații AI au fost eliminate (nu respectau regulile de siguranță).",
+      "discarded_other": "{{count}} de afirmații AI au fost eliminate (nu respectau regulile de siguranță).",
+      "disclaimer": "Sugestie AI experimentală, informativă. Nu este un diagnostic, nu indică gravitatea și nu recomandă tratamente."
+    },
+    "search": {
+      "intro": "Caută orice specialitate, fără AI.",
+      "placeholder": "Ex.: cardiologie, piele, ochi",
+      "none": "Nicio specialitate găsită",
+      "noneHint": "Încearcă alt cuvânt sau alege Medicină de familie."
+    },
+    "doctors": {
+      "title": "Medici",
+      "intro": "Medici verificați WWHealth, cu orele libere din următoarele 14 zile.",
+      "noneTitle": "Niciun medic verificat pentru {{name}} deocamdată",
+      "noSlotsTitle": "Medicii pentru {{name}} nu au ore libere în următoarele 14 zile",
+      "noneText": "Poți alege altă specialitate sau un medic de familie, care te poate îndruma mai departe.",
+      "otherSpecialty": "Alege altă specialitate",
+      "familyMedicine": "Vezi medicii de familie",
+      "familyMedicineName": "Medicină de familie",
+      "next_one": "Următoarea oră liberă: {{when}} · {{count}} interval",
+      "next_few": "Următoarea oră liberă: {{when}} · {{count}} intervale",
+      "next_other": "Următoarea oră liberă: {{when}} · {{count}} de intervale",
+      "noSlots": "Fără ore libere în următoarele 14 zile"
+    },
+    "book": {
+      "slotsTitle": "Alege o oră",
+      "slotsHint": "Doar orele libere din calendarul medicului.",
+      "noSlots": "Nicio oră liberă",
+      "noteLabel": "Mesaj pentru medic (opțional)",
+      "notePlaceholder": "Ex.: motivul consultației",
+      "noteHint": "Nu scrie date pe care nu vrei să le vadă medicul. Maximum 500 de caractere.",
+      "submit": "Trimite cererea de programare",
+      "sentTitle": "Cerere trimisă",
+      "sentText": "Medicul o poate accepta, respinge sau îți poate propune altă oră. Vezi răspunsul în Programările mele."
+    },
+    "slot": {
+      "booked": "rezervat"
+    },
+    "status": {
+      "requested": "În așteptare",
+      "proposed": "Oră propusă",
+      "confirmed": "Confirmată",
+      "rejected": "Respinsă",
+      "cancelled": "Anulată"
+    },
+    "appointments": {
+      "doctor": "Medic",
+      "patient": "Pacient",
+      "proposedTime": "Oră propusă",
+      "patientNote": "Mesajul pacientului",
+      "doctorNote": "Mesajul medicului",
+      "new": "Programare nouă",
+      "empty": "Nicio programare încă",
+      "emptyHint": "Descrie simptomele în Smart Care sau caută direct o specialitate.",
+      "active": "Active",
+      "past": "Istoric",
+      "acceptProposal": "Accept ora propusă",
+      "declineProposal": "Refuz",
+      "cancel": "Anulează programarea",
+      "cancelTitle": "Anulezi programarea?",
+      "cancelText": "Ora devine din nou liberă pentru alți pacienți.",
+      "findAnother": "Caută alt medic"
+    },
+    "doctor": {
+      "entry": "Programări",
+      "entryHint": "Cereri de la pacienți și orele tale libere.",
+      "tabs": {
+        "requests": "Cereri",
+        "availability": "Disponibilitate"
+      },
+      "refresh": "Reîmprospătează",
+      "noRequests": "Nicio cerere",
+      "noRequestsHint": "Publică ore libere în Disponibilitate ca pacienții să te poată programa.",
+      "pending_one": "{{count}} cerere în așteptare",
+      "pending_few": "{{count}} cereri în așteptare",
+      "pending_other": "{{count}} de cereri în așteptare",
+      "accept": "Accept",
+      "propose": "Propun altă oră",
+      "reject": "Resping",
+      "rejectTitle": "Respingi cererea?",
+      "rejectText": "Pacientul va vedea că cererea a fost respinsă și poate căuta alt medic.",
+      "others": "Celelalte programări",
+      "privacy": "Vezi doar numele pacientului și mesajul lui. Dosarul medical rămâne accesibil doar cu acordul lui (Transfer & Access).",
+      "proposeHint": "Alege o oră liberă din calendarul tău:",
+      "noFreeSlots": "Nu ai ore libere. Adaugă din Disponibilitate.",
+      "noteLabel": "Mesaj pentru pacient (opțional)",
+      "sendProposal": "Trimite propunerea",
+      "addTitle": "Adaugă ore libere",
+      "day": "Ziua",
+      "from": "De la",
+      "length": "Durată totală",
+      "hours_one": "{{count}} oră",
+      "hours_few": "{{count}} ore",
+      "hours_other": "{{count}} de ore",
+      "slotLength": "Durata unei programări",
+      "publish": "Publică intervalele",
+      "added_one": "{{count}} interval adăugat.",
+      "added_few": "{{count}} intervale adăugate.",
+      "added_other": "{{count}} de intervale adăugate.",
+      "mySlots": "Orele mele",
+      "mySlotsHint": "Atinge o oră ca să o ștergi. Cele rezervate rămân valabile pentru pacient.",
+      "noSlots": "Nicio oră publicată",
+      "noSlotsHint": "Pacienții te văd în căutare doar dacă ai ore libere.",
+      "deleteTitle": "Ștergi această oră?",
+      "delete": "Șterge"
+    },
+    "failure": {
+      "timeout": "Gemini nu a răspuns la timp. Încearcă din nou.",
+      "busy": "Serviciul Gemini este supraaglomerat acum (am reîncercat automat). Încearcă din nou peste un minut.",
+      "invalid": "Gemini a trimis un răspuns care nu respectă formatul cerut, așa că nu l-am afișat. Încearcă din nou.",
+      "error": "Gemini a refuzat cererea. Încearcă din nou; dacă se repetă, verifică cheia GEMINI_API_KEY și modelul din backend/.env."
+    },
+    "retry": "Încearcă din nou"
+  }
+}
