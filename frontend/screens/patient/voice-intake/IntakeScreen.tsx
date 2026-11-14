@@ -3,7 +3,9 @@ import { StyleSheet, View } from 'react-native';
 
 import { AppButton, AppCard, AppInput, AppText, DemoNotice, LoadingState, ScreenContainer } from '@/design-system';
 import { spacing } from '@/design-system/theme';
-import { useCurrentUser } from '@/services/auth/useCurrentUser';
+import { useLocalPatientId } from '@/services/auth/useCurrentUser';
+import { RecordButton } from './RecordButton';
+import { RecordingFeedback } from './RecordingFeedback';
 import { saveIntake } from './intakeStorage';
 import { useVoiceIntake } from './useVoiceIntake';
 import { useSubmit } from '@/hooks/useSubmit';
@@ -12,8 +14,8 @@ import type { IntakeForm, Symptom } from '@/types';
 const EMPTY_SYMPTOM: Symptom = { name: '', duration: null, severity: null, notes: null };
 
 export function IntakeScreen() {
-  const user = useCurrentUser();
-  return <VoiceIntake key={user?.id} userId={user?.id} />;
+  const userId = useLocalPatientId();
+  return <VoiceIntake key={userId} userId={userId} />;
 }
 
 function VoiceIntake({ userId }: { userId?: string }) {
@@ -31,11 +33,13 @@ function VoiceIntake({ userId }: { userId?: string }) {
       {phase === 'processing' ? (
         <LoadingState message="Preparing your symptom form…" />
       ) : phase === 'recording' ? (
-        <AppButton title="Stop and transcribe" icon="stop-circle-outline" variant="danger" onPress={stop} />
+        <>
+          <RecordingFeedback recorder={intake.recorder} />
+          <RecordButton title="Stop and transcribe" stopping onPress={stop} />
+        </>
       ) : (
-        <AppButton
+        <RecordButton
           title={form ? 'Record again' : 'Start recording'}
-          icon="mic-outline"
           loading={phase === 'starting'}
           disabled={!userId}
           onPress={start}
