@@ -59,7 +59,7 @@ export const APP_INFO = {
   name: 'WWHealth',
   fullName: 'WorldWideHealth',
   version: '1.0.0',
-  description: 'Your medical record, documents and AI-assisted X-ray insights — shareable with doctors via a temporary QR passport.',
+  description: 'Your medical record, documents and AI-assisted X-ray insights — shareable with verified doctors through time-limited, revocable consent.',
 } as const;
 
 /** Shown next to every AI output. */

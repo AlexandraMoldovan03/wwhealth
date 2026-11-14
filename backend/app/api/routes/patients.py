@@ -3,8 +3,10 @@ from fastapi import APIRouter, Depends, HTTPException
 from app.api.supabase_errors import supabase_errors
 from app.core.config import settings
 from app.core.security import CurrentUser, get_current_user
+from app.schemas.doctor_access import MedicalSummary
 from app.schemas.patient import PatientRecord, ProfileUpdate
-from app.services import patient_service, supabase_repo
+from app.services import lab_extraction, patient_service, supabase_repo
+from app.services.medical_summary import build_summary
 
 router = APIRouter(prefix="/patients", tags=["patients"])
 
@@ -29,3 +31,24 @@ def update_me(update: ProfileUpdate, user: CurrentUser = Depends(get_current_use
     if not record:
         raise HTTPException(status_code=404, detail="Patient not found")
     return record
+
+
+@router.get("/me/summary", response_model=MedicalSummary)
+def my_summary(user: CurrentUser = Depends(get_current_user)) -> MedicalSummary:
+    """The patient's own structured summary — the same view a doctor gets when every section is shared."""
+    with supabase_errors():
+        if settings.supabase_enabled:
+            record = supabase_repo.get_record(user)
+            try:
+                labs = supabase_repo.list_lab_values(user)
+            except supabase_repo.LabStorageUnavailable:
+                labs = []
+        else:
+            record = patient_service.get_patient(user.id)
+            titles = {d.id: (d.title, d.uploaded_at[:10]) for d in (record.documents if record else [])}
+            labs = [{**v, "document_title": titles.get(v["document_id"], (None, None))[0],
+                     "document_date": titles.get(v["document_id"], (None, None))[1]}
+                    for v in lab_extraction.demo_list(user.id)]
+    if not record:
+        raise HTTPException(status_code=404, detail="Patient not found")
+    return build_summary(record, record.documents, labs)

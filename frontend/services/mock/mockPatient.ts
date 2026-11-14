@@ -92,5 +92,3 @@ export const MOCK_PATIENT: PatientRecord = {
   ],
 };
 
-/** Demo token that the doctor can type in the QR Scanner screen (MOCK mode). */
-export const DEMO_ACCESS_TOKEN = 'DEMO-1234';

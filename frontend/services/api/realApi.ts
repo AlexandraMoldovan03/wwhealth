@@ -4,6 +4,8 @@ import type { JsonValue, WWHealthApi } from '@/types';
 import { apiClient } from './client';
 import { ENDPOINTS } from './endpoints';
 
+
+const AI_TIMEOUT_MS = 60_000;
 export const realApi: WWHealthApi = {
   health: () => apiClient.get(ENDPOINTS.health, { timeoutMs: 5_000 }),
 
@@ -23,11 +25,6 @@ export const realApi: WWHealthApi = {
   // Model + Grad-CAM run on CPU; the first call also loads the model.
   analyzeLung: (file) => apiClient.upload(ENDPOINTS.lungAnalyze, { file }, {}, { timeoutMs: 60_000 }),
 
-  grantAccess: (request) =>
-    apiClient.post(ENDPOINTS.accessGrant, { scopes: request.scopes, ttlMinutes: request.ttlMinutes }),
-
-  redeemAccess: (request) => apiClient.post(ENDPOINTS.accessRedeem, { token: request.token }),
-
   analyzeIntake: (file) => apiClient.upload(ENDPOINTS.voiceIntake, { file }, {}, { timeoutMs: 190_000 }),
 
   voiceSummary: (request) =>
@@ -46,4 +43,23 @@ export const realApi: WWHealthApi = {
   redeemEmergencyToken: (request) => apiClient.post(ENDPOINTS.emergencyRedeem, { token: request.token }),
   getEmergencyAudit: () => apiClient.get(ENDPOINTS.emergencyAudit),
   getMyEmergencyAccesses: () => apiClient.get(ENDPOINTS.emergencyMyAccesses),
+
+  getMySummary: () => apiClient.get(ENDPOINTS.patientsMeSummary),
+  searchDoctors: (query) => apiClient.get(ENDPOINTS.doctorAccessDoctors, { params: { q: query } }),
+  getDoctorAccess: () => apiClient.get(ENDPOINTS.doctorAccessGrants),
+  grantDoctorAccess: (request) => apiClient.post(ENDPOINTS.doctorAccessGrants, JSON.parse(JSON.stringify(request)) as JsonValue),
+  revokeDoctorAccess: (grantId) => apiClient.post(ENDPOINTS.doctorAccessRevoke(grantId)),
+  getDoctorIdentity: () => apiClient.get(ENDPOINTS.doctorAccessMe),
+  listDoctorPatients: (query = '') => apiClient.get(ENDPOINTS.doctorAccessPatients, { params: { q: query } }),
+  openDoctorPatient: (patientId) => apiClient.get(ENDPOINTS.doctorAccessPatient(patientId)),
+
+  getAiConsent: () => apiClient.get(ENDPOINTS.aiConsent),
+  setAiConsent: (granted) => apiClient.put(ENDPOINTS.aiConsent, { granted }),
+  getMyIntelligence: () => apiClient.get(ENDPOINTS.aiMe),
+  // Gemini may take up to ~30 s on the server.
+  generateMyIntelligence: (language) => apiClient.post(ENDPOINTS.aiMeGenerate, { language }, { timeoutMs: AI_TIMEOUT_MS }),
+  deleteMyIntelligence: () => apiClient.delete(ENDPOINTS.aiMe),
+  getPatientIntelligence: (patientId) => apiClient.get(ENDPOINTS.aiPatient(patientId)),
+  generatePatientIntelligence: (patientId, language) =>
+    apiClient.post(ENDPOINTS.aiPatientGenerate(patientId), { language }, { timeoutMs: AI_TIMEOUT_MS }),
 };

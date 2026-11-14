@@ -35,7 +35,7 @@ export default function TabsLayout() {
           options={{
             // Each role gets its own navigation; hidden tabs stay protected by the backend anyway.
             href: tab.roles.includes(role) ? undefined : null,
-            title: t(`tabs.${tab.name}`, { defaultValue: tab.title }),
+            title: t(`tabs.${role}.${tab.name}`, { defaultValue: t(`tabs.${tab.name}`, { defaultValue: tab.title }) }),
           }}
         />
       ))}

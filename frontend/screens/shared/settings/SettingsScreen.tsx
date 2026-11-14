@@ -6,6 +6,7 @@ import { AppCard, AppText, Avatar, Badge, ScreenContainer, SectionHeader } from 
 import { API_BASE_URL, APP_INFO, SUPABASE_ENABLED, USE_MOCKS } from '@/config/config';
 import { spacing } from '@/design-system/theme';
 import { logout } from '@/services/auth/authService';
+import { setChecklistHidden } from '@/screens/patient/dashboard/progressStorage';
 import { useCurrentUser } from '@/services/auth/useCurrentUser';
 import { SettingsRow } from './components/SettingsRow';
 import { LanguageSelector } from './components/LanguageSelector';
@@ -40,7 +41,7 @@ export function SettingsScreen() {
   };
 
   return (
-    <ScreenContainer>
+    <ScreenContainer help="profile">
       <AppText variant="title" accessibilityRole="header">
         {t('settings.title')}
       </AppText>
@@ -75,8 +76,22 @@ export function SettingsScreen() {
                 <SettingsRow icon="document-text-outline" title={t('settings.medicalProfile')} onPress={() => router.push('/patient/profile')} />
               )}
               {user.role === 'patient' && (
+                <SettingsRow icon="shield-checkmark-outline" title={t('settings.doctorAccess')} onPress={() => router.push('/patient/doctor-access')} />
+              )}
+              {user.role === 'patient' && (
                 <SettingsRow icon="medkit-outline" title={t('settings.emergencyPassport')} onPress={() => router.push('/patient/emergency')} />
               )}
+              {user.role === 'patient' && (
+                <SettingsRow
+                  icon="checkbox-outline"
+                  title={t('progress.showAgain')}
+                  onPress={() => {
+                    void setChecklistHidden(user.id, false);
+                    router.navigate('/');
+                  }}
+                />
+              )}
+              <SettingsRow icon="compass-outline" title={t('settings.allFeatures')} onPress={() => router.navigate('/explore')} />
               <SettingsRow icon="sparkles-outline" title={t('settings.replayOnboarding')} onPress={() => router.push('/onboarding')} />
               <SettingsRow icon="log-out-outline" title={t('settings.signOut')} onPress={signOut} />
             </>

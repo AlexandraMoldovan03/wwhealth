@@ -9,6 +9,7 @@ export * from './components/ErrorState';
 export * from './components/IconBadge';
 export * from './components/LoadingState';
 export * from './components/ScreenContainer';
+export * from './components/AppBackground';
 export * from './components/SectionHeader';
 export * from './components/ImagePickerArea';
 export * from './components/DemoNotice';

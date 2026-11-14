@@ -36,15 +36,26 @@ export function MedicalEventList({
   events,
   onSelect,
   grouped = false,
+  emptyAction,
 }: {
   events: MedicalEvent[];
   onSelect?: (e: MedicalEvent) => void;
   grouped?: boolean;
+  /** CTA in the empty state (patient screens only). */
+  emptyAction?: { label: string; onPress: () => void };
 }) {
   const { colors } = useTheme();
   const { t } = useTranslation();
   if (events.length === 0) {
-    return <EmptyState icon="time-outline" title={t('history.empty')} message={t('history.emptyHint')} />;
+    return (
+      <EmptyState
+        icon="time-outline"
+        title={t('history.empty')}
+        message={t('history.emptyHint')}
+        actionLabel={emptyAction?.label}
+        onAction={emptyAction?.onPress}
+      />
+    );
   }
 
   const months = events.map((e) => monthLabel(e.date));

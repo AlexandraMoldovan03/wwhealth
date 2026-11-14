@@ -1,6 +1,7 @@
 import { StyleSheet, View } from 'react-native';
 
 import { AppCard, AppText, Badge, DemoNotice } from '@/design-system';
+import { DataOriginBadge } from './DataOrigin';
 import { radius, spacing } from '@/design-system/theme';
 import { useTheme } from '@/design-system/useTheme';
 import type { XrayAnalysis } from '@/types';
@@ -22,7 +23,10 @@ export function XrayResultCard({ result, showHeatmap = true }: { result: XrayAna
           </AppText>
           <AppText variant="title">{result.topLabel}</AppText>
         </View>
-        {result.isDemo && <Badge label="DEMO" color={colors.warning} />}
+        <View style={styles.badges}>
+          <DataOriginBadge origin="ai" />
+          {result.isDemo && <Badge label="DEMO" color={colors.warning} />}
+        </View>
       </View>
 
       {showHeatmap && <HeatmapPreview imageUrl={result.imageUrl} heatmapUrl={result.heatmapUrl} />}
@@ -52,6 +56,7 @@ export function XrayResultCard({ result, showHeatmap = true }: { result: XrayAna
 }
 
 const styles = StyleSheet.create({
+  badges: { alignItems: 'flex-end', gap: 4 },
   card: { gap: spacing.md },
   header: { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', gap: spacing.sm },
   headerText: { gap: spacing.xxs },

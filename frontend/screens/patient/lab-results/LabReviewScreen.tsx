@@ -8,6 +8,8 @@ import { LabReviewForm, reviewBlockers } from './components/LabReviewForm';
 import { prepareLabValues, scanMessage } from './labUtils';
 import { useAsync } from '@/hooks/useAsync';
 import { useSubmit } from '@/hooks/useSubmit';
+import { DataOriginBadge } from '@/screens/shared/components/DataOrigin';
+import { NextSteps } from '@/screens/shared/components/NextSteps';
 import { api } from '@/services/backend';
 import type { LabValueEntry } from '@/types';
 import { useTranslation } from 'react-i18next';
@@ -49,9 +51,10 @@ export function LabReviewScreen({ id, extract }: { id: string; extract: boolean 
   const [confirmDelete, setConfirmDelete] = useState(false);
   const blockers = reviewBlockers(values ?? [], date);
 
+  const [savedCount, setSavedCount] = useState<number | null>(null);
   const onSave = async () => {
     const res = await save.run(id, prepareLabValues(values ?? [], date.trim() || null));
-    if (res) router.back();
+    if (res) setSavedCount(res.length);
   };
   const onDelete = async () => {
     const res = await save.run(id, []);
@@ -60,22 +63,46 @@ export function LabReviewScreen({ id, extract }: { id: string; extract: boolean 
 
   if (isLoading && !values) {
     return (
-      <ScreenContainer edges={['bottom']}>
+      <ScreenContainer help="labs" edges={['bottom']}>
         <LoadingState message={extract ? t('labs.reading') : undefined} />
       </ScreenContainer>
     );
   }
   if (error) {
     return (
-      <ScreenContainer edges={['bottom']}>
+      <ScreenContainer help="labs" edges={['bottom']}>
         <ErrorState message={error} onRetry={reload} />
       </ScreenContainer>
     );
   }
 
+  if (savedCount !== null) {
+    return (
+      <ScreenContainer help="labs" edges={['bottom']}>
+        <AppCard style={styles.confirm}>
+          <View style={styles.titleRow}>
+            <AppText variant="heading" style={styles.flex}>{t('labs.savedTitle')}</AppText>
+            <DataOriginBadge origin="confirmed" />
+          </View>
+          <AppText color="textMuted">{t('scanner.saved', { count: savedCount })}</AppText>
+        </AppCard>
+        <NextSteps
+          steps={[
+            { id: 'labTrends', icon: 'analytics-outline', route: '/history' },
+            { id: 'refreshAi', icon: 'sparkles-outline', route: '/patient/intelligence' },
+          ]}
+        />
+        <AppButton title={t('labs.backToDocument')} variant="ghost" onPress={() => router.back()} />
+      </ScreenContainer>
+    );
+  }
+
   return (
-    <ScreenContainer edges={['bottom']}>
-      <AppText color="textMuted">{t('scanner.intro')}</AppText>
+    <ScreenContainer help="labs" edges={['bottom']}>
+      <View style={styles.titleRow}>
+        <AppText color="textMuted" style={styles.flex}>{t('scanner.intro')}</AppText>
+        <DataOriginBadge origin={data?.saved ? 'confirmed' : 'extracted'} />
+      </View>
       {data?.info && (
         <AppCard tone="muted">
           <AppText variant="caption" color="warning">
@@ -128,5 +155,6 @@ export function LabReviewScreen({ id, extract }: { id: string; extract: boolean 
 const styles = StyleSheet.create({
   confirm: { gap: spacing.sm },
   row: { flexDirection: 'row', gap: spacing.sm },
+  titleRow: { flexDirection: 'row', alignItems: 'flex-start', gap: spacing.sm },
   flex: { flex: 1 },
 });

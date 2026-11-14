@@ -13,6 +13,7 @@ import '@/i18n'; // initialises i18next before any screen renders
 import { STACK_SCREENS } from '@/config/navigation';
 import { fonts } from '@/design-system/theme';
 import { ThemeProvider } from '@/design-system/ThemeContext';
+import { HelpProvider } from '@/help';
 import { useSignedIn } from '@/services/auth/useSignedIn';
 import { useTheme } from '@/design-system/useTheme';
 import { useTranslation } from 'react-i18next';
@@ -102,7 +103,9 @@ export default function RootLayout() {
   if (!fontsLoaded && !fontError) return null;
   return (
     <ThemeProvider>
-      <RootNavigator />
+      <HelpProvider>
+        <RootNavigator />
+      </HelpProvider>
     </ThemeProvider>
   );
 }

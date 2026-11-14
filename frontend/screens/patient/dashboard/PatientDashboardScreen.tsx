@@ -1,28 +1,32 @@
-import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { RefreshControl, StyleSheet, View } from 'react-native';
 
-import { AppButton, AppText, ErrorState, GradientCard, LoadingState, ScreenContainer, SectionHeader, StatTile } from '@/design-system';
-import { gradients, spacing } from '@/design-system/theme';
-import { QUICK_ACTIONS } from './quickActions';
+import { ErrorState, ScreenContainer, SectionHeader, StatTile } from '@/design-system';
+import { spacing } from '@/design-system/theme';
 import { useCurrentUser } from '@/services/auth/useCurrentUser';
-import { MedicalEventList } from '@/screens/shared/components/MedicalEventList';
-import { HeroCard } from './components/HeroCard';
-import { QuickActionGrid } from './components/QuickActionGrid';
+import { EmergencyCard } from './components/EmergencyCard';
+import { JourneyCards } from './components/JourneyCards';
+import { NextStepCard } from './components/NextStepCard';
+import { ProgressChecklist } from './components/ProgressChecklist';
+import { useRecordProgress } from './useRecordProgress';
 import { WelcomeHeader } from '@/screens/shared/components/WelcomeHeader';
 import { useAsync } from '@/hooks/useAsync';
 import { useTheme } from '@/design-system/useTheme';
 import { api } from '@/services/backend';
 import { useTranslation } from 'react-i18next';
 
-/** Patient Dashboard — Home tab for accounts with role `patient` in Supabase. All numbers come from the real record. */
+/**
+ * Patient Home — action-oriented: welcome, Emergency Passport one tap away, the recommended next step,
+ * real record progress (hideable), snapshot, what each section is for.
+ * Every number comes from the patient's real record.
+ */
 export function PatientDashboardScreen() {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const user = useCurrentUser();
   const { data: patient, isLoading, error, reload } = useAsync(api.getMyPatient, { refetchOnFocus: true });
+  const progress = useRecordProgress(patient);
   const name = patient?.fullName || user?.fullName || t('home.there');
-
 
   const loading = !patient && isLoading;
   const stats = [
@@ -37,63 +41,38 @@ export function PatientDashboardScreen() {
   ];
 
   return (
-    <ScreenContainer refreshControl={<RefreshControl refreshing={isLoading && !!patient} onRefresh={reload} tintColor={colors.primary} />}>
+    <ScreenContainer help="home" refreshControl={<RefreshControl refreshing={isLoading && !!patient} onRefresh={reload} tintColor={colors.primary} />}>
       <WelcomeHeader name={name} roleLabel={t('roles.patient')} headline={t('home.headline')} />
 
-      <GradientCard colors={gradients.emergency} enterIndex={1}>
-        <View style={styles.emergencyRow}>
-          <View style={styles.emergencyIcon}>
-            <Ionicons name="medkit" size={24} color="#B9505F" />
-          </View>
-          <View style={styles.flex}>
-            <AppText variant="heading" style={styles.ink}>
-              {t('home.emergency.title')}
-            </AppText>
-            <AppText variant="caption" style={styles.inkSoft}>
-              {t('home.emergency.text')}
-            </AppText>
-          </View>
-        </View>
-        <AppButton
-          title={t('home.emergencyQr')}
-          icon="qr-code-outline"
-          variant="danger"
-          fullWidth
-          onPress={() => router.push('/patient/emergency')}
-        />
-      </GradientCard>
+      <EmergencyCard enterIndex={1} />
+
+      {error && !patient ? (
+        <ErrorState message={error} onRetry={reload} />
+      ) : (
+        progress.ready && (
+          <>
+            <NextStepCard next={progress.next} enterIndex={2} />
+            {!progress.hidden && (
+              <ProgressChecklist steps={progress.steps} doneCount={progress.doneCount} onHide={() => progress.hide(true)} enterIndex={3} />
+            )}
+          </>
+        )
+      )}
 
       <View style={styles.section}>
         <SectionHeader title={t('home.snapshot')} actionLabel={t('home.edit')} onActionPress={() => router.push('/patient/edit-profile')} />
-        {error && !patient ? (
-          <ErrorState message={error} onRetry={reload} />
-        ) : (
-          <View style={styles.stats}>
-            {stats.map((s, i) => (
-              <StatTile key={s.label} {...s} enterIndex={2 + i} onPress={() => router.push('/patient/profile')} />
-            ))}
-          </View>
-        )}
+        <View style={styles.stats}>
+          {stats.map((s, i) => (
+            <StatTile key={s.label} {...s} enterIndex={4 + i} onPress={() => router.push('/patient/profile')} />
+          ))}
+        </View>
       </View>
 
       <View style={styles.section}>
-        <SectionHeader title={t('home.quickActions')} />
-        <QuickActionGrid actions={QUICK_ACTIONS} startIndex={4} />
+        <SectionHeader title={t('journey.title')} subtitle={t('journey.subtitle')} />
+        <JourneyCards startIndex={6} />
       </View>
 
-      <HeroCard enterIndex={6} />
-
-      <View style={styles.section}>
-        <SectionHeader title={t('home.recentActivity')} actionLabel={t('home.seeAll')} onActionPress={() => router.navigate('/history')} />
-        {loading ? (
-          <LoadingState count={2} />
-        ) : (
-          <MedicalEventList
-            events={(patient?.history ?? []).slice(0, 3)}
-            onSelect={(e) => router.push({ pathname: '/history/[id]', params: { id: e.id } })}
-          />
-        )}
-      </View>
     </ScreenContainer>
   );
 }
@@ -101,17 +80,4 @@ export function PatientDashboardScreen() {
 const styles = StyleSheet.create({
   section: { gap: spacing.md },
   stats: { flexDirection: 'row', gap: spacing.sm },
-  emergencyRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.md },
-  emergencyIcon: {
-    width: 52,
-    height: 52,
-    borderRadius: 18,
-    backgroundColor: 'rgba(255,255,255,0.92)',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  flex: { flex: 1, gap: spacing.xxs },
-  // The coral card is light in both themes → fixed dark text keeps AA contrast.
-  ink: { color: '#1C2E34' },
-  inkSoft: { color: '#3E4F55' },
 });

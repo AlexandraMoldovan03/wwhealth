@@ -12,7 +12,7 @@ export function MedicalDocumentsScreen() {
 
 
   return (
-    <ScreenContainer edges={['bottom']}>
+    <ScreenContainer help="documents" edges={['bottom']}>
       <AppButton title={t('documents.upload')} icon="cloud-upload-outline" fullWidth onPress={() => router.push('/patient/upload-document')} />
       {isLoading && !data && <LoadingState />}
       {error && <ErrorState message={error} onRetry={reload} />}

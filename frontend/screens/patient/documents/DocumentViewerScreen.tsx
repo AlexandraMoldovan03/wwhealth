@@ -3,7 +3,7 @@ import { StyleSheet, View } from 'react-native';
 
 import { AppText, EmptyState, ErrorState, LoadingState, ScreenContainer } from '@/design-system';
 import { radius, spacing } from '@/design-system/theme';
-import { DocumentPreview } from './components/DocumentPreview';
+import { DocumentPreview } from '@/screens/shared/components/DocumentPreview';
 import { LabValuesPanel } from './components/LabValuesPanel';
 import { getDocumentMeta } from '@/screens/shared/components/documentMeta';
 import { useAsync } from '@/hooks/useAsync';

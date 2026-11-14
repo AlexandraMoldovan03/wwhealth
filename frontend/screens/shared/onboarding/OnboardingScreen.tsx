@@ -1,13 +1,12 @@
 import { Ionicons } from '@expo/vector-icons';
-import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import Animated from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { AppButton, AppCard, AppInput, AppText, ErrorState, enterUp, tapFeedback } from '@/design-system';
-import { gradients, radius, sizes, spacing } from '@/design-system/theme';
+import { AppBackground, AppButton, AppCard, AppInput, AppText, ErrorState, enterUp, tapFeedback } from '@/design-system';
+import { radius, sizes, spacing } from '@/design-system/theme';
 import { useCurrentUser } from '@/services/auth/useCurrentUser';
 import { CategoryFilter } from '@/design-system/components/CategoryFilter';
 import { ChipList } from './components/ChipList';
@@ -32,7 +31,7 @@ const uid = () => Math.random().toString(36).slice(2, 10);
  * Doctor: three short screens about the emergency flow. Both can be skipped and reopened from Profile.
  */
 export function OnboardingScreen() {
-  const { colors, isDark } = useTheme();
+  const { colors } = useTheme();
   const { t } = useTranslation();
   const user = useCurrentUser();
   const isDoctor = user?.role === 'doctor';
@@ -239,7 +238,8 @@ export function OnboardingScreen() {
   };
 
   return (
-    <LinearGradient colors={isDark ? gradients.calmDark : gradients.calm} style={styles.flex}>
+    <View style={[styles.flex, { backgroundColor: colors.background }]}>
+      <AppBackground />
       <SafeAreaView style={styles.flex} edges={['top', 'bottom']}>
         <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
           <View style={styles.topBar}>
@@ -274,7 +274,7 @@ export function OnboardingScreen() {
           </View>
         </KeyboardAvoidingView>
       </SafeAreaView>
-    </LinearGradient>
+    </View>
   );
 }
 

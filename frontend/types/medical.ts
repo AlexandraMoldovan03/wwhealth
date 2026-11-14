@@ -32,6 +32,14 @@ export interface Treatment {
   active: boolean;
 }
 
+/** Surgical history. date: 'YYYY', 'YYYY-MM' or 'YYYY-MM-DD' — as precise as the patient knows it. */
+export interface Surgery {
+  id: string;
+  name: string;
+  date: string | null;
+  notes: string;
+}
+
 export interface EmergencyContact {
   name: string;
   phone: string;
@@ -50,6 +58,8 @@ export interface PatientProfile {
   allergies: Allergy[];
   diagnoses: Diagnosis[];
   treatments: Treatment[];
+  /** Missing on servers without migration 20261116000000. */
+  surgeries?: Surgery[];
 }
 
 /** 'lab' = confirmed lab values of a document (built in the app from GET /documents/lab-values). */
@@ -125,8 +135,6 @@ export interface PatientRecord extends PatientProfile {
   xrays: XrayAnalysis[];
 }
 
-export type AccessScope = 'profile' | 'history' | 'documents' | 'xrays';
-
 // ---------- Requests / responses ----------
 
 export interface HealthResponse {
@@ -136,31 +144,6 @@ export interface HealthResponse {
 
 export interface DocumentAnalyzeResponse {
   document: MedicalDocument;
-}
-
-export interface AccessGrantRequest {
-  scopes: AccessScope[];
-  ttlMinutes: number;
-}
-
-export interface AccessGrantResponse {
-  token: string;
-  /** String to encode in the QR code (e.g. "wwhealth://access/<token>"). */
-  qrPayload: string;
-  expiresAt: string;
-  scopes: AccessScope[];
-}
-
-export interface AccessRedeemRequest {
-  token: string;
-}
-
-export interface AccessRedeemResponse {
-  accessId: string;
-  expiresAt: string;
-  scopes: AccessScope[];
-  /** Filtered by scopes: arrays outside the granted scopes are empty. */
-  patient: PatientRecord;
 }
 
 export interface VoiceSummaryRequest {
@@ -205,12 +188,20 @@ export interface TreatmentInput {
   active: boolean;
 }
 
+export interface SurgeryInput {
+  id?: string;
+  name: string;
+  date?: string | null;
+  notes?: string;
+}
+
 /** PATCH /api/v1/patients/me — only the fields sent are changed; lists replace the whole list. */
 export interface ProfileUpdate {
   bloodType?: BloodType | null;
   allergies?: AllergyInput[];
   diagnoses?: DiagnosisInput[];
   treatments?: TreatmentInput[];
+  surgeries?: SurgeryInput[];
 }
 
 /** POST /api/v1/documents (PDF / JPEG / PNG, no OCR). */

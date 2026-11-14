@@ -1,6 +1,7 @@
 import { View } from 'react-native';
 
 import { Badge, EmptyState, ListRow } from '@/design-system';
+import { DataOriginBadge } from './DataOrigin';
 import { spacing } from '@/design-system/theme';
 import { useTheme } from '@/design-system/useTheme';
 import type { MedicalDocument } from '@/types';
@@ -30,7 +31,7 @@ export function DocumentList({ documents, onSelect }: { documents: MedicalDocume
               icon={meta.icon}
               title={doc.title}
               subtitle={[t(`documentTypes.${meta.value}`), format, formatDateTime(doc.uploadedAt)].filter(Boolean).join(' · ')}
-              right={doc.isDemo ? <Badge label="DEMO" color={colors.warning} /> : undefined}
+              right={doc.isDemo ? <Badge label="DEMO" color={colors.warning} /> : doc.extraction ? <DataOriginBadge origin="extracted" /> : undefined}
               onPress={canOpen ? () => onSelect(doc) : undefined}
             />
             {doc.extraction && <ExtractionView extraction={doc.extraction} />}

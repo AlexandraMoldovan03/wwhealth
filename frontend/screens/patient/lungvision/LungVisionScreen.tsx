@@ -21,7 +21,7 @@ export function LungVisionScreen() {
 
   return (
     // New key when the result appears → fresh ScrollView at the top, so the classification is the first thing seen.
-    <ScreenContainer key={showResult ? 'result' : 'select'}>
+    <ScreenContainer help="lungvision" key={showResult ? 'result' : 'select'}>
       {showResult ? (
         <View style={styles.titleRow}>
           <AppText variant="title" accessibilityRole="header">

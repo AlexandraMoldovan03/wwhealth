@@ -28,7 +28,11 @@ export function XrayResultsScreen() {
       {data.xrays.length > 1 && (
         <>
           <SectionHeader title={t('xray.all')} />
-          <XrayList xrays={data.xrays} onSelect={(x) => router.setParams({ id: x.id })} />
+          <XrayList
+            xrays={data.xrays}
+            onSelect={(x) => router.setParams({ id: x.id })}
+            emptyAction={{ label: t('home.hero.button'), onPress: () => router.navigate('/analysis') }}
+          />
         </>
       )}
     </ScreenContainer>

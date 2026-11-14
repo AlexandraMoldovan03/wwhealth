@@ -26,6 +26,10 @@ class Settings(BaseSettings):
     supabase_documents_bucket: str = "medical-documents"
 
     gemini_api_key: str = ""
+    # AI Medical Intelligence (Google Gen AI SDK). Any text model the key can use; override in backend/.env.
+    gemini_summary_model: str = "gemini-3.5-flash-lite"
+    gemini_timeout_seconds: float = 30.0
+    ai_summary_per_user_per_hour: int = 6
     elevenlabs_api_key: str = ""
     elevenlabs_voice_id: str = ""
 

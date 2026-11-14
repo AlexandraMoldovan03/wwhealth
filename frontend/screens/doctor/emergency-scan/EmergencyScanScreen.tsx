@@ -50,7 +50,7 @@ export function EmergencyScanScreen({ inTab = false }: { inTab?: boolean }) {
 
   if (data) {
     return (
-      <ScreenContainer edges={inTab ? ['top'] : ['bottom']}>
+      <ScreenContainer help="doctorScan" edges={inTab ? ['top'] : ['bottom']}>
         <Animated.View entering={popIn}>
           <EmergencyDataView data={data} />
         </Animated.View>
@@ -61,7 +61,7 @@ export function EmergencyScanScreen({ inTab = false }: { inTab?: boolean }) {
 
   const cameraReady = Platform.OS !== 'web' && permission?.granted;
   return (
-    <ScreenContainer edges={inTab ? ['top'] : ['bottom']}>
+    <ScreenContainer help="doctorScan" edges={inTab ? ['top'] : ['bottom']}>
       {inTab && (
         <AppText variant="title" accessibilityRole="header">
           {t('doctor.scanPatientQr')}

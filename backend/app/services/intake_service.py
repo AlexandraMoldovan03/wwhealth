@@ -75,6 +75,10 @@ async def structure(transcript: str) -> IntakeDetails:
 
 async def build_form(audio: bytes, filename: str, content_type: str) -> IntakeForm:
     if not settings.elevenlabs_api_key or not settings.gemini_api_key:
+        if settings.supabase_enabled:
+            # Real accounts never get example symptoms in place of what the patient said.
+            missing = "ELEVENLABS_API_KEY" if not settings.elevenlabs_api_key else "GEMINI_API_KEY"
+            raise HTTPException(503, f"Voice intake is not configured on the server ({missing} missing in backend/.env)")
         return IntakeForm(
             transcript="De trei zile mă doare capul și am febră, mai ales seara.",
             language="ro",

@@ -30,7 +30,7 @@ export function AppTabBar({ state, descriptors, emitter, navigateToTab }: Bottom
 
   const items = state.routes
     .map((route, index) => ({ route, index, tab: TABS.find((t) => t.name === route.name) }))
-    .filter((it): it is typeof it & { tab: TabConfig } => !!it.tab && it.tab.roles.includes(role));
+    .filter((it): it is typeof it & { tab: TabConfig } => !!it.tab && !it.tab.parent && it.tab.roles.includes(role));
 
   return (
     <View
@@ -46,7 +46,9 @@ export function AppTabBar({ state, descriptors, emitter, navigateToTab }: Bottom
       ]}
     >
       {items.map(({ route, index, tab }) => {
-        const focused = state.index === index;
+        // A hidden route (e.g. /history inside "My record") keeps its section highlighted.
+        const current = TABS.find((t) => t.name === state.routes[state.index]?.name);
+        const focused = state.index === index || current?.parent === tab.name;
         const options = descriptors[route.key]?.options;
         const label = typeof options?.title === 'string' ? options.title : tab.title;
         return (
@@ -58,7 +60,7 @@ export function AppTabBar({ state, descriptors, emitter, navigateToTab }: Bottom
             activeColor={role === 'doctor' ? colors.accent : colors.primary}
             onPress={() => {
               const event = emitter.emit({ type: 'tabPress', target: route.key, canPreventDefault: true });
-              if (!focused && !event.defaultPrevented) {
+              if (state.index !== index && !event.defaultPrevented) {
                 tapFeedback();
                 navigateToTab(route.key);
               }

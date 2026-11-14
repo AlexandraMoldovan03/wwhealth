@@ -21,7 +21,7 @@ function VoiceIntake({ userId }: { userId?: string }) {
   const { form, phase, start, stop, error } = intake;
 
   return (
-    <ScreenContainer edges={['bottom']}>
+    <ScreenContainer help="intake" edges={['bottom']}>
       <AppText variant="title">Describe your symptoms</AppText>
       <AppText color="textMuted">
         Speak in Romanian or English. ElevenLabs transcribes your recording and Gemini organizes the transcript.

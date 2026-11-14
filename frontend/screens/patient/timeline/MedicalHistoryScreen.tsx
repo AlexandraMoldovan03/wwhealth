@@ -104,7 +104,7 @@ export function MedicalHistoryScreen() {
   const error = view === 'timeline' ? (!patient.data ? patient.error : null) : !labs.data ? labs.error : null;
 
   return (
-    <ScreenContainer
+    <ScreenContainer help="timeline"
       refreshControl={
         <RefreshControl
           refreshing={(patient.isLoading && !!patient.data) || (labs.isLoading && !!labs.data) || loadingIntakes}
@@ -137,7 +137,12 @@ export function MedicalHistoryScreen() {
       )}
       {loading && <LoadingState />}
       {error && <ErrorState message={error} onRetry={refresh} />}
-      {view === 'timeline' && patient.data && <MedicalEventList events={events} onSelect={open} grouped />}
+      {view === 'timeline' && patient.data && <MedicalEventList
+          events={events}
+          onSelect={open}
+          grouped
+          emptyAction={{ label: t('hubs.records.uploadFirst'), onPress: () => router.push('/patient/upload-document') }}
+        />}
       {view === 'trends' && labs.data && (
         <LabTrendsList series={series} onSelect={(s) => router.push({ pathname: '/patient/lab-trend', params: { id: s.id } })} />
       )}

@@ -8,10 +8,28 @@ import { formatDateTime, formatPercent } from '@/utils/format';
 import { useTranslation } from 'react-i18next';
 
 /** List of LungVision analyses. Used by patient and doctor screens. */
-export function XrayList({ xrays, onSelect }: { xrays: XrayAnalysis[]; onSelect?: (x: XrayAnalysis) => void }) {
+export function XrayList({
+  xrays,
+  onSelect,
+  emptyAction,
+}: {
+  xrays: XrayAnalysis[];
+  onSelect?: (x: XrayAnalysis) => void;
+  emptyAction?: { label: string; onPress: () => void };
+}) {
   const { colors } = useTheme();
   const { t } = useTranslation();
-  if (xrays.length === 0) return <EmptyState icon="scan-outline" title={t('xray.noAnalyses')} />;
+  if (xrays.length === 0) {
+    return (
+      <EmptyState
+        icon="scan-outline"
+        title={t('xray.noAnalyses')}
+        message={t('xray.noAnalysesHint')}
+        actionLabel={emptyAction?.label}
+        onAction={emptyAction?.onPress}
+      />
+    );
+  }
   return (
     <View style={{ gap: spacing.md }}>
       {xrays.map((x) => (

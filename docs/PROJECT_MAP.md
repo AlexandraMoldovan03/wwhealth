@@ -29,16 +29,20 @@ Rutele (URL-urile) sunt în `app/`; fiecare fișier de rută doar importă un ec
 | Rută (`app/…`) | Ecran (`frontend/screens/…`) |
 |---|---|
 | `(tabs)/index` — Acasă (pacient sau medic) | `shared/home/` → `patient/dashboard/` sau `doctor/dashboard/` |
-| `(tabs)/history`, `history/[id]` — Istoric medical | `patient/timeline/` |
-| `(tabs)/analysis`, `patient/xray-results` — LungVision | `patient/lungvision/` |
-| `(tabs)/explore` | `shared/explore/` |
+| `(tabs)/records`, `(tabs)/insights`, `(tabs)/transfer` — secțiunile pacientului (Dosarul meu, AI Insights, Transfer & Access) | `patient/hubs/` |
+| `(tabs)/files` — Dosare medicale (medic) | `doctor/records/` |
+| Help contextual (?) — `HelpProvider`, registru de subiecte, conținut în `help.*` (i18n) | `frontend/help/` |
+| `(tabs)/history`, `history/[id]` — Istoric medical (din Dosarul meu, în afara barei) | `patient/timeline/` |
+| `(tabs)/analysis`, `patient/xray-results` — LungVision (din AI Insights) | `patient/lungvision/` |
+| `(tabs)/explore` — toate funcționalitățile (din Profil) | `shared/explore/` |
 | `(tabs)/settings` | `shared/settings/` |
 | `(tabs)/scan`, `doctor/emergency` — medic scanează pașaportul | `doctor/emergency-scan/` |
-| `(tabs)/access` — jurnal accesări medic | `doctor/access-log/` |
+| `(tabs)/access` — jurnal accesări medic (din Dosare medicale) | `doctor/access-log/` |
 | `doctor/index` | `doctor/dashboard/` |
-| `doctor/scan`, `doctor/patient/[id]/*` — acces la pacient prin cod | `doctor/patient-access/` |
+| `(tabs)/patients`, `doctor/patient/[id]/*` (rezumat, documente, analize) — pacienți cu consimțământ | `doctor/patient-access/` |
 | `patient/emergency` — Emergency Passport (QR) | `patient/emergency-passport/` |
-| `patient/passport` | `patient/medical-passport/` |
+| `patient/doctor-access`, `patient/grant-access`, `patient/summary` — Acces medici + rezumat | `patient/doctor-access/` |
+| `patient/intelligence`, `doctor/patient/[id]/intelligence` — AI Medical Intelligence (Gemini) | `patient/intelligence/`, `doctor/patient-access/` |
 | `patient/profile`, `patient/edit-profile` | `patient/medical-profile/` |
 | `patient/documents`, `patient/upload-document`, `patient/document/[id]` | `patient/documents/` |
 | `patient/lab-review/[id]`, `patient/lab-trend` — analize | `patient/lab-results/` |
@@ -93,3 +97,4 @@ supabase/   migrări SQL + scripturi demo
 docs/       documentație
 assets/     imagini, iconițe
 ```
+Vezi și [UX_INFORMATION_ARCHITECTURE.md](UX_INFORMATION_ARCHITECTURE.md) pentru navigație și fluxuri.

@@ -20,11 +20,11 @@ export function LabTrendScreen({ seriesId }: { seriesId: string }) {
   const { data, isLoading, error, reload } = useAsync(api.listLabValues, { refetchOnFocus: true });
   const series = useMemo(() => buildLabSeries(data ?? []).find((s) => s.id === seriesId), [data, seriesId]);
 
-  if (isLoading && !data) return <ScreenContainer edges={['bottom']}><LoadingState /></ScreenContainer>;
-  if (error && !data) return <ScreenContainer edges={['bottom']}><ErrorState message={error} onRetry={reload} /></ScreenContainer>;
+  if (isLoading && !data) return <ScreenContainer help="labs" edges={['bottom']}><LoadingState /></ScreenContainer>;
+  if (error && !data) return <ScreenContainer help="labs" edges={['bottom']}><ErrorState message={error} onRetry={reload} /></ScreenContainer>;
   if (!series) {
     return (
-      <ScreenContainer edges={['bottom']}>
+      <ScreenContainer help="labs" edges={['bottom']}>
         <EmptyState icon="analytics-outline" title={t('labs.trendMissing')} message={t('labs.trendsEmptyHint')} />
       </ScreenContainer>
     );
@@ -33,7 +33,7 @@ export function LabTrendScreen({ seriesId }: { seriesId: string }) {
   const numeric = series.points.filter((p) => p.numeric !== null).length;
   const newestFirst = [...series.points].reverse();
   return (
-    <ScreenContainer edges={['bottom']}>
+    <ScreenContainer help="labs" edges={['bottom']}>
       <Stack.Screen options={{ title: series.name }} />
       <View style={styles.header}>
         <AppText variant="title">{series.name}</AppText>

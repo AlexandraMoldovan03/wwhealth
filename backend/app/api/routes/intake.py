@@ -2,6 +2,7 @@ from starlette.concurrency import run_in_threadpool
 
 from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
 
+from app.api.supabase_errors import supabase_errors
 from app.core.config import settings
 from app.core.security import CurrentUser, get_current_user
 from app.schemas.intake import IntakeForm
@@ -18,7 +19,8 @@ async def voice_intake(
     user: CurrentUser = Depends(get_current_user),
 ) -> IntakeForm:
     if settings.supabase_enabled:
-        role = await run_in_threadpool(supabase_repo.get_role, user)
+        with supabase_errors():  # Supabase down / slow → 502 "Database unavailable", not a 500 traceback
+            role = await run_in_threadpool(supabase_repo.get_role, user)
         if role != "patient":
             raise HTTPException(403, "Patient account required")
     audio = await file.read(MAX_AUDIO_BYTES + 1)

@@ -1,14 +1,12 @@
-import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { StyleSheet, View } from 'react-native';
 import Animated from 'react-native-reanimated';
 
 import { AppText, enterUp } from '@/design-system';
-import { APP_INFO } from '@/config/config';
-import { gradients, radius, spacing } from '@/design-system/theme';
+import { radius, spacing } from '@/design-system/theme';
 import { useTheme } from '@/design-system/useTheme';
 
-/** Brand row + large calm title, with a soft sage→blue "sun" behind it. */
+/** Large calm title, with a soft sage→blue "sun" behind it. The brand logo comes from the screen background. */
 export function AuthHeader({ title, subtitle }: { title: string; subtitle: string }) {
   const { colors, isDark } = useTheme();
   return (
@@ -20,17 +18,6 @@ export function AuthHeader({ title, subtitle }: { title: string; subtitle: strin
         end={{ x: 1, y: 1 }}
         style={styles.sun}
       />
-      <View style={styles.brand}>
-        <LinearGradient colors={gradients.patientHero} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.logo}>
-          <Ionicons name="leaf" size={22} color="#FFFFFF" />
-        </LinearGradient>
-        <View>
-          <AppText variant="subheading">{APP_INFO.name}</AppText>
-          <AppText variant="caption" color="textMuted">
-            {APP_INFO.fullName}
-          </AppText>
-        </View>
-      </View>
       <View style={styles.text}>
         <AppText variant="display" style={[styles.title, { color: colors.text }]} accessibilityRole="header">
           {title}
@@ -44,8 +31,6 @@ export function AuthHeader({ title, subtitle }: { title: string; subtitle: strin
 const styles = StyleSheet.create({
   wrap: { gap: spacing.xl, paddingTop: spacing.md, paddingBottom: spacing.sm },
   sun: { position: 'absolute', width: 260, height: 260, borderRadius: radius.pill, top: -60, right: -90 },
-  brand: { flexDirection: 'row', alignItems: 'center', gap: spacing.md },
-  logo: { width: 48, height: 48, borderRadius: radius.md + 2, alignItems: 'center', justifyContent: 'center' },
   text: { gap: spacing.sm },
   title: { fontSize: 34, lineHeight: 40 },
 });

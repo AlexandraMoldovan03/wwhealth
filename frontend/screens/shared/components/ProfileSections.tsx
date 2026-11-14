@@ -90,6 +90,23 @@ export function ProfileSections({ profile }: { profile: PatientProfile }) {
           ))}
         </AppCard>
       </View>
+
+      {profile.surgeries && (
+        <View style={styles.section}>
+          <SectionHeader title={t('profile.surgeries')} />
+          <AppCard style={styles.list} enterIndex={4}>
+            {profile.surgeries.length === 0 && <AppText color="textMuted">{t('profile.noneRecorded')}</AppText>}
+            {profile.surgeries.map((s) => (
+              <View key={s.id} style={styles.itemText}>
+                <AppText variant="subheading">{s.name}</AppText>
+                <AppText variant="caption" color="textMuted">
+                  {[s.date, s.notes].filter(Boolean).join(' · ') || t('profile.noDate')}
+                </AppText>
+              </View>
+            ))}
+          </AppCard>
+        </View>
+      )}
     </>
   );
 }

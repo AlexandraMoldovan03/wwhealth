@@ -31,8 +31,8 @@ FastAPI format: `{ "detail": "Human readable message" }` (422 validation errors:
 - Now: none (backend returns a demo user). App sends nothing.
 - Target: Auth0. App sends `Authorization: Bearer <access_token>`. Backend validates via Auth0 JWKS
   (issuer `https://<AUTH0_DOMAIN>/`, audience `AUTH0_AUDIENCE`) and reads a role claim: `patient` | `doctor`.
-- Patient endpoints: `patients/me`, `documents/analyze`, `xray/analyze`, `access/grant`.
-- Doctor endpoints: `access/redeem`, `voice/summary` (voice also requires an active grant for that patient).
+- Patient endpoints: `patients/me`, `documents/analyze`, `xray/analyze`, `doctor-access/grants`.
+- Doctor endpoints: `doctor-access/patients*`, `doctor-access/me`, `voice/summary`.
 - **No secrets in the app.** Ever.
 
 ## Types
@@ -147,18 +147,40 @@ Errors: `415` wrong type · `413` too large · `400` not a valid/usable image ·
   "processingTimeMs": 284, "isExperimental": true, "disclaimer": "Educational prototype, not a medical device…" }
 ```
 
-### `POST /api/v1/access/grant` — patient
-Request: `{ "scopes": ["profile", "xrays"], "ttlMinutes": 15 }` (ttl capped by `ACCESS_TOKEN_MAX_TTL_MINUTES`)
-Response:
-```json
-{ "token": "WWH-K3P9-ZQ2M", "qrPayload": "wwhealth://access/WWH-K3P9-ZQ2M",
-  "expiresAt": "2026-11-13T10:15:00Z", "scopes": ["profile", "xrays"] }
-```
+### Doctor Access & Consent — `/api/v1/doctor-access` (migration `20261115000000_doctor_access_consent.sql`)
+Enforced in Postgres (RLS + security-definer RPCs, audited in `doctor_access_log`); the backend re-checks sections.
+Doctor role = `public.profiles.role` (set by an admin), never token metadata. 503 = migration not applied yet.
 
-### `POST /api/v1/access/redeem` — doctor
-Request: `{ "token": "WWH-K3P9-ZQ2M" }` (raw token or the full `qrPayload`)
-Response: `{ "accessId": "acc_77aa", "expiresAt": "…", "scopes": ["profile","xrays"], "patient": PatientRecord }`
-— arrays outside the granted scopes are **empty**. Errors: 404 invalid, 404/410 expired.
+Patient (own data only):
+- `GET /doctors?q=` → `[{ "id", "fullName", "doctorCode": "DR-1A2B3C" }]` — verified doctors by name or exact code.
+- `GET /grants` → `{ "grants": [DoctorGrant], "events": [AccessEvent] }` (status `active|expired|revoked`).
+- `POST /grants` `{ "doctorId" | "doctorCode", "scopes": ["profile","documents","labs"], "durationHours": 1|24|168 }`
+  → 201 `DoctorGrant`. Replaces an active grant to the same doctor. 422 invalid, 404 unknown doctor.
+- `POST /grants/{id}/revoke` → 204 (immediate), 404 if not the caller's active grant.
+- `GET /patients/me/summary` → `MedicalSummary` of the caller (no AI; sections not shared are `null`).
+
+Doctor (role doctor + valid consent):
+- `GET /me` → `{ "fullName", "doctorCode" }`.
+- `GET /patients?q=` → `[DoctorPatient]` (latest grant per patient, with status).
+- `GET /patients/{id}` → `PatientAccessView { status: ok|none|expired|revoked|forbidden, patientName, scopes, expiresAt,
+  summary, documents, labs }` — without valid consent only the status (no data).
+- `GET /patients/{id}/documents/{docId}/file` → file; 403 expired/revoked/section not shared, 404 otherwise.
+
+The Emergency Passport (`/emergency/*`) is separate and unchanged.
+
+### AI Medical Intelligence — `/api/v1/intelligence` (migration `20261116000000_ai_medical_intelligence.sql`)
+Gemini (Google Gen AI SDK) runs only in the backend (`GEMINI_API_KEY`, optional `GEMINI_SUMMARY_MODEL` in backend/.env).
+Nothing is sent without the patient's explicit consent. Only minimal facts are sent (no name, email, date of birth,
+files or OCR text). The answer is a strict JSON schema; every statement must cite real fact ids of the right kind or
+it is dropped. Priority uses explicit rules (anaphylaxis / severe allergy / lab outside its printed range).
+
+Patient: `GET|PUT /consent` `{ "granted": bool }` (withdrawing deletes the saved summary) · `GET /me` →
+`IntelligenceView { status: ok|none|no_consent|not_configured, aiConfigured, consent, summary }` ·
+`POST /me/generate` `{ "language": "ro"|"en" }` · `DELETE /me`.
+Doctor (role + valid consent): `GET /patients/{id}` (saved summary only if the active grant covers every section it was
+built from) · `POST /patients/{id}/generate` (granted sections only, needs the patient's AI consent, not stored).
+Errors: 403 no consent / access, 429 rate limit (`AI_SUMMARY_PER_USER_PER_HOUR`, default 6), 503 not configured,
+504 Gemini timeout, 502 invalid Gemini answer. `PATCH /patients/me` also accepts `surgeries: [{ name, date?, notes? }]`.
 
 ### `POST /api/v1/voice/summary` — doctor
 Request: `{ "patientId": "pat_demo_001", "language": "en" }` (`en` | `ro`)

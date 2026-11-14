@@ -15,6 +15,8 @@ import type { DocumentType, LabValueEntry } from '@/types';
 import { getErrorMessage } from '@/utils/errors';
 import { LabReviewForm, reviewBlockers } from '@/screens/patient/lab-results/components/LabReviewForm';
 import { prepareLabValues, scanMessage } from '@/screens/patient/lab-results/labUtils';
+import { DataOriginBadge } from '@/screens/shared/components/DataOrigin';
+import { NextSteps } from '@/screens/shared/components/NextSteps';
 import { formatFileSize } from '@/utils/format';
 import { useTranslation } from 'react-i18next';
 
@@ -82,9 +84,12 @@ export function UploadDocumentScreen() {
 
   if (uploaded) {
     return (
-      <ScreenContainer edges={['bottom']}>
+      <ScreenContainer help="upload" edges={['bottom']}>
         <AppCard style={styles.done}>
-          <AppText variant="heading">{t('upload.done')}</AppText>
+          <View style={styles.doneTitle}>
+            <AppText variant="heading" style={styles.flex1}>{t('upload.done')}</AppText>
+            <DataOriginBadge origin={savedLabs > 0 ? 'confirmed' : 'extracted'} />
+          </View>
           <AppText color="textMuted">
             {t('upload.doneText', { title: uploaded.title })}
           </AppText>
@@ -97,13 +102,26 @@ export function UploadDocumentScreen() {
           fullWidth
           onPress={() => router.replace({ pathname: '/patient/document/[id]', params: { id: uploaded.id } })}
         />
+        <NextSteps
+          steps={
+            savedLabs > 0
+              ? [
+                  { id: 'labTrends', icon: 'analytics-outline', route: '/history' },
+                  { id: 'refreshAi', icon: 'sparkles-outline', route: '/patient/intelligence' },
+                ]
+              : [
+                  { id: 'allDocuments', icon: 'folder-open-outline', route: '/patient/documents' },
+                  { id: 'shareDoctor', icon: 'shield-checkmark-outline', route: '/patient/doctor-access' },
+                ]
+          }
+        />
         <AppButton title={t('upload.back')} variant="ghost" onPress={() => router.back()} />
       </ScreenContainer>
     );
   }
 
   return (
-    <ScreenContainer edges={['bottom']}>
+    <ScreenContainer help="upload" edges={['bottom']}>
       <View style={styles.field}>
         <AppText variant="label" color="textMuted">
           {t('upload.type')}
@@ -188,5 +206,7 @@ const styles = StyleSheet.create({
   row: { flexDirection: 'row', gap: spacing.sm },
   flex: { flex: 1 },
   done: { gap: spacing.sm },
+  doneTitle: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
+  flex1: { flex: 1 },
   scanCard: { gap: spacing.sm },
 });

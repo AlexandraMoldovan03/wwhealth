@@ -1,10 +1,10 @@
 import { Ionicons } from '@expo/vector-icons';
-import { router, useFocusEffect } from 'expo-router';
-import { useCallback, useState } from 'react';
+import { router } from 'expo-router';
 import { RefreshControl, StyleSheet, View } from 'react-native';
 
 import {
   AppButton,
+  AppCard,
   AppText,
   Badge,
   ErrorState,
@@ -17,16 +17,16 @@ import {
 } from '@/design-system';
 import { gradients, spacing } from '@/design-system/theme';
 import { useCurrentUser } from '@/services/auth/useCurrentUser';
-import { listDoctorSessions } from '@/screens/doctor/patient-access/doctorSession';
+import { GrantStatusBadge } from '@/screens/shared/components/ConsentBadges';
 import { EmergencyAuditList } from '@/screens/shared/components/EmergencyAuditList';
 import { WelcomeHeader } from '@/screens/shared/components/WelcomeHeader';
 import { useAsync } from '@/hooks/useAsync';
 import { useTheme } from '@/design-system/useTheme';
 import { api } from '@/services/backend';
-import type { AccessRedeemResponse } from '@/types';
 import { formatDateTime } from '@/utils/format';
 import { useTranslation } from 'react-i18next';
 
+const listPatients = () => api.listDoctorPatients();
 const isToday = (iso: string) => new Date(iso).toDateString() === new Date().toDateString();
 
 /**
@@ -37,14 +37,9 @@ export function DoctorDashboardScreen({ inTab = false }: { inTab?: boolean }) {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const user = useCurrentUser();
-  const [sessions, setSessions] = useState<AccessRedeemResponse[]>([]);
   const accesses = useAsync(api.getMyEmergencyAccesses, { refetchOnFocus: true });
-
-  useFocusEffect(
-    useCallback(() => {
-      setSessions(listDoctorSessions());
-    }, []),
-  );
+  const patients = useAsync(listPatients, { refetchOnFocus: true });
+  const identity = useAsync(api.getDoctorIdentity);
 
   const events = accesses.data;
   const viewed = events?.filter((e) => e.event === 'viewed');
@@ -57,7 +52,7 @@ export function DoctorDashboardScreen({ inTab = false }: { inTab?: boolean }) {
   const name = user?.fullName ? t('doctor.greetingName', { name: user.fullName }) : t('roles.doctor');
 
   return (
-    <ScreenContainer
+    <ScreenContainer help="doctorHome"
       edges={inTab ? undefined : ['bottom']}
       refreshControl={<RefreshControl refreshing={accesses.isLoading && !!events} onRefresh={accesses.reload} tintColor={colors.primary} />}
     >
@@ -112,18 +107,45 @@ export function DoctorDashboardScreen({ inTab = false }: { inTab?: boolean }) {
       </View>
 
       <View style={styles.section}>
-        <SectionHeader title={t('doctor.extendedTitle')} subtitle={t('doctor.extendedSubtitle')} />
-        <ListRow icon="scan-circle-outline" iconColor={colors.accent} title={t('doctor.scan')} onPress={() => router.push('/doctor/scan')} />
-        {sessions.map((s) => (
-          <ListRow
-            key={s.accessId}
-            icon="person-outline"
-            title={s.patient.fullName}
-            subtitle={t('doctor.until', { date: formatDateTime(s.expiresAt) })}
-            right={<Badge label={t('doctor.scopesCount', { count: s.scopes.length })} color={colors.primary} />}
-            onPress={() => router.push({ pathname: '/doctor/patient/[id]', params: { id: s.patient.id } })}
-          />
-        ))}
+        <SectionHeader
+          title={t('consent.doctor.dashboardTitle')}
+          subtitle={t('consent.doctor.dashboardSubtitle')}
+          actionLabel={t('home.seeAll')}
+          onActionPress={() => router.navigate('/patients')}
+        />
+        {patients.error && !patients.data ? (
+          <ErrorState compact message={patients.error} onRetry={patients.reload} />
+        ) : !patients.data ? (
+          <LoadingState count={1} />
+        ) : patients.data.length === 0 ? (
+          <AppCard>
+            <AppText color="textMuted">{t('consent.doctor.noPatientsHint')}</AppText>
+          </AppCard>
+        ) : (
+          patients.data.slice(0, 3).map((p) => (
+            <ListRow
+              key={p.grantId}
+              icon="person-outline"
+              title={p.fullName || t('consent.doctor.thePatient')}
+              subtitle={t('consent.until', { date: formatDateTime(p.expiresAt) })}
+              right={<GrantStatusBadge status={p.status} />}
+              onPress={() => router.push({ pathname: '/doctor/patient/[id]', params: { id: p.patientId } })}
+            />
+          ))
+        )}
+        {identity.data?.doctorCode && (
+          <AppCard style={styles.code}>
+            <AppText variant="caption" color="textMuted">
+              {t('consent.doctor.yourCode')}
+            </AppText>
+            <AppText variant="title" selectable>
+              {identity.data.doctorCode}
+            </AppText>
+            <AppText variant="caption" color="textMuted">
+              {t('consent.doctor.yourCodeHint')}
+            </AppText>
+          </AppCard>
+        )}
       </View>
     </ScreenContainer>
   );
@@ -142,6 +164,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   heroText: { gap: spacing.xs },
+  code: { gap: spacing.xxs },
   white: { color: '#FFFFFF' },
   soft: { color: 'rgba(255,255,255,0.88)' },
 });

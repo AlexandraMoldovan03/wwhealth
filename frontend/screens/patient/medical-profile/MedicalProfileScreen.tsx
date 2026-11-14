@@ -12,7 +12,7 @@ export function MedicalProfileScreen() {
 
 
   return (
-    <ScreenContainer edges={['bottom']}>
+    <ScreenContainer help="medicalProfile" edges={['bottom']}>
       {isLoading && !data && <LoadingState />}
       {error && <ErrorState message={error} onRetry={reload} />}
       {data && (

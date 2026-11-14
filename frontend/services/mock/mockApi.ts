@@ -4,8 +4,21 @@
  * until the app reloads. All AI output is marked isDemo: true.
  */
 import { MEDICAL_DISCLAIMER, MOCK_DELAY_MS } from '@/config/config';
-import { DEMO_ACCESS_TOKEN, MOCK_PATIENT } from './mockPatient';
-import type { AccessScope, EmergencyAccessEvent, LabValueEntry, MedicalDocument, PatientRecord, WWHealthApi, XrayAnalysis } from '@/types';
+import { MOCK_PATIENT } from './mockPatient';
+import type {
+  AccessEvent,
+  DoctorGrant,
+  DoctorScope,
+  EmergencyAccessEvent,
+  LabValueEntry,
+  MedicalDocument,
+  MedicalSummary,
+  PatientLabValue,
+  PatientRecord,
+  VerifiedDoctor,
+  WWHealthApi,
+  XrayAnalysis,
+} from '@/types';
 import { createId, delay } from '@/utils/async';
 
 import { ApiError } from '@/services/api/ApiError';
@@ -15,9 +28,47 @@ const clone = <T,>(value: T): T => JSON.parse(JSON.stringify(value)) as T;
 
 // Mutable copy so uploads during a session are visible in lists.
 const db: PatientRecord = clone(MOCK_PATIENT);
-const grants = new Map<string, { expiresAt: string; scopes: AccessScope[] }>([
-  [DEMO_ACCESS_TOKEN, { expiresAt: new Date(Date.now() + 24 * 3600_000).toISOString(), scopes: ['profile', 'history', 'documents', 'xrays'] }],
-]);
+// Doctor access (MOCK): same rules as the backend — verified doctor, sections, 1 h / 24 h / 7 d, revocable, audited.
+// In MOCK mode the app is both the demo patient and the demo doctor, so the whole flow can be tried on one phone.
+const MOCK_DOCTOR: VerifiedDoctor = { id: 'doc_demo_001', fullName: 'Dr. Demo Medic', doctorCode: 'DR-DEMO01' };
+const doctorGrants: DoctorGrant[] = [];
+let aiConsentAt: string | null = null;
+const accessEvents: AccessEvent[] = [];
+const grantStatus = (g: DoctorGrant): DoctorGrant['status'] =>
+  g.revokedAt ? 'revoked' : new Date(g.expiresAt).getTime() <= Date.now() ? 'expired' : 'active';
+const withStatus = (g: DoctorGrant): DoctorGrant => ({ ...g, status: grantStatus(g) });
+const logAccess = (event: AccessEvent['event'], section: string | null = null, reason: string | null = null) =>
+  accessEvents.unshift({ id: createId('acc'), event, section, reason, doctorName: MOCK_DOCTOR.fullName, createdAt: new Date().toISOString() });
+
+const labKeyOf = (s: string | null) => (s ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/\s+/g, ' ').trim();
+
+/** Same rules as backend medical_summary.py: shared sections only, latest value per analysis + unit. */
+function mockSummary(record: PatientRecord | null, documents: MedicalDocument[] | null, labs: PatientLabValue[] | null): MedicalSummary {
+  const groups = new Map<string, PatientLabValue[]>();
+  for (const v of labs ?? []) {
+    const key = `${labKeyOf(v.name)}|${labKeyOf(v.unit)}`;
+    groups.set(key, [...(groups.get(key) ?? []), v]);
+  }
+  const date = (v: PatientLabValue) => v.measuredAt ?? v.documentDate ?? '';
+  return {
+    basics: record
+      ? { dateOfBirth: record.dateOfBirth, sex: record.sex, bloodType: record.bloodType, heightCm: record.heightCm, weightKg: record.weightKg }
+      : null,
+    allergies: record ? record.allergies : null,
+    conditions: record ? record.diagnoses.filter((d) => d.status === 'active') : null,
+    medications: record ? record.treatments.filter((t) => t.active) : null,
+    latestLabs: labs
+      ? [...groups.values()]
+          .map((rows) => {
+            const last = [...rows].sort((a, b) => (date(a) < date(b) ? -1 : 1))[rows.length - 1];
+            return { name: last.name, value: last.value, unit: last.unit, referenceRange: last.referenceRange, date: date(last) || null,
+              documentTitle: last.documentTitle, measurements: rows.length };
+          })
+          .sort((a, b) => a.name.localeCompare(b.name))
+      : null,
+    documents: documents ? [...documents].sort((a, b) => (a.uploadedAt < b.uploadedAt ? 1 : -1)).slice(0, 5) : null,
+  };
+}
 
 // Emergency passport (MOCK): same rules as the backend — 5 min, single use, revocable, audited.
 const emergencyTokens = new Map<string, { id: string; expiresAt: number; usedAt?: number; revokedAt?: number }>();
@@ -38,19 +89,6 @@ function fakePredictions() {
 }
 
 /** Applies scopes like the backend should: data outside the scopes is emptied. */
-function filterByScopes(record: PatientRecord, scopes: AccessScope[]): PatientRecord {
-  const has = (s: AccessScope) => scopes.includes(s);
-  return {
-    ...record,
-    allergies: has('profile') ? record.allergies : [],
-    diagnoses: has('profile') ? record.diagnoses : [],
-    treatments: has('profile') ? record.treatments : [],
-    history: has('history') ? record.history : [],
-    documents: has('documents') ? record.documents : [],
-    xrays: has('xrays') ? record.xrays : [],
-  };
-}
-
 export const mockApi: WWHealthApi = {
   async health() {
     await delay(200);
@@ -86,6 +124,9 @@ export const mockApi: WWHealthApi = {
         endDate: t.endDate ?? null,
         active: t.active,
       }));
+    }
+    if (update.surgeries) {
+      db.surgeries = update.surgeries.map((s) => ({ id: s.id ?? createId('sg'), name: s.name, date: s.date ?? null, notes: s.notes ?? '' }));
     }
     return clone(db);
   },
@@ -167,28 +208,6 @@ export const mockApi: WWHealthApi = {
     throw new Error(
       'LungVision needs the backend model. Set EXPO_PUBLIC_USE_MOCKS=false in .env, start the backend and restart Expo.',
     );
-  },
-
-  async grantAccess({ scopes, ttlMinutes }) {
-    await delay(MOCK_DELAY_MS);
-    const token = DEMO_ACCESS_TOKEN; // fixed in MOCK mode so the doctor flow is easy to demo
-    const expiresAt = new Date(Date.now() + ttlMinutes * 60_000).toISOString();
-    grants.set(token, { expiresAt, scopes });
-    return { token, qrPayload: `wwhealth://access/${token}`, expiresAt, scopes };
-  },
-
-  async redeemAccess({ token }) {
-    await delay(MOCK_DELAY_MS);
-    const normalized = token.trim().toUpperCase().replace('WWHEALTH://ACCESS/', '');
-    const grant = grants.get(normalized);
-    if (!grant) throw new ApiError('Invalid or unknown access token', 404);
-    if (new Date(grant.expiresAt).getTime() < Date.now()) throw new ApiError('Access token expired', 410);
-    return {
-      accessId: createId('acc'),
-      expiresAt: grant.expiresAt,
-      scopes: grant.scopes,
-      patient: filterByScopes(clone(db), grant.scopes),
-    };
   },
 
   // No text extraction in MOCK mode (it runs on the backend) — never invent values.
@@ -297,5 +316,124 @@ export const mockApi: WWHealthApi = {
       audioUrl: null,
       isDemo: true,
     };
+  },
+
+  // AI Medical Intelligence: MOCK mode has no Gemini → a clear "not configured" state, never a simulated summary.
+  async getAiConsent() {
+    await delay(200);
+    return { granted: aiConsentAt !== null, grantedAt: aiConsentAt };
+  },
+
+  async setAiConsent(granted) {
+    await delay(200);
+    aiConsentAt = granted ? new Date().toISOString() : null;
+    return { granted, grantedAt: aiConsentAt };
+  },
+
+  async getMyIntelligence() {
+    await delay(MOCK_DELAY_MS);
+    const consent = aiConsentAt !== null;
+    return { status: consent ? 'not_configured' : 'no_consent', aiConfigured: false, consent, summary: null, patientName: null, scopes: [] };
+  },
+
+  async generateMyIntelligence() {
+    await delay(MOCK_DELAY_MS);
+    throw new ApiError('AI is not configured on the server', 503);
+  },
+
+  async deleteMyIntelligence() {
+    await delay(200);
+  },
+
+  async getPatientIntelligence(patientId) {
+    await delay(MOCK_DELAY_MS);
+    const view = await mockApi.openDoctorPatient(patientId);
+    if (view.status !== 'ok') return { status: view.status === 'none' ? 'none' : view.status, aiConfigured: false, consent: false, summary: null, patientName: null, scopes: [] };
+    return { status: aiConsentAt ? 'not_configured' : 'no_consent', aiConfigured: false, consent: aiConsentAt !== null, summary: null,
+      patientName: view.patientName, scopes: view.scopes };
+  },
+
+  async generatePatientIntelligence() {
+    await delay(MOCK_DELAY_MS);
+    throw new ApiError('AI is not configured on the server', 503);
+  },
+
+  async getMySummary() {
+    await delay(MOCK_DELAY_MS);
+    return mockSummary(db, db.documents, await mockApi.listLabValues());
+  },
+
+  async searchDoctors(query) {
+    await delay(MOCK_DELAY_MS);
+    const q = query.trim();
+    const match = !q || MOCK_DOCTOR.fullName.toLowerCase().includes(q.toLowerCase()) || MOCK_DOCTOR.doctorCode === q.toUpperCase();
+    return match ? [MOCK_DOCTOR] : [];
+  },
+
+  async getDoctorAccess() {
+    await delay(MOCK_DELAY_MS);
+    return { grants: doctorGrants.map(withStatus), events: [...accessEvents] };
+  },
+
+  async grantDoctorAccess({ doctorId, doctorCode, scopes, durationHours }) {
+    await delay(MOCK_DELAY_MS);
+    if ((doctorId ?? '') !== MOCK_DOCTOR.id && (doctorCode ?? '').trim().toUpperCase() !== MOCK_DOCTOR.doctorCode) {
+      throw new ApiError('Verified doctor not found', 404);
+    }
+    for (const g of doctorGrants) {
+      if (grantStatus(g) === 'active') {
+        g.revokedAt = new Date().toISOString();
+        logAccess('revoked', null, 'replaced');
+      }
+    }
+    const now = Date.now();
+    const grant: DoctorGrant = {
+      id: createId('grant'), doctorId: MOCK_DOCTOR.id, doctorName: MOCK_DOCTOR.fullName, doctorCode: MOCK_DOCTOR.doctorCode,
+      scopes: [...new Set(scopes)].sort() as DoctorScope[], createdAt: new Date(now).toISOString(),
+      expiresAt: new Date(now + durationHours * 3600_000).toISOString(), revokedAt: null, status: 'active',
+    };
+    doctorGrants.unshift(grant);
+    logAccess('granted');
+    return grant;
+  },
+
+  async revokeDoctorAccess(grantId) {
+    await delay(MOCK_DELAY_MS);
+    const g = doctorGrants.find((x) => x.id === grantId && grantStatus(x) === 'active');
+    if (!g) throw new ApiError('Active access not found', 404);
+    g.revokedAt = new Date().toISOString();
+    logAccess('revoked');
+  },
+
+  async getDoctorIdentity() {
+    await delay(200);
+    return { fullName: MOCK_DOCTOR.fullName, doctorCode: MOCK_DOCTOR.doctorCode };
+  },
+
+  async listDoctorPatients(query = '') {
+    await delay(MOCK_DELAY_MS);
+    const latest = doctorGrants[0];
+    if (!latest || !db.fullName.toLowerCase().includes(query.trim().toLowerCase())) return [];
+    const g = withStatus(latest);
+    return [{ patientId: db.id, fullName: db.fullName, grantId: g.id, scopes: g.scopes, createdAt: g.createdAt,
+      expiresAt: g.expiresAt, revokedAt: g.revokedAt, status: g.status }];
+  },
+
+  async openDoctorPatient(patientId) {
+    await delay(MOCK_DELAY_MS);
+    const latest = doctorGrants[0];
+    const base = { patientId, patientName: null, scopes: [], expiresAt: null, summary: null, documents: null, labs: null };
+    if (!latest || patientId !== db.id) return { ...base, status: 'none' };
+    const g = withStatus(latest);
+    const known = { ...base, patientName: db.fullName, scopes: g.scopes, expiresAt: g.expiresAt };
+    if (g.status !== 'active') {
+      logAccess('denied', 'summary', g.status);
+      return { ...known, status: g.status };
+    }
+    logAccess('viewed', 'summary');
+    const has = (s: DoctorScope) => g.scopes.includes(s);
+    const documents = has('documents') ? clone(db.documents) : null;
+    const labs = has('labs') ? await mockApi.listLabValues() : null;
+    return { ...known, status: 'ok', summary: mockSummary(has('profile') ? clone(db) : null, documents, labs), documents, labs };
   },
 };

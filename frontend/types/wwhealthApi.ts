@@ -1,13 +1,11 @@
 import type { UploadFile } from './api';
 import type { IntakeForm } from './intake';
+import type { AccessOverview, DoctorGrant, DoctorIdentity, DoctorPatient, GrantRequest, MedicalSummary, PatientAccessView, VerifiedDoctor } from './consent';
+import type { AiConsent, IntelligenceView } from './intelligence';
 import type { LabExtractionResponse, LabValueEntry, PatientLabValue } from './labs';
 import type { EmergencyAccessEvent, EmergencyData, EmergencyRedeemRequest, EmergencyTokenResponse } from './emergency';
 import type { LungAnalysis } from './lungvision';
 import type {
-  AccessGrantRequest,
-  AccessGrantResponse,
-  AccessRedeemRequest,
-  AccessRedeemResponse,
   DocumentAnalyzeResponse,
   DocumentType,
   DocumentUploadResponse,
@@ -35,8 +33,6 @@ export interface WWHealthApi {
   analyzeIntake(file: UploadFile): Promise<IntakeForm>;
   /** LungVision (real model on the backend) — POST /api/ai/lung/analyze. */
   analyzeLung(file: UploadFile): Promise<LungAnalysis>;
-  grantAccess(request: AccessGrantRequest): Promise<AccessGrantResponse>;
-  redeemAccess(request: AccessRedeemRequest): Promise<AccessRedeemResponse>;
   voiceSummary(request: VoiceSummaryRequest): Promise<VoiceSummaryResponse>;
   // Document scanner (digital PDFs, local extraction on our server)
   extractLabValues(file: UploadFile): Promise<LabExtractionResponse>;
@@ -53,4 +49,26 @@ export interface WWHealthApi {
   getEmergencyAudit(): Promise<EmergencyAccessEvent[]>;
   /** Doctor: own emergency scans (opened / refused). */
   getMyEmergencyAccesses(): Promise<EmergencyAccessEvent[]>;
+  // Doctor Access & Consent — patient side (own data only)
+  /** Patient's own structured summary (same view a doctor gets with every section shared). */
+  getMySummary(): Promise<MedicalSummary>;
+  searchDoctors(query: string): Promise<VerifiedDoctor[]>;
+  getDoctorAccess(): Promise<AccessOverview>;
+  grantDoctorAccess(request: GrantRequest): Promise<DoctorGrant>;
+  revokeDoctorAccess(grantId: string): Promise<void>;
+  // Doctor side (doctor role + valid consent, enforced on the server)
+  getDoctorIdentity(): Promise<DoctorIdentity>;
+  listDoctorPatients(query?: string): Promise<DoctorPatient[]>;
+  openDoctorPatient(patientId: string): Promise<PatientAccessView>;
+
+  // AI Medical Intelligence (Gemini on the server, explicit patient consent, sources checked)
+  getAiConsent(): Promise<AiConsent>;
+  setAiConsent(granted: boolean): Promise<AiConsent>;
+  getMyIntelligence(): Promise<IntelligenceView>;
+  generateMyIntelligence(language: 'ro' | 'en'): Promise<IntelligenceView>;
+  deleteMyIntelligence(): Promise<void>;
+  /** Doctor: saved summary only with a valid consent covering every section it was built from. */
+  getPatientIntelligence(patientId: string): Promise<IntelligenceView>;
+  /** Doctor: from the granted sections only; not stored. */
+  generatePatientIntelligence(patientId: string, language: 'ro' | 'en'): Promise<IntelligenceView>;
 }

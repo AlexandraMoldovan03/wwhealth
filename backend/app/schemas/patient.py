@@ -33,6 +33,14 @@ class Treatment(CamelModel):
     active: bool
 
 
+class Surgery(CamelModel):
+    """Surgical history (medical_profiles.surgeries). Date: YYYY, YYYY-MM or YYYY-MM-DD, as the patient knows it."""
+    id: str
+    name: str
+    date: str | None = None
+    notes: str = ""
+
+
 class EmergencyContact(CamelModel):
     name: str
     phone: str
@@ -61,6 +69,7 @@ class PatientRecord(CamelModel):
     allergies: list[Allergy] = []
     diagnoses: list[Diagnosis] = []
     treatments: list[Treatment] = []
+    surgeries: list[Surgery] = []
     history: list[MedicalEvent] = []
     documents: list[MedicalDocument] = []
     xrays: list[XrayAnalysis] = []
@@ -97,6 +106,13 @@ class TreatmentInput(CamelModel):
     active: bool = True
 
 
+class SurgeryInput(CamelModel):
+    id: str | None = None
+    name: str = Field(min_length=1, max_length=120)
+    date: str | None = Field(default=None, pattern=r"^\d{4}(-\d{2}(-\d{2})?)?$")
+    notes: str = Field(default="", max_length=200)
+
+
 class ProfileUpdate(CamelModel):
     """Only the fields that are sent are changed. Lists replace the whole list."""
 
@@ -104,3 +120,4 @@ class ProfileUpdate(CamelModel):
     allergies: list[AllergyInput] | None = Field(default=None, max_length=50)
     diagnoses: list[DiagnosisInput] | None = Field(default=None, max_length=50)
     treatments: list[TreatmentInput] | None = Field(default=None, max_length=50)
+    surgeries: list[SurgeryInput] | None = Field(default=None, max_length=50)

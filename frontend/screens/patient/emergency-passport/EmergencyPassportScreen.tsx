@@ -68,7 +68,7 @@ export function EmergencyPassportScreen() {
     });
 
   return (
-    <ScreenContainer edges={["bottom"]}>
+    <ScreenContainer help="emergency" edges={["bottom"]}>
       <AppText color="textMuted">{t("emergency.intro")}</AppText>
       <AppCard style={styles.shared}>
         <AppText variant="label" color="textMuted">

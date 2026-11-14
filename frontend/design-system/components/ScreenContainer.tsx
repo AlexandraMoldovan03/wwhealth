@@ -1,9 +1,15 @@
-import type { PropsWithChildren, ReactElement } from 'react';
-import { type RefreshControlProps, ScrollView, StyleSheet, View } from 'react-native';
-import { type Edge, SafeAreaView } from 'react-native-safe-area-context';
+import { useNavigation } from 'expo-router';
+import { type PropsWithChildren, type ReactElement, useLayoutEffect } from 'react';
+import { type RefreshControlProps, ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
+import { type Edge, SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { sizes, spacing } from '@/design-system/theme';
 import { useTheme } from '@/design-system/useTheme';
+
+import { HelpButton } from '@/help/HelpButton';
+import type { HelpTopic } from '@/help/helpRegistry';
+
+import { AppBackground, useBrandLogoSize } from './AppBackground';
 
 export interface ScreenContainerProps extends PropsWithChildren {
   /** Wrap content in a ScrollView (default true). Use false for FlatList screens. */
@@ -12,34 +18,63 @@ export interface ScreenContainerProps extends PropsWithChildren {
   edges?: Edge[];
   padded?: boolean;
   refreshControl?: ReactElement<RefreshControlProps>;
+  /** WWHealth logo at the top of the background. Default: on screens without a navigation header (top edge). */
+  brand?: boolean;
+  /** Contextual help (?) for this screen: top-right on tab screens, in the navigation header elsewhere. */
+  help?: HelpTopic;
 }
 
-/** Every screen starts with this: background colour, safe area, padding, max width. */
+/** Every screen starts with this: brand background, safe area, padding, max width. */
 export function ScreenContainer({
   children,
   scroll = true,
   edges = ['top'],
   padded = true,
   refreshControl,
+  brand = edges.includes('top'),
+  help,
 }: ScreenContainerProps) {
   const { colors } = useTheme();
-  const inner = [styles.inner, padded && styles.padded];
+  const logo = useBrandLogoSize();
+  const insets = useSafeAreaInsets();
+  const { width } = useWindowDimensions();
+  const navigation = useNavigation();
+  const inHeader = !!help && !brand;
+
+  useLayoutEffect(() => {
+    if (inHeader) navigation.setOptions({ headerRight: () => <HelpButton topic={help} /> });
+  }, [inHeader, help, navigation]);
+
+  const inner = [styles.inner, padded && styles.padded, brand && { paddingTop: spacing.md + logo.height + spacing.sm }];
 
   return (
-    <SafeAreaView edges={edges} style={[styles.safe, { backgroundColor: colors.background }]}>
-      {scroll ? (
-        <ScrollView
-          contentContainerStyle={inner}
-          keyboardShouldPersistTaps="handled"
-          showsVerticalScrollIndicator={false}
-          refreshControl={refreshControl}
+    <View style={[styles.safe, { backgroundColor: colors.background }]}>
+      <AppBackground showLogo={brand} />
+      <SafeAreaView edges={edges} style={styles.safe}>
+        {scroll ? (
+          <ScrollView
+            contentContainerStyle={inner}
+            keyboardShouldPersistTaps="handled"
+            showsVerticalScrollIndicator={false}
+            refreshControl={refreshControl}
+          >
+            {children}
+          </ScrollView>
+        ) : (
+          <View style={[inner, styles.flex]}>{children}</View>
+        )}
+      </SafeAreaView>
+      {help && brand && (
+        <View
+          style={[
+            styles.help,
+            { top: insets.top + spacing.sm + (logo.height - 36) / 2, right: Math.max(0, (width - sizes.maxContentWidth) / 2) + spacing.lg - 4 },
+          ]}
         >
-          {children}
-        </ScrollView>
-      ) : (
-        <View style={[inner, styles.flex]}>{children}</View>
+          <HelpButton topic={help} />
+        </View>
       )}
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -47,5 +82,6 @@ const styles = StyleSheet.create({
   safe: { flex: 1 },
   flex: { flex: 1 },
   inner: { width: '100%', maxWidth: sizes.maxContentWidth, alignSelf: 'center', gap: spacing.lg },
+  help: { position: 'absolute' },
   padded: { paddingHorizontal: spacing.lg - 4, paddingTop: spacing.md, paddingBottom: spacing.xl },
 });

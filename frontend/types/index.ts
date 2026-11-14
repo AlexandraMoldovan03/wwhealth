@@ -1,5 +1,6 @@
 export * from './api';
 export * from './auth';
+export * from './consent';
 export * from './emergency';
 export * from './feature';
 export * from './icons';
@@ -9,3 +10,4 @@ export * from './lungvision';
 export * from './medical';
 export * from './theme';
 export * from './wwhealthApi';
+export * from './intelligence';

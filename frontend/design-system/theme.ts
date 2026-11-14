@@ -14,6 +14,7 @@ export const palette = {
   softBlue: '#A7C7E7',
   blueDeep: '#3F6E99',
   ivory: '#F7F5F0',
+  canvas: '#F6F4FC', // brand background (light) — matches assets/images/background/*-light.png
   ivoryDeep: '#EFEBE2',
   sand: '#E4DED2',
   deepTeal: '#273E46',
@@ -27,6 +28,7 @@ export const palette = {
   slate400: '#86959A',
 
   night: '#121E22',
+  canvasNight: '#0F172B', // brand background (dark) — matches assets/images/background/*-dark.png
   night2: '#1A2A30',
   night3: '#223840',
   night4: '#2E4850',
@@ -73,7 +75,7 @@ export const lightColors: ThemeColors = {
   accentMuted: 'rgba(167, 199, 231, 0.35)',
   coral: palette.coral,
   coralMuted: 'rgba(232, 174, 183, 0.28)',
-  background: palette.ivory,
+  background: palette.canvas,
   surface: palette.white,
   surfaceAlt: palette.ivoryDeep,
   border: palette.sand,
@@ -100,7 +102,7 @@ export const darkColors: ThemeColors = {
   accentMuted: 'rgba(167, 199, 231, 0.16)',
   coral: palette.coral,
   coralMuted: 'rgba(232, 174, 183, 0.16)',
-  background: palette.night,
+  background: palette.canvasNight,
   surface: palette.night2,
   surfaceAlt: palette.night3,
   border: palette.night4,

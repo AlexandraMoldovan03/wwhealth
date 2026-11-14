@@ -11,14 +11,15 @@ import { useAsync } from '@/hooks/useAsync';
 import { useSubmit } from '@/hooks/useSubmit';
 import { useTheme } from '@/design-system/useTheme';
 import { api } from '@/services/backend';
-import type { AllergyInput, BloodType, DiagnosisInput, PatientRecord, TreatmentInput } from '@/types';
+import type { AllergyInput, BloodType, DiagnosisInput, PatientRecord, ProfileUpdate, SurgeryInput, TreatmentInput } from '@/types';
 import { useTranslation } from 'react-i18next';
 
 const UNKNOWN = 'Unknown';
 type BloodChoice = BloodType | typeof UNKNOWN;
 const BLOOD_OPTIONS: readonly BloodChoice[] = [UNKNOWN, ...BLOOD_TYPES];
+const SURGERY_DATE = /^\d{4}(-\d{2}(-\d{2})?)?$/;
 
-/** Edit blood type, allergies, conditions and medication → PATCH /api/v1/patients/me. */
+/** Edit blood type, allergies, conditions, medication and surgeries → PATCH /api/v1/patients/me. */
 export function EditProfileScreen() {
   const { data, isLoading, error, reload } = useAsync(api.getMyPatient);
   return (
@@ -36,6 +37,12 @@ function EditForm({ patient }: { patient: PatientRecord }) {
   const [allergies, setAllergies] = useState<AllergyInput[]>(patient.allergies);
   const [diagnoses, setDiagnoses] = useState<DiagnosisInput[]>(patient.diagnoses);
   const [treatments, setTreatments] = useState<TreatmentInput[]>(patient.treatments);
+  const [surgeries, setSurgeriesState] = useState<SurgeryInput[]>(patient.surgeries ?? []);
+  const [surgeriesTouched, setSurgeriesTouched] = useState(false);
+  const setSurgeries = (v: SurgeryInput[]) => {
+    setSurgeriesState(v);
+    setSurgeriesTouched(true);
+  };
   const [showErrors, setShowErrors] = useState(false);
   const save = useSubmit(api.updateMyProfile);
 
@@ -44,12 +51,19 @@ function EditForm({ patient }: { patient: PatientRecord }) {
   }, [save.status]);
 
   const missingName =
-    allergies.some((a) => !a.substance.trim()) || diagnoses.some((d) => !d.name.trim()) || treatments.some((tr) => !tr.name.trim());
+    allergies.some((a) => !a.substance.trim()) ||
+    diagnoses.some((d) => !d.name.trim()) ||
+    treatments.some((tr) => !tr.name.trim()) ||
+    surgeries.some((s) => !s.name.trim());
+  const badDate = surgeries.some((s) => !!s.date && !SURGERY_DATE.test(s.date));
 
   const onSave = () => {
     setShowErrors(true);
-    if (missingName) return;
-    void save.run({ bloodType: bloodType === UNKNOWN ? null : bloodType, allergies, diagnoses, treatments });
+    if (missingName || badDate) return;
+    const update: ProfileUpdate = { bloodType: bloodType === UNKNOWN ? null : bloodType, allergies, diagnoses, treatments };
+    // Sent only when edited, so saving still works on a server without the surgeries migration.
+    if (surgeriesTouched) update.surgeries = surgeries.map((s) => ({ ...s, date: s.date?.trim() || null }));
+    void save.run(update);
   };
 
   const update = <T,>(list: T[], set: (v: T[]) => void, index: number, patch: Partial<T>) =>
@@ -127,6 +141,30 @@ function EditForm({ patient }: { patient: PatientRecord }) {
               <AppText>{t('editProfile.currentlyTaking')}</AppText>
               <Switch value={tr.active} onValueChange={(v) => update(treatments, setTreatments, i, { active: v })} />
             </View>
+          </ItemCard>
+        ))}
+      </EditableSection>
+
+      <EditableSection
+        title={t('editProfile.surgeries')}
+        addLabel={t('editProfile.addSurgery')}
+        onAdd={() => setSurgeries([...surgeries, { name: '', date: '', notes: '' }])}
+        empty={surgeries.length === 0}
+      >
+        {surgeries.map((s, i) => (
+          <ItemCard key={s.id ?? `new-${i}`} onRemove={() => remove(surgeries, setSurgeries, i)}>
+            <AppInput label={t('editProfile.surgeryName')} placeholder={t('editProfile.surgeryPlaceholder')} value={s.name} error={required(s.name)}
+              onChangeText={(v) => update(surgeries, setSurgeries, i, { name: v })} />
+            <AppInput
+              label={t('editProfile.surgeryDate')}
+              placeholder={t('editProfile.surgeryDatePlaceholder')}
+              value={s.date ?? ''}
+              keyboardType="numbers-and-punctuation"
+              error={showErrors && !!s.date && !SURGERY_DATE.test(s.date) ? t('editProfile.surgeryDateInvalid') : undefined}
+              onChangeText={(v) => update(surgeries, setSurgeries, i, { date: v })}
+            />
+            <AppInput label={t('editProfile.surgeryNotes')} placeholder={t('editProfile.surgeryNotesPlaceholder')} value={s.notes ?? ''}
+              onChangeText={(v) => update(surgeries, setSurgeries, i, { notes: v })} />
           </ItemCard>
         ))}
       </EditableSection>
