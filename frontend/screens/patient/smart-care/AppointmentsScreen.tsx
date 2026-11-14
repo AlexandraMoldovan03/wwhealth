@@ -71,6 +71,10 @@ export function AppointmentsScreen() {
                 </View>
               )}
               {a.status !== 'proposed' && (
+                <AppButton title={t('cj.cta.prepare')} icon="create-outline" variant="outline" size="sm"
+                  onPress={() => router.push({ pathname: '/patient/prepare/[id]', params: { id: a.id } })} />
+              )}
+              {a.status !== 'proposed' && (
                 <AppButton title={t('care.appointments.cancel')} icon="close-circle-outline" variant="ghost" size="sm" disabled={act.isLoading} onPress={() => cancel(a)} />
               )}
             </AppointmentCard>

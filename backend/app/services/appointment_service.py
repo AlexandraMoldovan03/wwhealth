@@ -58,6 +58,7 @@ class _Slot:
     starts_at: datetime
     ends_at: datetime
     id: str = field(default_factory=lambda: str(uuid.uuid4()))
+    source: str = "manual"  # manual | schedule (generated from the weekly schedule, see schedule_service)
 
 
 @dataclass
@@ -119,11 +120,18 @@ def _taken(doctor_id: str, start: datetime, end: datetime, ignore: str | None = 
     return False
 
 
+def _blocked(doctor_id: str, start: datetime, end: datetime) -> bool:
+    from app.services import schedule_service  # local import: schedule_service builds on this module
+
+    return schedule_service.blocked(doctor_id, start, end)
+
+
 def _demo_free(doctor_id: str, days: int = WINDOW_DAYS) -> list[_Slot]:
     now = datetime.now(UTC)
     until = now + timedelta(days=days)
     return sorted((s for s in _slots if s.doctor_id == doctor_id and now < s.starts_at < until
-                   and not _taken(doctor_id, s.starts_at, s.ends_at)), key=lambda s: s.starts_at)
+                   and not _taken(doctor_id, s.starts_at, s.ends_at) and not _blocked(doctor_id, s.starts_at, s.ends_at)),
+                  key=lambda s: s.starts_at)
 
 
 def _demo_doc(doctor_id: str) -> dict | None:
@@ -162,6 +170,7 @@ def specialty_doctors(user: CurrentUser, specialty_id: str) -> list[DoctorAvaila
     if specialty_id not in specialty_catalog.BY_ID:
         raise NotFound("specialty")
     if settings.supabase_enabled:
+        supabase_repo.ensure_specialty_availability(user, specialty_id)  # extends schedules (idempotent)
         rows = supabase_repo.specialty_doctors(user, specialty_id)
         return [DoctorAvailabilityOut.model_validate(r) for r in rows if r.get("id") != user.id]
     out = []
@@ -177,6 +186,7 @@ def specialty_doctors(user: CurrentUser, specialty_id: str) -> list[DoctorAvaila
 def doctor_slots(user: CurrentUser, doctor_id: str, days: int = WINDOW_DAYS) -> list[Slot]:
     days = max(1, min(days, 60))
     if settings.supabase_enabled:
+        supabase_repo.ensure_doctor_availability(user, doctor_id)
         return [Slot.model_validate(r) for r in supabase_repo.doctor_free_slots(user, doctor_id, days)]
     if _demo_doc(doctor_id) is None:
         raise NotFound("doctor")
@@ -199,7 +209,8 @@ def request(user: CurrentUser, slot_id: str, specialty_id: str | None, note: str
     slot = next((s for s in _slots if s.id == slot_id), None)
     if slot is None or slot.doctor_id == user.id:
         raise NotFound("doctor_not_found")
-    if slot.starts_at <= datetime.now(UTC) or _taken(slot.doctor_id, slot.starts_at, slot.ends_at):
+    if slot.starts_at <= datetime.now(UTC) or _taken(slot.doctor_id, slot.starts_at, slot.ends_at) \
+            or _blocked(slot.doctor_id, slot.starts_at, slot.ends_at):
         raise Conflict("slot_unavailable")
     appt = _Appt(user.id, slot.doctor_id, specialty_id, slot.starts_at, slot.ends_at, note)
     _appts.append(appt)
@@ -276,7 +287,8 @@ def doctor_respond(doctor: CurrentUser, appointment_id: str, action: str, slot_i
         a.status = "rejected"
     else:
         slot = next((s for s in _slots if s.id == slot_id and s.doctor_id == doctor.id), None)
-        if slot is None or slot.starts_at <= datetime.now(UTC) or _taken(doctor.id, slot.starts_at, slot.ends_at, a.id):
+        if slot is None or slot.starts_at <= datetime.now(UTC) or _taken(doctor.id, slot.starts_at, slot.ends_at, a.id) \
+                or _blocked(doctor.id, slot.starts_at, slot.ends_at):
             raise Conflict("slot_unavailable")
         a.status, a.proposed_starts_at, a.proposed_ends_at = "proposed", slot.starts_at, slot.ends_at
     a.doctor_note = note

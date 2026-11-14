@@ -127,7 +127,14 @@
     "patient/specialty/[id]": "Doctors",
     "patient/book/[doctorId]": "Book",
     "patient/appointments": "My appointments",
-    "doctor/appointments": "Appointments"
+    "doctor/appointments": "Appointments",
+    "patient/treatments": "My treatments",
+    "patient/record": "Smart record",
+    "patient/prepare/[id]": "Prepare consultation",
+    "doctor/agenda": "My agenda",
+    "doctor/schedule": "Work schedule",
+    "doctor/consultation/[id]": "Consultation sheet",
+    "doctor/treatment": "Treatment"
   },
   "settings": {
     "title": "Profile",
@@ -664,7 +671,7 @@
       "expired": "This QR expired or was revoked. Ask the patient to generate a new one."
     },
     "timeLeft": "{{time}} left"
-  },
+  },
   "family": {
     "title": "Family QR",
     "intro": "Add up to 3 family members and keep their emergency QR codes in one place. Each QR is valid for 5 minutes, and a new one is generated every time you press the button.",
@@ -1137,7 +1144,13 @@
   },
   "hubs": {
     "records": {
-      "folders": { "symptoms": "Describe symptoms", "documents": "Documents and lab results", "history": "Medical history" },
+      "folders": {
+        "symptoms": "Describe symptoms",
+        "documents": "Documents and lab results",
+        "history": "Medical history",
+        "smartRecord": "Smart record",
+        "treatments": "My treatments"
+      },
       "title": "My record",
       "subtitle": "Everything about your health, gathered in one place.",
       "aboutYou": "About you",
@@ -1249,7 +1262,12 @@
       "smartCare": "Smart Care",
       "specialties": "Find a specialty",
       "appointments": "My appointments",
-      "doctorAppointments": "Appointments"
+      "doctorAppointments": "Appointments",
+      "treatments": "My treatments",
+      "smartRecord": "Smart record",
+      "agenda": "My agenda",
+      "schedule": "Work schedule",
+      "grantAccess": "Grant access"
     },
     "topics": {
       "home": {
@@ -1731,6 +1749,155 @@
             "a": "You show up once an administrator assigns your specialty and you have published free slots."
           }
         ]
+      },
+      "treatments": {
+        "title": "My treatments",
+        "intro": "Treatments your doctor recorded in WWHealth, today's doses and the full history.",
+        "can": [
+          "See today's doses and the next one.",
+          "Mark a dose as taken or skipped.",
+          "Turn on discreet reminders."
+        ],
+        "steps": [
+          "Tap a dose to mark it.",
+          "Tap a treatment for the doctor's instructions and change history.",
+          "Turn on “Dose reminders”."
+        ],
+        "faq": [
+          {
+            "q": "Does marking a dose change my prescription?",
+            "a": "No. It only records what you report; the plan is changed only by your doctor."
+          },
+          {
+            "q": "What if I missed a dose?",
+            "a": "Don't double the next dose. Follow the doctor's instructions or ask your doctor or pharmacist."
+          }
+        ]
+      },
+      "prepare": {
+        "title": "Prepare the consultation",
+        "intro": "Tell the doctor in advance why you're coming and what you want to ask.",
+        "can": [
+          "Write the reason, symptoms and questions.",
+          "Attach the Smart Care summary, if you want.",
+          "Share your record separately."
+        ],
+        "steps": [
+          "Fill in what you know.",
+          "Tap Save.",
+          "Optionally, grant access to your record."
+        ],
+        "faq": [
+          {
+            "q": "Who sees this?",
+            "a": "Only you and the doctor of this appointment."
+          }
+        ]
+      },
+      "smartRecord": {
+        "title": "Smart record",
+        "intro": "Your whole record in one place, organised three ways, with the source of every item.",
+        "can": [
+          "Switch between Relevant, Chronological and By category.",
+          "See who added each item and how it was verified.",
+          "Ask for an AI summary with sources."
+        ],
+        "steps": [
+          "Choose a view.",
+          "Tap an item with a document to open it."
+        ],
+        "faq": [
+          {
+            "q": "Why are allergies always on top?",
+            "a": "Allergies and active treatments are never hidden — they matter for every visit."
+          },
+          {
+            "q": "Is the AI summary a diagnosis?",
+            "a": "No. It only reorganises what's already in your record, with sources."
+          }
+        ]
+      },
+      "agenda": {
+        "title": "My agenda",
+        "intro": "Your appointments by day or week, new requests and free slots.",
+        "can": [
+          "See today's and this week's appointments.",
+          "Open the consultation sheet.",
+          "Go to requests and the work schedule."
+        ],
+        "steps": [
+          "Choose Day or Week.",
+          "Tap “Consultation sheet” on an appointment."
+        ],
+        "faq": [
+          {
+            "q": "Where do I accept requests?",
+            "a": "In Appointments — the agenda links to it."
+          }
+        ]
+      },
+      "schedule": {
+        "title": "Work schedule",
+        "intro": "Set the hours patients can book, breaks, consultation length and days off.",
+        "can": [
+          "Set hours per weekday and a break.",
+          "Choose the consultation length.",
+          "Add days off, vacations or blocked intervals."
+        ],
+        "steps": [
+          "Turn on your working days and set the hours.",
+          "Tap Save schedule.",
+          "Add time off below."
+        ],
+        "faq": [
+          {
+            "q": "What happens to booked appointments?",
+            "a": "Nothing — they are never removed or cancelled automatically."
+          }
+        ]
+      },
+      "consultation": {
+        "title": "Consultation sheet",
+        "intro": "What the patient prepared and the record sections they shared with you.",
+        "can": [
+          "Read the reason, symptoms and questions.",
+          "See shared allergies, treatments, labs and documents.",
+          "Add or change a treatment plan."
+        ],
+        "steps": [
+          "Check the access status.",
+          "Open documents from the list.",
+          "Use “New treatment” when you have profile access."
+        ],
+        "faq": [
+          {
+            "q": "Why don't I see the record?",
+            "a": "The patient hasn't granted access, or it expired / was revoked."
+          }
+        ]
+      },
+      "treatmentEditor": {
+        "title": "Treatment",
+        "intro": "Write a prescription or treatment instructions. Every change becomes a new version.",
+        "can": [
+          "Set medication, dose, route and times.",
+          "Mark “as needed” without inventing times.",
+          "Discontinue or cancel a plan."
+        ],
+        "steps": [
+          "Fill in the fields.",
+          "Save and confirm."
+        ],
+        "faq": [
+          {
+            "q": "Is this a CNAS e-prescription?",
+            "a": "No. It's a WWHealth treatment record."
+          },
+          {
+            "q": "Can AI change it?",
+            "a": "Never."
+          }
+        ]
       }
     }
   },
@@ -1967,5 +2134,313 @@
       "error": "Gemini refused the request. Try again; if it keeps happening, check GEMINI_API_KEY and the model in backend/.env."
     },
     "retry": "Try again"
+  },
+  "cj": {
+    "home": {
+      "title": "Your care journey",
+      "nextVisit": "Next visit",
+      "proposals_one": "{{count}} new time proposed",
+      "proposals_other": "{{count}} new times proposed",
+      "proposalsHint": "Accept or decline the doctor's proposal.",
+      "requests_one": "{{count}} request waiting for the doctor",
+      "requests_other": "{{count}} requests waiting for the doctor",
+      "requestsHint": "You'll see here when the doctor answers.",
+      "activePlans_one": "{{count}} active treatment",
+      "activePlans_other": "{{count}} active treatments"
+    },
+    "cta": {
+      "findDoctor": "Find a doctor",
+      "viewAppointment": "View appointment",
+      "prepare": "Prepare the consultation",
+      "viewTreatment": "View treatment",
+      "nextDose": "Next dose",
+      "viewHistory": "View history",
+      "followUp": "Book a follow-up"
+    },
+    "prep": {
+      "intro": "Only you and the doctor of this appointment see what you write here. Your medical record is shared separately, only if you choose.",
+      "reason": "Reason for the visit",
+      "reasonHint": "e.g. check-up, persistent cough",
+      "symptoms": "Symptoms",
+      "symptomsHint": "What you feel, since when",
+      "questions": "Questions for the doctor",
+      "questionsHint": "Up to 10 questions.",
+      "questionN": "Question {{n}}",
+      "addQuestion": "Add a question",
+      "attachSummary": "Attach the Smart Care summary",
+      "attachHint": "The symptom summary from your last Smart Care session. Not a diagnosis.",
+      "saved": "Saved. The doctor will see it in the consultation sheet.",
+      "shareTitle": "Share your record with the doctor",
+      "shareHint": "Allergies, conditions, treatments, documents — only the sections you choose, for a limited time, revocable anytime.",
+      "shareCta": "Grant access"
+    },
+    "consult": {
+      "preparation": "Prepared by the patient",
+      "notPrepared": "The patient hasn't prepared anything for this consultation.",
+      "careSummary": "Smart Care summary (attached by the patient)",
+      "careSummaryNote": "Symptom orientation produced by Smart Care — not a diagnosis.",
+      "access": "Record access",
+      "until": "until {{date}}",
+      "grantHint": "Medical data is shown only after the patient grants access from the app.",
+      "grant": {
+        "none": "The patient hasn't shared their record with you.",
+        "expired": "The patient's access grant has expired.",
+        "revoked": "The patient revoked access."
+      },
+      "noneDeclared": "None declared.",
+      "treatments": "WWHealth treatments",
+      "noPlans": "No treatment plan in WWHealth yet.",
+      "documents": "Documents",
+      "showRecord": "Organised record",
+      "hideRecord": "Hide the organised record",
+      "declared": "Medication declared by the patient"
+    },
+    "treat": {
+      "empty": "No treatments yet",
+      "emptyHint": "Treatments prescribed by your doctor in WWHealth appear here.",
+      "nextDose": "NEXT DOSE",
+      "today": "Today's doses",
+      "history": "Change history",
+      "instructions": "Doctor's instructions",
+      "reason": "Reason for the change",
+      "declaredHint": "Added by you in the medical profile — not prescribed in WWHealth.",
+      "noTimes": "No set times: take it as described in the doctor's instructions. WWHealth sends no reminders for it.",
+      "noTimesDoctor": "No reminders are generated for “as needed” or undocumented schedules.",
+      "notCnas": "WWHealth treatment records are not official CNAS e-prescriptions. For any change, ask your doctor.",
+      "notCnasDoctor": "Written by you, versioned and audited. Not an official CNAS e-prescription. AI never generates or changes treatments.",
+      "readOnly": "Only the prescribing doctor can change an active plan. Ended plans stay in the history.",
+      "new": "New treatment",
+      "create": "Save treatment",
+      "saveVersion": "Save new version",
+      "kindLabel": "Type",
+      "confirmCreate": "Save this treatment?",
+      "confirmUpdate": "Save a new version?",
+      "confirmText": "The patient will see it right away. Each change is kept in the history.",
+      "confirmEndText": "The plan stays in the patient's history and can no longer be changed.",
+      "confirm": {
+        "discontinued": "Discontinue this treatment?",
+        "cancelled": "Cancel this treatment?"
+      },
+      "end": {
+        "discontinued": "Discontinue",
+        "cancelled": "Cancel (entered by mistake)"
+      },
+      "status": {
+        "UPCOMING": "Upcoming",
+        "ACTIVE": "Active",
+        "COMPLETED": "Completed",
+        "DISCONTINUED": "Discontinued",
+        "CANCELLED": "Cancelled"
+      },
+      "kind": {
+        "prescription": "Prescription",
+        "instructions": "Treatment instructions"
+      },
+      "schedule": {
+        "fixed_times": "Set times",
+        "as_needed": "As needed",
+        "undocumented": "Not specified"
+      },
+      "change": {
+        "created": "created",
+        "updated": "updated",
+        "discontinued": "discontinued",
+        "cancelled": "cancelled"
+      },
+      "section": {
+        "active": "Active",
+        "upcoming": "Upcoming",
+        "finished": "Finished",
+        "declared": "Declared by you"
+      },
+      "f": {
+        "medicationName": "Medication",
+        "activeSubstance": "Active substance",
+        "strength": "Strength",
+        "dosageForm": "Form",
+        "doseAmount": "Dose",
+        "doseUnit": "Unit",
+        "route": "Route",
+        "schedule": "Schedule",
+        "times": "Times (HH:MM)",
+        "frequencyText": "Frequency (as written)",
+        "startDate": "Start (YYYY-MM-DD)",
+        "endDate": "End (optional)"
+      },
+      "err": {
+        "name": "Enter the medication name.",
+        "times": "Enter the times as HH:MM, e.g. 08:00, 20:00.",
+        "dates": "Check the dates (YYYY-MM-DD, end after start).",
+        "dose": "The dose must be a positive number."
+      }
+    },
+    "dose": {
+      "pending": "Due",
+      "taken": "Taken",
+      "skipped": "Skipped",
+      "markTaken": "Mark as taken",
+      "markSkipped": "Mark as skipped",
+      "snooze": "Remind me in {{count}} min",
+      "missedNote": "Missed a dose? Don't take a double dose to catch up — follow the doctor's instructions or ask your doctor or pharmacist."
+    },
+    "remind": {
+      "title": "WWHealth",
+      "body": "Medication reminder",
+      "toggle": "Dose reminders",
+      "privacy": "Notifications show only “Medication reminder” — no medication names on the lock screen.",
+      "denied": "Notifications are off for WWHealth. Turn them on in the phone's Settings.",
+      "snoozed": "We'll remind you again in {{count}} min.",
+      "enableFirst": "Turn on dose reminders first."
+    },
+    "record": {
+      "view": {
+        "relevance": "Relevant",
+        "chronological": "Chronological",
+        "category": "By category"
+      },
+      "empty": "Your record is empty",
+      "emptyHint": "Add allergies, conditions or treatments, or upload a document.",
+      "addData": "Complete the profile",
+      "insufficient": "Nothing in the record matches the reason for this visit. Allergies and active treatments are always shown.",
+      "category": {
+        "conditions": "Conditions",
+        "procedures": "Procedures",
+        "medication": "Medication & prescriptions",
+        "allergies": "Allergies",
+        "labs": "Lab results",
+        "investigations": "Investigations",
+        "consultations": "Consultations",
+        "hospitalizations": "Hospitalisations",
+        "vaccinations": "Vaccinations",
+        "family_history": "Family history"
+      },
+      "verification": {
+        "patient_declared": "Declared by patient",
+        "doctor_prescribed": "Doctor (WWHealth)",
+        "document": "Document",
+        "patient_confirmed_lab": "Confirmed value",
+        "ai_screening": "AI screening",
+        "booking": "Appointment"
+      },
+      "why": {
+        "allergy_always": "Always shown: allergy",
+        "active_treatment_always": "Always shown: active treatment",
+        "matches_reason": "Related to the visit reason",
+        "matches_specialty": "Related to the specialty"
+      }
+    },
+    "ai": {
+      "title": "AI organisation of the record",
+      "disclaimer": "Generated only from the shared record, with sources. Not a diagnosis, no advice, no urgency assessment.",
+      "generate": "Generate summary",
+      "sources": "Sources",
+      "consultation": "For this consultation",
+      "patient": "In plain words",
+      "clinical": "Clinical summary",
+      "general": "Overview",
+      "contradictions": "Information that doesn't match",
+      "missing": "Not documented",
+      "terms": "Terms explained",
+      "insufficient": "The record has too little information for a reliable summary.",
+      "discarded_one": "{{count}} statement without a source was removed.",
+      "discarded_other": "{{count}} statements without a source were removed.",
+      "consentCta": "AI consent settings",
+      "status": {
+        "no_consent": "The patient hasn't consented to AI processing of the record.",
+        "not_configured": "AI organisation isn't configured on this server.",
+        "forbidden": "No access to this patient's record.",
+        "expired": "The access grant has expired.",
+        "revoked": "Access was revoked.",
+        "none": "No access to this patient's record."
+      }
+    },
+    "agenda": {
+      "entry": "My agenda",
+      "entryHint": "Today, this week, free slots, consultation sheets",
+      "schedule": "Work schedule",
+      "requests": "Requests",
+      "newRequests_one": "{{count}} new request",
+      "newRequests_other": "{{count}} new requests",
+      "newRequestsHint": "Accept, reject or propose another time.",
+      "day": "Day",
+      "week": "Week",
+      "prev": "Previous",
+      "next": "Next",
+      "today": "Today",
+      "prepared": "Prepared",
+      "openSheet": "Consultation sheet",
+      "free_one": "{{count}} free slot",
+      "free_other": "{{count}} free slots",
+      "emptyDay": "Nothing scheduled",
+      "emptyDayHint": "Set your work schedule so patients can book.",
+      "upcoming": "Upcoming confirmed"
+    },
+    "schedule": {
+      "intro": "Times are in {{tz}}. Patients see only free slots generated from this schedule.",
+      "slot": "Consultation length",
+      "horizon": "Open for booking",
+      "days_one": "{{count}} day",
+      "days_other": "{{count}} days",
+      "week": "Weekly schedule",
+      "weekHint": "One interval and an optional break per day.",
+      "start": "Start",
+      "end": "End",
+      "break": "Break",
+      "save": "Save schedule",
+      "saved": "Saved: {{added}} slots added, {{removed}} free slots removed.",
+      "safe": "Booked appointments are never removed or cancelled when you change the schedule.",
+      "invalidDay": "Check the times for {{day}} (HH:MM, break inside working hours).",
+      "invalidRange": "Check the dates (YYYY-MM-DD) and times.",
+      "timeOff": "Days off and blocked times",
+      "timeOffHint": "Patients can't book in these intervals.",
+      "off": {
+        "day_off": "Day off",
+        "vacation": "Vacation",
+        "blocked": "Blocked interval"
+      },
+      "from": "From",
+      "to": "To (optional)",
+      "note": "Note (optional)",
+      "addOff": "Add",
+      "offAdded": "Added.",
+      "conflicts_one": "Added. {{count}} existing appointment falls in this interval — it was NOT cancelled; contact the patient if needed.",
+      "conflicts_other": "Added. {{count}} existing appointments fall in this interval — they were NOT cancelled; contact the patients if needed.",
+      "removeTitle": "Remove this interval?",
+      "removeText": "The slots become bookable again.",
+      "remove": "Remove",
+      "statusTitle": "WHAT PATIENTS SEE",
+      "notConfigured": "You haven't set your schedule yet — patients can't book you until you save it.",
+      "freeWeek_one": "{{count}} free slot in the next 7 days",
+      "freeWeek_other": "{{count}} free slots in the next 7 days",
+      "nextFree": "First free slot: {{when}}",
+      "noFreeWeek": "No free slot in the next 7 days — check the days and hours below.",
+      "seeAgenda": "See it in the agenda",
+      "step1": "Days and hours",
+      "templatesHint": "Start from a template, then adjust. Tap a day to turn it on or off.",
+      "tpl": {
+        "weekdays_9_17": "Mon–Fri 9–17",
+        "weekdays_8_14": "Mon–Fri 8–14",
+        "weekdays_14_20": "Mon–Fri 14–20"
+      },
+      "customDays": "Different hours on some days",
+      "breakFrom": "Break from",
+      "breakTo": "Break until",
+      "preview": "PREVIEW",
+      "previewWeekly_one": "≈ {{count}} consultation per week",
+      "previewWeekly_other": "≈ {{count}} consultations per week",
+      "previewNone": "No working day selected.",
+      "slotsCount_one": "{{count}} slot",
+      "slotsCount_other": "{{count}} slots",
+      "tz": "Time zone: {{tz}}.",
+      "quickToday": "Off today",
+      "quickTomorrow": "Off tomorrow",
+      "addVacation": "Vacation",
+      "addBlocked": "Block a few hours",
+      "noTimeOff": "No days off planned.",
+      "addTitle": "Time off",
+      "pickRange": "Tap the first day, then the last day (one tap = one day).",
+      "pickOneDay": "Choose the day, then the hours.",
+      "offSafe": "Existing appointments in this interval are not cancelled — you'll see how many there are."
+    }
   }
 }

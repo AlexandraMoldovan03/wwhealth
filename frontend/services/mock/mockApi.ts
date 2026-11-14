@@ -22,6 +22,7 @@ import type {
 import { createId, delay } from '@/utils/async';
 
 import { ApiError } from '@/services/api/ApiError';
+import { createMockCareJourney } from './mockCareJourney';
 import { mockSmartCare } from './mockSmartCare';
 
 /** Deep copy (JSON-safe data only). */
@@ -449,4 +450,8 @@ export const mockApi: WWHealthApi = {
   },
 
   ...mockSmartCare,
+  ...createMockCareJourney({
+    hasGrant: (scope) => doctorGrants.some((g) => grantStatus(g) === 'active' && g.scopes.includes(scope)),
+    record: () => db,
+  }),
 };

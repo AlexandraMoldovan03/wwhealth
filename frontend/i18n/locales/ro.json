@@ -127,7 +127,14 @@
     "patient/specialty/[id]": "Medici",
     "patient/book/[doctorId]": "Programare",
     "patient/appointments": "Programările mele",
-    "doctor/appointments": "Programări"
+    "doctor/appointments": "Programări",
+    "patient/treatments": "Tratamentele mele",
+    "patient/record": "Fișa inteligentă",
+    "patient/prepare/[id]": "Pregătește consultația",
+    "doctor/agenda": "Agenda mea",
+    "doctor/schedule": "Program de lucru",
+    "doctor/consultation/[id]": "Fișa de consultație",
+    "doctor/treatment": "Tratament"
   },
   "settings": {
     "title": "Profil",
@@ -664,7 +671,7 @@
       "expired": "Acest QR a expirat sau a fost revocat. Roagă pacientul să genereze unul nou."
     },
     "timeLeft": "Mai sunt {{time}}"
-  },
+  },
   "family": {
     "title": "QR familiei",
     "intro": "Adaugă până la 3 membri ai familiei și păstrează QR-urile lor de urgență într-un singur loc. Fiecare QR este valabil 5 minute, iar unul nou este generat de fiecare dată când apeși butonul.",
@@ -1143,7 +1150,13 @@
   },
   "hubs": {
     "records": {
-      "folders": { "symptoms": "Descrie simptomele", "documents": "Documente și analize", "history": "Istoric medical" },
+      "folders": {
+        "symptoms": "Descrie simptomele",
+        "documents": "Documente și analize",
+        "history": "Istoric medical",
+        "smartRecord": "Fișa inteligentă",
+        "treatments": "Tratamentele mele"
+      },
       "title": "Dosarul meu",
       "subtitle": "Tot ce ține de sănătatea ta, adunat într-un singur loc.",
       "aboutYou": "Despre tine",
@@ -1261,7 +1274,12 @@
       "smartCare": "Smart Care",
       "specialties": "Caută o specialitate",
       "appointments": "Programările mele",
-      "doctorAppointments": "Programări"
+      "doctorAppointments": "Programări",
+      "treatments": "Tratamentele mele",
+      "smartRecord": "Fișa inteligentă",
+      "agenda": "Agenda mea",
+      "schedule": "Program de lucru",
+      "grantAccess": "Acordă acces"
     },
     "topics": {
       "home": {
@@ -1743,6 +1761,155 @@
             "a": "Apari după ce un administrator îți asociază specialitatea și ai ore libere publicate."
           }
         ]
+      },
+      "treatments": {
+        "title": "Tratamentele mele",
+        "intro": "Tratamentele înregistrate de medic în WWHealth, dozele de azi și tot istoricul.",
+        "can": [
+          "Vezi dozele de azi și următoarea doză.",
+          "Marchează o doză ca luată sau omisă.",
+          "Activează remindere discrete."
+        ],
+        "steps": [
+          "Apasă pe o doză ca s-o marchezi.",
+          "Apasă pe un tratament pentru instrucțiuni și istoricul modificărilor.",
+          "Activează „Remindere pentru doze”."
+        ],
+        "faq": [
+          {
+            "q": "Dacă marchez o doză se schimbă prescripția?",
+            "a": "Nu. Se înregistrează doar ce raportezi; planul îl modifică doar medicul."
+          },
+          {
+            "q": "Ce fac dacă am omis o doză?",
+            "a": "Nu dubla doza următoare. Urmează instrucțiunile medicului sau întreabă medicul ori farmacistul."
+          }
+        ]
+      },
+      "prepare": {
+        "title": "Pregătește consultația",
+        "intro": "Spune-i medicului dinainte de ce vii și ce vrei să întrebi.",
+        "can": [
+          "Scrie motivul, simptomele și întrebările.",
+          "Atașează rezumatul Smart Care, dacă vrei.",
+          "Partajează fișa separat."
+        ],
+        "steps": [
+          "Completează ce știi.",
+          "Apasă Salvează.",
+          "Opțional, acordă acces la fișă."
+        ],
+        "faq": [
+          {
+            "q": "Cine vede asta?",
+            "a": "Doar tu și medicul acestei programări."
+          }
+        ]
+      },
+      "smartRecord": {
+        "title": "Fișa inteligentă",
+        "intro": "Toată fișa într-un loc, organizată în trei moduri, cu sursa fiecărei informații.",
+        "can": [
+          "Comută între Relevanță, Cronologic și Pe categorii.",
+          "Vezi cine a adăugat fiecare element și cum a fost verificat.",
+          "Cere un rezumat AI cu surse."
+        ],
+        "steps": [
+          "Alege o vizualizare.",
+          "Apasă pe un element cu document ca să-l deschizi."
+        ],
+        "faq": [
+          {
+            "q": "De ce alergiile sunt mereu sus?",
+            "a": "Alergiile și tratamentele active nu se ascund niciodată — contează la orice consultație."
+          },
+          {
+            "q": "Rezumatul AI e un diagnostic?",
+            "a": "Nu. Doar reorganizează ce e deja în fișă, cu surse."
+          }
+        ]
+      },
+      "agenda": {
+        "title": "Agenda mea",
+        "intro": "Programările pe zi sau săptămână, cererile noi și sloturile libere.",
+        "can": [
+          "Vezi programările de azi și din săptămână.",
+          "Deschide fișa de consultație.",
+          "Mergi la cereri și la programul de lucru."
+        ],
+        "steps": [
+          "Alege Zi sau Săptămână.",
+          "Apasă „Fișa de consultație” la o programare."
+        ],
+        "faq": [
+          {
+            "q": "Unde accept cererile?",
+            "a": "În Programări — agenda are link direct."
+          }
+        ]
+      },
+      "schedule": {
+        "title": "Program de lucru",
+        "intro": "Setează orele în care pacienții se pot programa, pauzele, durata consultației și zilele libere.",
+        "can": [
+          "Ore pe fiecare zi și o pauză.",
+          "Durata consultației.",
+          "Zile libere, concedii sau intervale blocate."
+        ],
+        "steps": [
+          "Activează zilele de lucru și setează orele.",
+          "Apasă Salvează programul.",
+          "Adaugă zilele libere mai jos."
+        ],
+        "faq": [
+          {
+            "q": "Ce se întâmplă cu programările existente?",
+            "a": "Nimic — nu sunt niciodată șterse sau anulate automat."
+          }
+        ]
+      },
+      "consultation": {
+        "title": "Fișa de consultație",
+        "intro": "Ce a pregătit pacientul și secțiunile din fișă pe care ți le-a partajat.",
+        "can": [
+          "Citește motivul, simptomele și întrebările.",
+          "Vezi alergiile, tratamentele, analizele și documentele partajate.",
+          "Adaugă sau modifică un plan de tratament."
+        ],
+        "steps": [
+          "Verifică starea accesului.",
+          "Deschide documentele din listă.",
+          "Folosește „Tratament nou” când ai acces la profil."
+        ],
+        "faq": [
+          {
+            "q": "De ce nu văd fișa?",
+            "a": "Pacientul nu a acordat acces sau accesul a expirat / a fost revocat."
+          }
+        ]
+      },
+      "treatmentEditor": {
+        "title": "Tratament",
+        "intro": "Scrie o prescripție sau instrucțiuni de tratament. Fiecare modificare devine o versiune nouă.",
+        "can": [
+          "Medicament, doză, cale de administrare și ore.",
+          "„La nevoie” fără ore inventate.",
+          "Oprește sau anulează un plan."
+        ],
+        "steps": [
+          "Completează câmpurile.",
+          "Salvează și confirmă."
+        ],
+        "faq": [
+          {
+            "q": "Este o rețetă electronică CNAS?",
+            "a": "Nu. Este o înregistrare de tratament WWHealth."
+          },
+          {
+            "q": "Poate AI să-l modifice?",
+            "a": "Niciodată."
+          }
+        ]
       }
     }
   },
@@ -1984,5 +2151,324 @@
       "error": "Gemini a refuzat cererea. Încearcă din nou; dacă se repetă, verifică cheia GEMINI_API_KEY și modelul din backend/.env."
     },
     "retry": "Încearcă din nou"
+  },
+  "cj": {
+    "home": {
+      "title": "Parcursul tău de îngrijire",
+      "nextVisit": "Următoarea consultație",
+      "proposals_one": "{{count}} oră nouă propusă",
+      "proposals_few": "{{count}} ore noi propuse",
+      "proposals_other": "{{count}} de ore noi propuse",
+      "proposalsHint": "Acceptă sau refuză propunerea medicului.",
+      "requests_one": "{{count}} cerere așteaptă medicul",
+      "requests_few": "{{count}} cereri așteaptă medicul",
+      "requests_other": "{{count}} de cereri așteaptă medicul",
+      "requestsHint": "Vei vedea aici când răspunde medicul.",
+      "activePlans_one": "{{count}} tratament activ",
+      "activePlans_few": "{{count}} tratamente active",
+      "activePlans_other": "{{count}} de tratamente active"
+    },
+    "cta": {
+      "findDoctor": "Găsește un medic",
+      "viewAppointment": "Vezi programarea",
+      "prepare": "Pregătește consultația",
+      "viewTreatment": "Vezi tratamentul",
+      "nextDose": "Următoarea doză",
+      "viewHistory": "Vezi istoricul",
+      "followUp": "Programează controlul"
+    },
+    "prep": {
+      "intro": "Ce scrii aici văd doar tu și medicul acestei programări. Fișa medicală se partajează separat, doar dacă alegi.",
+      "reason": "Motivul consultației",
+      "reasonHint": "ex. control, tuse persistentă",
+      "symptoms": "Simptome",
+      "symptomsHint": "Ce simți, de când",
+      "questions": "Întrebări pentru medic",
+      "questionsHint": "Maximum 10 întrebări.",
+      "questionN": "Întrebarea {{n}}",
+      "addQuestion": "Adaugă o întrebare",
+      "attachSummary": "Atașează rezumatul Smart Care",
+      "attachHint": "Rezumatul simptomelor din ultima sesiune Smart Care. Nu este un diagnostic.",
+      "saved": "Salvat. Medicul îl va vedea în fișa de consultație.",
+      "shareTitle": "Partajează fișa cu medicul",
+      "shareHint": "Alergii, afecțiuni, tratamente, documente — doar secțiunile alese, pe timp limitat, revocabil oricând.",
+      "shareCta": "Acordă acces"
+    },
+    "consult": {
+      "preparation": "Pregătit de pacient",
+      "notPrepared": "Pacientul nu a pregătit nimic pentru această consultație.",
+      "careSummary": "Rezumat Smart Care (atașat de pacient)",
+      "careSummaryNote": "Orientare după simptome generată de Smart Care — nu este un diagnostic.",
+      "access": "Acces la fișă",
+      "until": "până la {{date}}",
+      "grantHint": "Datele medicale apar doar după ce pacientul acordă acces din aplicație.",
+      "grant": {
+        "none": "Pacientul nu ți-a partajat fișa.",
+        "expired": "Accesul acordat de pacient a expirat.",
+        "revoked": "Pacientul a revocat accesul."
+      },
+      "noneDeclared": "Nimic declarat.",
+      "treatments": "Tratamente WWHealth",
+      "noPlans": "Încă niciun plan de tratament în WWHealth.",
+      "documents": "Documente",
+      "showRecord": "Fișa organizată",
+      "hideRecord": "Ascunde fișa organizată",
+      "declared": "Medicație declarată de pacient"
+    },
+    "treat": {
+      "empty": "Niciun tratament încă",
+      "emptyHint": "Aici apar tratamentele prescrise de medic în WWHealth.",
+      "nextDose": "URMĂTOAREA DOZĂ",
+      "today": "Dozele de azi",
+      "history": "Istoricul modificărilor",
+      "instructions": "Instrucțiunile medicului",
+      "reason": "Motivul modificării",
+      "declaredHint": "Adăugate de tine în profilul medical — nu sunt prescrise în WWHealth.",
+      "noTimes": "Fără ore stabilite: urmează instrucțiunile medicului. WWHealth nu trimite remindere pentru acest tratament.",
+      "noTimesDoctor": "Pentru „la nevoie” sau ore nedocumentate nu se generează remindere.",
+      "notCnas": "Tratamentele din WWHealth nu sunt rețete electronice oficiale CNAS. Pentru orice schimbare, întreabă medicul.",
+      "notCnasDoctor": "Scris de tine, versionat și auditat. Nu este o rețetă electronică oficială CNAS. AI nu generează și nu modifică tratamente.",
+      "readOnly": "Doar medicul care a prescris poate modifica un plan activ. Planurile încheiate rămân în istoric.",
+      "new": "Tratament nou",
+      "create": "Salvează tratamentul",
+      "saveVersion": "Salvează versiunea nouă",
+      "kindLabel": "Tip",
+      "confirmCreate": "Salvezi acest tratament?",
+      "confirmUpdate": "Salvezi o versiune nouă?",
+      "confirmText": "Pacientul îl vede imediat. Fiecare modificare rămâne în istoric.",
+      "confirmEndText": "Planul rămâne în istoricul pacientului și nu mai poate fi modificat.",
+      "confirm": {
+        "discontinued": "Oprești acest tratament?",
+        "cancelled": "Anulezi acest tratament?"
+      },
+      "end": {
+        "discontinued": "Oprește",
+        "cancelled": "Anulează (introdus greșit)"
+      },
+      "status": {
+        "UPCOMING": "Urmează",
+        "ACTIVE": "Activ",
+        "COMPLETED": "Finalizat",
+        "DISCONTINUED": "Oprit",
+        "CANCELLED": "Anulat"
+      },
+      "kind": {
+        "prescription": "Prescripție",
+        "instructions": "Instrucțiuni de tratament"
+      },
+      "schedule": {
+        "fixed_times": "Ore stabilite",
+        "as_needed": "La nevoie",
+        "undocumented": "Nespecificat"
+      },
+      "change": {
+        "created": "creat",
+        "updated": "modificat",
+        "discontinued": "oprit",
+        "cancelled": "anulat"
+      },
+      "section": {
+        "active": "Active",
+        "upcoming": "Urmează",
+        "finished": "Încheiate",
+        "declared": "Declarate de tine"
+      },
+      "f": {
+        "medicationName": "Medicament",
+        "activeSubstance": "Substanță activă",
+        "strength": "Concentrație",
+        "dosageForm": "Formă",
+        "doseAmount": "Doză",
+        "doseUnit": "Unitate",
+        "route": "Cale de administrare",
+        "schedule": "Program",
+        "times": "Ore (HH:MM)",
+        "frequencyText": "Frecvență (cum e scrisă)",
+        "startDate": "Început (AAAA-LL-ZZ)",
+        "endDate": "Sfârșit (opțional)"
+      },
+      "err": {
+        "name": "Completează numele medicamentului.",
+        "times": "Scrie orele ca HH:MM, ex. 08:00, 20:00.",
+        "dates": "Verifică datele (AAAA-LL-ZZ, sfârșitul după început).",
+        "dose": "Doza trebuie să fie un număr pozitiv."
+      }
+    },
+    "dose": {
+      "pending": "De luat",
+      "taken": "Luat",
+      "skipped": "Omis",
+      "markTaken": "Marchează „Luat”",
+      "markSkipped": "Marchează „Omis”",
+      "snooze": "Amintește-mi în {{count}} min",
+      "missedNote": "Ai omis o doză? Nu lua doză dublă ca să recuperezi — urmează instrucțiunile medicului sau întreabă medicul ori farmacistul."
+    },
+    "remind": {
+      "title": "WWHealth",
+      "body": "Reminder medicament",
+      "toggle": "Remindere pentru doze",
+      "privacy": "Notificările arată doar „Reminder medicament” — fără numele medicamentului pe ecranul blocat.",
+      "denied": "Notificările sunt oprite pentru WWHealth. Activează-le din Setările telefonului.",
+      "snoozed": "Îți reamintim în {{count}} min.",
+      "enableFirst": "Activează mai întâi reminderele pentru doze."
+    },
+    "record": {
+      "view": {
+        "relevance": "Relevanță",
+        "chronological": "Cronologic",
+        "category": "Pe categorii"
+      },
+      "empty": "Fișa ta e goală",
+      "emptyHint": "Adaugă alergii, afecțiuni sau tratamente ori încarcă un document.",
+      "addData": "Completează profilul",
+      "insufficient": "Nimic din fișă nu se leagă de motivul consultației. Alergiile și tratamentele active apar mereu.",
+      "category": {
+        "conditions": "Afecțiuni",
+        "procedures": "Proceduri",
+        "medication": "Medicație și prescripții",
+        "allergies": "Alergii",
+        "labs": "Analize",
+        "investigations": "Investigații",
+        "consultations": "Consultații",
+        "hospitalizations": "Internări",
+        "vaccinations": "Vaccinări",
+        "family_history": "Istoric familial"
+      },
+      "verification": {
+        "patient_declared": "Declarat de pacient",
+        "doctor_prescribed": "Medic (WWHealth)",
+        "document": "Document",
+        "patient_confirmed_lab": "Valoare confirmată",
+        "ai_screening": "Screening AI",
+        "booking": "Programare"
+      },
+      "why": {
+        "allergy_always": "Afișat mereu: alergie",
+        "active_treatment_always": "Afișat mereu: tratament activ",
+        "matches_reason": "Legat de motivul consultației",
+        "matches_specialty": "Legat de specialitate"
+      }
+    },
+    "ai": {
+      "title": "Organizarea fișei cu AI",
+      "disclaimer": "Generat doar din fișa partajată, cu surse. Nu e diagnostic, nu dă sfaturi, nu evaluează urgența.",
+      "generate": "Generează rezumatul",
+      "sources": "Surse",
+      "consultation": "Pentru această consultație",
+      "patient": "Pe înțelesul tău",
+      "clinical": "Rezumat clinic",
+      "general": "Privire de ansamblu",
+      "contradictions": "Informații care nu se potrivesc",
+      "missing": "Nedocumentat",
+      "terms": "Termeni explicați",
+      "insufficient": "Fișa are prea puține informații pentru un rezumat de încredere.",
+      "discarded_one": "{{count}} afirmație fără sursă a fost eliminată.",
+      "discarded_few": "{{count}} afirmații fără sursă au fost eliminate.",
+      "discarded_other": "{{count}} de afirmații fără sursă au fost eliminate.",
+      "consentCta": "Setări consimțământ AI",
+      "status": {
+        "no_consent": "Pacientul nu și-a dat consimțământul pentru procesarea fișei cu AI.",
+        "not_configured": "Organizarea cu AI nu este configurată pe acest server.",
+        "forbidden": "Nu ai acces la fișa acestui pacient.",
+        "expired": "Accesul a expirat.",
+        "revoked": "Accesul a fost revocat.",
+        "none": "Nu ai acces la fișa acestui pacient."
+      }
+    },
+    "agenda": {
+      "entry": "Agenda mea",
+      "entryHint": "Azi, săptămâna aceasta, sloturi libere, fișe de consultație",
+      "schedule": "Program de lucru",
+      "requests": "Cereri",
+      "newRequests_one": "{{count}} cerere nouă",
+      "newRequests_few": "{{count}} cereri noi",
+      "newRequests_other": "{{count}} de cereri noi",
+      "newRequestsHint": "Acceptă, refuză sau propune altă oră.",
+      "day": "Zi",
+      "week": "Săptămână",
+      "prev": "Înapoi",
+      "next": "Înainte",
+      "today": "Azi",
+      "prepared": "Pregătită",
+      "openSheet": "Fișa de consultație",
+      "free_one": "{{count}} slot liber",
+      "free_few": "{{count}} sloturi libere",
+      "free_other": "{{count}} de sloturi libere",
+      "emptyDay": "Nimic programat",
+      "emptyDayHint": "Setează programul de lucru ca pacienții să se poată programa.",
+      "upcoming": "Următoarele confirmate"
+    },
+    "schedule": {
+      "intro": "Orele sunt în {{tz}}. Pacienții văd doar sloturile libere generate din acest program.",
+      "slot": "Durata consultației",
+      "horizon": "Deschis pentru programări",
+      "days_one": "{{count}} zi",
+      "days_few": "{{count}} zile",
+      "days_other": "{{count}} de zile",
+      "week": "Program săptămânal",
+      "weekHint": "Un interval și o pauză opțională pe zi.",
+      "start": "Început",
+      "end": "Sfârșit",
+      "break": "Pauză",
+      "save": "Salvează programul",
+      "saved": "Salvat: {{added}} sloturi adăugate, {{removed}} sloturi libere eliminate.",
+      "safe": "Programările existente nu sunt niciodată șterse sau anulate când schimbi programul.",
+      "invalidDay": "Verifică orele pentru {{day}} (HH:MM, pauza în timpul programului).",
+      "invalidRange": "Verifică datele (AAAA-LL-ZZ) și orele.",
+      "timeOff": "Zile libere și intervale blocate",
+      "timeOffHint": "Pacienții nu se pot programa în aceste intervale.",
+      "off": {
+        "day_off": "Zi liberă",
+        "vacation": "Concediu",
+        "blocked": "Interval blocat"
+      },
+      "from": "De la",
+      "to": "Până la (opțional)",
+      "note": "Notă (opțional)",
+      "addOff": "Adaugă",
+      "offAdded": "Adăugat.",
+      "conflicts_one": "Adăugat. {{count}} programare existentă cade în acest interval — NU a fost anulată; contactează pacientul dacă e nevoie.",
+      "conflicts_few": "Adăugat. {{count}} programări existente cad în acest interval — NU au fost anulate; contactează pacienții dacă e nevoie.",
+      "conflicts_other": "Adăugat. {{count}} de programări existente cad în acest interval — NU au fost anulate; contactează pacienții dacă e nevoie.",
+      "removeTitle": "Ștergi acest interval?",
+      "removeText": "Sloturile redevin disponibile.",
+      "remove": "Șterge",
+      "statusTitle": "CE VĂD PACIENȚII",
+      "notConfigured": "Nu ți-ai setat încă programul — pacienții nu se pot programa la tine până nu îl salvezi.",
+      "freeWeek_one": "{{count}} slot liber în următoarele 7 zile",
+      "freeWeek_few": "{{count}} sloturi libere în următoarele 7 zile",
+      "freeWeek_other": "{{count}} de sloturi libere în următoarele 7 zile",
+      "nextFree": "Primul slot liber: {{when}}",
+      "noFreeWeek": "Niciun slot liber în următoarele 7 zile — verifică zilele și orele de mai jos.",
+      "seeAgenda": "Vezi în agendă",
+      "step1": "Zile și ore",
+      "templatesHint": "Pornește de la un șablon, apoi ajustează. Apasă pe o zi ca s-o activezi sau dezactivezi.",
+      "tpl": {
+        "weekdays_9_17": "Lun–Vin 9–17",
+        "weekdays_8_14": "Lun–Vin 8–14",
+        "weekdays_14_20": "Lun–Vin 14–20"
+      },
+      "customDays": "Ore diferite în anumite zile",
+      "breakFrom": "Pauză de la",
+      "breakTo": "Pauză până la",
+      "preview": "PREVIZUALIZARE",
+      "previewWeekly_one": "≈ {{count}} consultație pe săptămână",
+      "previewWeekly_few": "≈ {{count}} consultații pe săptămână",
+      "previewWeekly_other": "≈ {{count}} de consultații pe săptămână",
+      "previewNone": "Nicio zi de lucru selectată.",
+      "slotsCount_one": "{{count}} slot",
+      "slotsCount_few": "{{count}} sloturi",
+      "slotsCount_other": "{{count}} de sloturi",
+      "tz": "Fus orar: {{tz}}.",
+      "quickToday": "Liber azi",
+      "quickTomorrow": "Liber mâine",
+      "addVacation": "Concediu",
+      "addBlocked": "Blochează câteva ore",
+      "noTimeOff": "Nicio zi liberă planificată.",
+      "addTitle": "Timp liber",
+      "pickRange": "Apasă prima zi, apoi ultima zi (o singură apăsare = o zi).",
+      "pickOneDay": "Alege ziua, apoi orele.",
+      "offSafe": "Programările existente din acest interval nu se anulează — vei vedea câte sunt."
+    }
   }
 }
