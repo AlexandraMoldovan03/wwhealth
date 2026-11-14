@@ -1,10 +1,11 @@
+import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { Alert, StyleSheet, View } from 'react-native';
 
 import { AppCard, AppText, Avatar, Badge, ScreenContainer, SectionHeader } from '@/design-system';
 import { API_BASE_URL, APP_INFO, SUPABASE_ENABLED, USE_MOCKS } from '@/config/config';
-import { spacing } from '@/design-system/theme';
+import { radius, spacing } from '@/design-system/theme';
 import { logout } from '@/services/auth/authService';
 import { setChecklistHidden } from '@/screens/patient/dashboard/progressStorage';
 import { useCurrentUser } from '@/services/auth/useCurrentUser';
@@ -41,30 +42,36 @@ export function SettingsScreen() {
   };
 
   return (
-    <ScreenContainer help="profile">
+    <ScreenContainer help="profile" showBackgroundLungs={false}>
       <AppText variant="title" accessibilityRole="header">
         {t('settings.title')}
       </AppText>
 
       {user && (
-        <AppCard style={styles.profile} enterIndex={0}>
-          <Avatar name={user.fullName || user.email} size={64} tone={user.role === 'doctor' ? 'accent' : 'primary'} />
-          <View style={styles.flex}>
-            <AppText variant="heading" numberOfLines={1}>
+        <View style={styles.profile}>
+          <LinearGradient
+            colors={[colors.accentMuted, colors.primaryMuted, 'transparent']}
+            pointerEvents="none"
+            style={styles.profileGlow}
+          />
+          <View style={[styles.avatarRing, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+            <Avatar name={user.fullName || user.email} size={80} tone={user.role === 'doctor' ? 'accent' : 'primary'} />
+          </View>
+          <AppCard style={styles.identity} enterIndex={0}>
+            <AppText variant="heading" align="center">
               {user.fullName || t('settings.signedIn')}
             </AppText>
-            <AppText variant="caption" color="textMuted" numberOfLines={1}>
+            <AppText variant="body" color="textMuted" align="center" selectable>
               {user.email}
             </AppText>
-            {/* Read-only: the role is set in Supabase (public.profiles.role), never from the app. */}
-            <Badge label={t(`roles.${user.role}`)} color={user.role === 'doctor' ? colors.accent : colors.primary} />
-          </View>
-        </AppCard>
+            <Badge label={t('roles.' + user.role)} color={user.role === 'doctor' ? colors.accent : colors.primary} />
+          </AppCard>
+        </View>
       )}
 
       <View style={styles.section}>
         <SectionHeader title={t('settings.account')} />
-        <AppCard>
+        <AppCard style={styles.group}>
           {user ? (
             <>
               <SettingsRow
@@ -106,7 +113,7 @@ export function SettingsScreen() {
 
       <View style={styles.section}>
         <SectionHeader title={t('settings.appearance')} />
-        <AppCard style={styles.card}>
+        <AppCard style={[styles.group, styles.card]}>
           <AppText variant="caption" color="textMuted">
             {t('settings.theme')}
           </AppText>
@@ -120,7 +127,7 @@ export function SettingsScreen() {
 
       <View style={styles.section}>
         <SectionHeader title={t('settings.backend')} subtitle={t('settings.backendSubtitle')} />
-        <AppCard>
+        <AppCard style={styles.group}>
           <SettingsRow icon="server-outline" title={t('settings.apiUrl')} value={API_BASE_URL} />
           <SettingsRow icon="flask-outline" title={t('settings.dataSource')} value={USE_MOCKS ? t('settings.dataMock') : t('settings.dataApi')} />
           <SettingsRow
@@ -133,7 +140,7 @@ export function SettingsScreen() {
 
       <View style={styles.section}>
         <SectionHeader title={t('settings.integrations')} subtitle={t('settings.integrationsSubtitle')} />
-        <AppCard>
+        <AppCard style={styles.group}>
           <SettingsRow icon="shield-checkmark-outline" title={t('settings.supabaseLogin')} value={SUPABASE_ENABLED ? t('settings.connected') : t('settings.notConfigured')} />
           <SettingsRow icon="scan-outline" title={t('settings.lungModel')} value="DenseNet121 (demo)" />
           <SettingsRow icon="sparkles-outline" title={t('settings.geminiExtraction')} value="Backend" />
@@ -143,7 +150,7 @@ export function SettingsScreen() {
 
       <View style={styles.section}>
         <SectionHeader title={t('settings.about')} />
-        <AppCard>
+        <AppCard style={styles.group}>
           <SettingsRow icon="information-circle-outline" title={APP_INFO.name} value={`v${APP_INFO.version}`} />
           <AppText variant="caption" color="textMuted" style={styles.about}>
             {t('app.description')}
@@ -155,9 +162,20 @@ export function SettingsScreen() {
 }
 
 const styles = StyleSheet.create({
-  section: { gap: spacing.md },
-  profile: { flexDirection: 'row', alignItems: 'center', gap: spacing.md },
-  flex: { flex: 1, gap: spacing.xs },
-  card: { gap: spacing.sm },
-  about: { paddingTop: spacing.xs },
+  section: { gap: spacing.sm },
+  profile: { alignItems: 'center', paddingTop: spacing.md },
+  profileGlow: { ...StyleSheet.absoluteFill, borderRadius: radius.xl },
+  avatarRing: { padding: 4, borderWidth: StyleSheet.hairlineWidth, borderRadius: radius.pill, zIndex: 1 },
+  identity: {
+    width: '100%',
+    alignItems: 'center',
+    gap: spacing.sm,
+    marginTop: -spacing.md,
+    paddingTop: spacing.xl + spacing.sm,
+    paddingBottom: spacing.lg,
+    borderRadius: radius.xl,
+  },
+  group: { borderRadius: radius.xl, paddingVertical: spacing.xs },
+  card: { gap: spacing.sm, paddingVertical: spacing.md },
+  about: { paddingVertical: spacing.sm },
 });
