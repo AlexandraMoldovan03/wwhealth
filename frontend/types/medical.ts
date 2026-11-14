@@ -76,7 +76,9 @@ export interface MedicalEvent {
   documentId?: string | null;
 }
 
-export type DocumentType = 'lab_result' | 'prescription' | 'discharge_summary' | 'imaging_report' | 'other';
+export type DocumentType = 'lab_result' | 'prescription' | 'discharge_summary' | 'imaging_report' | 'other'
+  // Smart Import categories
+  | 'consultation' | 'trauma' | 'surgery' | 'vaccination';
 
 export interface LabValue {
   name: string;
@@ -106,6 +108,14 @@ export interface MedicalDocument {
   status: 'uploaded' | 'processing' | 'analyzed' | 'failed';
   extraction: DocumentExtraction | null;
   isDemo: boolean;
+  /** Smart Import metadata (absent for older documents). */
+  originalFilename?: string | null;
+  specialty?: string | null;
+  eventDate?: string | null;
+  documentDate?: string | null;
+  institution?: string | null;
+  processingStatus?: 'uploaded' | 'processing' | 'needs_review' | 'confirmed' | 'failed' | null;
+  importId?: string | null;
 }
 
 export interface XrayPrediction {

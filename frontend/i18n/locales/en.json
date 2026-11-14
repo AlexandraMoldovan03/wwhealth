@@ -104,7 +104,7 @@
     "patient/profile": "Medical Profile",
     "patient/edit-profile": "Edit Medical Profile",
     "patient/document/[id]": "Document",
-    "patient/documents": "Medical Documents",
+    "patient/documents": "My documents",
     "patient/upload-document": "Upload Document",
     "patient/xray-results": "X-ray Results",
     "doctor/index": "Doctor",
@@ -128,12 +128,13 @@
     "patient/appointments": "My appointments",
     "doctor/appointments": "Appointments",
     "patient/treatments": "My treatments",
-    "patient/record": "Smart record",
+    "patient/record": "My smart record",
     "patient/prepare/[id]": "Prepare consultation",
     "doctor/agenda": "My agenda",
     "doctor/schedule": "Work schedule",
     "doctor/consultation/[id]": "Consultation sheet",
-    "doctor/treatment": "Treatment"
+    "doctor/treatment": "Treatment",
+    "patient/import/[id]": "Check import"
   },
   "settings": {
     "title": "Profile",
@@ -431,7 +432,11 @@
     "prescription": "Prescription",
     "discharge_summary": "Discharge summary",
     "imaging_report": "Imaging report",
-    "other": "Other"
+    "other": "Other",
+    "consultation": "Consultation",
+    "trauma": "Accident / trauma",
+    "surgery": "Surgery",
+    "vaccination": "Vaccination"
   },
   "documents": {
     "formatPdf": "PDF",
@@ -2285,7 +2290,8 @@
         "consultations": "Consultations",
         "hospitalizations": "Hospitalisations",
         "vaccinations": "Vaccinations",
-        "family_history": "Family history"
+        "family_history": "Family history",
+        "recommendations": "Recommendations"
       },
       "verification": {
         "patient_declared": "Declared by patient",
@@ -2414,6 +2420,219 @@
       "pickRange": "Tap the first day, then the last day (one tap = one day).",
       "pickOneDay": "Choose the day, then the hours.",
       "offSafe": "Existing appointments in this interval are not cancelled — you'll see how many there are."
+    }
+  },
+  "smart": {
+    "retryAnalysis": "Retry analysis",
+    "analysisRunning": "AI analysis in progress…",
+    "analysisDeferred": "AI analysis is temporarily unavailable. The document and local results are saved for review.",
+    "reviewReady": "Document uploaded. Ready for review.",
+    "importWorking": "Uploading document. Text extraction and analysis follow when available.",
+    "ner": {"title": "Terms found in the document", "notice": "Automatically extracted, unverified terms. Check them against the original document.", "Disease": "Diseases mentioned", "Chemical": "Chemicals mentioned"},
+    "structured": "Structured data (FHIR / CSV)",
+    "uploadTitle": "Smart import",
+    "uploadIntro": "We detect the format and document type, propose a title and extract the data. You review it before anything is saved to your record.",
+    "uploadPrivacy": "AI analysis (Gemini) runs only with your consent in “Medical intelligence”; otherwise local extraction is used.",
+    "analyze": "Analyze document",
+    "importButton": "Import document",
+    "csvMappingHint": "We couldn't recognise the columns. Type the exact column names from the file (at least test name and value).",
+    "csv": {
+      "name": "Test name column",
+      "value": "Value column",
+      "unit": "Unit column",
+      "referenceRange": "Reference range column",
+      "date": "Date column"
+    },
+    "previewTitle": "Check import",
+    "method": {
+      "local": "Local extraction",
+      "gemini": "AI analysis",
+      "local_fallback": "Local extraction (no AI)"
+    },
+    "format": {
+      "pdf_text": "Text PDF",
+      "pdf_scanned": "Scanned PDF",
+      "image": "Image",
+      "fhir_json": "FHIR JSON",
+      "fhir_ndjson": "FHIR NDJSON",
+      "csv": "CSV"
+    },
+    "cached": "Cached",
+    "fallback": {
+      "no_consent": "No AI consent — local extraction was used.",
+      "not_configured": "AI analysis is not configured — local extraction was used.",
+      "budget": "Daily AI budget reached — local extraction was used.",
+      "rate_limited": "Too many AI analyses in the last hour — local extraction was used.",
+      "ai_busy": "The AI service is busy — local extraction was used.",
+      "ai_timeout": "AI analysis took too long — local extraction was used.",
+      "ai_invalid": "The AI answer was invalid — local extraction was used.",
+      "ai_error": "AI analysis was unavailable — local extraction was used.",
+      "no_text": "No text was found in the document."
+    },
+    "originalFile": "Original file: {{name}}",
+    "identity": {
+      "match": "This document is yours",
+      "unverified": "Identity not confirmed",
+      "mismatch": "Warning: the document's details don't match your profile",
+      "insufficient": "The document lacks identifying details",
+      "demo": "Demo (synthetic) document"
+    },
+    "identityReason": {
+      "placeholder_identity": "The name in the document is a placeholder",
+      "placeholder_birth_date": "The birth date in the document is a placeholder",
+      "synthetic_document": "The document is marked synthetic / demo",
+      "name_match": "Name matches",
+      "name_mismatch": "Name differs from your profile",
+      "dob_match": "Birth date matches",
+      "dob_mismatch": "Birth date differs from your profile",
+      "sex_match": "Sex matches",
+      "sex_mismatch": "Sex differs from your profile",
+      "profile_missing_birth_date": "Your profile has no birth date — a name alone is not enough",
+      "no_identifiers": "No name or birth date in the document"
+    },
+    "identityConfirm": "I confirm this document is mine",
+    "identityRequired": "First confirm the document is yours.",
+    "titleLabel": "Title",
+    "category": "Category",
+    "eventDate": "Event date",
+    "dateInvalid": "Use the YYYY-MM-DD format.",
+    "institution": "Institution",
+    "specialty": "Specialty: {{name}}",
+    "duplicates": "Possible duplicates",
+    "duplicate": {
+      "same_file": "The same file was already uploaded",
+      "same_event": "Same document type, same date"
+    },
+    "contradictions": "Differences from your record",
+    "contradiction": {
+      "allergy_not_in_profile": "allergy not in your profile",
+      "medication_not_in_active_list": "medication not in your active treatment (saved as history)",
+      "condition_ruled_out_in_document": "the document rules it out, but it is active in your record",
+      "condition_status_differs": "resolved in your record, confirmed by the document",
+      "certainty_differs": "certainty differs from another document"
+    },
+    "toVerify": "To verify",
+    "verify": {
+      "document_truncated": "The document is long; only the first part was analysed",
+      "csv_invalid_date": "Some CSV dates could not be read",
+      "invalid_date": "A date in the document could not be read",
+      "multiple_patients": "The document seems to contain several patients",
+      "no_date": "No event date found",
+      "no_diagnosis_found": "No explicit diagnosis found",
+      "no_patient_identity": "No patient details found",
+      "placeholder_values": "The document contains example values (e.g. [Name])",
+      "unverified_sources": "Some items were not found verbatim in the text",
+      "no_text": "The document text could not be read"
+    },
+    "nothingExtracted": "No structured data was extracted. You can still save the document with its title and category.",
+    "kind": {
+      "reason": "Reason for visit",
+      "diagnosis": "Diagnoses",
+      "allergy": "Allergies",
+      "medication": "Medication",
+      "procedure": "Procedures",
+      "investigation": "Investigations",
+      "vaccination": "Vaccinations",
+      "symptom": "Symptoms",
+      "recommendation": "Recommendations",
+      "follow_up": "Follow-ups"
+    },
+    "medicationNote": "Imported medication is saved as history — it doesn't change your active treatment.",
+    "include": "Include",
+    "itemStatus": {
+      "confirmed": "Confirmed",
+      "suspected": "Suspected",
+      "ruled_out": "Ruled out",
+      "history": "Past history",
+      "historical": "Historical",
+      "at_discharge": "At discharge",
+      "prior": "Prior",
+      "prescribed": "Prescribed",
+      "active": "Active",
+      "unknown": "Unknown",
+      "stopped": "Stopped",
+      "differential": "Differential",
+      "resolved": "Resolved"
+    },
+    "uncertain": "To verify",
+    "edited": "Edited",
+    "page": "p. {{page}}",
+    "unverifiedSource": "unverified source",
+    "labs": "Lab results",
+    "reference": "ref. {{range}}",
+    "confirm": "Confirm and save",
+    "saveChanges": "Save changes",
+    "reanalyze": "Re-analyze",
+    "reanalyzeHint": "Re-analysis may use AI (with your consent) and counts towards the daily budget.",
+    "reject": "Reject",
+    "rejectTitle": "Reject import?",
+    "rejectMessage": "The unconfirmed document will be deleted. Your record stays unchanged.",
+    "backToDocuments": "Back to documents",
+    "editItem": "Edit item",
+    "itemLabel": "Name",
+    "itemDetail": "Details",
+    "status": {
+      "uploaded": "Uploaded",
+      "processing": "Processing",
+      "needs_review": "Needs review",
+      "confirmed": "Confirmed",
+      "failed": "Failed",
+      "rejected": "Rejected"
+    },
+    "reviewAndConfirm": "Review and confirm",
+    "showFacts": "Extracted data ({{count}})",
+    "hideFacts": "Hide extracted data",
+    "openInRecord": "See in record",
+    "downloadOriginal": "Download original",
+    "structuredPreview": "Structured data",
+    "structuredPreviewHint": "FHIR / CSV files have no preview; see the extracted data.",
+    "editDocument": "Edit document",
+    "errors": {
+      "csv_mapping_required": "Pick the CSV columns for test name and value.",
+      "csv_empty": "The CSV file has no rows.",
+      "csv_too_many_rows": "The CSV file has too many rows.",
+      "fhir_empty": "The FHIR file has no resources.",
+      "fhir_invalid_bundle": "Invalid FHIR bundle.",
+      "fhir_invalid_entry": "A FHIR entry is invalid.",
+      "fhir_missing_resource_type": "A FHIR resource has no resourceType.",
+      "fhir_unsupported_resources": "The file has no supported FHIR resources.",
+      "invalid_json": "The JSON file is not valid.",
+      "invalid_ndjson": "The NDJSON file is not valid.",
+      "too_many_resources": "The file contains too many resources.",
+      "unreadable_pdf": "The PDF cannot be read.",
+      "unsupported_format": "Unsupported format. Use PDF, JPG/PNG, FHIR JSON/NDJSON or CSV.",
+      "demo_document_not_allowed": "Demo documents can't be imported into a real account.",
+      "identity_confirmation_required": "Confirm the document is yours.",
+      "import_rejected": "The import was rejected.",
+      "not_found": "Import not found."
+    },
+    "library": {
+      "search": "Search by title, file or institution",
+      "all": "All",
+      "allSpecialties": "All specialties",
+      "allInstitutions": "All institutions",
+      "period": {
+        "all": "Any time",
+        "3m": "Last 3 months",
+        "1y": "Last year",
+        "older": "Older than a year"
+      },
+      "sort": {
+        "date": "Date",
+        "title": "Title",
+        "uploaded": "Uploaded"
+      },
+      "asc": "Asc.",
+      "desc": "Desc.",
+      "noResults": "No documents match the filters."
+    },
+    "record": {
+      "summaryTitle": "At a glance",
+      "summary": "{{count}} items in {{sections}} categories.",
+      "activeMedication": "Active medication",
+      "noAllergies": "No allergies recorded",
+      "noActiveMedication": "No active treatment recorded",
+      "relevanceExplain": "“Relevance” always shows allergies and active treatments first, then what relates to the visit reason. It is not a severity score."
     }
   }
 }

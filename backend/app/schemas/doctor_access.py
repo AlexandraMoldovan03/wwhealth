@@ -89,6 +89,16 @@ class LatestLab(CamelModel):
     measurements: int = 1
 
 
+class DocumentFinding(CamelModel):
+    """A fact the patient confirmed from an imported document (Smart Import) — with its source document."""
+    kind: str
+    label: str
+    status: str | None = None
+    date: str | None = None
+    document_id: str
+    document_title: str | None = None
+
+
 class MedicalSummary(CamelModel):
     """Sections that were not shared are null (not empty), so the UI can say "not shared"."""
     basics: SummaryBasics | None = None
@@ -97,6 +107,9 @@ class MedicalSummary(CamelModel):
     medications: list[Treatment] | None = None
     latest_labs: list[LatestLab] | None = None
     documents: list[MedicalDocument] | None = None
+    # Confirmed from documents: diagnoses (with certainty), allergies, procedures. Medication from documents is
+    # historical and is NOT listed here (it never becomes "current medication").
+    documented_findings: list[DocumentFinding] | None = None
 
 
 class PatientAccessView(CamelModel):

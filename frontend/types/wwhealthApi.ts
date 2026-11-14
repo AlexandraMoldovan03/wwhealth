@@ -37,6 +37,7 @@ import type {
   TreatmentUpdate,
 } from './careJourney';
 import type { LabExtractionResponse, LabValueEntry, PatientLabValue } from './labs';
+import type { AiUsageSummary, CsvMapping, DocumentDetail, DocumentUpdate, ImportConfirm, ImportPreview, LibraryPage, LibraryQuery } from './smartImport';
 import type { EmergencyAccessEvent, EmergencyData, EmergencyRedeemRequest, EmergencyTokenResponse, EmergencyTokenStatus } from './emergency';
 import type { LungAnalysis } from './lungvision';
 import type {
@@ -153,4 +154,17 @@ export interface WWHealthApi {
   getMyInsights(language: Language, reason: string | null): Promise<CareInsights>;
   /** FHIR R4 Bundle (JSON) of the patient's own data. */
   exportMyFhir(): Promise<Record<string, unknown>>;
+
+  // Universal Smart Import (preview → confirm) and Document Library. Opening them never calls Gemini.
+  /** PDF / image / FHIR JSON / NDJSON / CSV → preview. Nothing is integrated before confirmImport. */
+  createImport(file: UploadFile, csvMapping?: CsvMapping | null): Promise<ImportPreview>;
+  getImport(importId: string): Promise<ImportPreview>;
+  confirmImport(importId: string, body: ImportConfirm): Promise<ImportPreview>;
+  rejectImport(importId: string): Promise<ImportPreview>;
+  /** Explicit request only (may use Gemini with the patient's AI consent). */
+  reanalyzeImport(importId: string): Promise<ImportPreview>;
+  getAiUsage(): Promise<AiUsageSummary>;
+  getLibrary(query: LibraryQuery): Promise<LibraryPage>;
+  getLibraryDocument(documentId: string): Promise<DocumentDetail>;
+  updateLibraryDocument(documentId: string, body: DocumentUpdate): Promise<DocumentDetail>;
 }

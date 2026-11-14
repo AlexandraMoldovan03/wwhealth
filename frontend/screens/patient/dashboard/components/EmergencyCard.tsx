@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router, useIsFocused } from 'expo-router';
 import { useEffect, useId, useState } from 'react';
-import { AppState, Pressable, StyleSheet, View } from 'react-native';
+import { Platform, AppState, Pressable, StyleSheet, View } from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
 import Svg, { Circle, Defs, RadialGradient, Rect, Stop } from 'react-native-svg';
 
@@ -84,7 +84,7 @@ export function EmergencyCard({ enterIndex }: { enterIndex?: number }) {
       style={({ pressed }) => [styles.generateButton, pressed && styles.pressed]}
     >
       <View pointerEvents="none" style={styles.qrTile}>
-        <Svg accessible={false} width="100%" height="100%" viewBox="0 0 108 108" style={StyleSheet.absoluteFill}>
+        <Svg {...(Platform.OS === 'web' ? { 'aria-hidden': true } : { accessible: false })} width="100%" height="100%" viewBox="0 0 108 108" style={StyleSheet.absoluteFill}>
           <Defs>
             <RadialGradient id={tileId} cx="50%" cy="50%" rx="50%" ry="50%">
               <Stop offset="0%" stopColor="#FFD8DC" />

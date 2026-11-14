@@ -197,7 +197,7 @@ export interface DoseSchedule {
 export type RecordView = 'relevance' | 'chronological' | 'category';
 export type RecordCategory =
   | 'conditions' | 'procedures' | 'medication' | 'allergies' | 'labs' | 'investigations' | 'consultations'
-  | 'hospitalizations' | 'vaccinations' | 'family_history';
+  | 'hospitalizations' | 'vaccinations' | 'family_history' | 'recommendations';
 export type Verification = 'patient_declared' | 'doctor_prescribed' | 'document' | 'patient_confirmed_lab' | 'ai_screening' | 'booking';
 
 export interface RecordItem {
@@ -216,6 +216,10 @@ export interface RecordItem {
   status: string | null;
   pinned: boolean;
   relevanceReason: 'allergy_always' | 'active_treatment_always' | 'matches_reason' | 'matches_specialty' | null;
+  /** Smart Import facts: exact quote + page of the source document. */
+  sourceExcerpt?: string | null;
+  sourcePage?: number | null;
+  isDemo?: boolean;
 }
 
 export interface OrganizedRecord {

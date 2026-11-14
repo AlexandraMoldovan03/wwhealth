@@ -251,7 +251,7 @@ class DoseSchedule(CamelModel):
 # ─────────────────────────────────────────────────────────── intelligent record
 
 RecordCategory = Literal["conditions", "procedures", "medication", "allergies", "labs", "investigations",
-                         "consultations", "hospitalizations", "vaccinations", "family_history"]
+                         "consultations", "hospitalizations", "vaccinations", "family_history", "recommendations"]
 Verification = Literal["patient_declared", "doctor_prescribed", "document", "patient_confirmed_lab", "ai_screening",
                        "booking"]
 
@@ -272,6 +272,9 @@ class RecordItem(CamelModel):
     status: str | None = None
     pinned: bool = False              # allergies and active treatments are never hidden in "relevance"
     relevance_reason: str | None = None  # why it is near the top (rule-based, never a severity score)
+    source_excerpt: str | None = None   # exact quote of the source document (Smart Import facts)
+    source_page: int | None = None
+    is_demo: bool = False
 
 
 class RecordSection(CamelModel):

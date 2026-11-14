@@ -59,6 +59,7 @@ export const STACK_SCREENS: { name: string; title: string }[] = [
   { name: 'patient/intelligence', title: 'AI Medical Intelligence' },
   { name: 'patient/emergency', title: 'Emergency Passport' },
   { name: 'patient/lab-review/[id]', title: 'Lab values' },
+  { name: 'patient/import/[id]', title: 'Check import' },
   { name: 'patient/lab-trend', title: 'Lab trend' },
   { name: 'patient/smart-care', title: 'Smart Care' },
   { name: 'patient/specialties', title: 'Find a specialty' },

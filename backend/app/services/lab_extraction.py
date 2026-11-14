@@ -207,16 +207,21 @@ def demo_list(user_id: str) -> list[dict]:
     ]
 
 
-def extract_text(content: bytes) -> tuple[str, int]:
-    """(text, page_count). Raises ValueError for unreadable / encrypted PDFs."""
+def extract_pages(content: bytes) -> tuple[list[str], int]:
+    """([text of each page], page_count) — first MAX_PAGES pages. Raises ValueError for unreadable / encrypted PDFs."""
     try:
         reader = PdfReader(io.BytesIO(content))
         if reader.is_encrypted:
             raise ValueError("Encrypted PDF")
-        pages = reader.pages[:MAX_PAGES]
-        return "\n".join((p.extract_text() or "") for p in pages), len(reader.pages)
+        return [(p.extract_text() or "") for p in reader.pages[:MAX_PAGES]], len(reader.pages)
     except PdfReadError as exc:
         raise ValueError("Unreadable PDF") from exc
+
+
+def extract_text(content: bytes) -> tuple[str, int]:
+    """(text, page_count). Raises ValueError for unreadable / encrypted PDFs."""
+    pages, count = extract_pages(content)
+    return "\n".join(pages), count
 
 
 def parse_lab_values(text: str) -> list[dict]:

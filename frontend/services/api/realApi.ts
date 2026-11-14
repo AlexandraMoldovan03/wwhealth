@@ -112,4 +112,20 @@ export const realApi: WWHealthApi = {
     apiClient.get(ENDPOINTS.cjRecord, { params: { view, lang: language, ...(appointmentId ? { appointmentId } : {}) } }),
   getMyInsights: (language, reason) => apiClient.post(ENDPOINTS.cjInsights, { language, reason }, { timeoutMs: AI_TIMEOUT_MS }),
   exportMyFhir: () => apiClient.get(ENDPOINTS.cjFhir),
+
+  // OCR / Gemini run on the server; a long scanned document can take a while.
+  createImport: (file, csvMapping) =>
+    apiClient.upload(ENDPOINTS.imports, { file }, csvMapping ? { csvMapping: JSON.stringify(csvMapping) } : {}, { timeoutMs: 120_000 }),
+  getImport: (importId) => apiClient.get(ENDPOINTS.importItem(importId)),
+  confirmImport: (importId, body) => apiClient.post(ENDPOINTS.importConfirm(importId), json(body)),
+  rejectImport: (importId) => apiClient.post(ENDPOINTS.importReject(importId)),
+  reanalyzeImport: (importId) => apiClient.post(ENDPOINTS.importReanalyze(importId), undefined, { timeoutMs: 120_000 }),
+  getAiUsage: () => apiClient.get(ENDPOINTS.importUsage),
+  getLibrary: (query) => {
+    const params: Record<string, string> = {};
+    for (const [k, v] of Object.entries(query)) if (v !== null && v !== undefined && v !== '') params[k] = String(v);
+    return apiClient.get(ENDPOINTS.library, { params });
+  },
+  getLibraryDocument: (documentId) => apiClient.get(ENDPOINTS.libraryItem(documentId)),
+  updateLibraryDocument: (documentId, body) => apiClient.patch(ENDPOINTS.libraryItem(documentId), json(body)),
 };

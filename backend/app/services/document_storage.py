@@ -19,13 +19,19 @@ from app.schemas.patient import MedicalEvent
 from app.services import patient_service
 
 SAFE_ID = re.compile(r"^[A-Za-z0-9_-]{1,64}$")
-EXTENSIONS = {"application/pdf": "pdf", "image/jpeg": "jpg", "image/png": "png"}
+EXTENSIONS = {"application/pdf": "pdf", "image/jpeg": "jpg", "image/png": "png",
+              # Smart Import (stored as received, read locally — never executed or served inline as HTML)
+              "application/fhir+json": "json", "application/x-ndjson": "ndjson", "text/csv": "csv"}
 TYPE_LABELS = {
     "lab_result": "Lab result",
     "prescription": "Prescription",
     "discharge_summary": "Discharge summary",
     "imaging_report": "Imaging report",
     "other": "Other",
+    "consultation": "Consultation",
+    "trauma": "Accident / trauma",
+    "surgery": "Surgery",
+    "vaccination": "Vaccination",
 }
 
 

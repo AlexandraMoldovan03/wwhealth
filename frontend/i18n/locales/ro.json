@@ -104,7 +104,7 @@
     "patient/profile": "Profil medical",
     "patient/edit-profile": "Editează profilul medical",
     "patient/document/[id]": "Document",
-    "patient/documents": "Documente medicale",
+    "patient/documents": "Documentele mele",
     "patient/upload-document": "Încarcă document",
     "patient/xray-results": "Rezultate radiografii",
     "doctor/index": "Medic",
@@ -128,12 +128,13 @@
     "patient/appointments": "Programările mele",
     "doctor/appointments": "Programări",
     "patient/treatments": "Tratamentele mele",
-    "patient/record": "Fișa inteligentă",
+    "patient/record": "Fișa mea inteligentă",
     "patient/prepare/[id]": "Pregătește consultația",
     "doctor/agenda": "Agenda mea",
     "doctor/schedule": "Program de lucru",
     "doctor/consultation/[id]": "Fișa de consultație",
-    "doctor/treatment": "Tratament"
+    "doctor/treatment": "Tratament",
+    "patient/import/[id]": "Verifică importul"
   },
   "settings": {
     "title": "Profil",
@@ -431,7 +432,11 @@
     "prescription": "Rețetă",
     "discharge_summary": "Bilet de externare",
     "imaging_report": "Raport imagistic",
-    "other": "Altele"
+    "other": "Altele",
+    "consultation": "Consultație",
+    "trauma": "Accident / traumatism",
+    "surgery": "Intervenție chirurgicală",
+    "vaccination": "Vaccinare"
   },
   "documents": {
     "formatPdf": "PDF",
@@ -2305,7 +2310,8 @@
         "consultations": "Consultații",
         "hospitalizations": "Internări",
         "vaccinations": "Vaccinări",
-        "family_history": "Istoric familial"
+        "family_history": "Istoric familial",
+        "recommendations": "Recomandări"
       },
       "verification": {
         "patient_declared": "Declarat de pacient",
@@ -2442,6 +2448,219 @@
       "pickRange": "Apasă prima zi, apoi ultima zi (o singură apăsare = o zi).",
       "pickOneDay": "Alege ziua, apoi orele.",
       "offSafe": "Programările existente din acest interval nu se anulează — vei vedea câte sunt."
+    }
+  },
+  "smart": {
+    "retryAnalysis": "Reîncearcă analiza",
+    "analysisRunning": "Analiză AI în curs…",
+    "analysisDeferred": "Analiza AI este temporar indisponibilă. Documentul și rezultatele locale sunt păstrate pentru verificare.",
+    "reviewReady": "Document încărcat. Pregătit pentru verificare.",
+    "importWorking": "Documentul se încarcă. Urmează extragerea textului și analiza, dacă este disponibilă.",
+    "ner": {"title": "Termeni identificați în document", "notice": "Termeni extrași automat și neverificați. Verifică-i în documentul original.", "Disease": "Boli menționate", "Chemical": "Substanțe chimice menționate"},
+    "structured": "Date structurate (FHIR / CSV)",
+    "uploadTitle": "Import inteligent",
+    "uploadIntro": "Detectăm automat formatul și tipul documentului, propunem un titlu și extragem datele. Le verifici înainte să fie salvate în fișă.",
+    "uploadPrivacy": "Analiza AI (Gemini) rulează doar cu acordul tău din „Inteligență medicală”; altfel se folosește extragerea locală.",
+    "analyze": "Analizează documentul",
+    "importButton": "Importă document",
+    "csvMappingHint": "Nu am recunoscut coloanele. Scrie numele exacte ale coloanelor din fișier (minim analiza și valoarea).",
+    "csv": {
+      "name": "Coloana analizei",
+      "value": "Coloana valorii",
+      "unit": "Coloana unității",
+      "referenceRange": "Coloana intervalului de referință",
+      "date": "Coloana datei"
+    },
+    "previewTitle": "Verifică importul",
+    "method": {
+      "local": "Extragere locală",
+      "gemini": "Analiză AI",
+      "local_fallback": "Extragere locală (fără AI)"
+    },
+    "format": {
+      "pdf_text": "PDF text",
+      "pdf_scanned": "PDF scanat",
+      "image": "Imagine",
+      "fhir_json": "FHIR JSON",
+      "fhir_ndjson": "FHIR NDJSON",
+      "csv": "CSV"
+    },
+    "cached": "Din cache",
+    "fallback": {
+      "no_consent": "Fără acord pentru AI — s-a folosit extragerea locală.",
+      "not_configured": "Analiza AI nu este configurată — s-a folosit extragerea locală.",
+      "budget": "Bugetul zilnic AI a fost atins — s-a folosit extragerea locală.",
+      "rate_limited": "Prea multe analize AI în ultima oră — s-a folosit extragerea locală.",
+      "ai_busy": "Serviciul AI este ocupat — s-a folosit extragerea locală.",
+      "ai_timeout": "Analiza AI a durat prea mult — s-a folosit extragerea locală.",
+      "ai_invalid": "Răspunsul AI nu a fost valid — s-a folosit extragerea locală.",
+      "ai_error": "Analiza AI nu a fost disponibilă — s-a folosit extragerea locală.",
+      "no_text": "Nu s-a găsit text în document."
+    },
+    "originalFile": "Fișier original: {{name}}",
+    "identity": {
+      "match": "Documentul îți aparține",
+      "unverified": "Identitate neconfirmată",
+      "mismatch": "Atenție: datele din document nu corespund profilului tău",
+      "insufficient": "Documentul nu conține suficiente date de identificare",
+      "demo": "Document demonstrativ (sintetic)"
+    },
+    "identityReason": {
+      "placeholder_identity": "Numele din document este un exemplu / substituent",
+      "placeholder_birth_date": "Data nașterii din document este un substituent",
+      "synthetic_document": "Documentul este marcat ca sintetic / demo",
+      "name_match": "Numele corespunde",
+      "name_mismatch": "Numele diferă de profil",
+      "dob_match": "Data nașterii corespunde",
+      "dob_mismatch": "Data nașterii diferă de profil",
+      "sex_match": "Sexul corespunde",
+      "sex_mismatch": "Sexul diferă de profil",
+      "profile_missing_birth_date": "Profilul tău nu are data nașterii — numele singur nu este suficient",
+      "no_identifiers": "Nu există nume sau dată a nașterii în document"
+    },
+    "identityConfirm": "Confirm că acest document îmi aparține",
+    "identityRequired": "Confirmă mai întâi că documentul îți aparține.",
+    "titleLabel": "Titlu",
+    "category": "Categorie",
+    "eventDate": "Data evenimentului",
+    "dateInvalid": "Folosește formatul AAAA-LL-ZZ.",
+    "institution": "Instituție",
+    "specialty": "Specialitate: {{name}}",
+    "duplicates": "Posibile duplicate",
+    "duplicate": {
+      "same_file": "Același fișier a mai fost încărcat",
+      "same_event": "Același tip de document, aceeași dată"
+    },
+    "contradictions": "Diferențe față de fișa ta",
+    "contradiction": {
+      "allergy_not_in_profile": "alergie care nu apare în profil",
+      "medication_not_in_active_list": "medicament care nu este în tratamentul activ (va fi salvat ca istoric)",
+      "condition_ruled_out_in_document": "documentul o exclude, dar în fișă este activă",
+      "condition_status_differs": "în fișă este rezolvată, documentul o confirmă",
+      "certainty_differs": "certitudinea diferă de alt document"
+    },
+    "toVerify": "De verificat",
+    "verify": {
+      "document_truncated": "Documentul este lung; doar prima parte a fost analizată",
+      "csv_invalid_date": "Unele date din CSV nu au putut fi citite",
+      "invalid_date": "O dată din document nu a putut fi citită",
+      "multiple_patients": "Documentul pare să conțină mai mulți pacienți",
+      "no_date": "Nu am găsit data evenimentului",
+      "no_diagnosis_found": "Nu am găsit un diagnostic explicit",
+      "no_patient_identity": "Nu am găsit datele pacientului",
+      "placeholder_values": "Documentul conține valori de exemplu (ex. [Nume])",
+      "unverified_sources": "Unele elemente nu au fost găsite exact în text",
+      "no_text": "Nu s-a putut citi textul documentului"
+    },
+    "nothingExtracted": "Nu am extras date structurate. Poți salva documentul doar cu titlul și categoria.",
+    "kind": {
+      "reason": "Motivul prezentării",
+      "diagnosis": "Diagnostice",
+      "allergy": "Alergii",
+      "medication": "Medicație",
+      "procedure": "Proceduri",
+      "investigation": "Investigații",
+      "vaccination": "Vaccinări",
+      "symptom": "Simptome",
+      "recommendation": "Recomandări",
+      "follow_up": "Controale"
+    },
+    "medicationNote": "Medicația importată se salvează ca istoric — nu modifică tratamentul tău activ.",
+    "include": "Include",
+    "itemStatus": {
+      "confirmed": "Confirmat",
+      "suspected": "Suspiciune",
+      "ruled_out": "Exclus",
+      "history": "Antecedent",
+      "historical": "Istoric",
+      "at_discharge": "La externare",
+      "prior": "Anterior",
+      "prescribed": "Prescris",
+      "active": "Activ",
+      "unknown": "Necunoscut",
+      "stopped": "Oprit",
+      "differential": "Diagnostic diferențial",
+      "resolved": "Rezolvat"
+    },
+    "uncertain": "De verificat",
+    "edited": "Editat",
+    "page": "pag. {{page}}",
+    "unverifiedSource": "sursă neverificată",
+    "labs": "Analize",
+    "reference": "ref. {{range}}",
+    "confirm": "Confirmă și salvează",
+    "saveChanges": "Salvează modificările",
+    "reanalyze": "Reanalizează",
+    "reanalyzeHint": "Reanaliza poate folosi AI (cu acordul tău) și consumă din bugetul zilnic.",
+    "reject": "Respinge",
+    "rejectTitle": "Respingi importul?",
+    "rejectMessage": "Documentul neconfirmat va fi șters. Datele din fișă rămân neschimbate.",
+    "backToDocuments": "Înapoi la documente",
+    "editItem": "Editează elementul",
+    "itemLabel": "Denumire",
+    "itemDetail": "Detalii",
+    "status": {
+      "uploaded": "Încărcat",
+      "processing": "În procesare",
+      "needs_review": "De verificat",
+      "confirmed": "Confirmat",
+      "failed": "Eșuat",
+      "rejected": "Respins"
+    },
+    "reviewAndConfirm": "Verifică și confirmă",
+    "showFacts": "Date extrase ({{count}})",
+    "hideFacts": "Ascunde datele extrase",
+    "openInRecord": "Vezi în fișă",
+    "downloadOriginal": "Descarcă originalul",
+    "structuredPreview": "Date structurate",
+    "structuredPreviewHint": "Fișierele FHIR / CSV nu au previzualizare; vezi datele extrase.",
+    "editDocument": "Editează documentul",
+    "errors": {
+      "csv_mapping_required": "Indică coloanele CSV pentru analiză și valoare.",
+      "csv_empty": "Fișierul CSV nu conține rânduri.",
+      "csv_too_many_rows": "Fișierul CSV are prea multe rânduri.",
+      "fhir_empty": "Fișierul FHIR nu conține resurse.",
+      "fhir_invalid_bundle": "Bundle FHIR invalid.",
+      "fhir_invalid_entry": "O intrare FHIR este invalidă.",
+      "fhir_missing_resource_type": "O resursă FHIR nu are resourceType.",
+      "fhir_unsupported_resources": "Fișierul nu conține resurse FHIR suportate.",
+      "invalid_json": "Fișierul JSON nu este valid.",
+      "invalid_ndjson": "Fișierul NDJSON nu este valid.",
+      "too_many_resources": "Fișierul conține prea multe resurse.",
+      "unreadable_pdf": "PDF-ul nu poate fi citit.",
+      "unsupported_format": "Format nesuportat. Folosește PDF, JPG/PNG, FHIR JSON/NDJSON sau CSV.",
+      "demo_document_not_allowed": "Documentele demonstrative nu pot fi importate într-un cont real.",
+      "identity_confirmation_required": "Confirmă că documentul îți aparține.",
+      "import_rejected": "Importul a fost respins.",
+      "not_found": "Importul nu a fost găsit."
+    },
+    "library": {
+      "search": "Caută după titlu, fișier sau instituție",
+      "all": "Toate",
+      "allSpecialties": "Toate specialitățile",
+      "allInstitutions": "Toate instituțiile",
+      "period": {
+        "all": "Oricând",
+        "3m": "Ultimele 3 luni",
+        "1y": "Ultimul an",
+        "older": "Mai vechi de un an"
+      },
+      "sort": {
+        "date": "Dată",
+        "title": "Titlu",
+        "uploaded": "Încărcare"
+      },
+      "asc": "Cresc.",
+      "desc": "Descresc.",
+      "noResults": "Niciun document nu corespunde filtrelor."
+    },
+    "record": {
+      "summaryTitle": "Pe scurt",
+      "summary": "{{count}} elemente în {{sections}} categorii.",
+      "activeMedication": "Medicație activă",
+      "noAllergies": "Nicio alergie înregistrată",
+      "noActiveMedication": "Niciun tratament activ înregistrat",
+      "relevanceExplain": "Ordinea „Relevanță” arată mereu întâi alergiile și tratamentele active, apoi ce se leagă de motivul consultației. Nu este un scor de gravitate."
     }
   }
 }

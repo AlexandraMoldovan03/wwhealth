@@ -1,5 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
-import { StyleSheet, View } from 'react-native';
+import { useState } from 'react';
+import { Pressable, StyleSheet, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 import { AppCard, AppText, Badge } from '@/design-system';
@@ -11,8 +12,11 @@ import { formatDate } from '@/utils/format';
 const ICON: Record<RecordCategory, IconName> = {
   allergies: 'warning-outline', medication: 'medkit-outline', conditions: 'pulse-outline', procedures: 'cut-outline',
   labs: 'flask-outline', investigations: 'scan-outline', consultations: 'calendar-outline', hospitalizations: 'bed-outline',
-  vaccinations: 'shield-checkmark-outline', family_history: 'people-outline',
+  vaccinations: 'shield-checkmark-outline', family_history: 'people-outline', recommendations: 'list-outline',
 };
+/** Statuses worth a visible label (imported medication is historical; suspicions are never shown as diagnoses). */
+const STATUS_BADGE = new Set(['historical', 'suspected', 'history', 'ruled_out', 'stopped', 'differential']);
+const OPEN_BY_DEFAULT = new Set<RecordCategory>(['allergies', 'medication', 'conditions']);
 
 function useVerificationTone() {
   const { colors } = useTheme();
@@ -34,7 +38,18 @@ export function RecordItemCard({ item, onPress, showWhy = false }: { item: Recor
         <AppText variant="subheading" style={styles.flex}>{item.title}</AppText>
         <Badge label={t(`cj.record.verification.${item.verification}`)} color={tone(item.verification)} />
       </View>
+      {(item.isDemo || (!!item.status && STATUS_BADGE.has(item.status))) && (
+        <View style={styles.badges}>
+          {!!item.status && STATUS_BADGE.has(item.status) && <Badge label={t(`smart.itemStatus.${item.status}`)} color={colors.info} />}
+          {item.isDemo && <Badge label="DEMO" color={colors.warning} />}
+        </View>
+      )}
       {!!item.detail && <AppText variant="caption">{item.detail}</AppText>}
+      {!!item.sourceExcerpt && (
+        <AppText variant="caption" color="textMuted" numberOfLines={2}>
+          {`„${item.sourceExcerpt}”${item.sourcePage ? ` · ${t('smart.page', { page: item.sourcePage })}` : ''}`}
+        </AppText>
+      )}
       <AppText variant="caption" color="textMuted">
         {[t(`cj.record.category.${item.category}`), date, item.author, item.documentType && t(`documentTypes.${item.documentType}`, { defaultValue: item.documentType })]
           .filter(Boolean).join(' · ')}
@@ -49,16 +64,29 @@ export function RecordItemCard({ item, onPress, showWhy = false }: { item: Recor
 /** The three views of the intelligent record. Empty categories are never rendered. */
 export function OrganizedRecordView({ record, onOpen }: { record: OrganizedRecord; onOpen?: (item: RecordItem) => void }) {
   const { t } = useTranslation();
-  const open = (i: RecordItem) => (onOpen && (i.documentId || i.planId) ? () => onOpen(i) : undefined);
+  const { colors } = useTheme();
+  const [open, setOpen] = useState<Set<RecordCategory>>(() => new Set(OPEN_BY_DEFAULT));
+  const toggle = (c: RecordCategory) => setOpen((prev) => {
+    const next = new Set(prev);
+    if (next.has(c)) next.delete(c); else next.add(c);
+    return next;
+  });
+  const press = (i: RecordItem) => (onOpen && (i.documentId || i.planId) ? () => onOpen(i) : undefined);
   if (record.view === 'category') {
     return (
       <View style={styles.list}>
-        {record.sections.map((s) => (
-          <View key={s.category} style={styles.list}>
-            <AppText variant="label" color="textMuted">{t(`cj.record.category.${s.category}`)} · {s.items.length}</AppText>
-            {s.items.map((i) => <RecordItemCard key={i.id} item={i} onPress={open(i)} />)}
-          </View>
-        ))}
+        {record.sections.map((s) => {
+          const expanded = open.has(s.category);
+          return (
+            <View key={s.category} style={styles.list}>
+              <Pressable accessibilityRole="button" accessibilityState={{ expanded }} onPress={() => toggle(s.category)} style={styles.row}>
+                <AppText variant="label" color="textMuted" style={styles.flex}>{t(`cj.record.category.${s.category}`)} · {s.items.length}</AppText>
+                <Ionicons name={expanded ? 'chevron-up' : 'chevron-down'} size={16} color={colors.textMuted} />
+              </Pressable>
+              {expanded && s.items.map((i) => <RecordItemCard key={i.id} item={i} onPress={press(i)} />)}
+            </View>
+          );
+        })}
       </View>
     );
   }
@@ -67,7 +95,7 @@ export function OrganizedRecordView({ record, onOpen }: { record: OrganizedRecor
       {record.view === 'relevance' && record.insufficient && (
         <AppText variant="caption" color="textMuted">{t('cj.record.insufficient')}</AppText>
       )}
-      {record.items.map((i) => <RecordItemCard key={i.id} item={i} onPress={open(i)} showWhy={record.view === 'relevance'} />)}
+      {record.items.map((i) => <RecordItemCard key={i.id} item={i} onPress={press(i)} showWhy={record.view === 'relevance'} />)}
     </View>
   );
 }
@@ -77,4 +105,5 @@ const styles = StyleSheet.create({
   row: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
   flex: { flex: 1 },
   list: { gap: spacing.sm },
+  badges: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.xs },
 });

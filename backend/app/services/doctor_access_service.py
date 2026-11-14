@@ -224,6 +224,14 @@ def collect(doctor: CurrentUser, patient_id: str, scopes: list[str], name: str =
     return record, documents, labs
 
 
+def documented_facts(doctor: CurrentUser, patient_id: str, scopes: list[str]) -> list[dict] | None:
+    """Facts confirmed from imported documents — only with the 'documents' grant (RLS re-checks it). No demo docs."""
+    if "documents" not in scopes:
+        return None
+    from app.services import import_repo
+    return [f for f in import_repo.facts_or_empty(doctor, patient_id) if not f.get("is_demo") or not settings.supabase_enabled]
+
+
 def open_patient(doctor: CurrentUser, patient_id: str) -> PatientAccessView:
     """Everything the doctor may see, or only the status (none / expired / revoked) when consent is not valid."""
     o = _open(doctor, patient_id, "summary")
@@ -236,7 +244,8 @@ def open_patient(doctor: CurrentUser, patient_id: str) -> PatientAccessView:
         return view
 
     record, documents, labs = collect(doctor, patient_id, view.scopes, view.patient_name or "")
-    view.summary = build_summary(record, documents, labs)
+    facts = documented_facts(doctor, patient_id, view.scopes)
+    view.summary = build_summary(record, documents, labs, facts)
     view.documents = documents
     view.labs = [PatientLabValue.model_validate(v) for v in labs] if labs is not None else None
     return view

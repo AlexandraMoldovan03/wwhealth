@@ -88,6 +88,8 @@ export interface MedicalSummary {
   medications: Treatment[] | null;
   latestLabs: LatestLab[] | null;
   documents: MedicalDocument[] | null;
+  /** Confirmed from imported documents (diagnoses with certainty, allergies, procedures). */
+  documentedFindings?: { kind: string; label: string; status: string | null; date: string | null; documentId: string; documentTitle: string | null }[] | null;
 }
 
 export interface PatientAccessView {

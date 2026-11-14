@@ -39,6 +39,7 @@ from app.services import (
     doctor_access_service,
     fhir_service,
     gemini_client,
+    import_repo,
     intelligence_service,
     lab_extraction,
     patient_service,
@@ -170,7 +171,8 @@ def _doctor_data(doctor: CurrentUser, patient_id: str):
 def _doctor_record(doctor: CurrentUser, patient_id: str, view: str, appointment_id: str | None, lang: str) -> OrganizedRecord:
     o, record, documents, labs, plans, appts = _doctor_data(doctor, patient_id)
     appts = [a.model_copy(update={"specialty_name": _spec(a.specialty_id, lang)}) for a in appts]
-    items = record_views.build_items(record, documents, labs, plans, appts, o.get("patient_name") or "")
+    items = record_views.build_items(record, documents, labs, plans, appts, o.get("patient_name") or "",
+                                     doctor_access_service.documented_facts(doctor, patient_id, o.get("scopes") or []))
     reason, spec_id = None, None
     if appointment_id:
         sheet = consultation_service.sheet(doctor, appointment_id, lang)
@@ -191,10 +193,11 @@ def doctor_record(patient_id: str, view: View = "relevance", appointment_id: str
 
 
 def _doctor_fhir(doctor: CurrentUser, patient_id: str) -> dict:
-    _, record, documents, labs, plans, appts = _doctor_data(doctor, patient_id)
+    o, record, documents, labs, plans, appts = _doctor_data(doctor, patient_id)
     if settings.supabase_enabled:
         supabase_repo.log_fhir_export(doctor, patient_id)
-    return fhir_service.bundle(patient_id, record, documents, labs, plans, appts)
+    return fhir_service.bundle(patient_id, record, documents, labs, plans, appts,
+                               facts=doctor_access_service.documented_facts(doctor, patient_id, o.get("scopes") or []))
 
 
 @router.get("/doctor/patients/{patient_id}/fhir")
@@ -263,7 +266,8 @@ def _own_data(user: CurrentUser, lang: str):
 
 def _own_record(user: CurrentUser, view: str, appointment_id: str | None, reason: str | None, lang: str) -> OrganizedRecord:
     record, documents, labs, plans, appts = _own_data(user, lang)
-    items = record_views.build_items(record, documents, labs, plans, appts, record.full_name if record else "")
+    items = record_views.build_items(record, documents, labs, plans, appts, record.full_name if record else "",
+                                     import_repo.facts_or_empty(user))
     spec_id = None
     if appointment_id:
         appt = next((a for a in appts if a.id == appointment_id), None)
@@ -286,7 +290,7 @@ def _own_fhir(user: CurrentUser) -> dict:
     record, documents, labs, plans, appts = _own_data(user, "en")
     if settings.supabase_enabled:
         supabase_repo.log_fhir_export(user, user.id)
-    return fhir_service.bundle(user.id, record, documents, labs, plans, appts)
+    return fhir_service.bundle(user.id, record, documents, labs, plans, appts, facts=import_repo.facts_or_empty(user))
 
 
 @router.get("/fhir")

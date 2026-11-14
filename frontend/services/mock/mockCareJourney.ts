@@ -6,6 +6,7 @@
  * In MOCK mode the app is both the demo patient and the demo doctor (doc_demo_001). Local device time is used.
  */
 import { ApiError } from '@/services/api/ApiError';
+import { mockDocumentFacts } from './mockSmartImport';
 import type {
   Appointment,
   ConsultationSheet,
@@ -165,8 +166,19 @@ function recordItems(deps: Deps, opts: { profile: boolean; documents: boolean; l
   }
   if (opts.documents) {
     const cat: Record<string, RecordCategory> = { lab_result: 'labs', imaging_report: 'investigations', discharge_summary: 'hospitalizations', prescription: 'medication' };
-    rec.documents.forEach((d) => items.push({ ...base, id: `document:${d.id}`, category: cat[d.type] ?? 'investigations', title: d.title, date: d.uploadedAt.slice(0, 10),
-      source: 'uploaded_document', documentType: d.type, verification: 'document', provenance: 'medical_documents', documentId: d.id }));
+    rec.documents.forEach((d) => items.push({ ...base, id: `document:${d.id}`, category: cat[d.type] ?? 'investigations', title: d.title,
+      date: (d.eventDate ?? d.uploadedAt).slice(0, 10), source: 'uploaded_document', documentType: d.type, verification: 'document',
+      provenance: 'medical_documents', documentId: d.id, isDemo: d.isDemo }));
+    // Facts confirmed from imported documents (imported medication is historical: never pinned / active).
+    const factCat: Partial<Record<string, RecordCategory>> = { diagnosis: 'conditions', allergy: 'allergies', medication: 'medication', procedure: 'procedures',
+      investigation: 'investigations', vaccination: 'vaccinations', recommendation: 'recommendations', follow_up: 'recommendations' };
+    mockDocumentFacts.forEach((f) => {
+      const category = factCat[f.kind];
+      if (!category) return;
+      items.push({ ...base, id: `fact:${f.id}`, category, title: f.label, detail: f.detail ?? '', date: f.eventDate, source: 'document_fact',
+        verification: 'document', provenance: 'document_facts', documentId: f.documentId, status: f.kind === 'medication' ? 'historical' : f.status,
+        pinned: f.kind === 'allergy', relevanceReason: f.kind === 'allergy' ? 'allergy_always' : null, sourceExcerpt: f.sourceExcerpt, sourcePage: f.sourcePage, isDemo: true });
+    });
   }
   mockCareStore.appointments.filter((a) => a.status === 'confirmed').forEach((a) => items.push({ ...base, id: `appointment:${a.id}`, category: 'consultations',
     title: mockCareStore.nameOf(a.specialtyId, 'ro') ?? a.doctorName ?? '', detail: a.doctorName ?? '', date: a.startsAt, source: 'appointment', author: a.doctorName,
@@ -174,7 +186,7 @@ function recordItems(deps: Deps, opts: { profile: boolean; documents: boolean; l
   return items;
 }
 
-const ORDER: RecordCategory[] = ['allergies', 'medication', 'conditions', 'procedures', 'labs', 'investigations', 'consultations', 'hospitalizations', 'vaccinations', 'family_history'];
+const ORDER: RecordCategory[] = ['allergies', 'medication', 'conditions', 'procedures', 'labs', 'investigations', 'consultations', 'hospitalizations', 'recommendations', 'vaccinations', 'family_history'];
 const fold = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
 
 function organize(items: RecordItem[], view: OrganizedRecord['view'], reason: string | null): OrganizedRecord {

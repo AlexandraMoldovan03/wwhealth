@@ -5,7 +5,9 @@ from pydantic import Field, field_validator
 
 from app.schemas.base import CamelModel
 
-DocumentType = Literal["lab_result", "prescription", "discharge_summary", "imaging_report", "other"]
+DocumentType = Literal["lab_result", "prescription", "discharge_summary", "imaging_report", "other",
+                       # Smart Import categories (migration 20261119000000)
+                       "consultation", "trauma", "surgery", "vaccination"]
 
 
 class LabValue(CamelModel):
@@ -34,6 +36,14 @@ class MedicalDocument(CamelModel):
     status: Literal["uploaded", "processing", "analyzed", "failed"]
     extraction: DocumentExtraction | None = None
     is_demo: bool = False
+    # Smart Import metadata (None for documents uploaded before migration 20261119000000).
+    original_filename: str | None = None
+    specialty: str | None = None
+    event_date: str | None = None
+    document_date: str | None = None
+    institution: str | None = None
+    processing_status: Literal["uploaded", "processing", "needs_review", "confirmed", "failed"] | None = None
+    import_id: str | None = None
 
 
 class DocumentAnalyzeResponse(CamelModel):

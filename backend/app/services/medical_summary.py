@@ -40,6 +40,7 @@ def build_summary(
     record: PatientRecord | None,
     documents: list[MedicalDocument] | None,
     labs: list[dict] | None,
+    facts: list[dict] | None = None,
 ) -> MedicalSummary:
     """record → profile sections (None if not shared); documents / labs None if not shared."""
     summary = MedicalSummary()
@@ -55,4 +56,13 @@ def build_summary(
         summary.documents = sorted(documents, key=lambda d: d.uploaded_at, reverse=True)[:RECENT_DOCUMENTS]
     if labs is not None:
         summary.latest_labs = latest_labs(labs)
+    if facts is not None:
+        from app.schemas.doctor_access import DocumentFinding
+        from app.core.config import settings
+        keep = [f for f in facts if f.get("kind") in ("diagnosis", "allergy", "procedure") and f.get("status") != "ruled_out"
+                and (not f.get("is_demo") or not settings.supabase_enabled)]
+        keep.sort(key=lambda f: str(f.get("event_date") or ""), reverse=True)
+        summary.documented_findings = [DocumentFinding(
+            kind=f["kind"], label=f["label"], status=f.get("status"), date=str(f["event_date"])[:10] if f.get("event_date") else None,
+            document_id=str(f["document_id"]), document_title=f.get("document_title")) for f in keep[:30]]
     return summary

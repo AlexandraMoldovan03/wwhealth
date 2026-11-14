@@ -19,11 +19,19 @@ from app.services.medical_summary import latest_labs
 
 CATEGORY_ORDER: tuple[RecordCategory, ...] = (
     "allergies", "medication", "conditions", "procedures", "labs", "investigations", "consultations",
-    "hospitalizations", "vaccinations", "family_history")
+    "hospitalizations", "recommendations", "vaccinations", "family_history")
 
 DOC_CATEGORY: dict[str, RecordCategory] = {
     "lab_result": "labs", "imaging_report": "investigations", "discharge_summary": "hospitalizations",
-    "prescription": "medication", "other": "investigations",
+    "prescription": "medication", "other": "investigations", "consultation": "consultations",
+    "trauma": "hospitalizations", "surgery": "procedures", "vaccination": "vaccinations",
+}
+# Smart Import facts (confirmed by the patient from a document) → record category. Symptoms / reasons stay in the
+# document (they are context, not record entries).
+FACT_CATEGORY: dict[str, RecordCategory] = {
+    "diagnosis": "conditions", "allergy": "allergies", "medication": "medication", "procedure": "procedures",
+    "investigation": "investigations", "vaccination": "vaccinations", "recommendation": "recommendations",
+    "follow_up": "recommendations",
 }
 
 # Words that tie a specialty to documented terms (matching only; never used to rank severity).
@@ -61,7 +69,7 @@ def _terms(reason: str | None, specialty_id: str | None) -> tuple[list[str], lis
 
 def build_items(record: PatientRecord | None, documents: list[MedicalDocument] | None, labs: list[dict] | None,
                 plans: list[TreatmentPlan] | None, appointments: list[Appointment] | None,
-                patient_name: str = "") -> list[RecordItem]:
+                patient_name: str = "", facts: list[dict] | None = None) -> list[RecordItem]:
     """All authorised items. None = section not shared / not available."""
     items: list[RecordItem] = []
     author = patient_name or None
@@ -107,8 +115,23 @@ def build_items(record: PatientRecord | None, documents: list[MedicalDocument] |
     for doc in documents or []:
         items.append(RecordItem(
             id=f"document:{doc.id}", category=DOC_CATEGORY.get(doc.type, "investigations"), title=doc.title,
-            date=doc.uploaded_at[:10], source="uploaded_document", author=author, document_type=doc.type,
-            verification="document", provenance="medical_documents", document_id=doc.id))
+            date=(doc.event_date or doc.uploaded_at)[:10], source="uploaded_document", author=author, document_type=doc.type,
+            verification="document", provenance="medical_documents", document_id=doc.id, is_demo=doc.is_demo,
+            detail=" · ".join(x for x in (doc.institution or "",) if x)))
+    for f in facts or []:
+        category = FACT_CATEGORY.get(f.get("kind", ""))
+        if category is None:
+            continue
+        status = f.get("status")
+        # Imported medication is historical by definition: never pinned, never "active".
+        medication = f["kind"] == "medication"
+        items.append(RecordItem(
+            id=f"fact:{f['id']}", category=category, title=f["label"], detail=f.get("detail") or "",
+            date=str(f["event_date"])[:10] if f.get("event_date") else None, source="document_fact",
+            author=None, document_type=None, verification="document", provenance="document_facts",
+            document_id=str(f["document_id"]), status=("historical" if medication else status),
+            pinned=f["kind"] == "allergy", relevance_reason="allergy_always" if f["kind"] == "allergy" else None,
+            source_excerpt=f.get("source_excerpt"), source_page=f.get("source_page"), is_demo=bool(f.get("is_demo"))))
     if labs is not None:
         by_doc = {}
         for v in labs:

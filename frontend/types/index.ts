@@ -13,3 +13,4 @@ export * from './wwhealthApi';
 export * from './intelligence';
 export * from './smartCare';
 export * from './careJourney';
+export * from './smartImport';

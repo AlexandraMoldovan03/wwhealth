@@ -1,4 +1,4 @@
-import { ActivityIndicator, Pressable, StyleSheet, View } from 'react-native';
+import { Platform, ActivityIndicator, Pressable, StyleSheet, View } from 'react-native';
 import Svg, { Circle } from 'react-native-svg';
 
 import { AppText } from '@/design-system';
@@ -48,7 +48,7 @@ export function RecordButton({ title, loading = false, disabled = false, stoppin
         {stopping ? <View style={styles.stopGlyph} /> : loading ? (
           <ActivityIndicator color={colors.primary} />
         ) : (
-          <Svg accessible={false} width={70} height={83} viewBox="0 0 64 76">
+          <Svg {...(Platform.OS === 'web' ? { 'aria-hidden': true } : { accessible: false })} width={70} height={83} viewBox="0 0 64 76">
             {microphoneDots.map(({ x, y, radius, accent }, index) => (
               <Circle key={index} cx={x} cy={y} r={radius} fill={accent ? colors.accent : colors.primary} />
             ))}

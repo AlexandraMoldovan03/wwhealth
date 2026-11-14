@@ -100,23 +100,67 @@ def _document(row: dict) -> MedicalDocument:
         file_url=f"/api/v1/documents/{row['id']}/file",
         mime_type=row["mime_type"],
         size_bytes=row["size_bytes"],
-        status="uploaded",
-        is_demo=False,
+        status="analyzed" if row.get("processing_status") == "confirmed" else "uploaded",
+        is_demo=bool(row.get("is_demo")),
+        # Smart Import metadata (migration 20261119000000; absent before it → None)
+        original_filename=row.get("original_filename"),
+        specialty=row.get("specialty"),
+        event_date=row.get("event_date"),
+        document_date=row.get("document_date"),
+        institution=row.get("institution"),
+        processing_status=row.get("processing_status"),
     )
 
 
-def _history(record: PatientRecord, analyses: list[dict]) -> list[MedicalEvent]:
+DOC_SELECT = "id,title,document_type,mime_type,size_bytes,uploaded_at"
+DOC_SELECT_SMART = (f"{DOC_SELECT},original_filename,specialty,event_date,document_date,institution,processing_status,"
+                    "is_demo")
+
+
+def _own_documents(user: CurrentUser) -> list[dict]:
+    """The user's documents with Smart Import metadata when that migration is applied (plain columns otherwise)."""
+    res = _request("GET", _rest("medical_documents"), user, expected=(200, 400), params={
+        "user_id": f"eq.{user.id}", "select": DOC_SELECT_SMART, "order": "uploaded_at.desc"})
+    if res.status_code == 400:
+        res = _request("GET", _rest("medical_documents"), user, params={
+            "user_id": f"eq.{user.id}", "select": DOC_SELECT, "order": "uploaded_at.desc"})
+    return res.json()
+
+
+def _confirmed_diagnoses(user: CurrentUser) -> list[dict]:
+    """Diagnoses / procedures the patient confirmed from documents, for the Medical Timeline ([] before migration)."""
+    res = _request("GET", _rest("document_facts"), user, expected=(200, 400, 404), params={
+        "user_id": f"eq.{user.id}", "kind": "in.(diagnosis,procedure)", "status": "not.eq.ruled_out",
+        "select": "id,document_id,kind,label,status,event_date", "limit": "500"})
+    return res.json() if res.status_code == 200 else []
+
+
+def _history(record: PatientRecord, analyses: list[dict], facts: list[dict] | None = None) -> list[MedicalEvent]:
     events: list[MedicalEvent] = []
     for doc in record.documents:
         label = TYPE_LABELS.get(doc.type, "Document")
+        details = {
+            "Type": label,
+            "Format": {"application/pdf": "PDF", "image/jpeg": "Image", "image/png": "Image", "text/csv": "CSV"}.get(
+                doc.mime_type or "", "FHIR"),
+            "Size": f"{max(1, round((doc.size_bytes or 0) / 1024))} KB",
+        }
+        if doc.institution:
+            details["Institution"] = doc.institution
         events.append(MedicalEvent(
-            id=f"ev_doc_{doc.id}", type="document", title=doc.title, description=f"{label} uploaded.",
-            date=doc.uploaded_at, document_id=doc.id,
-            details={
-                "Type": label,
-                "Format": "PDF" if doc.mime_type == "application/pdf" else "Image",
-                "Size": f"{max(1, round((doc.size_bytes or 0) / 1024))} KB",
-            },
+            id=f"ev_doc_{doc.id}", type="document", title=doc.title,
+            description=f"{label}." if doc.event_date else f"{label} uploaded.",
+            date=doc.event_date or doc.uploaded_at, document_id=doc.id, details=details,
+        ))
+    titles = {d.id: d.title for d in record.documents}
+    for f in facts or []:
+        if not f.get("event_date") or f.get("kind") != "diagnosis":
+            continue
+        events.append(MedicalEvent(
+            id=f"ev_fact_{f['id']}", type="diagnosis", title=f["label"],
+            description=f"Documented ({f.get('status') or 'confirmed'}).", date=str(f["event_date"])[:10],
+            document_id=str(f["document_id"]),
+            details={k: v for k, v in {"Status": f.get("status"), "Document": titles.get(str(f["document_id"]))}.items() if v},
         ))
     for d in record.diagnoses:
         events.append(MedicalEvent(
@@ -157,17 +201,14 @@ def get_record(user: CurrentUser) -> PatientRecord | None:
     if isinstance(medical, list):  # PostgREST may embed 1:1 as a list
         medical = medical[0] if medical else {}
 
-    docs = _request("GET", _rest("medical_documents"), user, params={
-        "user_id": f"eq.{user.id}", "select": "id,title,document_type,mime_type,size_bytes,uploaded_at",
-        "order": "uploaded_at.desc",
-    }).json()
+    docs = _own_documents(user)
     analyses = _request("GET", _rest("lungvision_analyses"), user, params={
         "user_id": f"eq.{user.id}", "select": "id,score,threshold,model_version,created_at",
         "order": "created_at.desc", "limit": "50",
     }).json()
 
     record = _record_from(user.id, profile.get("full_name") or "", medical, [_document(r) for r in docs])
-    record.history = _history(record, analyses)
+    record.history = _history(record, analyses, _confirmed_diagnoses(user))
     return record
 
 

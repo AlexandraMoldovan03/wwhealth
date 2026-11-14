@@ -56,3 +56,7 @@ backend/models/*.pth
 backend/storage/
 ai/data/*
 !ai/data/.gitkeep
+
+# Local Medical NER artifact
+/backend/models/medical_ner/
+/ai/notebooks/wwhealth_ner_model.zip

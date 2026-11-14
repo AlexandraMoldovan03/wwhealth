@@ -5,7 +5,7 @@ import { DataOriginBadge } from './DataOrigin';
 import { spacing } from '@/design-system/theme';
 import { useTheme } from '@/design-system/useTheme';
 import type { MedicalDocument } from '@/types';
-import { formatDateTime } from '@/utils/format';
+import { formatDate, formatDateTime } from '@/utils/format';
 
 import { getDocumentMeta } from './documentMeta';
 import { ExtractionView } from './ExtractionView';
@@ -24,14 +24,17 @@ export function DocumentList({ documents, onSelect }: { documents: MedicalDocume
         const meta = getDocumentMeta(doc.type);
         const format =
           doc.mimeType === 'application/pdf' ? t('documents.formatPdf') : doc.mimeType?.startsWith('image/') ? t('documents.formatImage') : null;
-        const canOpen = !!onSelect && !!doc.fileUrl && !!doc.mimeType;
+        const canOpen = !!onSelect && (!!doc.fileUrl || !!doc.processingStatus);
+        const when = doc.eventDate ? formatDate(doc.eventDate) : formatDateTime(doc.uploadedAt);
         return (
           <View key={doc.id} style={{ gap: spacing.sm }}>
             <ListRow
               icon={meta.icon}
               title={doc.title}
-              subtitle={[t(`documentTypes.${meta.value}`), format, formatDateTime(doc.uploadedAt)].filter(Boolean).join(' · ')}
-              right={doc.isDemo ? <Badge label="DEMO" color={colors.warning} /> : doc.extraction ? <DataOriginBadge origin="extracted" /> : undefined}
+              subtitle={[t(`documentTypes.${meta.value}`), doc.institution, format, when].filter(Boolean).join(' · ')}
+              right={doc.isDemo ? <Badge label="DEMO" color={colors.warning} />
+                : doc.processingStatus && doc.processingStatus !== 'confirmed' ? <Badge label={t(`smart.status.${doc.processingStatus}`)} color={doc.processingStatus === 'failed' ? colors.danger : colors.warning} />
+                : doc.extraction ? <DataOriginBadge origin="extracted" /> : undefined}
               onPress={canOpen ? () => onSelect(doc) : undefined}
             />
             {doc.extraction && <ExtractionView extraction={doc.extraction} />}

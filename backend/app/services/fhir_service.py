@@ -8,6 +8,11 @@ FHIR R4 export (Bundle, type "collection") of the data the caller may read. No i
     (informationSource = Patient). MedicationAdministration is NEVER produced from those reports;
   • Condition, Observation (confirmed lab values), Procedure (surgeries), Encounter (confirmed appointments),
     DocumentReference (uploaded documents). Every resource keeps its WWHealth identifier and meta.source.
+  • facts the patient confirmed from imported documents (Smart Import): Condition (verificationStatus from the
+    documented certainty — a suspicion stays "provisional"), AllergyIntolerance, Procedure, Immunization, Observation,
+    and MedicationStatement with status "unknown" (historical, as documented — never "active"); each one points to
+    its DocumentReference. Codings are copied only when the source (e.g. an imported FHIR file) had them.
+  • demo / synthetic documents and their facts are exported only in demo mode, never with real (Supabase) data.
 """
 import hashlib
 import re
@@ -45,7 +50,12 @@ def _num(value: str) -> float | None:
 
 def bundle(patient_id: str, record: PatientRecord | None, documents: list[MedicalDocument] | None,
            labs: list[dict] | None, plans: list[TreatmentPlan] | None, appointments: list[Appointment] | None,
-           dose_reports: list[dict] | None = None) -> dict:
+           dose_reports: list[dict] | None = None, facts: list[dict] | None = None,
+           include_demo: bool | None = None) -> dict:
+    # Demo / synthetic documents are kept apart from real data: exported only in demo mode (no Supabase).
+    if include_demo is None:
+        from app.core.config import settings
+        include_demo = not settings.supabase_enabled
     pid = _safe(patient_id)
     subject = {"reference": f"Patient/{pid}"}
     entries: list[dict] = []
@@ -174,6 +184,8 @@ def bundle(patient_id: str, record: PatientRecord | None, documents: list[Medica
         entries.append(_entry(res))
 
     for doc in documents or []:
+        if doc.is_demo and not include_demo:
+            continue
         entries.append(_entry({
             "resourceType": "DocumentReference", "id": _safe(f"doc-{doc.id}"), "identifier": [_id("document", doc.id)],
             "meta": {"source": f"{SYSTEM}:medical_documents"}, "status": "current", "type": {"text": doc.type},
@@ -181,5 +193,80 @@ def bundle(patient_id: str, record: PatientRecord | None, documents: list[Medica
             "content": [{"attachment": {k: v for k, v in {"contentType": doc.mime_type, "title": doc.title,
                                                           "url": doc.file_url}.items() if v}}]}))
 
+    entries.extend(_fact_entries([f for f in facts or [] if include_demo or not f.get("is_demo")], subject,
+                                 {d.id for d in documents or [] if include_demo or not d.is_demo}))
     return {"resourceType": "Bundle", "type": "collection", "timestamp": datetime.now(UTC).isoformat(),
             "entry": entries}
+
+
+VERIFICATION = {"confirmed": "confirmed", "suspected": "provisional", "ruled_out": "refuted", "history": "confirmed"}
+MED_CONTEXT_TEXT = {"at_discharge": "at discharge", "during_stay": "during the hospital stay", "prior": "before admission",
+                    "prescribed": "prescribed", "unknown": "context not stated"}
+
+
+def _fact_entries(facts: list[dict], subject: dict, exported_docs: set[str]) -> list[dict]:
+    out = []
+    for f in facts:
+        doc_id = str(f["document_id"])
+        doc_ref = {"reference": f"DocumentReference/{_safe('doc-' + doc_id)}"} if doc_id in exported_docs else None
+        meta = {"source": f"{SYSTEM}:document_facts"}
+        ident = [_id("document-fact", str(f["id"]))]
+        code: dict = {"text": f["label"]}
+        coding = (f.get("value") or {}).get("coding")
+        if isinstance(coding, list) and coding:
+            code["coding"] = [c for c in coding if isinstance(c, dict)][:5]
+        when = str(f["event_date"])[:10] if f.get("event_date") else None
+        note = [{"text": f"Confirmed by the patient from an imported document ({f.get('document_title') or doc_id})."}]
+        kind, status = f["kind"], f.get("status")
+        rid = _safe(f"fact-{f['id']}")
+        if kind == "diagnosis":
+            res = {"resourceType": "Condition", "id": rid, "identifier": ident, "meta": meta, "code": code,
+                   "subject": subject, "verificationStatus": {"coding": [{
+                       "system": "http://terminology.hl7.org/CodeSystem/condition-ver-status",
+                       "code": VERIFICATION.get(status or "", "unconfirmed")}]}, "note": note}
+            if status == "history":
+                res["note"].append({"text": "Documented as past medical history."})
+            if when:
+                res["recordedDate"] = when
+            if doc_ref:
+                res["evidence"] = [{"detail": [doc_ref]}]
+        elif kind == "allergy":
+            res = {"resourceType": "AllergyIntolerance", "id": rid, "identifier": ident, "meta": meta, "code": code,
+                   "patient": subject, "note": note}
+            if f.get("detail"):
+                res["reaction"] = [{"manifestation": [{"text": f["detail"]}]}]
+        elif kind == "medication":
+            res = {"resourceType": "MedicationStatement", "id": rid, "identifier": ident, "meta": meta,
+                   "status": "unknown", "medicationCodeableConcept": code, "subject": subject,
+                   "note": [*note, {"text": f"Historical: documented {MED_CONTEXT_TEXT.get(status or 'unknown', '')}; "
+                                            "not verified as current medication."}]}
+            if when:
+                res["effectiveDateTime"] = when
+            if f.get("detail"):
+                res["dosage"] = [{"text": f["detail"]}]
+            if doc_ref:
+                res["derivedFrom"] = [doc_ref]
+        elif kind == "procedure":
+            res = {"resourceType": "Procedure", "id": rid, "identifier": ident, "meta": meta, "status": "completed",
+                   "code": code, "subject": subject, "note": note}
+            if when:
+                res["performedDateTime"] = when
+            if doc_ref:
+                res["report"] = [doc_ref]
+        elif kind == "vaccination":
+            res = {"resourceType": "Immunization", "id": rid, "identifier": ident, "meta": meta, "status": "completed",
+                   "vaccineCode": code, "patient": subject, "note": note,
+                   **({"occurrenceDateTime": when} if when else {"occurrenceString": "as documented"})}
+        elif kind == "investigation":
+            res = {"resourceType": "Observation", "id": rid, "identifier": ident, "meta": meta, "status": "unknown",
+                   "code": code, "subject": subject, "note": note}
+            if f.get("detail"):
+                res["valueString"] = f["detail"]
+            if when:
+                res["effectiveDateTime"] = when
+            if doc_ref:
+                res["derivedFrom"] = [doc_ref]
+        else:
+            continue  # recommendations / follow-ups / reasons stay in the document
+        out.append(_entry(res))
+    return out

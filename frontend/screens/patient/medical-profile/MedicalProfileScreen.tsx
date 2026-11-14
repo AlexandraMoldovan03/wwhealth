@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import { StyleSheet, useWindowDimensions, View } from 'react-native';
+import { Platform, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import Svg, { Defs, Image, LinearGradient, Mask, Rect, Stop } from 'react-native-svg';
 
@@ -26,7 +26,7 @@ export function MedicalProfileScreen() {
       {data && (
         <View style={styles.content}>
           <View pointerEvents="none" style={styles.art}>
-            <Svg width="100%" height="100%" viewBox="0 0 100 100" accessible={false}>
+            <Svg width="100%" height="100%" viewBox="0 0 100 100" {...(Platform.OS === 'web' ? { 'aria-hidden': true } : { accessible: false })}>
               <Defs>
                 <LinearGradient id="profileLungsFade" x1="0%" y1="0%" x2="65%" y2="45%">
                   <Stop offset="0" stopColor="white" stopOpacity={0} />

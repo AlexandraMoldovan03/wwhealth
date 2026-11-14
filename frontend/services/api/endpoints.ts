@@ -63,4 +63,12 @@ export const ENDPOINTS = {
   cjRecord: '/api/v1/care/record',
   cjFhir: '/api/v1/care/fhir',
   cjInsights: '/api/v1/care/insights',
+  imports: '/api/v1/imports',
+  importItem: (id: string) => `/api/v1/imports/${encodeURIComponent(id)}`,
+  importConfirm: (id: string) => `/api/v1/imports/${encodeURIComponent(id)}/confirm`,
+  importReject: (id: string) => `/api/v1/imports/${encodeURIComponent(id)}/reject`,
+  importReanalyze: (id: string) => `/api/v1/imports/${encodeURIComponent(id)}/reanalyze`,
+  importUsage: '/api/v1/imports/usage',
+  library: '/api/v1/library',
+  libraryItem: (id: string) => `/api/v1/library/${encodeURIComponent(id)}`,
 } as const;

@@ -51,4 +51,5 @@ def my_summary(user: CurrentUser = Depends(get_current_user)) -> MedicalSummary:
                     for v in lab_extraction.demo_list(user.id)]
     if not record:
         raise HTTPException(status_code=404, detail="Patient not found")
-    return build_summary(record, record.documents, labs)
+    from app.services import import_repo
+    return build_summary(record, record.documents, labs, import_repo.facts_or_empty(user))
