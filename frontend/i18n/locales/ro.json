@@ -1211,6 +1211,7 @@
       "careSubtitle": "De la simptome la programare.",
       "care": "Ce specialitate îmi trebuie?",
       "careHint": "Descrii simptomele, primești 1–3 specialități și medici cu ore libere.",
+      "careAction": "Descrie simptomele",
       "specialties": "Caută o specialitate",
       "specialtiesHint": "Fără AI: alegi direct specialitatea și medicul."
     },

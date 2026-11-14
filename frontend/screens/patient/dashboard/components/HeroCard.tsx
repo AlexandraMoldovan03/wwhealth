@@ -19,8 +19,8 @@ export function HeroCard({ enterIndex }: { enterIndex?: number }) {
           <AppText variant="heading" style={styles.white}>
             LungVision AI
           </AppText>
-          <AppText variant="caption" style={styles.soft}>
-            {t('home.hero.text')}
+          <AppText variant="body" style={styles.description}>
+            {t('explain.lungvision.text')}
           </AppText>
         </View>
         <Ionicons name="sparkles" size={30} color="#FFFFFF" />
@@ -43,6 +43,6 @@ const styles = StyleSheet.create({
   text: { flex: 1, gap: spacing.xs },
   kicker: { color: 'rgba(255,255,255,0.85)' },
   white: { color: '#FFFFFF' },
-  soft: { color: 'rgba(255,255,255,0.92)' },
+  description: { color: '#142b32' },
   buttonWrap: { alignSelf: 'flex-start' },
 });
