@@ -1,9 +1,9 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router, useIsFocused } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { useEffect, useId, useState } from 'react';
 import { AppState, Pressable, StyleSheet, View } from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
-import Animated, { cancelAnimation, Easing, interpolate, useAnimatedStyle, useReducedMotion, useSharedValue, withRepeat, withTiming } from 'react-native-reanimated';
+import Svg, { Circle, Defs, RadialGradient, Rect, Stop } from 'react-native-svg';
 
 import { AppButton, AppText, GradientCard } from '@/design-system';
 import { gradients, spacing } from '@/design-system/theme';
@@ -18,29 +18,10 @@ export function EmergencyCard({ enterIndex }: { enterIndex?: number }) {
   const { t } = useTranslation();
   const focused = useIsFocused();
   const { token, clearToken } = useEmergencyToken();
-  const reduceMotion = useReducedMotion();
-  const glow = useSharedValue(0);
+  const tileId = useId();
   const [closing, setClosing] = useState(false);
   const secondsLeft = useCountdown(token?.expiresAt ?? null);
   const activeToken = !!token && secondsLeft > 0;
-
-  useEffect(() => {
-    cancelAnimation(glow);
-    if (!focused || activeToken || reduceMotion) {
-      glow.set(0);
-      return;
-    }
-    glow.set(withRepeat(withTiming(1, { duration: 1_100, easing: Easing.inOut(Easing.ease) }), -1, true));
-    return () => cancelAnimation(glow);
-  }, [activeToken, focused, glow, reduceMotion]);
-
-  const glowStyle = useAnimatedStyle(() => ({
-    shadowColor: '#B9505F',
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: interpolate(glow.value, [0, 1], [0.28, 0.68]),
-    shadowRadius: interpolate(glow.value, [0, 1], [8, 18]),
-    elevation: interpolate(glow.value, [0, 1], [5, 12]),
-  }));
 
   useEffect(() => {
     if (!focused || !activeToken || !token) return;
@@ -96,36 +77,45 @@ export function EmergencyCard({ enterIndex }: { enterIndex?: number }) {
   }
 
   return (
-    <Animated.View style={[styles.generateGlow, glowStyle]}>
-      <Pressable
-        accessibilityRole="button"
-        accessibilityLabel={t('home.emergencyQr')}
-        onPress={() => { tapFeedback(); router.push('/patient/emergency'); }}
-        style={styles.generateButton}
-      >
-        <Ionicons name="qr-code-outline" size={34} color="#B9505F" />
-        <AppText variant="subheading" align="center" style={styles.generateLabel}>
-          {t('home.emergencyQr')}
-        </AppText>
-      </Pressable>
-    </Animated.View>
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel={t('home.emergencyQr')}
+      onPress={() => { tapFeedback(); router.push('/patient/emergency'); }}
+      style={({ pressed }) => [styles.generateButton, pressed && styles.pressed]}
+    >
+      <View pointerEvents="none" style={styles.qrTile}>
+        <Svg accessible={false} width="100%" height="100%" viewBox="0 0 108 108" style={StyleSheet.absoluteFill}>
+          <Defs>
+            <RadialGradient id={tileId} cx="50%" cy="50%" rx="50%" ry="50%">
+              <Stop offset="0%" stopColor="#FFD8DC" />
+              <Stop offset="52%" stopColor="#F47D8E" stopOpacity={.94} />
+              <Stop offset="100%" stopColor="#E75C73" stopOpacity={0} />
+            </RadialGradient>
+          </Defs>
+          <Rect width={108} height={108} fill={'url(#' + tileId + ')'} />
+          {edgeDots.map(({ x, y, size, opacity }, index) => (
+            <Circle key={index} cx={x} cy={y} r={size} fill="#EF7185" opacity={opacity} />
+          ))}
+        </Svg>
+        <Ionicons name="qr-code-outline" size={41} color="#781F32" />
+      </View>
+      <AppText variant="subheading" align="center">{t('home.emergencyQr')}</AppText>
+    </Pressable>
   );
 }
 
+const edgeDots = Array.from({ length: 18 * 18 }, (_, index) => {
+  const x = 4 + (index % 18) * 5.9 + Math.sin(index * 2.4) * 1.8;
+  const y = 4 + Math.floor(index / 18) * 5.9 + Math.cos(index * 1.7) * 1.8;
+  const distance = Math.max(Math.abs(x - 54), Math.abs(y - 54));
+  const fade = Math.max(0, 1 - distance / 55);
+  return { x, y, size: .55 + fade * 1.7, opacity: distance > 27 ? fade * 1.35 : 0 };
+}).filter(({ opacity }) => opacity > 0.04);
+
 const styles = StyleSheet.create({
-  generateGlow: { borderRadius: 22, shadowColor: '#B9505F' },
-  generateButton: {
-    minHeight: 112,
-    borderRadius: 22,
-    backgroundColor: '#F2C6CD',
-    borderColor: '#E8AEB7',
-    borderWidth: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: spacing.sm,
-    padding: spacing.md,
-  },
-  generateLabel: { color: '#B9505F' },
+  generateButton: { alignSelf: 'center', alignItems: 'center', gap: spacing.xxs, paddingHorizontal: spacing.sm },
+  pressed: { opacity: .82, transform: [{ scale: .96 }] },
+  qrTile: { width: 118, height: 118, alignItems: 'center', justifyContent: 'center' },
   activeToken: { alignItems: 'center', gap: spacing.sm },
   qrBox: { padding: spacing.md, backgroundColor: '#FFFFFF', borderRadius: 16 },
   ink: { color: '#1C2E34' },

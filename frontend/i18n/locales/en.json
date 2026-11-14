@@ -1109,6 +1109,7 @@
   },
   "hubs": {
     "records": {
+      "folders": { "symptoms": "Describe symptoms", "documents": "Documents and lab results", "history": "Medical history" },
       "title": "My record",
       "subtitle": "Everything about your health, gathered in one place.",
       "aboutYou": "About you",
