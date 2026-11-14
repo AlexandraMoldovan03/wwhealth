@@ -112,6 +112,21 @@ def demo_revoke(patient_id: str, token_id: str) -> bool:
     return False
 
 
+def demo_token_status(patient_id: str, token_id: str) -> str:
+    now = datetime.now(UTC)
+    with _store.lock:
+        token = next((item for item in _store.tokens.values() if item.id == token_id and item.patient_id == patient_id), None)
+        if token is None:
+            return "not_found"
+        if token.used_at:
+            return "used"
+        if token.revoked_at:
+            return "revoked"
+        if token.expires_at <= now:
+            return "expired"
+        return "active"
+
+
 def demo_redeem(doctor_id: str, token_hash: str, doctor_name: str = "Demo Doctor") -> dict:
     now = datetime.now(UTC)
     with _store.lock:

@@ -1,27 +1,17 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import { Image, StyleSheet, useWindowDimensions, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { sizes, spacing } from '@/design-system/theme';
 import { useTheme } from '@/design-system/useTheme';
 
-/**
- * Brand background (logo, lungs, waves), one set per theme. The layers are separate transparent images
- * placed by rule instead of one stretched picture, so nothing is cropped or distorted on any screen size:
- * logo top-left aligned with the content column, lungs top-right, waves along the bottom.
- */
+/** Decorative lungs and waves, with separate assets for each theme. */
 const LAYERS = {
   light: {
-    logo: require('../../../assets/images/background/logo-light.png'),
     lungs: require('../../../assets/images/background/lungs-light.png'),
     waves: require('../../../assets/images/background/waves-light.png'),
-    logoRatio: 522 / 136,
   },
   dark: {
-    logo: require('../../../assets/images/background/logo-dark.png'),
     lungs: require('../../../assets/images/background/lungs-dark.png'),
     waves: require('../../../assets/images/background/waves-dark.png'),
-    logoRatio: 528 / 124,
   },
 } as const;
 const LUNGS_RATIO = 355 / 380;
@@ -29,27 +19,15 @@ const WAVES_RATIO = 923 / 830;
 
 const clamp = (v: number, min: number, max: number) => Math.min(max, Math.max(min, v));
 
-/** Logo size for a window width — ScreenContainer uses it to keep the content clear of the logo. */
-export function useBrandLogoSize() {
-  const { width } = useWindowDimensions();
-  const { isDark } = useTheme();
-  const w = clamp(width * 0.5, 150, 230);
-  return { width: w, height: w / LAYERS[isDark ? 'dark' : 'light'].logoRatio };
-}
-
-export function AppBackground({ showLogo = false }: { showLogo?: boolean }) {
+export function AppBackground() {
   const { width, height } = useWindowDimensions();
-  const insets = useSafeAreaInsets();
   const { colors, isDark } = useTheme();
-  const logo = useBrandLogoSize();
   const layers = LAYERS[isDark ? 'dark' : 'light'];
 
   const lungsW = clamp(width * 0.36, 110, 230);
   // Waves span the full width; on wide or short windows only their lower part shows (max ~40% of the height).
   const wavesH = width / WAVES_RATIO;
   const wavesBox = Math.min(wavesH, height * 0.4);
-  // Same left edge as the (max-width, centred) content column.
-  const contentLeft = Math.max(0, (width - sizes.maxContentWidth) / 2) + spacing.lg - 4;
 
   return (
     <View pointerEvents="none" style={StyleSheet.absoluteFill}>
@@ -61,17 +39,9 @@ export function AppBackground({ showLogo = false }: { showLogo?: boolean }) {
       {/* Under a navigation header the lungs sit among the first rows of content, so they stay faint there. */}
       <Image
         source={layers.lungs}
-        style={[styles.lungs, { width: lungsW, height: lungsW / LUNGS_RATIO, opacity: showLogo ? 1 : 0.35 }]}
+        style={[styles.lungs, { width: lungsW, height: lungsW / LUNGS_RATIO, opacity: 0.35 }]}
         resizeMode="contain"
       />
-      {showLogo && (
-        <Image
-          source={layers.logo}
-          style={[styles.logo, { top: insets.top + spacing.sm, left: contentLeft, width: logo.width, height: logo.height }]}
-          resizeMode="contain"
-          accessibilityIgnoresInvertColors
-        />
-      )}
     </View>
   );
 }
@@ -80,5 +50,4 @@ const styles = StyleSheet.create({
   waves: { position: 'absolute', left: 0, right: 0, bottom: 0, overflow: 'hidden', justifyContent: 'flex-end' },
   fade: { position: 'absolute', top: 0, left: 0, right: 0 },
   lungs: { position: 'absolute', top: 0, right: 0 },
-  logo: { position: 'absolute' },
 });

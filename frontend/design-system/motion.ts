@@ -4,7 +4,7 @@
  */
 import * as Haptics from 'expo-haptics';
 import { Platform } from 'react-native';
-import { FadeIn, FadeInDown, FadeOut, ReduceMotion, ZoomIn } from 'react-native-reanimated';
+import { FadeIn, FadeInDown, FadeOut, ReduceMotion } from 'react-native-reanimated';
 
 import { motion } from './theme';
 
@@ -20,11 +20,6 @@ export const fadeIn = (index = 0) =>
     .reduceMotion(ReduceMotion.System);
 
 export const fadeOut = FadeOut.duration(motion.fast).reduceMotion(ReduceMotion.System);
-
-/** QR / result reveal. */
-export const popIn = ZoomIn.springify().damping(16).reduceMotion(ReduceMotion.System);
-
-export const pressSpring = { damping: 18, stiffness: 320, mass: 0.6 } as const;
 
 /** Light tap feedback on iOS/Android (no-op on web). */
 export function tapFeedback(kind: 'light' | 'medium' | 'success' | 'warning' = 'light') {

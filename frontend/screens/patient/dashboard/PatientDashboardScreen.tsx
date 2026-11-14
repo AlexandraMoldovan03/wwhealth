@@ -1,12 +1,13 @@
-import { router } from 'expo-router';
 import { RefreshControl, StyleSheet, View } from 'react-native';
+import Svg, { Defs, RadialGradient, Rect, Stop } from 'react-native-svg';
 
-import { ErrorState, ScreenContainer, SectionHeader, StatTile } from '@/design-system';
+import { AppText, ErrorState, ScreenContainer, SectionHeader } from '@/design-system';
 import { spacing } from '@/design-system/theme';
 import { useCurrentUser } from '@/services/auth/useCurrentUser';
 import { EmergencyCard } from './components/EmergencyCard';
 import { JourneyCards } from './components/JourneyCards';
 import { NextStepCard } from './components/NextStepCard';
+import { PassportButton } from './components/PassportButton';
 import { ProgressChecklist } from './components/ProgressChecklist';
 import { useRecordProgress } from './useRecordProgress';
 import { WelcomeHeader } from '@/screens/shared/components/WelcomeHeader';
@@ -17,32 +18,40 @@ import { useTranslation } from 'react-i18next';
 
 /**
  * Patient Home — action-oriented: welcome, Emergency Passport one tap away, the recommended next step,
- * real record progress (hideable), snapshot, what each section is for.
+ * real record progress (hideable) and what each section is for.
  * Every number comes from the patient's real record.
  */
 export function PatientDashboardScreen() {
-  const { colors } = useTheme();
+  const { colors, isDark } = useTheme();
   const { t } = useTranslation();
   const user = useCurrentUser();
   const { data: patient, isLoading, error, reload } = useAsync(api.getMyPatient, { refetchOnFocus: true });
   const progress = useRecordProgress(patient);
   const name = patient?.fullName || user?.fullName || t('home.there');
 
-  const loading = !patient && isLoading;
-  const stats = [
-    { icon: 'water-outline' as const, label: t('home.stats.bloodType'), value: loading ? undefined : patient?.bloodType ?? '—', tint: colors.danger },
-    { icon: 'alert-circle-outline' as const, label: t('home.stats.allergies'), value: loading ? undefined : patient?.allergies.length ?? 0, tint: colors.warning },
-    {
-      icon: 'pulse-outline' as const,
-      label: t('home.stats.activeDiagnoses'),
-      value: loading ? undefined : patient?.diagnoses.filter((d) => d.status === 'active').length ?? 0,
-      tint: colors.accent,
-    },
-  ];
-
   return (
     <ScreenContainer help="home" refreshControl={<RefreshControl refreshing={isLoading && !!patient} onRefresh={reload} tintColor={colors.primary} />}>
-      <WelcomeHeader name={name} roleLabel={t('roles.patient')} headline={t('home.headline')} />
+      <WelcomeHeader name={name} roleLabel={t('roles.patient')} />
+
+      <View style={styles.headline}>
+        <View pointerEvents="none" style={styles.aura}>
+          <Svg width="100%" height="100%" viewBox="0 0 360 120" preserveAspectRatio="none">
+            <Defs>
+              <RadialGradient id="headline-aura" cx="50%" cy="50%" rx="50%" ry="50%">
+                <Stop offset="0%" stopColor={isDark ? '#50B99D' : '#7FCDB6'} stopOpacity={isDark ? 0.24 : 0.5} />
+                <Stop offset="60%" stopColor="#73B9C2" stopOpacity={isDark ? 0.1 : 0.2} />
+                <Stop offset="100%" stopColor="#73B9C2" stopOpacity={0} />
+              </RadialGradient>
+            </Defs>
+            <Rect width={360} height={120} fill="url(#headline-aura)" />
+          </Svg>
+        </View>
+        <AppText variant="heading" accessibilityRole="header" style={styles.headlineText}>
+          {t('home.headline')}
+        </AppText>
+      </View>
+
+      <PassportButton />
 
       <EmergencyCard enterIndex={1} />
 
@@ -60,24 +69,16 @@ export function PatientDashboardScreen() {
       )}
 
       <View style={styles.section}>
-        <SectionHeader title={t('home.snapshot')} actionLabel={t('home.edit')} onActionPress={() => router.push('/patient/edit-profile')} />
-        <View style={styles.stats}>
-          {stats.map((s, i) => (
-            <StatTile key={s.label} {...s} enterIndex={4 + i} onPress={() => router.push('/patient/profile')} />
-          ))}
-        </View>
-      </View>
-
-      <View style={styles.section}>
         <SectionHeader title={t('journey.title')} subtitle={t('journey.subtitle')} />
         <JourneyCards startIndex={6} />
       </View>
-
     </ScreenContainer>
   );
 }
 
 const styles = StyleSheet.create({
+  headline: { justifyContent: 'center', minHeight: 52 },
+  aura: { position: 'absolute', width: '100%', maxWidth: 390, height: 102, left: 0, top: -25 },
+  headlineText: { fontSize: 19, lineHeight: 26 },
   section: { gap: spacing.md },
-  stats: { flexDirection: 'row', gap: spacing.sm },
 });

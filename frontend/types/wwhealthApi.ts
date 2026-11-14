@@ -17,7 +17,7 @@ import type {
   Transcript,
 } from './smartCare';
 import type { LabExtractionResponse, LabValueEntry, PatientLabValue } from './labs';
-import type { EmergencyAccessEvent, EmergencyData, EmergencyRedeemRequest, EmergencyTokenResponse } from './emergency';
+import type { EmergencyAccessEvent, EmergencyData, EmergencyRedeemRequest, EmergencyTokenResponse, EmergencyTokenStatus } from './emergency';
 import type { LungAnalysis } from './lungvision';
 import type {
   DocumentAnalyzeResponse,
@@ -59,6 +59,7 @@ export interface WWHealthApi {
   // Emergency Medical Passport
   createEmergencyToken(): Promise<EmergencyTokenResponse>;
   revokeEmergencyToken(tokenId: string): Promise<void>;
+  getEmergencyTokenStatus(tokenId: string): Promise<EmergencyTokenStatus>;
   redeemEmergencyToken(request: EmergencyRedeemRequest): Promise<EmergencyData>;
   getEmergencyAudit(): Promise<EmergencyAccessEvent[]>;
   /** Doctor: own emergency scans (opened / refused). */

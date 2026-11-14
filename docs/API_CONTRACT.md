@@ -166,7 +166,9 @@ Doctor (role doctor + valid consent):
   summary, documents, labs }` — without valid consent only the status (no data).
 - `GET /patients/{id}/documents/{docId}/file` → file; 403 expired/revoked/section not shared, 404 otherwise.
 
-The Emergency Passport (`/emergency/*`) is separate and unchanged.
+The Emergency Passport (`/emergency/*`) uses single-use QR tokens that expire after five minutes. Patients can
+check `GET /emergency/tokens/{id}/status` for `active|used|revoked|expired|not_found`; this exposes only the
+status of their own token. The schema migration `20261117000000_emergency_token_status.sql` adds the Supabase RPC.
 
 ### AI Medical Intelligence — `/api/v1/intelligence` (migration `20261116000000_ai_medical_intelligence.sql`)
 Gemini (Google Gen AI SDK) runs only in the backend (`GEMINI_API_KEY`, optional `GEMINI_SUMMARY_MODEL` in backend/.env).

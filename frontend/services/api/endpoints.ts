@@ -14,6 +14,7 @@ export const ENDPOINTS = {
   voiceSummary: '/api/v1/voice/summary',
   voiceIntake: '/api/v1/intake/voice',
   emergencyTokens: '/api/v1/emergency/tokens',
+  emergencyTokenStatus: (tokenId: string) => `/api/v1/emergency/tokens/${encodeURIComponent(tokenId)}/status`,
   emergencyRevoke: (tokenId: string) => `/api/v1/emergency/tokens/${encodeURIComponent(tokenId)}/revoke`,
   emergencyRedeem: '/api/v1/emergency/redeem',
   emergencyAudit: '/api/v1/emergency/audit',

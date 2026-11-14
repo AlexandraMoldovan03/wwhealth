@@ -1,4 +1,5 @@
 {
+  "voiceRecording": {"active":"Se înregistrează"},
   "common": {
     "email": "Email",
     "password": "Parolă",
@@ -81,7 +82,7 @@
     "explore": "Explorează",
     "analysis": "LungVision",
     "history": "Istoric",
-    "settings": "Profil",
+    "settings": "Setări",
     "scan": "Scanează QR",
     "access": "Accesări",
     "patients": "Pacienți",
@@ -174,6 +175,7 @@
     "description": "Dosarul tău medical, documentele și analiza radiografiilor asistată de AI — partajabile cu medici verificați, cu acces limitat în timp și revocabil."
   },
   "home": {
+    "passportTap": "Apasă pe pașaport ca să-l deschizi",
     "there": "acolo",
     "greeting": {
       "morning": "Bună dimineața",
@@ -253,6 +255,7 @@
       }
     },
     "emergencyQr": "Generează QR de urgență",
+    "openEmergencyQr": "Deschide QR-ul de urgență",
     "headline": "Sănătatea ta, liniștit, într-un singur loc",
     "emergency": {
       "title": "Pașaport de urgență",
@@ -543,6 +546,7 @@
     "select": "Selectează o imagine",
     "hint": "Atinge pentru a alege din galerie",
     "change": "Schimbă imaginea",
+    "remove": "Șterge imaginea",
     "selectA11y": "Selectează imaginea"
   },
   "notFound": {
@@ -551,6 +555,7 @@
     "home": "Mergi acasă"
   },
   "lung": {
+    "animatePreview": "Apasă pe plămâni pentru a alege radiografia",
     "subtitle": "Screening experimental pentru pneumonie cu DenseNet121 (antrenat pe PneumoniaMNIST) și explicații Grad-CAM.",
     "analyzeAnother": "Analizează altă radiografie",
     "select": "Selectează o radiografie toracică",
@@ -1229,6 +1234,7 @@
     },
     "topics": {
       "home": {
+    "passportTap": "Apasă pe pașaport ca să-l deschizi",
         "title": "Acasă",
         "intro": "Punctul de plecare: ce ai de făcut mai departe și cât de complet e dosarul.",
         "can": [

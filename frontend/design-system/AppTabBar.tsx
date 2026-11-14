@@ -1,25 +1,22 @@
-/**
- * Bottom navigation — docked (never covers content), safe-area aware, role specific.
- * Active tab = solid pill behind the icon + bold label in the text colour; animated with Reanimated
- * (instant when Reduce Motion is on) and a light haptic tick on iOS / Android.
- */
+import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import type { BottomTabBarProps } from 'expo-router/js-tabs';
-import { useEffect } from 'react';
+import { useEffect, useId, useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import Animated, {
-  interpolate,
   useAnimatedStyle,
   useReducedMotion,
   useSharedValue,
   withSpring,
+  withSequence,
   withTiming,
 } from 'react-native-reanimated';
+import Svg, { Defs, RadialGradient, Rect, Stop } from 'react-native-svg';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { pressSpring, tapFeedback } from './motion';
+import { tapFeedback } from './motion';
 import { TABS, type TabConfig } from '@/config/navigation';
-import { fonts, radius, shadows, spacing } from './theme';
+import { fonts, radius, spacing } from './theme';
 import { useRole } from '@/services/auth/useCurrentUser';
 import { useTheme } from './useTheme';
 
@@ -32,43 +29,94 @@ export function AppTabBar({ state, descriptors, emitter, navigateToTab }: Bottom
     .map((route, index) => ({ route, index, tab: TABS.find((t) => t.name === route.name) }))
     .filter((it): it is typeof it & { tab: TabConfig } => !!it.tab && !it.tab.parent && it.tab.roles.includes(role));
 
+  const current = TABS.find((tab) => tab.name === state.routes[state.index]?.name);
+  const activeIndex = items.findIndex(({ index, tab }) => state.index === index || current?.parent === tab.name);
+  const [rowWidth, setRowWidth] = useState(0);
+  const reduceMotion = useReducedMotion();
+  const position = useSharedValue(Math.max(0, activeIndex));
+  const halo = useSharedValue(0);
+  const gradientId = useId();
+  const itemWidth = rowWidth / Math.max(1, items.length);
+  const activeColor = role === 'doctor' ? colors.accent : colors.primary;
+
+  useEffect(() => {
+    if (activeIndex < 0) return;
+    position.set(reduceMotion ? activeIndex : withSpring(activeIndex, { damping: 21, stiffness: 225 }));
+    halo.set(reduceMotion ? 0 : withSequence(
+      withTiming(1, { duration: 140 }),
+      withTiming(0, { duration: 430 }),
+    ));
+  }, [activeIndex, halo, position, reduceMotion]);
+
+  const haloStyle = useAnimatedStyle(() => ({
+    opacity: .68 + halo.value * .32,
+    transform: [{ scale: 1 + halo.value * .16 }],
+  }));
+
+  const capsuleMotion = useAnimatedStyle(() => ({
+    transform: [{ translateX: position.value * itemWidth }],
+  }));
+
   return (
-    <View
-      accessibilityRole="tablist"
-      style={[
-        styles.bar,
-        {
-          backgroundColor: colors.tabBar,
-          borderColor: colors.border,
-          paddingBottom: Math.max(insets.bottom, spacing.sm + 4),
-        },
-        !isDark && shadows.raised,
-      ]}
-    >
-      {items.map(({ route, index, tab }) => {
-        // A hidden route (e.g. /history inside "My record") keeps its section highlighted.
-        const current = TABS.find((t) => t.name === state.routes[state.index]?.name);
-        const focused = state.index === index || current?.parent === tab.name;
-        const options = descriptors[route.key]?.options;
-        const label = typeof options?.title === 'string' ? options.title : tab.title;
-        return (
-          <TabItem
-            key={route.key}
-            label={label}
-            icon={focused ? tab.iconFocused : tab.icon}
-            focused={focused}
-            activeColor={role === 'doctor' ? colors.accent : colors.primary}
-            onPress={() => {
-              const event = emitter.emit({ type: 'tabPress', target: route.key, canPreventDefault: true });
-              if (state.index !== index && !event.defaultPrevented) {
-                tapFeedback();
-                navigateToTab(route.key);
-              }
-            }}
-            onLongPress={() => emitter.emit({ type: 'tabLongPress', target: route.key })}
-          />
-        );
-      })}
+    <View style={[styles.dock, { marginBottom: Math.max(insets.bottom, spacing.sm) }]}>
+      <LinearGradient
+        colors={isDark ? ['#354D57E8', '#192B36F5'] : ['#FFFFFFF5', '#DDEFE9E8']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 0.9, y: 1 }}
+        style={[styles.glass, { borderColor: isDark ? '#B7E8DA40' : '#FFFFFF' }]}
+      >
+        <View
+          accessibilityRole="tablist"
+          onLayout={(event) => setRowWidth(event.nativeEvent.layout.width)}
+          style={styles.row}
+        >
+          {activeIndex >= 0 && itemWidth > 6 && (
+            <Animated.View pointerEvents="none" style={[
+              styles.capsule, capsuleMotion,
+              { width: itemWidth - 6 },
+            ]}>
+              <Animated.View style={[styles.halo, haloStyle]}>
+                <Svg width="100%" height="100%">
+                  <Defs>
+                    <RadialGradient id={gradientId} cx="50%" cy="50%" rx="50%" ry="50%">
+                      <Stop offset="0" stopColor={activeColor} stopOpacity={isDark ? .94 : .64} />
+                      <Stop offset=".48" stopColor={activeColor} stopOpacity={isDark ? .48 : .31} />
+                      <Stop offset="1" stopColor={activeColor} stopOpacity={0} />
+                    </RadialGradient>
+                  </Defs>
+                  <Rect width="100%" height="100%" fill={'url(#' + gradientId + ')'} />
+                </Svg>
+              </Animated.View>
+              <LinearGradient
+                colors={isDark ? ['#ECFFF22D', '#D4F8EB0A'] : ['#FFFFFFEA', '#FFFFFF45']}
+                style={[styles.selection, { borderColor: isDark ? '#B7E8DA66' : '#FFFFFF' }]}
+              />
+            </Animated.View>
+          )}
+          {items.map(({ route, index, tab }, visibleIndex) => {
+            const focused = visibleIndex === activeIndex;
+            const options = descriptors[route.key]?.options;
+            const label = typeof options?.title === 'string' ? options.title : tab.title;
+            return (
+              <TabItem
+                key={route.key}
+                label={label}
+                icon={focused ? tab.iconFocused : tab.icon}
+                focused={focused}
+                activeColor={activeColor}
+                onPress={() => {
+                  const event = emitter.emit({ type: 'tabPress', target: route.key, canPreventDefault: true });
+                  if (state.index !== index && !event.defaultPrevented) {
+                    tapFeedback();
+                    navigateToTab(route.key);
+                  }
+                }}
+                onLongPress={() => emitter.emit({ type: 'tabLongPress', target: route.key })}
+              />
+            );
+          })}
+        </View>
+      </LinearGradient>
     </View>
   );
 }
@@ -85,19 +133,18 @@ interface TabItemProps {
 function TabItem({ label, icon, focused, activeColor, onPress, onLongPress }: TabItemProps) {
   const { colors } = useTheme();
   const reduceMotion = useReducedMotion();
-  const progress = useSharedValue(focused ? 1 : 0);
   const press = useSharedValue(1);
+  const lift = useSharedValue(0);
 
   useEffect(() => {
-    progress.set(reduceMotion ? (focused ? 1 : 0) : withTiming(focused ? 1 : 0, { duration: 260 }));
-  }, [focused, reduceMotion, progress]);
+    lift.set(focused && !reduceMotion ? withSequence(
+      withTiming(-4, { duration: 145 }),
+      withSpring(0, { damping: 18, stiffness: 320, mass: 0.6 }),
+    ) : 0);
+  }, [focused, lift, reduceMotion]);
 
-  const pillStyle = useAnimatedStyle(() => ({
-    opacity: progress.value,
-    transform: [{ scaleX: interpolate(progress.value, [0, 1], [0.6, 1]) }],
-  }));
   const contentStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: press.value }, { translateY: interpolate(progress.value, [0, 1], [0, -1]) }],
+    transform: [{ translateY: lift.value }, { scale: press.value }],
   }));
 
   return (
@@ -108,42 +155,49 @@ function TabItem({ label, icon, focused, activeColor, onPress, onLongPress }: Ta
       onPress={onPress}
       onLongPress={onLongPress}
       onPressIn={() => {
-        if (!reduceMotion) press.set(withSpring(0.9, pressSpring));
+        if (!reduceMotion) press.set(withTiming(0.9, { duration: 90 }));
       }}
-      onPressOut={() => press.set(withSpring(1, pressSpring))}
+      onPressOut={() => {
+        if (!reduceMotion) press.set(withTiming(1, { duration: 110 }));
+      }}
       style={styles.item}
       hitSlop={4}
     >
       <Animated.View style={[styles.content, contentStyle]}>
-        <View style={styles.iconWrap}>
-          <Animated.View style={[StyleSheet.absoluteFill, styles.pill, { backgroundColor: activeColor }, pillStyle]} />
-          <Ionicons name={icon} size={21} color={focused ? colors.onPrimary : colors.textMuted} />
-        </View>
-        <Animated.Text
-          numberOfLines={1}
-          maxFontSizeMultiplier={1.3}
-          style={[styles.label, { color: focused ? colors.text : colors.textMuted, fontFamily: focused ? fonts.bodyBold : fonts.bodyMedium }]}
-        >
-          {label}
-        </Animated.Text>
+        <Ionicons name={icon} size={21} color={focused ? activeColor : colors.textMuted} />
+        {focused && (
+          <Animated.Text
+            numberOfLines={1}
+            style={[styles.label, { color: colors.text, fontFamily: fonts.bodyBold }]}
+          >
+            {label}
+          </Animated.Text>
+        )}
       </Animated.View>
     </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
-  bar: {
-    flexDirection: 'row',
-    paddingTop: spacing.sm + 2,
-    paddingHorizontal: spacing.sm,
-    borderTopLeftRadius: radius.xl,
-    borderTopRightRadius: radius.xl,
-    borderWidth: StyleSheet.hairlineWidth,
-    borderBottomWidth: 0,
+  dock: {
+    width: '94%',
+    maxWidth: 510,
+    alignSelf: 'center',
+    marginTop: spacing.xs,
+    borderRadius: radius.pill,
+    boxShadow: '0 6px 22px rgba(8, 26, 34, 0.22)',
   },
-  item: { flex: 1, alignItems: 'center', minHeight: 54 },
-  content: { alignItems: 'center', gap: 4 },
-  iconWrap: { width: 54, height: 32, alignItems: 'center', justifyContent: 'center' },
-  pill: { borderRadius: radius.pill },
-  label: { fontSize: 11, lineHeight: 14, letterSpacing: 0.1 },
+  glass: { borderRadius: radius.pill, padding: 5, borderWidth: 1 },
+  row: { flexDirection: 'row' },
+  capsule: {
+    position: 'absolute',
+    left: 3,
+    top: 2,
+    bottom: 2,
+  },
+  halo: { position: 'absolute', top: -14, bottom: -14, left: -15, right: -15 },
+  selection: { flex: 1, borderRadius: radius.pill, borderWidth: StyleSheet.hairlineWidth },
+  item: { flex: 1, minWidth: 0, minHeight: 52, justifyContent: 'center' },
+  content: { alignItems: 'center', gap: 2, paddingHorizontal: 5 },
+  label: { fontSize: 11, lineHeight: 14, textAlign: 'center' },
 });

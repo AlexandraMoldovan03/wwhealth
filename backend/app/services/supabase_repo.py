@@ -274,6 +274,12 @@ def revoke_emergency_token(user: CurrentUser, token_id: str) -> bool:
     return bool(_rpc("revoke_emergency_token", user, {"p_token_id": token_id}))
 
 
+def emergency_token_status(user: CurrentUser, token_id: str) -> str:
+    if not UUID_RE.match(token_id):
+        return "not_found"
+    return str(_rpc("emergency_token_status", user, {"p_token_id": token_id}))
+
+
 def redeem_emergency_token(user: CurrentUser, token_hash: str) -> dict:
     """Doctor role + validity + single use are enforced atomically in Postgres; every attempt is logged."""
     return _rpc("redeem_emergency_token", user, {"p_token_hash": token_hash})
@@ -400,7 +406,7 @@ def emergency_doctor_accesses(user: CurrentUser, limit: int = 50) -> list[dict]:
 
 __all__ = [
     "InvalidDocumentError", "SupabaseAuthError", "SupabaseError",
-    "LabStorageUnavailable", "create_emergency_token", "emergency_audit", "emergency_doctor_accesses",
+    "LabStorageUnavailable", "create_emergency_token", "emergency_audit", "emergency_doctor_accesses", "emergency_token_status",
     "get_lab_values", "list_lab_values", "save_lab_values", "get_document_file", "get_record", "get_role",
     "redeem_emergency_token", "revoke_emergency_token", "store_document", "update_profile",
 ]

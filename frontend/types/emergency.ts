@@ -10,6 +10,10 @@ export interface EmergencyTokenResponse {
   ttlSeconds: number;
 }
 
+export interface EmergencyTokenStatus {
+  status: 'active' | 'used' | 'revoked' | 'expired' | 'not_found';
+}
+
 export interface EmergencyRedeemRequest {
   /** Raw token or the full QR payload. Validated by the backend only. */
   token: string;

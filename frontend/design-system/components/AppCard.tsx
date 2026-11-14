@@ -1,11 +1,11 @@
 import type { PropsWithChildren } from 'react';
 import { Pressable, StyleSheet, type StyleProp, type ViewStyle } from 'react-native';
-import Animated, { useAnimatedStyle, useReducedMotion, useSharedValue, withSpring } from 'react-native-reanimated';
+import Animated, { useAnimatedStyle, useReducedMotion, useSharedValue, withTiming } from 'react-native-reanimated';
 
 import { radius, shadows, spacing } from '@/design-system/theme';
 import { useTheme } from '@/design-system/useTheme';
 
-import { enterUp, pressSpring, tapFeedback } from '@/design-system/motion';
+import { enterUp, tapFeedback } from '@/design-system/motion';
 
 export interface AppCardProps extends PropsWithChildren {
   /** When provided, the card becomes pressable. */
@@ -66,10 +66,10 @@ export function AppCard({
         onPress();
       }}
       onPressIn={() => {
-        if (!reduceMotion) scale.set(withSpring(0.98, pressSpring));
+        if (!reduceMotion) scale.set(withTiming(0.98, { duration: 90 }));
       }}
       onPressOut={() => {
-        scale.set(withSpring(1, pressSpring));
+        if (!reduceMotion) scale.set(withTiming(1, { duration: 110 }));
       }}
       accessibilityRole="button"
       accessibilityLabel={accessibilityLabel}

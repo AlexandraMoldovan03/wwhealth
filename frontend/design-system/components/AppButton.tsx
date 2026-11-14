@@ -1,13 +1,13 @@
 import { Ionicons } from '@expo/vector-icons';
 import { ActivityIndicator, Pressable, type PressableProps, StyleSheet, View } from 'react-native';
-import Animated, { useAnimatedStyle, useReducedMotion, useSharedValue, withSpring } from 'react-native-reanimated';
+import Animated, { useAnimatedStyle, useReducedMotion, useSharedValue, withTiming } from 'react-native-reanimated';
 
 import { iconSize, radius, sizes, spacing } from '@/design-system/theme';
 import { useTheme } from '@/design-system/useTheme';
 import type { IconName } from '@/types';
 
 import { AppText } from './AppText';
-import { pressSpring, tapFeedback } from '@/design-system/motion';
+import { tapFeedback } from '@/design-system/motion';
 
 /** inverse = for use on top of a dark / coloured background. */
 type Variant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger' | 'inverse';
@@ -19,6 +19,8 @@ export interface AppButtonProps extends Omit<PressableProps, 'children' | 'style
   icon?: IconName;
   /** Icon at the end (e.g. arrow-forward). */
   trailingIcon?: IconName;
+  /** Optional icon/text colour override for buttons on custom backgrounds. */
+  contentColor?: string;
   loading?: boolean;
   fullWidth?: boolean;
 }
@@ -31,6 +33,7 @@ export function AppButton({
   size = 'md',
   icon,
   trailingIcon,
+  contentColor,
   loading = false,
   fullWidth = false,
   disabled,
@@ -53,7 +56,8 @@ export function AppButton({
     danger: { bg: colors.danger, fg: colors.onDanger, border: colors.danger },
     inverse: { bg: 'rgba(255,255,255,0.95)', fg: '#1C2E34', border: 'transparent' },
   };
-  const { bg, fg, border } = palette[variant];
+  const { bg, fg: variantFg, border } = palette[variant];
+  const fg = contentColor ?? variantFg;
   const height = size === 'sm' ? sizes.buttonHeightSmall : size === 'lg' ? sizes.buttonHeight + 8 : sizes.buttonHeight;
 
   return (
@@ -63,11 +67,11 @@ export function AppButton({
       accessibilityState={{ disabled: !!isDisabled, busy: loading }}
       disabled={isDisabled}
       onPressIn={(e) => {
-        if (!reduceMotion) scale.set(withSpring(0.97, pressSpring));
+        if (!reduceMotion) scale.set(withTiming(0.97, { duration: 90 }));
         onPressIn?.(e);
       }}
       onPressOut={(e) => {
-        scale.set(withSpring(1, pressSpring));
+        if (!reduceMotion) scale.set(withTiming(1, { duration: 110 }));
         onPressOut?.(e);
       }}
       onPress={(e) => {

@@ -1,4 +1,5 @@
 {
+  "voiceRecording": {"active":"Recording"},
   "common": {
     "email": "Email",
     "password": "Password",
@@ -81,7 +82,7 @@
     "explore": "Explore",
     "analysis": "LungVision",
     "history": "Timeline",
-    "settings": "Profile",
+    "settings": "Settings",
     "scan": "Scan QR",
     "access": "Accesses",
     "patients": "Patients",
@@ -174,6 +175,7 @@
     "description": "Your medical record, documents and AI-assisted X-ray insights — shareable with verified doctors through time-limited, revocable consent."
   },
   "home": {
+    "passportTap": "Tap the passport to open it",
     "there": "there",
     "greeting": {
       "morning": "Good morning",
@@ -253,6 +255,7 @@
       }
     },
     "emergencyQr": "Generate emergency QR",
+    "openEmergencyQr": "Open emergency QR",
     "headline": "Your health, calmly in one place",
     "emergency": {
       "title": "Emergency Passport",
@@ -543,6 +546,7 @@
     "select": "Select an image",
     "hint": "Tap to choose from your gallery",
     "change": "Change image",
+    "remove": "Remove image",
     "selectA11y": "Select image"
   },
   "notFound": {
@@ -551,6 +555,7 @@
     "home": "Go home"
   },
   "lung": {
+    "animatePreview": "Tap the lungs to choose an X-ray",
     "subtitle": "Experimental pneumonia screening with DenseNet121 (trained on PneumoniaMNIST) and Grad-CAM explanations.",
     "analyzeAnother": "Analyze another X-ray",
     "select": "Select a chest X-ray",
@@ -1217,6 +1222,7 @@
     },
     "topics": {
       "home": {
+    "passportTap": "Tap the passport to open it",
         "title": "Home",
         "intro": "Your starting point: what to do next and how complete your record is.",
         "can": [

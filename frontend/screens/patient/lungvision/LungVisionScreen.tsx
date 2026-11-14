@@ -1,12 +1,14 @@
-import { router } from 'expo-router';
+import { router, useIsFocused } from 'expo-router';
+import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { Ionicons } from '@expo/vector-icons';
 import Animated from 'react-native-reanimated';
 
-import { AppButton, AppText, Badge, DemoNotice, ErrorState, GradientCard, ImagePickerArea, LoadingState, ScreenContainer, popIn } from '@/design-system';
+import { AppButton, AppText, Badge, DemoNotice, ErrorState, GradientCard, ImagePickerArea, LoadingState, ScreenContainer, fadeIn } from '@/design-system';
 import { USE_MOCKS } from '@/config/config';
 import { gradients, spacing } from '@/design-system/theme';
+import { LungsPicker } from './components/LungsPicker';
 import { LungResultCard } from './components/LungResultCard';
 import { useXrayAnalysis } from './useXrayAnalysis';
 import { useTheme } from '@/design-system/useTheme';
@@ -17,6 +19,8 @@ export function LungVisionScreen() {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const { imageUri, result, error, isAnalyzing, pickFromLibrary, takePhoto, analyze, reset } = useXrayAnalysis();
+  const focused = useIsFocused();
+  const [showSources, setShowSources] = useState(false);
   const showResult = !!result && !isAnalyzing;
 
   return (
@@ -48,25 +52,43 @@ export function LungVisionScreen() {
 
       {showResult && result && (
         <>
-          <Animated.View entering={popIn}>
+          <Animated.View entering={fadeIn()}>
             <LungResultCard result={result} imageUri={imageUri} />
           </Animated.View>
-          <AppButton title={t('lung.analyzeAnother')} variant="outline" icon="refresh" fullWidth onPress={reset} />
+          <AppButton title={t('lung.analyzeAnother')} variant="outline" icon="refresh" fullWidth onPress={() => { setShowSources(false); reset(); }} />
         </>
       )}
 
       {!showResult && (
         <>
-          <ImagePickerArea imageUri={imageUri} onPress={pickFromLibrary} title={t('lung.select')} hint={t('lung.selectHint')} />
+          {imageUri ? (
+            <ImagePickerArea
+              imageUri={imageUri}
+              onPress={pickFromLibrary}
+              onRemove={() => { setShowSources(false); reset(); }}
+              title={t('lung.select')}
+              hint={t('lung.selectHint')}
+            />
+          ) : focused && !showSources ? (
+            <View>
+              <LungsPicker onReveal={() => setShowSources(true)} />
+              <View style={styles.sceneCaption}>
+                <AppText variant="heading" align="center">{t('lung.animatePreview')}</AppText>
+                <AppText variant="caption" color="textMuted" align="center">{t('lung.selectHint')}</AppText>
+              </View>
+            </View>
+          ) : null}
 
-          <View style={styles.actions}>
+          {(showSources || imageUri) && (
+            <Animated.View entering={fadeIn()} style={styles.actions}>
             <View style={styles.flex}>
               <AppButton title={t('lung.gallery')} icon="images-outline" variant="outline" fullWidth onPress={pickFromLibrary} />
             </View>
             <View style={styles.flex}>
               <AppButton title={t('lung.camera')} icon="camera-outline" variant="outline" fullWidth onPress={takePhoto} />
             </View>
-          </View>
+            </Animated.View>
+          )}
 
           <AppButton title={t('lung.analyze')} icon="sparkles" size="lg" fullWidth disabled={!imageUri} loading={isAnalyzing} onPress={analyze} />
 
@@ -97,6 +119,7 @@ const styles = StyleSheet.create({
   white: { color: '#FFFFFF' },
   soft: { color: 'rgba(255,255,255,0.94)' },
   titleRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
+  sceneCaption: { alignItems: 'center', gap: spacing.xxs },
   actions: { flexDirection: 'row', gap: spacing.md },
   flex: { flex: 1 },
 });

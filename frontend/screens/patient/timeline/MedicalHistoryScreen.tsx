@@ -8,7 +8,7 @@ import { CategoryFilter } from '@/design-system/components/CategoryFilter';
 import { MedicalEventList } from '@/screens/shared/components/MedicalEventList';
 import { LabTrendsList } from '@/screens/patient/lab-results/components/LabTrendsList';
 import { buildLabSeries, labDate, labFlag } from '@/screens/patient/lab-results/labUtils';
-import { useCurrentUser } from '@/services/auth/useCurrentUser';
+import { useLocalPatientId } from '@/services/auth/useCurrentUser';
 import { loadIntakes, type SavedIntake } from '@/screens/patient/voice-intake/intakeStorage';
 import { useAsync } from '@/hooks/useAsync';
 import { useTheme } from '@/design-system/useTheme';
@@ -59,8 +59,8 @@ export function MedicalHistoryScreen() {
   const labs = useAsync(api.listLabValues, { refetchOnFocus: true });
   const [view, setView] = useState<(typeof VIEWS)[number]>('timeline');
   const [filter, setFilter] = useState<Filter>('all');
-  const user = useCurrentUser();
-  const userId = user?.id;
+
+  const userId = useLocalPatientId();
   const loadSaved = useCallback(() => userId ? loadIntakes(userId) : Promise.resolve([]), [userId]);
   const { data: savedIntakes, error: intakeError, isLoading: loadingIntakes, reload: reloadIntakes } =
     useAsync(loadSaved, { refetchOnFocus: true });
