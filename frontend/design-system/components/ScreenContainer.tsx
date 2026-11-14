@@ -18,6 +18,7 @@ export interface ScreenContainerProps extends PropsWithChildren {
   /** Safe-area edges to respect. Tabs handle the bottom edge, so default is top only. */
   edges?: Edge[];
   padded?: boolean;
+  showBackgroundLungs?: boolean;
   refreshControl?: ReactElement<RefreshControlProps>;
   /** WWHealth logo at the top of the content. Default: on screens without a navigation header (top edge). */
   brand?: boolean;
@@ -31,6 +32,7 @@ export function ScreenContainer({
   scroll = true,
   edges = ['top'],
   padded = true,
+  showBackgroundLungs = true,
   refreshControl,
   brand = edges.includes('top'),
   help,
@@ -54,7 +56,7 @@ export function ScreenContainer({
 
   return (
     <View style={[styles.safe, { backgroundColor: colors.background }]}>
-      <AppBackground />
+      <AppBackground showLungs={showBackgroundLungs} />
       <SafeAreaView edges={edges} style={styles.safe}>
         {scroll ? (
           <ScrollView
