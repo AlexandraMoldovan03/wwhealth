@@ -247,7 +247,8 @@
         "subtitle": "Dr. Demo · acces 15 min"
       }
     },
-    "emergencyQr": "Generează QR de urgență",
+    "emergencyQrHint": "Unică folosință · 5 minute",
+    "emergencyQr": "Cod QR de urgență",
     "headline": "Sănătatea ta, liniștit, într-un singur loc",
     "emergency": {
       "title": "Pașaport de urgență",
