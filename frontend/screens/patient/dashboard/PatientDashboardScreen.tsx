@@ -1,6 +1,7 @@
 import { RefreshControl, StyleSheet, View } from 'react-native';
+import Svg, { Defs, RadialGradient, Rect, Stop } from 'react-native-svg';
 
-import { ErrorState, ScreenContainer, SectionHeader } from '@/design-system';
+import { AppText, ErrorState, ScreenContainer, SectionHeader } from '@/design-system';
 import { spacing } from '@/design-system/theme';
 import { useCurrentUser } from '@/services/auth/useCurrentUser';
 import { EmergencyCard } from './components/EmergencyCard';
@@ -21,7 +22,7 @@ import { useTranslation } from 'react-i18next';
  * Every number comes from the patient's real record.
  */
 export function PatientDashboardScreen() {
-  const { colors } = useTheme();
+  const { colors, isDark } = useTheme();
   const { t } = useTranslation();
   const user = useCurrentUser();
   const { data: patient, isLoading, error, reload } = useAsync(api.getMyPatient, { refetchOnFocus: true });
@@ -30,7 +31,25 @@ export function PatientDashboardScreen() {
 
   return (
     <ScreenContainer help="home" refreshControl={<RefreshControl refreshing={isLoading && !!patient} onRefresh={reload} tintColor={colors.primary} />}>
-      <WelcomeHeader name={name} roleLabel={t('roles.patient')} headline={t('home.headline')} />
+      <WelcomeHeader name={name} roleLabel={t('roles.patient')} />
+
+      <View style={styles.headline}>
+        <View pointerEvents="none" style={styles.aura}>
+          <Svg width="100%" height="100%" viewBox="0 0 360 120" preserveAspectRatio="none">
+            <Defs>
+              <RadialGradient id="headline-aura" cx="50%" cy="50%" rx="50%" ry="50%">
+                <Stop offset="0%" stopColor={isDark ? '#50B99D' : '#7FCDB6'} stopOpacity={isDark ? 0.24 : 0.5} />
+                <Stop offset="60%" stopColor="#73B9C2" stopOpacity={isDark ? 0.1 : 0.2} />
+                <Stop offset="100%" stopColor="#73B9C2" stopOpacity={0} />
+              </RadialGradient>
+            </Defs>
+            <Rect width={360} height={120} fill="url(#headline-aura)" />
+          </Svg>
+        </View>
+        <AppText variant="heading" accessibilityRole="header" style={styles.headlineText}>
+          {t('home.headline')}
+        </AppText>
+      </View>
 
       <PassportButton />
 
@@ -57,4 +76,9 @@ export function PatientDashboardScreen() {
   );
 }
 
-const styles = StyleSheet.create({ section: { gap: spacing.md } });
+const styles = StyleSheet.create({
+  headline: { justifyContent: 'center', minHeight: 52 },
+  aura: { position: 'absolute', width: '100%', maxWidth: 390, height: 102, left: 0, top: -25 },
+  headlineText: { fontSize: 19, lineHeight: 26 },
+  section: { gap: spacing.md },
+});

@@ -16,7 +16,7 @@ async function recordingFile(uri: string): Promise<UploadFile> {
 }
 
 export function useVoiceIntake() {
-  const recorder = useAudioRecorder(RecordingPresets.HIGH_QUALITY);
+  const recorder = useAudioRecorder({ ...RecordingPresets.HIGH_QUALITY, isMeteringEnabled: true });
   const { run, reset, error: uploadError } = useSubmit(api.analyzeIntake);
   const [form, setForm] = useState<IntakeForm | null>(null);
   const [revision, setRevision] = useState(0);
@@ -107,5 +107,5 @@ export function useVoiceIntake() {
     }
   }
 
-  return { form, revision, phase, start, stop, error: error ?? uploadError };
+  return { recorder, form, revision, phase, start, stop, error: error ?? uploadError };
 }

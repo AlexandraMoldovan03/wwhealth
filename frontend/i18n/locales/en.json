@@ -1,4 +1,5 @@
 {
+  "voiceRecording": {"active":"Recording"},
   "common": {
     "email": "Email",
     "password": "Password",
