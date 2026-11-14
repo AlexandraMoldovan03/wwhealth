@@ -6,6 +6,7 @@ import { AppCard, AppText } from '@/components/ui';
 import { iconSize, radius, spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/useTheme';
 import type { IconName, LungAnalysis } from '@/types';
+import { useTranslation } from 'react-i18next';
 
 /**
  * LungVision result for non-experts.
@@ -15,25 +16,14 @@ import type { IconName, LungAnalysis } from '@/types';
 
 type ImageView = 'original' | 'heatmap';
 
-const COPY = {
-  positive: {
-    title: 'Possible pneumonia pattern detected',
-    subtitle: 'AI classification: Positive',
-    explanation: 'The AI detected image patterns associated with pneumonia. This is not a confirmed diagnosis.',
-    icon: 'alert-circle' as IconName,
-  },
-  negative: {
-    title: 'No pneumonia pattern flagged',
-    subtitle: 'AI classification: Negative',
-    explanation: 'The AI did not flag a pneumonia pattern in this image. This does not rule out pneumonia.',
-    icon: 'remove-circle' as IconName,
-  },
-} as const;
+// Texts live in the locale files under lung.result.positive / lung.result.negative.
+const ICONS = { positive: 'alert-circle' as IconName, negative: 'remove-circle' as IconName } as const;
 
 export function LungResultCard({ result, imageUri }: { result: LungAnalysis; imageUri: string | null }) {
   const { colors } = useTheme();
+  const { t } = useTranslation();
   const isPositive = result.score >= result.threshold;
-  const copy = isPositive ? COPY.positive : COPY.negative;
+  const kind = isPositive ? 'positive' : 'negative';
   // Positive = warning (orange). Negative = neutral grey — never green, it must not read as "healthy".
   const accent = isPositive ? colors.warning : colors.textMuted;
 
@@ -42,15 +32,15 @@ export function LungResultCard({ result, imageUri }: { result: LungAnalysis; ima
       {/* 1. Classification — first thing the user sees */}
       <View style={[styles.status, { backgroundColor: `${accent}1A`, borderBottomColor: `${accent}40` }]}>
         <View style={styles.statusTop}>
-          <Ionicons name={copy.icon} size={iconSize.lg} color={accent} />
+          <Ionicons name={ICONS[kind]} size={iconSize.lg} color={accent} />
           <AppText variant="label" style={{ color: accent }}>
-            {copy.subtitle}
+            {t(`lung.result.${kind}.subtitle`)}
           </AppText>
         </View>
         <AppText variant="title" accessibilityRole="header">
-          {copy.title}
+          {t(`lung.result.${kind}.title`)}
         </AppText>
-        <AppText color="textMuted">{copy.explanation}</AppText>
+        <AppText color="textMuted">{t(`lung.result.${kind}.explanation`)}</AppText>
       </View>
 
       <View style={styles.body}>
@@ -64,7 +54,7 @@ export function LungResultCard({ result, imageUri }: { result: LungAnalysis; ima
         <View style={[styles.notice, { backgroundColor: colors.surfaceAlt }]}>
           <Ionicons name="shield-checkmark-outline" size={iconSize.sm} color={colors.textMuted} />
           <AppText variant="caption" color="textMuted" style={styles.flex}>
-            Educational prototype, not a medical device. Always have an X-ray reviewed by a qualified clinician.
+            {t('lung.result.notice')}
           </AppText>
         </View>
 
@@ -76,14 +66,15 @@ export function LungResultCard({ result, imageUri }: { result: LungAnalysis; ima
 
 function ScoreSection({ score, threshold }: { score: number; threshold: number }) {
   const { colors } = useTheme();
+  const { t } = useTranslation();
   const clamp = (v: number) => Math.min(Math.max(v, 0), 1);
   return (
     <View style={styles.section}>
       <View style={styles.rowBetween}>
-        <AppText variant="subheading">AI score</AppText>
+        <AppText variant="subheading">{t('lung.result.score')}</AppText>
         <AppText variant="subheading">
           {score.toFixed(3)}
-          <AppText color="textMuted"> / threshold {threshold}</AppText>
+          <AppText color="textMuted">{t('lung.result.threshold', { threshold })}</AppText>
         </AppText>
       </View>
       {/* Neutral scale with a threshold tick — not a severity meter. */}
@@ -104,8 +95,7 @@ function ScoreSection({ score, threshold }: { score: number; threshold: number }
         </View>
       </View>
       <AppText variant="caption" color="textMuted">
-        The score is the sigmoid output of the classifier, not a validated clinical probability. Images scoring {threshold} or
-        higher are classified as positive.
+        {t('lung.result.scoreNote', { threshold })}
       </AppText>
     </View>
   );
@@ -113,6 +103,7 @@ function ScoreSection({ score, threshold }: { score: number; threshold: number }
 
 function ImageSection({ imageUri, heatmapBase64 }: { imageUri: string | null; heatmapBase64: string | null }) {
   const { colors } = useTheme();
+  const { t } = useTranslation();
   const [view, setView] = useState<ImageView>(heatmapBase64 ? 'heatmap' : 'original');
   const source = view === 'original' ? imageUri : heatmapBase64 ? `data:image/png;base64,${heatmapBase64}` : null;
 
@@ -130,7 +121,7 @@ function ImageSection({ imageUri, heatmapBase64 }: { imageUri: string | null; he
               style={[styles.segmentItem, active && [styles.segmentActive, { backgroundColor: colors.surface }]]}
             >
               <AppText variant="subheading" color={active ? 'text' : 'textMuted'}>
-                {option === 'original' ? 'Original X-ray' : 'AI Heatmap'}
+                {option === 'original' ? t('lung.result.original') : t('lung.result.heatmap')}
               </AppText>
             </Pressable>
           );
@@ -143,11 +134,11 @@ function ImageSection({ imageUri, heatmapBase64 }: { imageUri: string | null; he
             source={{ uri: source }}
             style={StyleSheet.absoluteFill}
             resizeMode="contain"
-            accessibilityLabel={view === 'original' ? 'Original chest X-ray' : 'Grad-CAM heatmap over the analysed image'}
+            accessibilityLabel={view === 'original' ? t('lung.result.a11yOriginal') : t('lung.result.a11yHeatmap')}
           />
         ) : (
           <AppText variant="caption" style={styles.imageFallback}>
-            {view === 'heatmap' ? 'The server did not return a heatmap for this image.' : 'Original image not available.'}
+            {view === 'heatmap' ? t('lung.result.noHeatmap') : t('lung.result.noOriginal')}
           </AppText>
         )}
       </View>
@@ -156,7 +147,7 @@ function ImageSection({ imageUri, heatmapBase64 }: { imageUri: string | null; he
         <View style={styles.legendBlock}>
           <View style={styles.legendRow}>
             <AppText variant="caption" color="textMuted">
-              Less influence
+              {t('lung.result.lessInfluence')}
             </AppText>
             <View style={styles.legendBar}>
               {['#1E3A8A', '#06B6D4', '#84CC16', '#FACC15', '#DC2626'].map((c) => (
@@ -164,18 +155,16 @@ function ImageSection({ imageUri, heatmapBase64 }: { imageUri: string | null; he
               ))}
             </View>
             <AppText variant="caption" color="textMuted">
-              More influence
+              {t('lung.result.moreInfluence')}
             </AppText>
           </View>
           <AppText variant="caption" color="textMuted">
-            Warm colours (red, yellow) mark the regions that influenced the AI&apos;s output the most. Grad-CAM shows where the model
-            looked, not where pneumonia is, and it can highlight irrelevant areas. It is drawn on the square, centre-cropped 224×224
-            image the model analysed.
+            {t('lung.result.heatmapNote')}
           </AppText>
         </View>
       ) : (
         <AppText variant="caption" color="textMuted">
-          Your image exactly as selected. It is not stored on the server.
+          {t('lung.result.originalNote')}
         </AppText>
       )}
     </View>
@@ -184,13 +173,14 @@ function ImageSection({ imageUri, heatmapBase64 }: { imageUri: string | null; he
 
 function TechnicalDetails({ result }: { result: LungAnalysis }) {
   const { colors } = useTheme();
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const rows: [string, string][] = [
-    ['Model', result.modelVersion],
-    ['Raw score', String(result.score)],
-    ['Threshold', String(result.threshold)],
-    ['Processing time', `${result.processingTimeMs} ms`],
-    ['Image storage', 'Not stored'],
+    [t('lung.result.model'), result.modelVersion],
+    [t('lung.result.rawScore'), String(result.score)],
+    [t('lung.result.thresholdLabel'), String(result.threshold)],
+    [t('lung.result.processingTime'), `${result.processingTimeMs} ms`],
+    [t('lung.result.imageStorage'), t('lung.result.notStored')],
   ];
   return (
     <View style={[styles.details, { borderTopColor: colors.border }]}>
@@ -202,7 +192,7 @@ function TechnicalDetails({ result }: { result: LungAnalysis }) {
         hitSlop={8}
       >
         <AppText variant="caption" color="textMuted">
-          Technical details
+          {t('lung.result.technical')}
         </AppText>
         <Ionicons name={open ? 'chevron-up' : 'chevron-down'} size={iconSize.sm} color={colors.textMuted} />
       </Pressable>

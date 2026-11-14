@@ -23,14 +23,15 @@ export function CategoryFilter<T extends string>({ options, value, onChange, get
           <Pressable
             key={option}
             onPress={() => onChange(option)}
+            hitSlop={4}
             accessibilityRole="button"
             accessibilityState={{ selected: active }}
             style={[
               styles.chip,
-              { backgroundColor: active ? colors.primary : colors.surface, borderColor: active ? colors.primary : colors.border },
+              { backgroundColor: active ? colors.ink : colors.surface, borderColor: active ? colors.ink : colors.border },
             ]}
           >
-            <AppText variant="caption" color={active ? 'onPrimary' : 'text'} style={styles.label}>
+            <AppText variant="caption" color={active ? 'onInk' : 'text'} style={styles.label}>
               {getLabel ? getLabel(option) : option}
             </AppText>
           </Pressable>
@@ -42,6 +43,6 @@ export function CategoryFilter<T extends string>({ options, value, onChange, get
 
 const styles = StyleSheet.create({
   row: { gap: spacing.sm },
-  chip: { paddingHorizontal: spacing.md, paddingVertical: spacing.sm, borderRadius: radius.pill, borderWidth: 1 },
-  label: { fontWeight: '600' },
+  chip: { paddingHorizontal: spacing.md + 2, paddingVertical: spacing.sm + 2, borderRadius: radius.pill, borderWidth: 1, minHeight: 40, justifyContent: 'center' },
+  label: { fontFamily: 'DMSans_700Bold' },
 });

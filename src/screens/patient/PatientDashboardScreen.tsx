@@ -1,78 +1,98 @@
+import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import { StyleSheet, View } from 'react-native';
+import { RefreshControl, StyleSheet, View } from 'react-native';
 
-import { AppCard, AppText, ListRow, ScreenContainer, SectionHeader } from '@/components/ui';
-import { spacing } from '@/constants/theme';
-import { RECENT_ACTIVITY } from '@/data/activity';
+import { AppButton, AppText, ErrorState, GradientCard, LoadingState, ScreenContainer, SectionHeader, StatTile } from '@/components/ui';
+import { gradients, spacing } from '@/constants/theme';
 import { QUICK_ACTIONS } from '@/data/quickActions';
-import { ActivityRow } from '@/features/home/components/ActivityRow';
+import { useCurrentUser } from '@/features/auth/useCurrentUser';
+import { MedicalEventList } from '@/features/history/components/MedicalEventList';
 import { HeroCard } from '@/features/home/components/HeroCard';
 import { QuickActionGrid } from '@/features/home/components/QuickActionGrid';
 import { WelcomeHeader } from '@/features/home/components/WelcomeHeader';
 import { useAsync } from '@/hooks/useAsync';
 import { useTheme } from '@/hooks/useTheme';
 import { api } from '@/services/backend';
+import { useTranslation } from 'react-i18next';
 
-/** Patient Dashboard (Home tab). */
+/** Patient Dashboard — Home tab for accounts with role `patient` in Supabase. All numbers come from the real record. */
 export function PatientDashboardScreen() {
   const { colors } = useTheme();
-  const { data: patient } = useAsync(api.getMyPatient);
-  const firstName = patient?.fullName.split(' ')[0] ?? 'there';
+  const { t } = useTranslation();
+  const user = useCurrentUser();
+  const { data: patient, isLoading, error, reload } = useAsync(api.getMyPatient, { refetchOnFocus: true });
+  const name = patient?.fullName || user?.fullName || t('home.there');
 
+
+  const loading = !patient && isLoading;
   const stats = [
-    { label: 'Allergies', value: patient?.allergies.length },
-    { label: 'Active diagnoses', value: patient?.diagnoses.filter((d) => d.status === 'active').length },
-    { label: 'Documents', value: patient?.documents.length },
+    { icon: 'water-outline' as const, label: t('home.stats.bloodType'), value: loading ? undefined : patient?.bloodType ?? '—', tint: colors.danger },
+    { icon: 'alert-circle-outline' as const, label: t('home.stats.allergies'), value: loading ? undefined : patient?.allergies.length ?? 0, tint: colors.warning },
+    {
+      icon: 'pulse-outline' as const,
+      label: t('home.stats.activeDiagnoses'),
+      value: loading ? undefined : patient?.diagnoses.filter((d) => d.status === 'active').length ?? 0,
+      tint: colors.accent,
+    },
   ];
 
   return (
-    <ScreenContainer>
-      <WelcomeHeader name={firstName} />
+    <ScreenContainer refreshControl={<RefreshControl refreshing={isLoading && !!patient} onRefresh={reload} tintColor={colors.primary} />}>
+      <WelcomeHeader name={name} roleLabel={t('roles.patient')} headline={t('home.headline')} />
 
-      <View style={styles.stats}>
-        {stats.map((s) => (
-          <AppCard key={s.label} style={styles.stat}>
-            <AppText variant="title" color="primary">
-              {s.value ?? '–'}
+      <GradientCard colors={gradients.emergency} enterIndex={1}>
+        <View style={styles.emergencyRow}>
+          <View style={styles.emergencyIcon}>
+            <Ionicons name="medkit" size={24} color="#B9505F" />
+          </View>
+          <View style={styles.flex}>
+            <AppText variant="heading" style={styles.ink}>
+              {t('home.emergency.title')}
             </AppText>
-            <AppText variant="caption" color="textMuted">
-              {s.label}
+            <AppText variant="caption" style={styles.inkSoft}>
+              {t('home.emergency.text')}
             </AppText>
-          </AppCard>
-        ))}
-      </View>
-
-      <HeroCard />
-
-      <View style={styles.section}>
-        <SectionHeader title="Quick actions" />
-        <QuickActionGrid actions={QUICK_ACTIONS} />
-      </View>
-
-      <View style={styles.section}>
-        <SectionHeader
-          title="Recent activity"
-          subtitle="Demo data"
-          actionLabel="Medical history"
-          onActionPress={() => router.navigate('/history')}
+          </View>
+        </View>
+        <AppButton
+          title={t('home.emergencyQr')}
+          icon="qr-code-outline"
+          variant="danger"
+          fullWidth
+          onPress={() => router.push('/patient/emergency')}
         />
-        <AppCard>
-          {RECENT_ACTIVITY.map((item, index) => (
-            <View key={item.id} style={index > 0 && [styles.divider, { borderTopColor: colors.border }]}>
-              <ActivityRow item={item} />
-            </View>
-          ))}
-        </AppCard>
+      </GradientCard>
+
+      <View style={styles.section}>
+        <SectionHeader title={t('home.snapshot')} actionLabel={t('home.edit')} onActionPress={() => router.push('/patient/edit-profile')} />
+        {error && !patient ? (
+          <ErrorState message={error} onRetry={reload} />
+        ) : (
+          <View style={styles.stats}>
+            {stats.map((s, i) => (
+              <StatTile key={s.label} {...s} enterIndex={2 + i} onPress={() => router.push('/patient/profile')} />
+            ))}
+          </View>
+        )}
       </View>
 
       <View style={styles.section}>
-        <SectionHeader title="Doctor area" subtitle="Demo role switch until Auth0 roles exist" />
-        <ListRow
-          icon="medkit-outline"
-          title="Open Doctor Dashboard"
-          subtitle="Scan a patient QR passport"
-          onPress={() => router.push('/doctor')}
-        />
+        <SectionHeader title={t('home.quickActions')} />
+        <QuickActionGrid actions={QUICK_ACTIONS} startIndex={4} />
+      </View>
+
+      <HeroCard enterIndex={6} />
+
+      <View style={styles.section}>
+        <SectionHeader title={t('home.recentActivity')} actionLabel={t('home.seeAll')} onActionPress={() => router.navigate('/history')} />
+        {loading ? (
+          <LoadingState count={2} />
+        ) : (
+          <MedicalEventList
+            events={(patient?.history ?? []).slice(0, 3)}
+            onSelect={(e) => router.push({ pathname: '/history/[id]', params: { id: e.id } })}
+          />
+        )}
       </View>
     </ScreenContainer>
   );
@@ -81,6 +101,17 @@ export function PatientDashboardScreen() {
 const styles = StyleSheet.create({
   section: { gap: spacing.md },
   stats: { flexDirection: 'row', gap: spacing.sm },
-  stat: { flex: 1, gap: spacing.xxs, alignItems: 'center' },
-  divider: { borderTopWidth: StyleSheet.hairlineWidth },
+  emergencyRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.md },
+  emergencyIcon: {
+    width: 52,
+    height: 52,
+    borderRadius: 18,
+    backgroundColor: 'rgba(255,255,255,0.92)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  flex: { flex: 1, gap: spacing.xxs },
+  // The coral card is light in both themes → fixed dark text keeps AA contrast.
+  ink: { color: '#1C2E34' },
+  inkSoft: { color: '#3E4F55' },
 });

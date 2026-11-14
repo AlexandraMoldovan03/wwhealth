@@ -16,5 +16,5 @@ export function Badge({ label, color }: { label: string; color: string }) {
 }
 
 const styles = StyleSheet.create({
-  pill: { paddingHorizontal: spacing.sm, paddingVertical: spacing.xxs + 1, borderRadius: radius.pill, alignSelf: 'flex-start' },
+  pill: { paddingHorizontal: spacing.sm + 2, paddingVertical: spacing.xs, borderRadius: radius.pill, alignSelf: 'flex-start' },
 });

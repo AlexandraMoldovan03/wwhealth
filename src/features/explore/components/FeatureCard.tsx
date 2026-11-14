@@ -5,9 +5,11 @@ import { AppCard, AppText, Badge, IconBadge } from '@/components/ui';
 import { iconSize, spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/useTheme';
 import type { Feature } from '@/types';
+import { useTranslation } from 'react-i18next';
 
 export function FeatureCard({ feature, onPress }: { feature: Feature; onPress: () => void }) {
   const { colors } = useTheme();
+  const { t } = useTranslation();
   return (
     <AppCard onPress={onPress} accessibilityLabel={feature.title}>
       <View style={styles.row}>
@@ -18,7 +20,7 @@ export function FeatureCard({ feature, onPress }: { feature: Feature; onPress: (
               {feature.title}
             </AppText>
             <Badge
-              label={feature.isAvailable ? feature.category : 'Soon'}
+              label={feature.isAvailable ? t(`explore.categories.${feature.category}`) : t('explore.soon')}
               color={feature.isAvailable ? colors.primary : colors.textMuted}
             />
           </View>

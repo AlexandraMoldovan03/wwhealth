@@ -17,13 +17,15 @@ interface ListRowProps {
   right?: ReactNode;
   onPress?: () => void;
   iconColor?: string;
+  /** Staggered entrance (index in the list). */
+  enterIndex?: number;
 }
 
 /** Card with icon + title + subtitle (+ badge / chevron). Used by most lists. */
-export function ListRow({ icon, title, subtitle, right, onPress, iconColor }: ListRowProps) {
+export function ListRow({ icon, title, subtitle, right, onPress, iconColor, enterIndex }: ListRowProps) {
   const { colors } = useTheme();
   return (
-    <AppCard onPress={onPress} accessibilityLabel={title}>
+    <AppCard onPress={onPress} accessibilityLabel={subtitle ? `${title}, ${subtitle}` : title} enterIndex={enterIndex}>
       <View style={styles.row}>
         <IconBadge icon={icon} color={iconColor} />
         <View style={styles.text}>

@@ -5,6 +5,7 @@ import { radius, spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/useTheme';
 
 import { AppText } from './AppText';
+import { useTranslation } from 'react-i18next';
 
 export interface ImagePickerAreaProps {
   title?: string;
@@ -14,13 +15,14 @@ export interface ImagePickerAreaProps {
 }
 
 /** Dashed drop-zone that shows the selected image or a placeholder. */
-export function ImagePickerArea({ imageUri, onPress, title = 'Select an image', hint = 'Tap to choose from your gallery' }: ImagePickerAreaProps) {
+export function ImagePickerArea({ imageUri, onPress, title, hint }: ImagePickerAreaProps) {
+  const { t } = useTranslation();
   const { colors } = useTheme();
   return (
     <Pressable
       onPress={onPress}
       accessibilityRole="button"
-      accessibilityLabel={imageUri ? 'Change image' : 'Select image'}
+      accessibilityLabel={imageUri ? t('image.change') : t('image.selectA11y')}
       style={[styles.area, { borderColor: colors.border, backgroundColor: colors.surfaceAlt }]}
     >
       {imageUri ? (
@@ -28,9 +30,9 @@ export function ImagePickerArea({ imageUri, onPress, title = 'Select an image', 
       ) : (
         <View style={styles.placeholder}>
           <Ionicons name="image-outline" size={40} color={colors.primary} />
-          <AppText variant="subheading">{title}</AppText>
+          <AppText variant="subheading">{title ?? t('image.select')}</AppText>
           <AppText variant="caption" color="textMuted" align="center">
-            {hint}
+            {hint ?? t('image.hint')}
           </AppText>
         </View>
       )}

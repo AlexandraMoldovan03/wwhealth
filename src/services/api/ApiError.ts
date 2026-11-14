@@ -1,4 +1,6 @@
 /** Error thrown by the API client for any failed request. */
+import { i18n } from '@/i18n';
+
 export class ApiError extends Error {
   /** HTTP status code, or 0 for network / timeout errors. */
   readonly status: number;
@@ -18,11 +20,12 @@ export class ApiError extends Error {
 
   /** Message safe to show in the UI. */
   get userMessage(): string {
-    if (this.isNetworkError) return 'Cannot reach the server. Check your connection and API_BASE_URL.';
-    if (this.status === 401 || this.status === 403) return 'You are not allowed to do this.';
-    if (this.status === 404) return 'The requested resource was not found.';
-    if (this.status === 422) return 'The server rejected the data that was sent.';
-    if (this.status >= 500) return 'The server had a problem. Please try again later.';
+    if (this.isNetworkError) return this.message === i18n.t('errors.timeout') ? this.message : i18n.t('errors.network');
+    if (this.status === 401 || this.status === 403) return i18n.t('errors.forbidden');
+    if (this.status === 404 && this.message === 'Patient not found') return i18n.t('errors.profileMissing');
+    if (this.status === 404) return i18n.t('errors.notFound');
+    if (this.status === 422) return i18n.t('errors.invalidData');
+    if (this.status >= 500) return i18n.t('errors.server');
     return this.message;
   }
 }

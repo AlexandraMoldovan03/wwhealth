@@ -2,6 +2,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { useCallback, useState } from 'react';
 
 import { getErrorMessage } from '@/utils/errors';
+import { i18n } from '@/i18n';
 
 /**
  * Pick an image from the gallery or camera (expo-image-picker, works in Expo Go).
@@ -30,7 +31,7 @@ export function useImagePicker(options: { allowsEditing?: boolean } = {}) {
     try {
       const permission = await ImagePicker.requestCameraPermissionsAsync();
       if (!permission.granted) {
-        setPickError('Camera permission is required to take a photo.');
+        setPickError(i18n.t('errors.camera'));
         return;
       }
       handle(await ImagePicker.launchCameraAsync({ mediaTypes: ['images'], allowsEditing, quality: 0.8 }));

@@ -2,43 +2,47 @@ import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 
-import { AppButton, AppText } from '@/components/ui';
-import { radius, spacing } from '@/constants/theme';
-import { useTheme } from '@/hooks/useTheme';
+import { AppButton, AppText, GradientCard } from '@/components/ui';
+import { gradients, spacing } from '@/constants/theme';
+import { useTranslation } from 'react-i18next';
 
-/** Highlighted call-to-action card at the top of Home. */
-export function HeroCard() {
-  const { colors } = useTheme();
+/** LungVision call-to-action on the patient dashboard. */
+export function HeroCard({ enterIndex }: { enterIndex?: number }) {
+  const { t } = useTranslation();
   return (
-    <View style={[styles.card, { backgroundColor: colors.primary }]}>
+    <GradientCard colors={gradients.patientHero} enterIndex={enterIndex}>
       <View style={styles.row}>
         <View style={styles.text}>
-          <AppText variant="heading" color="onPrimary">
+          <AppText variant="label" style={styles.kicker}>
+            {t('home.hero.kicker')}
+          </AppText>
+          <AppText variant="heading" style={styles.white}>
             LungVision AI
           </AppText>
-          <AppText variant="caption" color="onPrimary" style={styles.subtitle}>
-            Upload a chest X-ray and get a DenseNet121 + Grad-CAM analysis (DEMO results for now).
+          <AppText variant="caption" style={styles.soft}>
+            {t('home.hero.text')}
           </AppText>
         </View>
-        <Ionicons name="sparkles" size={36} color={colors.onPrimary} />
+        <Ionicons name="sparkles" size={30} color="#FFFFFF" />
       </View>
       <View style={styles.buttonWrap}>
         <AppButton
-          title="Analyze X-ray"
-          icon="arrow-forward"
+          title={t('home.hero.button')}
+          trailingIcon="arrow-forward"
           variant="inverse"
           size="sm"
           onPress={() => router.navigate('/analysis')}
         />
       </View>
-    </View>
+    </GradientCard>
   );
 }
 
 const styles = StyleSheet.create({
-  card: { borderRadius: radius.xl, padding: spacing.lg, gap: spacing.md },
   row: { flexDirection: 'row', alignItems: 'flex-start', gap: spacing.md },
   text: { flex: 1, gap: spacing.xs },
-  subtitle: { opacity: 0.9 },
+  kicker: { color: 'rgba(255,255,255,0.85)' },
+  white: { color: '#FFFFFF' },
+  soft: { color: 'rgba(255,255,255,0.92)' },
   buttonWrap: { alignSelf: 'flex-start' },
 });

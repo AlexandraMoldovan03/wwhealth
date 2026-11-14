@@ -1,15 +1,26 @@
-import { ErrorState, LoadingState, ScreenContainer } from '@/components/ui';
+import { router } from 'expo-router';
+
+import { AppButton, ErrorState, LoadingState, ScreenContainer } from '@/components/ui';
 import { ProfileSections } from '@/features/patient/components/ProfileSections';
 import { useAsync } from '@/hooks/useAsync';
 import { api } from '@/services/backend';
+import { useTranslation } from 'react-i18next';
 
 export function MedicalProfileScreen() {
-  const { data, isLoading, error, reload } = useAsync(api.getMyPatient);
+  const { t } = useTranslation();
+  const { data, isLoading, error, reload } = useAsync(api.getMyPatient, { refetchOnFocus: true });
+
+
   return (
     <ScreenContainer edges={['bottom']}>
-      {isLoading && <LoadingState />}
+      {isLoading && !data && <LoadingState />}
       {error && <ErrorState message={error} onRetry={reload} />}
-      {data && <ProfileSections profile={data} />}
+      {data && (
+        <>
+          <AppButton title={t('profile.edit')} icon="create-outline" variant="secondary" fullWidth onPress={() => router.push('/patient/edit-profile')} />
+          <ProfileSections profile={data} />
+        </>
+      )}
     </ScreenContainer>
   );
 }

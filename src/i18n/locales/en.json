@@ -1,0 +1,705 @@
+{
+  "common": {
+    "email": "Email",
+    "password": "Password",
+    "signIn": "Sign in",
+    "createAccount": "Create account",
+    "or": "or",
+    "retry": "Try again",
+    "loading": "Loading…",
+    "save": "Save",
+    "cancel": "Cancel",
+    "notAvailable": "—",
+    "clear": "Clear"
+  },
+  "auth": {
+    "emailPlaceholder": "you@example.com",
+    "login": {
+      "title": "Welcome back",
+      "subtitle": "Sign in to access your medical record.",
+      "passwordPlaceholder": "Your password",
+      "forgot": "Forgot password?",
+      "forgotTodo": "Password reset is not available yet.",
+      "failed": "Sign in failed",
+      "noAccount": "Don’t have an account?",
+      "createOne": "Create one",
+      "demo": "DEMO — login is not connected yet. Any email + password works."
+    },
+    "register": {
+      "title": "Create your account",
+      "subtitle": "Your health record, available anywhere in the world.",
+      "fullName": "Full name",
+      "passwordPlaceholder": "At least {{count}} characters",
+      "confirmPassword": "Confirm password",
+      "confirmPlaceholder": "Repeat your password",
+      "passwordsMismatch": "Passwords do not match",
+      "mustAcceptTerms": "You must accept the terms",
+      "terms": "I agree to the Terms of Service and to the processing of my health data (GDPR).",
+      "failed": "Registration failed",
+      "haveAccount": "Already have an account?",
+      "demo": "DEMO — registration is not connected yet. No account is created.",
+      "doctorNote": "New accounts are patient accounts. Doctor accounts are activated by an administrator after verification."
+    },
+    "role": {
+      "label": "I am a",
+      "patient": "Patient",
+      "doctor": "Doctor"
+    },
+    "password": {
+      "show": "Show password",
+      "hide": "Hide password"
+    },
+    "google": {
+      "button": "Continue with Google",
+      "failed": "Google sign-in failed",
+      "signingIn": "Signing you in…",
+      "backToSignIn": "Back to sign in"
+    },
+    "errors": {
+      "rateLimit": "Too many sign-up attempts right now. Please wait a few minutes and try again.",
+      "wrongCredentials": "Wrong email or password.",
+      "emailNotConfirmed": "Confirm your email address first, then sign in.",
+      "alreadyRegistered": "An account with this email already exists. Sign in instead.",
+      "network": "No connection to the server. Check your internet.",
+      "generic": "Something went wrong. Please try again.",
+      "confirmEmail": "Account created. Check your email to confirm it, then sign in.",
+      "googleNotConfigured": "Google sign-in needs Supabase to be configured.",
+      "googleIncomplete": "Google sign-in did not complete. Please try again."
+    }
+  },
+  "validation": {
+    "emailRequired": "Email is required",
+    "emailInvalid": "Enter a valid email address",
+    "passwordRequired": "Password is required",
+    "passwordMin": "At least {{count}} characters",
+    "required": "{{label}} is required"
+  },
+  "tabs": {
+    "index": "Home",
+    "explore": "Explore",
+    "analysis": "LungVision",
+    "history": "Timeline",
+    "settings": "Profile",
+    "scan": "Scan QR",
+    "access": "Accesses"
+  },
+  "screens": {
+    "login": "Sign in",
+    "register": "Create account",
+    "auth/callback": "Signing in",
+    "history/[id]": "Details",
+    "patient/profile": "Medical Profile",
+    "patient/edit-profile": "Edit Medical Profile",
+    "patient/document/[id]": "Document",
+    "patient/documents": "Medical Documents",
+    "patient/upload-document": "Upload Document",
+    "patient/xray-results": "X-ray Results",
+    "patient/passport": "Medical Passport",
+    "doctor/index": "Doctor",
+    "doctor/scan": "QR Scanner",
+    "doctor/patient/[id]/index": "Patient Summary",
+    "doctor/patient/[id]/documents": "Patient Documents",
+    "doctor/patient/[id]/lungvision": "LungVision Results",
+    "patient/emergency": "Emergency Passport",
+    "doctor/emergency": "Emergency scan"
+  },
+  "settings": {
+    "title": "Profile",
+    "account": "Account",
+    "signedIn": "Signed in",
+    "signOut": "Sign out",
+    "appearance": "Appearance",
+    "theme": "Theme",
+    "themeLight": "Light",
+    "themeDark": "Dark",
+    "themeSystem": "System",
+    "language": "Language",
+    "languageSystem": "Phone",
+    "general": "General",
+    "notifications": "Notifications",
+    "backend": "Backend",
+    "backendSubtitle": "Configured in .env → src/constants/config.ts",
+    "apiUrl": "API URL",
+    "dataSource": "Data source",
+    "dataMock": "MOCK (demo data)",
+    "dataApi": "API (FastAPI)",
+    "checking": "Checking…",
+    "testConnection": "Test connection",
+    "backendOk": "Backend reachable",
+    "connectionFailed": "Connection failed",
+    "role": "Role",
+    "roleSubtitle": "Demo switch — the account role comes from Supabase",
+    "patientArea": "Patient area",
+    "patientAreaValue": "Tabs",
+    "doctorDashboard": "Doctor Dashboard",
+    "integrations": "Integrations",
+    "integrationsSubtitle": "Configured on the backend — not in the app",
+    "supabaseLogin": "Supabase login",
+    "connected": "Connected",
+    "notConfigured": "Not configured (demo)",
+    "lungModel": "LungVision model",
+    "geminiExtraction": "Gemini extraction",
+    "elevenLabs": "ElevenLabs voice",
+    "about": "About",
+    "activeRole": "Active role",
+    "medicalProfile": "Medical profile",
+    "emergencyPassport": "Emergency Passport",
+    "replayOnboarding": "Show the introduction again"
+  },
+  "app": {
+    "description": "Your medical record, documents and AI-assisted X-ray insights — shareable with doctors via a temporary QR passport."
+  },
+  "home": {
+    "there": "there",
+    "greeting": {
+      "morning": "Good morning",
+      "afternoon": "Good afternoon",
+      "evening": "Good evening"
+    },
+    "tagline": "your health record, in your pocket.",
+    "stats": {
+      "allergies": "Allergies",
+      "activeDiagnoses": "Active diagnoses",
+      "documents": "Documents",
+      "bloodType": "Blood type"
+    },
+    "quickActions": "Quick actions",
+    "recentActivity": "Recent activity",
+    "demoData": "Demo data",
+    "medicalHistory": "Medical history",
+    "doctorArea": "Doctor area",
+    "doctorAreaSubtitle": "Demo role switch",
+    "openDoctor": "Open Doctor Dashboard",
+    "openDoctorSubtitle": "Scan a patient QR passport",
+    "hero": {
+      "text": "Upload a chest X-ray and get a DenseNet121 + Grad-CAM analysis.",
+      "button": "Analyze X-ray",
+      "kicker": "AI screening"
+    },
+    "actions": {
+      "profile": {
+        "title": "Medical profile",
+        "subtitle": "Allergies, conditions"
+      },
+      "documents": {
+        "title": "Documents",
+        "subtitle": "Upload & view"
+      },
+      "lungvision": {
+        "title": "LungVision AI",
+        "subtitle": "Chest X-ray"
+      },
+      "passport": {
+        "title": "QR Passport",
+        "subtitle": "Share with a doctor"
+      },
+      "emergency": {
+        "title": "Emergency Passport",
+        "subtitle": "5-minute QR for a doctor"
+      },
+      "history": {
+        "title": "Timeline",
+        "subtitle": "Your medical history"
+      }
+    },
+    "activity": {
+      "a1": {
+        "title": "LungVision analysis",
+        "subtitle": "Chest X-ray · Normal (DEMO)"
+      },
+      "a2": {
+        "title": "Document analysed",
+        "subtitle": "Complete blood count · Gemini (DEMO)"
+      },
+      "a3": {
+        "title": "Passport shared",
+        "subtitle": "Dr. Demo · 15 min access"
+      }
+    },
+    "emergencyQr": "Generate emergency QR",
+    "headline": "Your health, calmly in one place",
+    "emergency": {
+      "title": "Emergency Passport",
+      "text": "A single-use QR, valid 5 minutes, for a verified doctor."
+    },
+    "snapshot": "Health snapshot",
+    "edit": "Edit",
+    "seeAll": "See all"
+  },
+  "time": {
+    "justNow": "just now",
+    "minAgo": "{{count}} min ago",
+    "hAgo": "{{count}} h ago",
+    "dAgo": "{{count}} d ago"
+  },
+  "explore": {
+    "features": {
+      "dashboard": {
+        "title": "Patient Dashboard",
+        "description": "Overview of your health record."
+      },
+      "profile": {
+        "title": "Medical Profile",
+        "description": "Personal data, allergies, diagnoses, treatments."
+      },
+      "documents": {
+        "title": "Medical Documents",
+        "description": "All your uploaded documents."
+      },
+      "upload": {
+        "title": "Upload Document",
+        "description": "Upload a PDF or a photo of a medical document."
+      },
+      "lungvision": {
+        "title": "LungVision AI",
+        "description": "Chest X-ray analysis with DenseNet121 + Grad-CAM."
+      },
+      "xray-results": {
+        "title": "X-ray Results",
+        "description": "Previous LungVision analyses."
+      },
+      "history": {
+        "title": "Medical History",
+        "description": "Timeline of visits, diagnoses and analyses."
+      },
+      "passport": {
+        "title": "Medical Passport QR",
+        "description": "Temporary QR access for a doctor."
+      },
+      "doctor-dashboard": {
+        "title": "Doctor Dashboard",
+        "description": "Doctor area (demo role)."
+      },
+      "qr-scanner": {
+        "title": "QR Scanner",
+        "description": "Scan a patient passport to get access."
+      },
+      "emergency": {
+        "title": "Emergency Passport",
+        "description": "Single-use 5-minute QR: blood type, allergies, conditions, medication."
+      },
+      "emergency-scan": {
+        "title": "Emergency scan",
+        "description": "Scan a patient emergency QR (doctor accounts)."
+      }
+    },
+    "title": "Explore",
+    "subtitle": "Features available now and ideas to build next.",
+    "search": "Search features…",
+    "comingSoon": "Coming soon — this feature is not available yet.",
+    "noResults": "No features found",
+    "noResultsHint": "Try another search term or category.",
+    "clearFilters": "Clear filters",
+    "soon": "Soon",
+    "categories": {
+      "All": "All",
+      "Patient": "Patient",
+      "Doctor": "Doctor",
+      "AI": "AI"
+    }
+  },
+  "profile": {
+    "name": "Name",
+    "age": "Age",
+    "sex": "Sex",
+    "bloodType": "Blood type",
+    "heightWeight": "Height / weight",
+    "emergencyContact": "Emergency contact",
+    "allergies": "Allergies",
+    "diagnoses": "Diagnoses",
+    "treatments": "Treatments",
+    "noneRecorded": "None recorded",
+    "since": "since {{date}}",
+    "edit": "Edit profile"
+  },
+  "enums": {
+    "sex": {
+      "female": "female",
+      "male": "male",
+      "other": "other"
+    },
+    "severity": {
+      "mild": "mild",
+      "moderate": "moderate",
+      "severe": "severe"
+    },
+    "diagnosisStatus": {
+      "active": "active",
+      "resolved": "resolved"
+    },
+    "treatment": {
+      "active": "active",
+      "ended": "ended"
+    }
+  },
+  "editProfile": {
+    "unknown": "Unknown",
+    "required": "Required",
+    "allergies": "Allergies",
+    "addAllergy": "Add allergy",
+    "substance": "Substance",
+    "substancePlaceholder": "e.g. Penicillin",
+    "reaction": "Reaction",
+    "reactionPlaceholder": "e.g. Skin rash",
+    "conditions": "Conditions",
+    "addCondition": "Add condition",
+    "condition": "Condition",
+    "conditionPlaceholder": "e.g. Asthma",
+    "medication": "Medication",
+    "addMedication": "Add medication",
+    "medicationName": "Medication",
+    "medicationPlaceholder": "e.g. Budesonide inhaler",
+    "dosage": "Dosage",
+    "frequency": "Frequency",
+    "frequencyPlaceholder": "2x daily",
+    "currentlyTaking": "Currently taking",
+    "fillOrRemove": "Fill in or remove the empty items.",
+    "couldNotSave": "Could not save",
+    "save": "Save profile",
+    "remove": "Remove"
+  },
+  "documentTypes": {
+    "lab_result": "Lab result",
+    "prescription": "Prescription",
+    "discharge_summary": "Discharge summary",
+    "imaging_report": "Imaging report",
+    "other": "Other"
+  },
+  "documents": {
+    "formatPdf": "PDF",
+    "formatImage": "Image",
+    "empty": "No documents",
+    "emptyHint": "Uploaded documents appear here.",
+    "upload": "Upload document",
+    "extracted": "Extracted data",
+    "diagnoses": "Diagnoses",
+    "allergies": "Allergies",
+    "medications": "Medications",
+    "loadFailed": "The document could not be loaded.",
+    "a11yDocument": "Medical document",
+    "noPdfAndroid": "PDF preview not available on Android",
+    "noPdfAndroidHint": "Open it on iOS or the web for now.",
+    "notFound": "Document not found",
+    "noFile": "No file attached",
+    "noFileHint": "This is a demo entry without an uploaded file."
+  },
+  "upload": {
+    "done": "Document uploaded",
+    "doneText": "“{{title}}” was added to your documents and medical history.",
+    "open": "Open document",
+    "back": "Back to documents",
+    "type": "Document type",
+    "titleLabel": "Title (optional)",
+    "titlePlaceholder": "e.g. Blood test March",
+    "tapToChange": "tap to change",
+    "select": "Select a medical document",
+    "hint": "PDF, JPEG or PNG · max 10 MB",
+    "files": "Files",
+    "gallery": "Gallery",
+    "camera": "Camera",
+    "upload": "Upload",
+    "mockNotice": "MOCK mode: the file stays on this device and is not uploaded.",
+    "privacyNotice": "Stored privately and visible only to your account. No OCR or AI is run.",
+    "errors": {
+      "type": "Only PDF, JPEG and PNG files are supported.",
+      "size": "File is too large (max 10 MB).",
+      "camera": "Camera permission is required to take a photo."
+    }
+  },
+  "history": {
+    "title": "Medical timeline",
+    "subtitle": "Visits, diagnoses, treatments, documents and X-rays.",
+    "loading": "Loading history…",
+    "empty": "No history yet",
+    "notFound": "Event not found",
+    "description": "Description",
+    "openDocument": "Open document",
+    "types": {
+      "diagnosis": "Diagnosis",
+      "treatment": "Treatment",
+      "allergy": "Allergy",
+      "document": "Document",
+      "xray": "X-ray",
+      "visit": "Visit"
+    },
+    "all": "All",
+    "emptyHint": "Uploaded documents, saved LungVision results and your conditions and medication appear here.",
+    "source": {
+      "upload": "Uploaded document",
+      "lungvision": "LungVision AI",
+      "profile": "Medical profile",
+      "visit": "Visit"
+    }
+  },
+  "xray": {
+    "empty": "No X-ray results",
+    "analyze": "Analyze an X-ray",
+    "all": "All analyses",
+    "noAnalyses": "No X-ray analyses",
+    "topFinding": "Top finding",
+    "heatmapPlaceholder": "Grad-CAM heatmap placeholder"
+  },
+  "passport": {
+    "intro": "Choose what the doctor can see and for how long. Access expires automatically.",
+    "shared": "Shared data",
+    "validFor": "Valid for (minutes)",
+    "scopes": {
+      "profile": "Profile, allergies, diagnoses",
+      "history": "Medical history",
+      "documents": "Documents",
+      "xrays": "LungVision X-rays"
+    },
+    "generate": "Generate QR passport",
+    "qrPlaceholder": "QR placeholder",
+    "accessCode": "Access code",
+    "expires": "Expires {{date}}",
+    "demo": "DEMO — in MOCK mode the code is always DEMO-1234. Enter it in Doctor → QR Scanner."
+  },
+  "doctor": {
+    "title": "Doctor Dashboard",
+    "subtitle": "Scan a patient's QR to see their emergency data.",
+    "demo": "DEMO role — doctor accounts are not verified yet.",
+    "scan": "Full QR passport (extended access)",
+    "activePatients": "Patients with active access",
+    "noAccess": "No active access",
+    "noAccessHint": "Scanned patients appear here until access expires.",
+    "until": "Until {{date}}",
+    "scopesCount": "{{count}} scopes",
+    "accessUntil": "Access until {{date}}",
+    "documents": "Documents",
+    "summary": "Medical summary",
+    "summarySubtitle": "Generated by backend (Gemini) · audio via ElevenLabs",
+    "regenerate": "Regenerate summary",
+    "generate": "Generate summary",
+    "audioReady": "Audio ready",
+    "audioNotYet": "Audio not available yet",
+    "summaryDemo": "DEMO — summary generated from mock data, no audio.",
+    "recentHistory": "Recent history",
+    "notShared": "Not shared",
+    "historyNotShared": "The patient did not share their history.",
+    "noXrays": "No X-rays shared",
+    "noXraysHint": "The patient has no analyses or did not share them.",
+    "cameraPlaceholder": "Camera scanner placeholder",
+    "accessCode": "Access code",
+    "accessCodePlaceholder": "e.g. DEMO-1234",
+    "unlock": "Unlock patient record",
+    "accessDenied": "Access denied",
+    "expiredTitle": "No active access",
+    "expiredHint": "Access expired or the app was reloaded. Scan the patient's QR passport again.",
+    "scanQr": "Scan QR",
+    "demoCode": "DEMO — use code {{code}} (or generate one in Patient → QR Passport).",
+    "scanPatientQr": "Scan patient QR",
+    "scanPatientQrHint": "Emergency Passport: blood type, allergies, conditions and medication. Every access is logged.",
+    "greetingName": "Dr. {{name}}",
+    "emergencyAccess": "Emergency access",
+    "heroTitle": "Scan a patient's emergency QR",
+    "stats": {
+      "title": "Your activity",
+      "today": "Opened today",
+      "total": "Opened in total",
+      "denied": "Refused"
+    },
+    "recentAccesses": "Recent accesses",
+    "extendedTitle": "Extended access",
+    "extendedSubtitle": "Patient-granted QR passport with chosen sections",
+    "accessLog": {
+      "title": "Access history",
+      "subtitle": "Every emergency passport you opened or that was refused. Recorded on the server."
+    }
+  },
+  "errors": {
+    "title": "Something went wrong",
+    "generic": "Something went wrong. Please try again.",
+    "network": "The WWHealth server is not responding. Make sure the phone and the Mac are on the same Wi-Fi and the backend is running.",
+    "forbidden": "You are not allowed to do this.",
+    "notFound": "The requested resource was not found.",
+    "invalidData": "The server rejected the data that was sent.",
+    "server": "The server had a problem. Please try again later.",
+    "timeout": "The server is taking too long. Please try again.",
+    "networkFailed": "Network request failed",
+    "status": "Request failed with status {{status}}",
+    "camera": "Camera permission is required to take a photo.",
+    "profileMissing": "Your medical profile has not been initialised in the database. Contact the administrator (profiles row missing)."
+  },
+  "image": {
+    "select": "Select an image",
+    "hint": "Tap to choose from your gallery",
+    "change": "Change image",
+    "selectA11y": "Select image"
+  },
+  "notFound": {
+    "title": "Page not found",
+    "message": "This screen doesn't exist.",
+    "home": "Go home"
+  },
+  "lung": {
+    "subtitle": "Experimental pneumonia screening with DenseNet121 (trained on PneumoniaMNIST) and Grad-CAM explanations.",
+    "analyzeAnother": "Analyze another X-ray",
+    "select": "Select a chest X-ray",
+    "selectHint": "Frontal (PA/AP) view works best",
+    "gallery": "Gallery",
+    "camera": "Camera",
+    "analyze": "Analyze",
+    "running": "Running the model on the server…",
+    "mockNotice": "MOCK mode: LungVision is disabled because it needs the real model on the backend. Set EXPO_PUBLIC_USE_MOCKS=false.",
+    "notice": "Educational prototype, not a medical device. The image is sent only to your WWHealth backend and is not stored.",
+    "previous": "Previous results",
+    "result": {
+      "positive": {
+        "title": "Possible pneumonia pattern detected",
+        "subtitle": "AI classification: Positive",
+        "explanation": "The AI detected image patterns associated with pneumonia. This is not a confirmed diagnosis."
+      },
+      "negative": {
+        "title": "No pneumonia pattern flagged",
+        "subtitle": "AI classification: Negative",
+        "explanation": "The AI did not flag a pneumonia pattern in this image. This does not rule out pneumonia."
+      },
+      "notice": "Educational prototype, not a medical device. Always have an X-ray reviewed by a qualified clinician.",
+      "score": "AI score",
+      "threshold": " / threshold {{threshold}}",
+      "scoreNote": "The score is the sigmoid output of the classifier, not a validated clinical probability. Images scoring {{threshold}} or higher are classified as positive.",
+      "original": "Original X-ray",
+      "heatmap": "AI Heatmap",
+      "a11yOriginal": "Original chest X-ray",
+      "a11yHeatmap": "Grad-CAM heatmap over the analysed image",
+      "noHeatmap": "The server did not return a heatmap for this image.",
+      "noOriginal": "Original image not available.",
+      "lessInfluence": "Less influence",
+      "moreInfluence": "More influence",
+      "heatmapNote": "Warm colours (red, yellow) mark the regions that influenced the AI's output the most. Grad-CAM shows where the model looked, not where pneumonia is, and it can highlight irrelevant areas. It is drawn on the square, centre-cropped 224×224 image the model analysed.",
+      "originalNote": "Your image exactly as selected. It is not stored on the server.",
+      "technical": "Technical details",
+      "model": "Model",
+      "rawScore": "Raw score",
+      "thresholdLabel": "Threshold",
+      "processingTime": "Processing time",
+      "imageStorage": "Image storage",
+      "notStored": "Not stored"
+    }
+  },
+  "emergency": {
+    "intro": "In an emergency, show this QR to a doctor. It works once, for 5 minutes, and only a verified doctor account can open it.",
+    "sharedTitle": "What the doctor sees",
+    "sharedList": "Blood type · Allergies · Active conditions · Active medication. Nothing else: no name, contacts, documents or history.",
+    "generate": "Generate emergency QR",
+    "generateNew": "Generate a new QR",
+    "revoke": "Revoke QR",
+    "expired": "This QR has expired or was revoked.",
+    "singleUse": "Single use · expires automatically · generating a new one cancels this one",
+    "privacyNote": "The QR contains only a random code, no medical data. The code is checked by the WWHealth server, and every access is recorded below.",
+    "audit": {
+      "title": "Access log",
+      "empty": "No activity yet.",
+      "created": "QR generated",
+      "revoked": "QR revoked",
+      "viewed": "Opened by {{name}}",
+      "denied": "Access refused for {{name}}",
+      "unknownDoctor": "an unknown account",
+      "reasons": {
+        "not_found": "invalid code",
+        "expired": "expired",
+        "used": "already used",
+        "revoked": "revoked",
+        "not_doctor": "not a doctor account"
+      },
+      "emptyHint": "When a doctor opens your passport, it will appear here.",
+      "doctorEmpty": "No accesses yet",
+      "doctorEmptyHint": "Scan a patient's emergency QR to see it here.",
+      "doctor": {
+        "viewed": "Emergency passport opened",
+        "denied": "Access refused",
+        "created": "QR generated",
+        "revoked": "QR revoked"
+      }
+    },
+    "doctorButton": "Emergency scan",
+    "scanIntro": "Scan the patient's emergency QR. You will see only blood type, allergies, active conditions and medication. The access is logged.",
+    "cameraPermission": "Camera access is needed to scan the QR. You can also paste the code below.",
+    "cameraWeb": "Camera scanning works in the mobile app. Paste the code below.",
+    "allowCamera": "Allow camera",
+    "manualLabel": "Emergency code",
+    "manualPlaceholder": "wwhealth://emergency/…",
+    "open": "Open emergency data",
+    "denied": "Access refused",
+    "tryAgain": "Scan again",
+    "scanAnother": "Close and scan another",
+    "bloodType": "Blood type",
+    "allergies": "Allergies",
+    "conditions": "Active conditions",
+    "medications": "Active medication",
+    "noneRecorded": "None recorded",
+    "accessedAt": "Accessed {{date}} · this access is logged",
+    "errors": {
+      "notDoctor": "Only verified doctor accounts can open an emergency passport.",
+      "invalid": "Invalid code. Ask the patient to generate a new QR.",
+      "used": "This QR was already used. Ask the patient to generate a new one.",
+      "expired": "This QR expired or was revoked. Ask the patient to generate a new one."
+    },
+    "timeLeft": "{{time}} left"
+  },
+  "roles": {
+    "patient": "Patient",
+    "doctor": "Doctor"
+  },
+  "onboarding": {
+    "skip": "Skip",
+    "back": "Back",
+    "next": "Continue",
+    "save": "Save profile",
+    "start": "Get started",
+    "add": "Add",
+    "remove": "Remove {{item}}",
+    "progress": "Step {{step}} of {{total}}",
+    "patient": {
+      "welcomeTitle": "Welcome",
+      "welcomeText": "Let's set up a minimal medical profile: blood type, allergies, chronic conditions and current medication. It takes a minute. Every step is optional — you can skip and complete it later.",
+      "bloodTitle": "Blood type",
+      "bloodText": "Choose only if you are sure. A doctor may rely on it in an emergency.",
+      "bloodUnknown": "I don't know",
+      "allergiesTitle": "Allergies",
+      "allergiesText": "Add each allergy and how severe it is. Leave empty if you have none.",
+      "allergyLabel": "Allergy",
+      "allergyPlaceholder": "e.g. Penicillin",
+      "severity": "Severity",
+      "conditionsTitle": "Chronic conditions",
+      "conditionsText": "Long-term conditions a doctor should know about.",
+      "conditionLabel": "Condition",
+      "conditionPlaceholder": "e.g. Asthma",
+      "medsTitle": "Current medication",
+      "medsText": "Medicines you take now. Dosage is optional.",
+      "medLabel": "Medicine",
+      "medPlaceholder": "e.g. Salbutamol",
+      "doseLabel": "Dosage (optional)",
+      "dosePlaceholder": "e.g. 100 mcg",
+      "welcomeTitleName": "Welcome, {{name}}"
+    },
+    "doctor": {
+      "s1Title": "Scan the patient's QR",
+      "s1Text": "In an emergency the patient shows a QR that works once, for 5 minutes. Use \"Scan patient QR\" on your dashboard.",
+      "s2Title": "Only what matters",
+      "s2Text": "You see blood type, allergies, active conditions and medication — no documents, contacts or history.",
+      "s3Title": "Every access is logged",
+      "s3Text": "The server records each access; the patient and you can see it in the access history."
+    }
+  },
+  "scanner": {
+    "title": "Lab value scanner (beta)",
+    "intro": "Reads the text of a digital PDF on the WWHealth server — nothing is sent to other services. Only values written explicitly (name, value, unit, reference range) are shown. Check every value before saving. This is not a diagnosis.",
+    "scan": "Read values from PDF",
+    "noText": "This PDF has no text layer (it is a scan). OCR is not available yet — you can still upload the document.",
+    "noValues": "No explicit lab values found. You can still upload the document.",
+    "review": "{{count}} values found — verify, correct or remove them:",
+    "imageLimit": "Lab value reading works only for digital PDFs. Photos and scans are stored without OCR.",
+    "uploadWithValues": "Upload + save {{count}} values",
+    "saved": "{{count}} lab values saved.",
+    "saveFailed": "Document uploaded, values not saved",
+    "savedValues": "Confirmed lab values ({{count}})",
+    "name": "Test",
+    "value": "Value",
+    "unit": "Unit",
+    "range": "Reference",
+    "source": "From",
+    "remove": "Remove {{name}}"
+  }
+}

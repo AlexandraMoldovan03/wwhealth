@@ -1,43 +1,51 @@
 /**
  * DESIGN SYSTEM — the single source of truth for every visual value.
  *
- * Want a different brand colour? Change `brand` below. That's it.
+ * WWHealth identity: calm, warm and clinical. Sage green + ivory for the patient experience,
+ * deep teal + soft blue for the doctor experience, soft coral for emergency actions.
  * Never hard-code colours, sizes or spacing inside components — import from here.
  */
 
 /** Raw palette. Only referenced inside this file. */
-const palette = {
-  brand: '#0F766E', // ← primary colour of the whole app (WWHealth teal)
-  brandDark: '#2DD4BF', // brighter variant used in dark mode
-  accent: '#2563EB',
-
+export const palette = {
+  sage: '#5E8B7E',
+  sageDeep: '#466C61', // AA text contrast on ivory / white
+  sageLight: '#8FBFAF',
+  softBlue: '#A7C7E7',
+  blueDeep: '#3F6E99',
+  ivory: '#F7F5F0',
+  ivoryDeep: '#EFEBE2',
+  sand: '#E4DED2',
+  deepTeal: '#273E46',
+  tealInk: '#1C2E34',
+  coral: '#E8AEB7',
+  coralDeep: '#B9505F', // AA on white for text / emergency buttons
   white: '#FFFFFF',
   black: '#000000',
 
-  gray50: '#F8FAFC',
-  gray100: '#F1F5F9',
-  gray200: '#E2E8F0',
-  gray300: '#CBD5E1',
-  gray400: '#94A3B8',
-  gray500: '#64748B',
-  gray600: '#475569',
-  gray700: '#334155',
-  gray800: '#1E293B',
-  gray900: '#0F172A',
-  gray950: '#0B1120',
+  slate500: '#5C6B70',
+  slate400: '#86959A',
 
-  green: '#22C55E',
-  amber: '#F59E0B',
-  red: '#EF4444',
-  blue: '#3B82F6',
+  night: '#121E22',
+  night2: '#1A2A30',
+  night3: '#223840',
+  night4: '#2E4850',
+
+  green: '#3E9B6E',
+  amber: '#C98A2B',
 } as const;
 
 /** Semantic colour tokens. Components use these names, never the palette. */
 export interface ThemeColors {
-  primary: string;
+  primary: string; // sage — brand, icons, links
   primaryMuted: string;
   onPrimary: string;
-  accent: string;
+  ink: string; // deep teal — main buttons, doctor hero
+  onInk: string;
+  accent: string; // soft blue
+  accentMuted: string;
+  coral: string; // emergency soft fill
+  coralMuted: string;
   background: string;
   surface: string;
   surfaceAlt: string;
@@ -52,48 +60,61 @@ export interface ThemeColors {
   info: string;
   tabBar: string;
   overlay: string;
+  skeleton: string;
 }
 
 export const lightColors: ThemeColors = {
-  primary: palette.brand,
-  primaryMuted: 'rgba(15, 118, 110, 0.12)',
+  primary: palette.sageDeep,
+  primaryMuted: 'rgba(94, 139, 126, 0.14)',
   onPrimary: palette.white,
-  accent: palette.accent,
-  background: palette.gray50,
+  ink: palette.deepTeal,
+  onInk: palette.ivory,
+  accent: palette.blueDeep,
+  accentMuted: 'rgba(167, 199, 231, 0.35)',
+  coral: palette.coral,
+  coralMuted: 'rgba(232, 174, 183, 0.28)',
+  background: palette.ivory,
   surface: palette.white,
-  surfaceAlt: palette.gray100,
-  border: palette.gray200,
-  text: palette.gray900,
-  textMuted: palette.gray500,
-  textSubtle: palette.gray400,
+  surfaceAlt: palette.ivoryDeep,
+  border: palette.sand,
+  text: palette.tealInk,
+  textMuted: palette.slate500,
+  textSubtle: palette.slate400,
   success: palette.green,
   warning: palette.amber,
-  danger: palette.red,
+  danger: palette.coralDeep,
   onDanger: palette.white,
-  info: palette.blue,
+  info: palette.blueDeep,
   tabBar: palette.white,
-  overlay: 'rgba(15, 23, 42, 0.5)',
+  overlay: 'rgba(28, 46, 52, 0.55)',
+  skeleton: 'rgba(39, 62, 70, 0.08)',
 };
 
 export const darkColors: ThemeColors = {
-  primary: palette.brandDark,
-  primaryMuted: 'rgba(45, 212, 191, 0.16)',
-  onPrimary: palette.gray950,
-  accent: palette.accent,
-  background: palette.gray950,
-  surface: palette.gray900,
-  surfaceAlt: palette.gray800,
-  border: palette.gray800,
-  text: palette.gray50,
-  textMuted: palette.gray400,
-  textSubtle: palette.gray500,
-  success: palette.green,
-  warning: palette.amber,
-  danger: palette.red,
-  onDanger: palette.white,
-  info: palette.blue,
-  tabBar: palette.gray900,
+  primary: palette.sageLight,
+  primaryMuted: 'rgba(143, 191, 175, 0.16)',
+  onPrimary: palette.night,
+  ink: palette.sageLight,
+  onInk: palette.night,
+  accent: palette.softBlue,
+  accentMuted: 'rgba(167, 199, 231, 0.16)',
+  coral: palette.coral,
+  coralMuted: 'rgba(232, 174, 183, 0.16)',
+  background: palette.night,
+  surface: palette.night2,
+  surfaceAlt: palette.night3,
+  border: palette.night4,
+  text: '#F2EFE8',
+  textMuted: '#A9B7B7',
+  textSubtle: '#7C8D90',
+  success: '#6CC59A',
+  warning: '#E5B566',
+  danger: '#F0A0AC',
+  onDanger: palette.night,
+  info: palette.softBlue,
+  tabBar: palette.night2,
   overlay: 'rgba(0, 0, 0, 0.6)',
+  skeleton: 'rgba(255, 255, 255, 0.07)',
 };
 
 /** Spacing scale (4pt grid). Use `spacing.md` instead of `16`. */
@@ -107,24 +128,33 @@ export const spacing = {
   xxl: 48,
 } as const;
 
-/** Corner radii. */
+/** Corner radii — soft and generous. */
 export const radius = {
-  sm: 8,
-  md: 12,
-  lg: 16,
-  xl: 24,
+  sm: 10,
+  md: 14,
+  lg: 20,
+  xl: 28,
   pill: 999,
+} as const;
+
+/** Font families (loaded in app/_layout.tsx). */
+export const fonts = {
+  heading: 'Inter_700Bold',
+  headingSemi: 'Inter_600SemiBold',
+  body: 'DMSans_400Regular',
+  bodyMedium: 'DMSans_500Medium',
+  bodyBold: 'DMSans_700Bold',
 } as const;
 
 /** Typography variants used by <AppText variant="..."/>. */
 export const typography = {
-  display: { fontSize: 32, lineHeight: 38, fontWeight: '800' },
-  title: { fontSize: 24, lineHeight: 30, fontWeight: '700' },
-  heading: { fontSize: 18, lineHeight: 24, fontWeight: '700' },
-  subheading: { fontSize: 16, lineHeight: 22, fontWeight: '600' },
-  body: { fontSize: 15, lineHeight: 22, fontWeight: '400' },
-  caption: { fontSize: 13, lineHeight: 18, fontWeight: '400' },
-  label: { fontSize: 12, lineHeight: 16, fontWeight: '600', letterSpacing: 0.4 },
+  display: { fontFamily: fonts.heading, fontSize: 30, lineHeight: 36, letterSpacing: -0.6 },
+  title: { fontFamily: fonts.heading, fontSize: 24, lineHeight: 30, letterSpacing: -0.4 },
+  heading: { fontFamily: fonts.headingSemi, fontSize: 18, lineHeight: 24, letterSpacing: -0.2 },
+  subheading: { fontFamily: fonts.bodyBold, fontSize: 16, lineHeight: 22 },
+  body: { fontFamily: fonts.body, fontSize: 15, lineHeight: 22 },
+  caption: { fontFamily: fonts.body, fontSize: 13, lineHeight: 18 },
+  label: { fontFamily: fonts.bodyBold, fontSize: 11, lineHeight: 15, letterSpacing: 0.8 },
 } as const;
 
 export type TypographyVariant = keyof typeof typography;
@@ -139,26 +169,44 @@ export const iconSize = {
 
 /** Fixed component sizes. */
 export const sizes = {
-  buttonHeight: 50,
-  buttonHeightSmall: 38,
-  inputHeight: 48,
+  buttonHeight: 54,
+  buttonHeightSmall: 40,
+  inputHeight: 52,
   iconBadge: 44,
   maxContentWidth: 640, // keeps layouts readable on tablets / web
 } as const;
 
-/** Subtle elevation for cards. */
+/** Soft, warm elevation. */
 export const shadows = {
   card: {
-    shadowColor: palette.black,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.06,
-    shadowRadius: 12,
+    shadowColor: palette.deepTeal,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.07,
+    shadowRadius: 18,
     elevation: 2,
+  },
+  raised: {
+    shadowColor: palette.deepTeal,
+    shadowOffset: { width: 0, height: 12 },
+    shadowOpacity: 0.14,
+    shadowRadius: 24,
+    elevation: 6,
   },
 } as const;
 
-/** Animation durations (ms). */
+/** Animation durations (ms) and the stagger between list items. */
 export const motion = {
   fast: 150,
   normal: 250,
+  slow: 420,
+  stagger: 55,
 } as const;
+
+/** Background gradients (expo-linear-gradient). */
+export const gradients = {
+  patientHero: ['#5E8B7E', '#7FA79A', '#A7C7E7'] as const,
+  doctorHero: ['#1C2E34', '#273E46', '#3F6E99'] as const,
+  emergency: ['#F2C6CD', '#FBEAE6'] as const, // light coral → dark text on top (AA)
+  calm: ['#F7F5F0', '#E9F0EC'] as const,
+  calmDark: ['#121E22', '#1A2A30'] as const,
+};

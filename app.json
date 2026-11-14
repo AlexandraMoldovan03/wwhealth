@@ -31,7 +31,16 @@
           "cameraPermission": "The app needs camera access to take photos for analysis."
         }
       ],
-      "expo-font"
+      "expo-font",
+      "expo-web-browser",
+      "expo-localization",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "The app needs camera access so doctors can scan an emergency passport QR code.",
+          "recordAudioAndroid": false
+        }
+      ]
     ],
     "scheme": "wwhealth",
     "experiments": {

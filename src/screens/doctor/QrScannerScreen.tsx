@@ -11,6 +11,7 @@ import { saveDoctorSession } from '@/features/doctor/doctorSession';
 import { useSubmit } from '@/hooks/useSubmit';
 import { useTheme } from '@/hooks/useTheme';
 import { api } from '@/services/backend';
+import { useTranslation } from 'react-i18next';
 
 /**
  * QR Scanner — camera is a placeholder; the doctor types the access code.
@@ -19,6 +20,7 @@ import { api } from '@/services/backend';
  */
 export function QrScannerScreen() {
   const { colors } = useTheme();
+  const { t } = useTranslation();
   const [token, setToken] = useState(USE_MOCKS ? DEMO_ACCESS_TOKEN : '');
   const redeem = useSubmit(api.redeemAccess);
 
@@ -35,23 +37,23 @@ export function QrScannerScreen() {
       <View style={[styles.camera, { backgroundColor: colors.surfaceAlt, borderColor: colors.border }]}>
         <Ionicons name="scan-outline" size={96} color={colors.textSubtle} />
         <AppText variant="caption" color="textMuted">
-          Camera scanner placeholder
+          {t('doctor.cameraPlaceholder')}
         </AppText>
       </View>
 
       <AppInput
-        label="Access code"
+        label={t('doctor.accessCode')}
         icon="key-outline"
-        placeholder="e.g. DEMO-1234"
+        placeholder={t('doctor.accessCodePlaceholder')}
         autoCapitalize="characters"
         autoCorrect={false}
         value={token}
         onChangeText={setToken}
         onClear={() => setToken('')}
       />
-      <AppButton title="Unlock patient record" icon="lock-open-outline" fullWidth disabled={!token.trim()} loading={redeem.isLoading} onPress={submit} />
-      {redeem.error && <ErrorState title="Access denied" message={redeem.error} />}
-      {USE_MOCKS && <DemoNotice message={`DEMO — use code ${DEMO_ACCESS_TOKEN} (or generate one in Patient → QR Passport).`} />}
+      <AppButton title={t('doctor.unlock')} icon="lock-open-outline" fullWidth disabled={!token.trim()} loading={redeem.isLoading} onPress={submit} />
+      {redeem.error && <ErrorState title={t('doctor.accessDenied')} message={redeem.error} />}
+      {USE_MOCKS && <DemoNotice message={t('doctor.demoCode', { code: DEMO_ACCESS_TOKEN })} />}
     </ScreenContainer>
   );
 }

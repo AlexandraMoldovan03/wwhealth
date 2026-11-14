@@ -41,8 +41,8 @@ export interface EmergencyContact {
 export interface PatientProfile {
   id: string;
   fullName: string;
-  dateOfBirth: string;
-  sex: Sex;
+  dateOfBirth: string | null;
+  sex: Sex | null;
   bloodType: string | null;
   heightCm: number | null;
   weightKg: number | null;
@@ -61,6 +61,8 @@ export interface MedicalEvent {
   description: string;
   date: string;
   details: Record<string, string>;
+  /** Set for type 'document' — opens the uploaded file. */
+  documentId?: string | null;
 }
 
 export type DocumentType = 'lab_result' | 'prescription' | 'discharge_summary' | 'imaging_report' | 'other';
@@ -86,8 +88,11 @@ export interface MedicalDocument {
   title: string;
   type: DocumentType;
   uploadedAt: string;
+  /** API path (needs auth), e.g. /api/v1/documents/{id}/file. Local file URI in MOCK mode. */
   fileUrl: string | null;
-  status: 'processing' | 'analyzed' | 'failed';
+  mimeType?: string | null;
+  sizeBytes?: number | null;
+  status: 'uploaded' | 'processing' | 'analyzed' | 'failed';
   extraction: DocumentExtraction | null;
   isDemo: boolean;
 }
@@ -167,4 +172,47 @@ export interface VoiceSummaryResponse {
   /** ElevenLabs audio (URL). null in MOCK mode / until integrated. */
   audioUrl: string | null;
   isDemo: boolean;
+}
+
+// ---------- Smart Medical Profile ----------
+
+export type BloodType = 'A+' | 'A-' | 'B+' | 'B-' | 'AB+' | 'AB-' | 'O+' | 'O-';
+
+/** Items without `id` are new; the backend assigns ids. */
+export interface AllergyInput {
+  id?: string;
+  substance: string;
+  reaction: string;
+  severity: Severity;
+}
+
+export interface DiagnosisInput {
+  id?: string;
+  name: string;
+  icd10?: string | null;
+  diagnosedAt?: string | null;
+  status: 'active' | 'resolved';
+}
+
+export interface TreatmentInput {
+  id?: string;
+  name: string;
+  dosage: string;
+  frequency: string;
+  startDate?: string | null;
+  endDate?: string | null;
+  active: boolean;
+}
+
+/** PATCH /api/v1/patients/me — only the fields sent are changed; lists replace the whole list. */
+export interface ProfileUpdate {
+  bloodType?: BloodType | null;
+  allergies?: AllergyInput[];
+  diagnoses?: DiagnosisInput[];
+  treatments?: TreatmentInput[];
+}
+
+/** POST /api/v1/documents (PDF / JPEG / PNG, no OCR). */
+export interface DocumentUploadResponse {
+  document: MedicalDocument;
 }

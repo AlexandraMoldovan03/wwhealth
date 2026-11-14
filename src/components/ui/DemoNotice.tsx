@@ -11,8 +11,8 @@ import { AppText } from './AppText';
 export function DemoNotice({ message = MEDICAL_DISCLAIMER }: { message?: string }) {
   const { colors } = useTheme();
   return (
-    <View style={[styles.box, { backgroundColor: `${colors.warning}1F`, borderColor: `${colors.warning}55` }]}>
-      <Ionicons name="flask-outline" size={iconSize.sm} color={colors.warning} />
+    <View style={[styles.box, { backgroundColor: colors.accentMuted, borderColor: 'transparent' }]} accessibilityRole="text">
+      <Ionicons name="information-circle-outline" size={iconSize.md} color={colors.accent} />
       <AppText variant="caption" style={[styles.text, { color: colors.text }]}>
         {message}
       </AppText>
@@ -21,6 +21,6 @@ export function DemoNotice({ message = MEDICAL_DISCLAIMER }: { message?: string 
 }
 
 const styles = StyleSheet.create({
-  box: { flexDirection: 'row', gap: spacing.sm, padding: spacing.sm + 4, borderRadius: radius.md, borderWidth: 1, alignItems: 'flex-start' },
+  box: { flexDirection: 'row', gap: spacing.sm, padding: spacing.md - 2, borderRadius: radius.lg, borderWidth: 1, alignItems: 'flex-start' },
   text: { flex: 1 },
 });

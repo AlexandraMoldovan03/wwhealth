@@ -2,10 +2,18 @@
 export const ENDPOINTS = {
   health: '/health',
   patientsMe: '/api/v1/patients/me',
+  documents: '/api/v1/documents',
   documentsAnalyze: '/api/v1/documents/analyze',
+  documentsExtractLabs: '/api/v1/documents/extract-labs',
+  documentLabValues: (id: string) => `/api/v1/documents/${encodeURIComponent(id)}/lab-values`,
   xrayAnalyze: '/api/v1/xray/analyze',
   lungAnalyze: '/api/ai/lung/analyze',
   accessGrant: '/api/v1/access/grant',
   accessRedeem: '/api/v1/access/redeem',
   voiceSummary: '/api/v1/voice/summary',
+  emergencyTokens: '/api/v1/emergency/tokens',
+  emergencyRevoke: (tokenId: string) => `/api/v1/emergency/tokens/${encodeURIComponent(tokenId)}/revoke`,
+  emergencyRedeem: '/api/v1/emergency/redeem',
+  emergencyAudit: '/api/v1/emergency/audit',
+  emergencyMyAccesses: '/api/v1/emergency/my-accesses',
 } as const;

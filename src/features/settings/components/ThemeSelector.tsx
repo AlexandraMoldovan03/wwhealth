@@ -5,16 +5,18 @@ import { AppText } from '@/components/ui';
 import { iconSize, radius, spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/useTheme';
 import type { IconName, ThemePreference } from '@/types';
+import { useTranslation } from 'react-i18next';
 
-const OPTIONS: { value: ThemePreference; label: string; icon: IconName }[] = [
-  { value: 'light', label: 'Light', icon: 'sunny-outline' },
-  { value: 'dark', label: 'Dark', icon: 'moon-outline' },
-  { value: 'system', label: 'System', icon: 'phone-portrait-outline' },
+const OPTIONS: { value: ThemePreference; labelKey: 'settings.themeLight' | 'settings.themeDark' | 'settings.themeSystem'; icon: IconName }[] = [
+  { value: 'light', labelKey: 'settings.themeLight', icon: 'sunny-outline' },
+  { value: 'dark', labelKey: 'settings.themeDark', icon: 'moon-outline' },
+  { value: 'system', labelKey: 'settings.themeSystem', icon: 'phone-portrait-outline' },
 ];
 
 /** Segmented control for Light / Dark / System. */
 export function ThemeSelector() {
   const { colors, preference, setPreference } = useTheme();
+  const { t } = useTranslation();
   return (
     <View style={[styles.container, { backgroundColor: colors.surfaceAlt }]}>
       {OPTIONS.map((option) => {
@@ -29,7 +31,7 @@ export function ThemeSelector() {
           >
             <Ionicons name={option.icon} size={iconSize.sm} color={active ? colors.primary : colors.textMuted} />
             <AppText variant="caption" color={active ? 'primary' : 'textMuted'} style={styles.label}>
-              {option.label}
+              {t(option.labelKey)}
             </AppText>
           </Pressable>
         );
@@ -49,5 +51,5 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.sm,
     borderRadius: radius.sm,
   },
-  label: { fontWeight: '600' },
+  label: { fontFamily: 'DMSans_700Bold' },
 });

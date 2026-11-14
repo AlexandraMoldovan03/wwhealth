@@ -5,7 +5,7 @@
  */
 import { MEDICAL_DISCLAIMER, MOCK_DELAY_MS } from '@/constants/config';
 import { DEMO_ACCESS_TOKEN, MOCK_PATIENT } from '@/data/mockPatient';
-import type { AccessScope, PatientRecord, WWHealthApi, XrayAnalysis } from '@/types';
+import type { AccessScope, EmergencyAccessEvent, LabValueEntry, MedicalDocument, PatientRecord, WWHealthApi, XrayAnalysis } from '@/types';
 import { createId, delay } from '@/utils/async';
 
 import { ApiError } from '../api/ApiError';
@@ -18,6 +18,14 @@ const db: PatientRecord = clone(MOCK_PATIENT);
 const grants = new Map<string, { expiresAt: string; scopes: AccessScope[] }>([
   [DEMO_ACCESS_TOKEN, { expiresAt: new Date(Date.now() + 24 * 3600_000).toISOString(), scopes: ['profile', 'history', 'documents', 'xrays'] }],
 ]);
+
+// Emergency passport (MOCK): same rules as the backend — 5 min, single use, revocable, audited.
+const emergencyTokens = new Map<string, { id: string; expiresAt: number; usedAt?: number; revokedAt?: number }>();
+const emergencyLog: EmergencyAccessEvent[] = [];
+const logEmergency = (event: EmergencyAccessEvent['event'], reason: EmergencyAccessEvent['reason'] = null, actorName: string | null = null) =>
+  emergencyLog.unshift({ id: createId('log'), event, reason, actorName, createdAt: new Date().toISOString() });
+
+const labValues = new Map<string, LabValueEntry[]>();
 
 const XRAY_LABELS = ['Normal', 'Pneumonia', 'Effusion', 'Cardiomegaly', 'Nodule'];
 
@@ -52,6 +60,63 @@ export const mockApi: WWHealthApi = {
   async getMyPatient() {
     await delay(MOCK_DELAY_MS);
     return clone(db);
+  },
+
+  async updateMyProfile(update) {
+    await delay(MOCK_DELAY_MS);
+    const today = new Date().toISOString().slice(0, 10);
+    if (update.bloodType !== undefined) db.bloodType = update.bloodType;
+    if (update.allergies) db.allergies = update.allergies.map((a) => ({ ...a, id: a.id ?? createId('al') }));
+    if (update.diagnoses) {
+      db.diagnoses = update.diagnoses.map((d) => ({
+        id: d.id ?? createId('dg'),
+        name: d.name,
+        icd10: d.icd10 ?? null,
+        diagnosedAt: d.diagnosedAt ?? today,
+        status: d.status,
+      }));
+    }
+    if (update.treatments) {
+      db.treatments = update.treatments.map((t) => ({
+        id: t.id ?? createId('tr'),
+        name: t.name,
+        dosage: t.dosage,
+        frequency: t.frequency,
+        startDate: t.startDate ?? today,
+        endDate: t.endDate ?? null,
+        active: t.active,
+      }));
+    }
+    return clone(db);
+  },
+
+  // MOCK: the file stays on the device (fileUrl = local URI); nothing is uploaded.
+  async uploadDocument(file, documentType, title) {
+    await delay(MOCK_DELAY_MS);
+    const uploadedAt = new Date().toISOString();
+    const document: MedicalDocument = {
+      id: createId('doc'),
+      title: title || file.name,
+      type: documentType,
+      uploadedAt,
+      fileUrl: file.uri,
+      mimeType: file.type,
+      sizeBytes: null,
+      status: 'uploaded',
+      extraction: null,
+      isDemo: true,
+    };
+    db.documents.unshift(document);
+    db.history.unshift({
+      id: createId('ev'),
+      type: 'document',
+      title: document.title,
+      description: 'Document uploaded (MOCK — stored only on this device).',
+      date: uploadedAt,
+      details: { Format: file.type === 'application/pdf' ? 'PDF' : 'Image' },
+      documentId: document.id,
+    });
+    return { document: clone(document) };
   },
 
   async analyzeDocument(file, documentType, title) {
@@ -124,6 +189,73 @@ export const mockApi: WWHealthApi = {
       scopes: grant.scopes,
       patient: filterByScopes(clone(db), grant.scopes),
     };
+  },
+
+  // No text extraction in MOCK mode (it runs on the backend) — never invent values.
+  async extractLabValues() {
+    await delay(MOCK_DELAY_MS);
+    throw new ApiError('Document scanning needs the backend (set EXPO_PUBLIC_USE_MOCKS=false).', 503);
+  },
+  async getLabValues(documentId) {
+    return labValues.get(documentId) ?? [];
+  },
+  async saveLabValues(documentId, values) {
+    await delay(MOCK_DELAY_MS);
+    labValues.set(documentId, values);
+    return values;
+  },
+
+  async createEmergencyToken() {
+    await delay(MOCK_DELAY_MS);
+    const now = Date.now();
+    emergencyTokens.forEach((t) => {
+      if (!t.usedAt && !t.revokedAt && t.expiresAt > now) t.revokedAt = now;
+    });
+    const token = `demo-${createId('em')}-${Math.random().toString(36).slice(2, 12)}`;
+    const entry = { id: createId('tok'), expiresAt: now + 5 * 60_000 };
+    emergencyTokens.set(token, entry);
+    logEmergency('created');
+    return { tokenId: entry.id, token, qrPayload: `wwhealth://emergency/${token}`, expiresAt: new Date(entry.expiresAt).toISOString(), ttlSeconds: 300 };
+  },
+
+  async revokeEmergencyToken(tokenId) {
+    await delay(MOCK_DELAY_MS);
+    const entry = [...emergencyTokens.values()].find((t) => t.id === tokenId && !t.usedAt && !t.revokedAt);
+    if (!entry) throw new ApiError('No active emergency code to revoke', 404);
+    entry.revokedAt = Date.now();
+    logEmergency('revoked');
+  },
+
+  async redeemEmergencyToken({ token }) {
+    await delay(MOCK_DELAY_MS);
+    const entry = emergencyTokens.get(token.trim().replace(/^wwhealth:\/\/emergency\//i, ''));
+    const deny = (reason: 'not_found' | 'expired' | 'used' | 'revoked', status: number, message: string) => {
+      logEmergency('denied', reason, 'Demo Doctor');
+      return new ApiError(message, status);
+    };
+    if (!entry) throw deny('not_found', 404, 'Invalid emergency code');
+    if (entry.revokedAt) throw deny('revoked', 410, 'Emergency code revoked');
+    if (entry.usedAt) throw deny('used', 409, 'Emergency code already used');
+    if (entry.expiresAt <= Date.now()) throw deny('expired', 410, 'Emergency code expired');
+    entry.usedAt = Date.now();
+    logEmergency('viewed', null, 'Demo Doctor');
+    return {
+      bloodType: db.bloodType,
+      allergies: db.allergies.map(({ substance, reaction, severity }) => ({ substance, reaction, severity })),
+      conditions: db.diagnoses.filter((d) => d.status === 'active').map(({ name, icd10 }) => ({ name, icd10: icd10 ?? null })),
+      medications: db.treatments.filter((m) => m.active).map(({ name, dosage, frequency }) => ({ name, dosage, frequency })),
+      accessedAt: new Date(entry.usedAt).toISOString(),
+    };
+  },
+
+  async getEmergencyAudit() {
+    await delay(MOCK_DELAY_MS);
+    return emergencyLog.slice(0, 20);
+  },
+
+  async getMyEmergencyAccesses() {
+    await delay(MOCK_DELAY_MS);
+    return emergencyLog.filter((e) => e.event === 'viewed' || e.event === 'denied');
   },
 
   async voiceSummary({ patientId }) {

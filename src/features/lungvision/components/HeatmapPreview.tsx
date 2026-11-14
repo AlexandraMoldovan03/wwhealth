@@ -4,6 +4,7 @@ import { Image, StyleSheet, View } from 'react-native';
 import { AppText } from '@/components/ui';
 import { radius, spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/useTheme';
+import { useTranslation } from 'react-i18next';
 
 interface HeatmapPreviewProps {
   imageUrl: string | null;
@@ -18,6 +19,7 @@ interface HeatmapPreviewProps {
  */
 export function HeatmapPreview({ imageUrl, heatmapUrl, caption }: HeatmapPreviewProps) {
   const { colors } = useTheme();
+  const { t } = useTranslation();
   const source = heatmapUrl ?? imageUrl;
   return (
     <View style={[styles.frame, { backgroundColor: colors.surfaceAlt }]}>
@@ -29,7 +31,7 @@ export function HeatmapPreview({ imageUrl, heatmapUrl, caption }: HeatmapPreview
       {(!heatmapUrl || caption) && (
         <View style={[styles.label, { backgroundColor: colors.overlay }]}>
           <AppText variant="caption" style={styles.labelText}>
-            {heatmapUrl ? caption : 'Grad-CAM heatmap placeholder'}
+            {heatmapUrl ? caption : t('xray.heatmapPlaceholder')}
           </AppText>
         </View>
       )}

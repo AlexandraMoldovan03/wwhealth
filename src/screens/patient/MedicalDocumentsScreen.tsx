@@ -1,27 +1,27 @@
-import { router, useFocusEffect } from 'expo-router';
-import { useCallback } from 'react';
+import { router } from 'expo-router';
 
 import { AppButton, ErrorState, LoadingState, ScreenContainer } from '@/components/ui';
 import { DocumentList } from '@/features/documents/components/DocumentList';
 import { useAsync } from '@/hooks/useAsync';
 import { api } from '@/services/backend';
+import { useTranslation } from 'react-i18next';
 
 export function MedicalDocumentsScreen() {
-  const { data, isLoading, error, reload } = useAsync(api.getMyPatient);
+  const { t } = useTranslation();
+  const { data, isLoading, error, reload } = useAsync(api.getMyPatient, { refetchOnFocus: true });
 
-  // Refresh when coming back from Upload Document.
-  useFocusEffect(
-    useCallback(() => {
-      void reload();
-    }, [reload]),
-  );
 
   return (
     <ScreenContainer edges={['bottom']}>
-      <AppButton title="Upload document" icon="cloud-upload-outline" fullWidth onPress={() => router.push('/patient/upload-document')} />
+      <AppButton title={t('documents.upload')} icon="cloud-upload-outline" fullWidth onPress={() => router.push('/patient/upload-document')} />
       {isLoading && !data && <LoadingState />}
       {error && <ErrorState message={error} onRetry={reload} />}
-      {data && <DocumentList documents={data.documents} />}
+      {data && (
+        <DocumentList
+          documents={data.documents}
+          onSelect={(doc) => router.push({ pathname: '/patient/document/[id]', params: { id: doc.id } })}
+        />
+      )}
     </ScreenContainer>
   );
 }

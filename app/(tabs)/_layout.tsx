@@ -1,21 +1,31 @@
-/** BOTTOM TABS — tab list lives in src/constants/navigation.ts. */
-import { Ionicons } from '@expo/vector-icons';
+/** BOTTOM TABS — tab list (per role) lives in src/constants/navigation.ts. */
+import { Redirect } from 'expo-router';
 import { Tabs } from 'expo-router/js-tabs';
 
+import { AppTabBar } from '@/components/navigation/AppTabBar';
 import { TABS } from '@/constants/navigation';
+import { useRole } from '@/features/auth/useCurrentUser';
+import { useSignedIn } from '@/features/auth/useSignedIn';
 import { useTheme } from '@/hooks/useTheme';
+import { useTranslation } from 'react-i18next';
 
 export default function TabsLayout() {
   const { colors } = useTheme();
+  const signedIn = useSignedIn();
+  const { t } = useTranslation();
+  const role = useRole();
+
+  // Don't mount the tabs (they fetch /patients/me) before the saved session is restored → no token-less 401.
+  if (signedIn === null) return null;
+  if (!signedIn) return <Redirect href="/login" />;
 
   return (
     <Tabs
+      tabBar={(props) => <AppTabBar {...props} />}
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: colors.primary,
-        tabBarInactiveTintColor: colors.textSubtle,
-        tabBarStyle: { backgroundColor: colors.tabBar, borderTopColor: colors.border },
         sceneStyle: { backgroundColor: colors.background },
+        animation: 'shift',
       }}
     >
       {TABS.map((tab) => (
@@ -23,17 +33,13 @@ export default function TabsLayout() {
           key={tab.name}
           name={tab.name}
           options={{
-            title: tab.title,
-            tabBarIcon: ({ size, focused }) => (
-              <Ionicons
-                name={focused ? tab.iconFocused : tab.icon}
-                size={size}
-                color={focused ? colors.primary : colors.textSubtle}
-              />
-            ),
+            // Each role gets its own navigation; hidden tabs stay protected by the backend anyway.
+            href: tab.roles.includes(role) ? undefined : null,
+            title: t(`tabs.${tab.name}`, { defaultValue: tab.title }),
           }}
         />
       ))}
     </Tabs>
   );
 }
+

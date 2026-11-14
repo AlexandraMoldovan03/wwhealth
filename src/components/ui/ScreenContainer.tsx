@@ -47,5 +47,5 @@ const styles = StyleSheet.create({
   safe: { flex: 1 },
   flex: { flex: 1 },
   inner: { width: '100%', maxWidth: sizes.maxContentWidth, alignSelf: 'center', gap: spacing.lg },
-  padded: { paddingHorizontal: spacing.md, paddingVertical: spacing.md },
+  padded: { paddingHorizontal: spacing.lg - 4, paddingTop: spacing.md, paddingBottom: spacing.xl },
 });

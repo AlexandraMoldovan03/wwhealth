@@ -11,18 +11,15 @@ import { useTheme } from '@/hooks/useTheme';
 import { api } from '@/services/backend';
 import type { AccessScope } from '@/types';
 import { formatDateTime } from '@/utils/format';
+import { useTranslation } from 'react-i18next';
 
-const SCOPES: { value: AccessScope; label: string }[] = [
-  { value: 'profile', label: 'Profile, allergies, diagnoses' },
-  { value: 'history', label: 'Medical history' },
-  { value: 'documents', label: 'Documents' },
-  { value: 'xrays', label: 'LungVision X-rays' },
-];
+const SCOPES: AccessScope[] = ['profile', 'history', 'documents', 'xrays'];
 const TTL_OPTIONS = ['15', '60', '240'] as const;
 
 /** QR Medical Passport — POST /api/v1/access/grant → temporary token shown as QR. */
 export function MedicalPassportScreen() {
   const { colors } = useTheme();
+  const { t } = useTranslation();
   const [scopes, setScopes] = useState<AccessScope[]>(['profile', 'history', 'xrays']);
   const [ttl, setTtl] = useState<(typeof TTL_OPTIONS)[number]>('15');
   const grant = useSubmit(api.grantAccess);
@@ -32,17 +29,17 @@ export function MedicalPassportScreen() {
 
   return (
     <ScreenContainer edges={['bottom']}>
-      <AppText color="textMuted">Choose what the doctor can see and for how long. Access expires automatically.</AppText>
+      <AppText color="textMuted">{t('passport.intro')}</AppText>
 
       <View style={styles.section}>
-        <SectionHeader title="Shared data" />
+        <SectionHeader title={t('passport.shared')} />
         <AppCard style={styles.list}>
           {SCOPES.map((s) => (
-            <View key={s.value} style={styles.scopeRow}>
-              <AppText style={styles.flex}>{s.label}</AppText>
+            <View key={s} style={styles.scopeRow}>
+              <AppText style={styles.flex}>{t(`passport.scopes.${s}`)}</AppText>
               <Switch
-                value={scopes.includes(s.value)}
-                onValueChange={() => toggle(s.value)}
+                value={scopes.includes(s)}
+                onValueChange={() => toggle(s)}
                 trackColor={{ true: colors.primary, false: colors.border }}
               />
             </View>
@@ -51,12 +48,12 @@ export function MedicalPassportScreen() {
       </View>
 
       <View style={styles.section}>
-        <SectionHeader title="Valid for (minutes)" />
+        <SectionHeader title={t('passport.validFor')} />
         <CategoryFilter options={TTL_OPTIONS} value={ttl} onChange={setTtl} />
       </View>
 
       <AppButton
-        title="Generate QR passport"
+        title={t('passport.generate')}
         icon="qr-code-outline"
         fullWidth
         disabled={scopes.length === 0}
@@ -71,21 +68,22 @@ export function MedicalPassportScreen() {
           <View style={[styles.qrBox, { borderColor: colors.border, backgroundColor: colors.surfaceAlt }]}>
             <Ionicons name="qr-code" size={120} color={colors.text} />
             <AppText variant="caption" color="textMuted">
-              QR placeholder
+              {t('passport.qrPlaceholder')}
             </AppText>
           </View>
           <AppText variant="label" color="textMuted">
-            Access code
+            {t('passport.accessCode')}
           </AppText>
           <AppText variant="title" selectable>
             {grant.data.token}
           </AppText>
           <AppText variant="caption" color="textMuted">
-            Expires {formatDateTime(grant.data.expiresAt)} · {grant.data.scopes.join(', ')}
+            {t('passport.expires', { date: formatDateTime(grant.data.expiresAt) })} ·{' '}
+            {grant.data.scopes.map((s) => t(`passport.scopes.${s}`)).join(', ')}
           </AppText>
         </AppCard>
       )}
-      {USE_MOCKS && <DemoNotice message="DEMO — in MOCK mode the code is always DEMO-1234. Enter it in Doctor → QR Scanner." />}
+      {USE_MOCKS && <DemoNotice message={t('passport.demo')} />}
     </ScreenContainer>
   );
 }

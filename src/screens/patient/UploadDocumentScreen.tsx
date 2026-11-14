@@ -2,77 +2,191 @@ import { router } from 'expo-router';
 import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
-import {
-  AppButton,
-  AppInput,
-  AppText,
-  DemoNotice,
-  ErrorState,
-  ImagePickerArea,
-  ScreenContainer,
-} from '@/components/ui';
+import { AppButton, AppCard, AppInput, AppText, DemoNotice, ErrorState, ImagePickerArea, ListRow, ScreenContainer } from '@/components/ui';
 import { USE_MOCKS } from '@/constants/config';
 import { spacing } from '@/constants/theme';
-import { ExtractionView } from '@/features/documents/components/ExtractionView';
 import { DOCUMENT_TYPES } from '@/features/documents/documentMeta';
+import { useDocumentPicker } from '@/features/documents/useDocumentPicker';
 import { CategoryFilter } from '@/features/explore/components/CategoryFilter';
-import { useImagePicker } from '@/hooks/useImagePicker';
 import { useSubmit } from '@/hooks/useSubmit';
+import { useTheme } from '@/hooks/useTheme';
 import { api } from '@/services/backend';
-import type { DocumentType } from '@/types';
-import { toUploadFile } from '@/utils/files';
+import type { DocumentType, LabValueEntry } from '@/types';
+import { getErrorMessage } from '@/utils/errors';
+import { LabReviewEditor } from '@/features/documents/components/LabReviewEditor';
+import { formatFileSize } from '@/utils/format';
+import { useTranslation } from 'react-i18next';
 
 const TYPE_VALUES = DOCUMENT_TYPES.map((t) => t.value);
-const typeLabel = (v: DocumentType) => DOCUMENT_TYPES.find((t) => t.value === v)?.label ?? v;
 
-/** Upload a photo of a medical document → POST /api/v1/documents/analyze (Gemini on backend). */
+/** Upload a PDF or image → POST /api/v1/documents (private storage, no OCR / AI). */
 export function UploadDocumentScreen() {
+  const { colors } = useTheme();
+  const { t } = useTranslation();
   const [type, setType] = useState<DocumentType>('lab_result');
   const [title, setTitle] = useState('');
-  const picker = useImagePicker();
-  const submit = useSubmit(api.analyzeDocument);
+  const picker = useDocumentPicker();
+  const submit = useSubmit(api.uploadDocument);
+  const uploaded = submit.data?.document;
 
-  const analyze = () => {
-    if (picker.imageUri) void submit.run(toUploadFile(picker.imageUri, 'document.jpg'), type, title.trim());
+  // Document scanner: local text extraction for digital PDFs, reviewed by the user before saving.
+  const [labs, setLabs] = useState<LabValueEntry[] | null>(null);
+  const [scanInfo, setScanInfo] = useState<string | null>(null);
+  const [scanning, setScanning] = useState(false);
+  const [labSaveError, setLabSaveError] = useState<string | null>(null);
+  const [savedLabs, setSavedLabs] = useState(0);
+  const pickedKey = picker.file?.uri;
+  const [scannedFor, setScannedFor] = useState<string | undefined>(undefined);
+  if (pickedKey !== scannedFor && (labs || scanInfo)) {
+    // A different file was picked → previous scan no longer applies.
+    setScannedFor(pickedKey);
+    setLabs(null);
+    setScanInfo(null);
+  }
+
+  const scan = async () => {
+    if (!picker.file?.isPdf) return;
+    setScanning(true);
+    setScanInfo(null);
+    try {
+      const res = await api.extractLabValues(picker.file);
+      setScannedFor(picker.file.uri);
+      setLabs(res.values);
+      setScanInfo(!res.textFound ? t('scanner.noText') : res.values.length === 0 ? t('scanner.noValues') : null);
+    } catch (err) {
+      setScanInfo(getErrorMessage(err));
+    } finally {
+      setScanning(false);
+    }
   };
+
+  const upload = async () => {
+    if (!picker.file) return;
+    const res = await submit.run(picker.file, type, title.trim());
+    const confirmed = (labs ?? []).filter((v) => v.name.trim() && v.value.trim());
+    if (res && confirmed.length) {
+      try {
+        const saved = await api.saveLabValues(res.document.id, confirmed);
+        setSavedLabs(saved.length);
+      } catch (err) {
+        setLabSaveError(getErrorMessage(err)); // the document itself is uploaded
+      }
+    }
+  };
+
+  if (uploaded) {
+    return (
+      <ScreenContainer edges={['bottom']}>
+        <AppCard style={styles.done}>
+          <AppText variant="heading">{t('upload.done')}</AppText>
+          <AppText color="textMuted">
+            {t('upload.doneText', { title: uploaded.title })}
+          </AppText>
+          {savedLabs > 0 && <AppText color="primary">{t('scanner.saved', { count: savedLabs })}</AppText>}
+        </AppCard>
+        {labSaveError && <ErrorState title={t('scanner.saveFailed')} message={labSaveError} />}
+        <AppButton
+          title={t('upload.open')}
+          icon="eye-outline"
+          fullWidth
+          onPress={() => router.replace({ pathname: '/patient/document/[id]', params: { id: uploaded.id } })}
+        />
+        <AppButton title={t('upload.back')} variant="ghost" onPress={() => router.back()} />
+      </ScreenContainer>
+    );
+  }
 
   return (
     <ScreenContainer edges={['bottom']}>
-      {USE_MOCKS && <DemoNotice message="DEMO — extraction is simulated. Gemini runs on the backend, never in the app." />}
-
       <View style={styles.field}>
         <AppText variant="label" color="textMuted">
-          Document type
+          {t('upload.type')}
         </AppText>
-        <CategoryFilter options={TYPE_VALUES} value={type} onChange={setType} getLabel={typeLabel} />
+        <CategoryFilter options={TYPE_VALUES} value={type} onChange={setType} getLabel={(v) => t(`documentTypes.${v}`)} />
       </View>
-      <AppInput label="Title (optional)" placeholder="e.g. Blood test March" value={title} onChangeText={setTitle} />
+      <AppInput label={t('upload.titleLabel')} placeholder={t('upload.titlePlaceholder')} value={title} onChangeText={setTitle} maxLength={120} />
 
-      <ImagePickerArea imageUri={picker.imageUri} onPress={picker.pickFromLibrary} title="Select a document photo" hint="PDF support: add expo-document-picker later" />
+      {picker.file?.isPdf ? (
+        <ListRow
+          icon="document-text-outline"
+          iconColor={colors.danger}
+          title={picker.file.name}
+          subtitle={`PDF${picker.file.size ? ` · ${formatFileSize(picker.file.size)}` : ''} · ${t('upload.tapToChange')}`}
+          onPress={picker.pickFile}
+        />
+      ) : (
+        <ImagePickerArea
+          imageUri={picker.file?.uri ?? null}
+          onPress={picker.pickFile}
+          title={t('upload.select')}
+          hint={t('upload.hint')}
+        />
+      )}
+
       <View style={styles.row}>
         <View style={styles.flex}>
-          <AppButton title="Gallery" icon="images-outline" variant="outline" fullWidth onPress={picker.pickFromLibrary} />
+          <AppButton size="sm" title={t('upload.files')} icon="document-attach-outline" variant="outline" fullWidth onPress={picker.pickFile} />
         </View>
         <View style={styles.flex}>
-          <AppButton title="Camera" icon="camera-outline" variant="outline" fullWidth onPress={picker.takePhoto} />
+          <AppButton size="sm" title={t('upload.gallery')} icon="images-outline" variant="outline" fullWidth onPress={picker.pickPhoto} />
+        </View>
+        <View style={styles.flex}>
+          <AppButton size="sm" title={t('upload.camera')} icon="camera-outline" variant="outline" fullWidth onPress={picker.takePhoto} />
         </View>
       </View>
 
-      <AppButton title="Upload & analyze" icon="sparkles" fullWidth disabled={!picker.imageUri} loading={submit.isLoading} onPress={analyze} />
+      {picker.file?.isPdf ? (
+        <AppCard style={styles.scanCard} tone="muted">
+          <AppText variant="subheading">{t('scanner.title')}</AppText>
+          <AppText variant="caption" color="textMuted">
+            {t('scanner.intro')}
+          </AppText>
+          {!labs && (
+            <AppButton title={t('scanner.scan')} icon="scan-outline" variant="secondary" size="sm" loading={scanning} onPress={() => void scan()} />
+          )}
+          {scanInfo && <AppText variant="caption" color="warning">{scanInfo}</AppText>}
+          {labs && labs.length > 0 && (
+            <>
+              <AppText variant="caption" color="textMuted">
+                {t('scanner.review', { count: labs.length })}
+              </AppText>
+              <LabReviewEditor values={labs} onChange={setLabs} />
+            </>
+          )}
+        </AppCard>
+      ) : (
+        picker.file && (
+          <AppText variant="caption" color="textMuted">
+            {t('scanner.imageLimit')}
+          </AppText>
+        )
+      )}
+
+      <AppButton
+        title={labs && labs.length ? t('scanner.uploadWithValues', { count: labs.length }) : t('upload.upload')}
+        icon="cloud-upload-outline"
+        fullWidth
+        disabled={!picker.file}
+        loading={submit.isLoading}
+        onPress={() => void upload()}
+      />
 
       {(picker.pickError || submit.error) && <ErrorState message={picker.pickError ?? submit.error ?? undefined} />}
-      {submit.data?.document.extraction && (
-        <>
-          <ExtractionView extraction={submit.data.document.extraction} />
-          <AppButton title="View all documents" variant="ghost" onPress={() => router.back()} />
-        </>
-      )}
+      <DemoNotice
+        message={
+          USE_MOCKS
+            ? t('upload.mockNotice')
+            : t('upload.privacyNotice')
+        }
+      />
     </ScreenContainer>
   );
 }
 
 const styles = StyleSheet.create({
   field: { gap: spacing.sm },
-  row: { flexDirection: 'row', gap: spacing.md },
+  row: { flexDirection: 'row', gap: spacing.sm },
   flex: { flex: 1 },
+  done: { gap: spacing.sm },
+  scanCard: { gap: spacing.sm },
 });

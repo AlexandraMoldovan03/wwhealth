@@ -46,9 +46,10 @@ PatientRecord {
   treatments: { id, name, dosage, frequency, startDate, endDate|null, active }[],
   history:    MedicalEvent[], documents: MedicalDocument[], xrays: XrayAnalysis[]
 }
-MedicalEvent    { id, type: 'diagnosis'|'treatment'|'allergy'|'document'|'xray'|'visit', title, description, date, details: Record<string,string> }
+MedicalEvent    { id, type: 'diagnosis'|'treatment'|'allergy'|'document'|'xray'|'visit', title, description, date, details: Record<string,string>, documentId?: string|null }
 MedicalDocument { id, title, type: 'lab_result'|'prescription'|'discharge_summary'|'imaging_report'|'other',
-                  uploadedAt, fileUrl|null, status: 'processing'|'analyzed'|'failed', extraction: DocumentExtraction|null, isDemo }
+                  uploadedAt, fileUrl|null, mimeType?, sizeBytes?, status: 'uploaded'|'processing'|'analyzed'|'failed',
+                  extraction: DocumentExtraction|null, isDemo }
 DocumentExtraction { summary, diagnoses: string[], allergies: string[], medications: string[],
                      labValues: { name, value, unit|null, flag: 'low'|'normal'|'high'|null }[] }
 XrayAnalysis    { id, createdAt, imageUrl|null, heatmapUrl|null, predictions: { label, probability }[],
@@ -65,6 +66,26 @@ AccessScope = 'profile' | 'history' | 'documents' | 'xrays'
 
 ### `GET /api/v1/patients/me` — patient
 Response: `PatientRecord`.
+
+### `PATCH /api/v1/patients/me` — patient (Smart Medical Profile)
+Only the fields sent are changed; lists replace the whole list. Items without `id` are new (server assigns ids).
+```json
+{ "bloodType": "O-",                       // A+ A- B+ B- AB+ AB- O+ O- or null
+  "allergies":  [{ "id": "al1", "substance": "Penicillin", "reaction": "Rash", "severity": "moderate" }],
+  "diagnoses":  [{ "name": "Hypertension", "status": "active" }],          // "conditions" in the UI
+  "treatments": [{ "name": "Lisinopril", "dosage": "10 mg", "frequency": "1x daily", "active": true }] }  // "medication"
+```
+Response: `PatientRecord`. `422` invalid values.
+
+### `POST /api/v1/documents` — patient, multipart (private upload, no OCR / AI)
+Fields: `file` (PDF/JPEG/PNG, max 10 MB, type checked from file bytes), `documentType`, `title` (optional).
+Response `201`: `{ "document": MedicalDocument }` with `status: "uploaded"`, `mimeType`, `sizeBytes`,
+`fileUrl: "/api/v1/documents/{id}/file"`. Also adds a `MedicalEvent` `{ type: "document", documentId }` to `history`.
+Files are stored outside any public folder (`backend/storage/`, owner-only permissions, server-generated names).
+
+### `GET /api/v1/documents/{id}/file` — patient
+The file, only for its owner (`404` otherwise — no existence leak). Headers: `Cache-Control: no-store, private`.
+The app sends `Authorization: Bearer <token>` (Image / WebView headers on mobile, fetch → blob on web).
 
 ### `POST /api/v1/documents/analyze` — patient, multipart
 Fields: `file` (required), `documentType` (`DocumentType`, default `other`), `title` (optional).

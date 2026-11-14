@@ -13,6 +13,7 @@ import { API_BASE_URL, API_TIMEOUT_MS } from '@/constants/config';
 import type { HttpMethod, JsonValue, UploadFile } from '@/types';
 
 import { ApiError } from './ApiError';
+import { i18n } from '@/i18n';
 
 interface RequestOptions {
   headers?: Record<string, string>;
@@ -52,7 +53,7 @@ function extractErrorMessage(body: unknown, status: number): string {
     const { detail } = body as { detail: unknown };
     if (typeof detail === 'string') return detail;
   }
-  return `Request failed with status ${status}`;
+  return i18n.t('errors.status', { status });
 }
 
 async function request<T>(
@@ -85,6 +86,17 @@ async function request<T>(
   }
 }
 
+/** Absolute URL for an API path (e.g. a document's fileUrl). Local/absolute URIs are returned unchanged. */
+export function resolveApiUrl(pathOrUrl: string): string {
+  return /^[a-z][a-z0-9+.-]*:/i.test(pathOrUrl) ? pathOrUrl : buildUrl(pathOrUrl);
+}
+
+/** Auth header for requests made outside apiClient (Image / WebView loading a protected file). */
+export async function getAuthHeaders(): Promise<Record<string, string>> {
+  const token = getAuthToken ? await getAuthToken() : null;
+  return token ? { Authorization: `Bearer ${token}` } : {};
+}
+
 async function buildHeaders(options: RequestOptions & { isJson?: boolean }): Promise<Record<string, string>> {
   const headers: Record<string, string> = { Accept: 'application/json', ...options.headers };
   if (options.isJson) headers['Content-Type'] = 'application/json';
@@ -99,7 +111,7 @@ function networkError(method: string, url: string, reason: string): ApiError {
     // Shows up in the Metro terminal — the URL the phone actually tried and the raw error.
     console.warn(`[api] ${method} ${url} failed:`, reason);
   }
-  return new ApiError(reason === 'timeout' ? 'Request timed out' : 'Network request failed', 0);
+  return new ApiError(reason === 'timeout' ? i18n.t('errors.timeout') : i18n.t('errors.networkFailed'), 0);
 }
 
 /**
@@ -133,14 +145,28 @@ async function uploadNative<T>(path: string, form: FormData, options: RequestOpt
   });
 }
 
+// Identical GETs already in flight share one network request (several screens mounting together).
+const pendingGets = new Map<string, Promise<unknown>>();
+
 export const apiClient = {
   get<T>(path: string, options?: RequestOptions): Promise<T> {
-    return request<T>('GET', path, undefined, options);
+    if (options?.headers) return request<T>('GET', path, undefined, options);
+    const key = buildUrl(path, options?.params);
+    const pending = pendingGets.get(key);
+    if (pending) return pending as Promise<T>;
+    const promise = request<T>('GET', path, undefined, options).finally(() => pendingGets.delete(key));
+    pendingGets.set(key, promise);
+    return promise;
   },
 
   post<T>(path: string, data?: JsonValue, options?: RequestOptions): Promise<T> {
     const body = data === undefined ? undefined : JSON.stringify(data);
     return request<T>('POST', path, body, { ...options, isJson: true });
+  },
+
+  patch<T>(path: string, data?: JsonValue, options?: RequestOptions): Promise<T> {
+    const body = data === undefined ? undefined : JSON.stringify(data);
+    return request<T>('PATCH', path, body, { ...options, isJson: true });
   },
 
   put<T>(path: string, data?: JsonValue, options?: RequestOptions): Promise<T> {

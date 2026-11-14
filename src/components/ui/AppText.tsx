@@ -3,7 +3,7 @@ import { StyleSheet, Text, type TextProps } from 'react-native';
 import { typography, type TypographyVariant } from '@/constants/theme';
 import { useTheme } from '@/hooks/useTheme';
 
-type TextColor = 'text' | 'textMuted' | 'textSubtle' | 'primary' | 'onPrimary' | 'success' | 'warning' | 'danger';
+type TextColor = 'text' | 'textMuted' | 'textSubtle' | 'primary' | 'onPrimary' | 'onInk' | 'accent' | 'success' | 'warning' | 'danger';
 
 export interface AppTextProps extends TextProps {
   variant?: TypographyVariant;
@@ -16,6 +16,7 @@ export function AppText({ variant = 'body', color = 'text', align, style, ...res
   const { colors } = useTheme();
   return (
     <Text
+      maxFontSizeMultiplier={1.6}
       style={[typography[variant], { color: colors[color] }, align && { textAlign: align }, variant === 'label' && styles.upper, style]}
       {...rest}
     />

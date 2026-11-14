@@ -3,6 +3,7 @@ import { StyleSheet, View } from 'react-native';
 import { AppCard, AppText, InfoRow } from '@/components/ui';
 import { spacing } from '@/constants/theme';
 import type { DocumentExtraction } from '@/types';
+import { useTranslation } from 'react-i18next';
 
 function Line({ label, items }: { label: string; items: string[] }) {
   if (items.length === 0) return null;
@@ -18,15 +19,16 @@ function Line({ label, items }: { label: string; items: string[] }) {
 
 /** Data extracted from a document (by Gemini on the backend). */
 export function ExtractionView({ extraction }: { extraction: DocumentExtraction }) {
+  const { t } = useTranslation();
   return (
     <AppCard style={styles.card}>
       <AppText variant="label" color="textMuted">
-        Extracted data
+        {t('documents.extracted')}
       </AppText>
       <AppText variant="caption">{extraction.summary}</AppText>
-      <Line label="Diagnoses" items={extraction.diagnoses} />
-      <Line label="Allergies" items={extraction.allergies} />
-      <Line label="Medications" items={extraction.medications} />
+      <Line label={t('documents.diagnoses')} items={extraction.diagnoses} />
+      <Line label={t('documents.allergies')} items={extraction.allergies} />
+      <Line label={t('documents.medications')} items={extraction.medications} />
       {extraction.labValues.length > 0 && (
         <View>
           {extraction.labValues.map((lab, i) => (

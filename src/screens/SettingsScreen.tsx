@@ -1,29 +1,39 @@
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { Alert, StyleSheet, Switch, View } from 'react-native';
+import { Alert, StyleSheet, View } from 'react-native';
 
-import { AppCard, AppText, ScreenContainer, SectionHeader } from '@/components/ui';
-import { API_BASE_URL, APP_INFO, USE_MOCKS } from '@/constants/config';
+import { AppCard, AppText, Avatar, Badge, ScreenContainer, SectionHeader } from '@/components/ui';
+import { API_BASE_URL, APP_INFO, SUPABASE_ENABLED, USE_MOCKS } from '@/constants/config';
 import { spacing } from '@/constants/theme';
+import { logout } from '@/features/auth/authService';
+import { useCurrentUser } from '@/features/auth/useCurrentUser';
 import { SettingsRow } from '@/features/settings/components/SettingsRow';
+import { LanguageSelector } from '@/features/settings/components/LanguageSelector';
 import { ThemeSelector } from '@/features/settings/components/ThemeSelector';
 import { useTheme } from '@/hooks/useTheme';
 import { realApi } from '@/services/api/realApi';
 import { getErrorMessage } from '@/utils/errors';
+import { useTranslation } from 'react-i18next';
 
 export function SettingsScreen() {
   const { colors } = useTheme();
-  const [notifications, setNotifications] = useState(true);
+  const { t } = useTranslation();
   const [checking, setChecking] = useState(false);
+  const user = useCurrentUser();
+
+  const signOut = async () => {
+    await logout();
+    router.replace('/login');
+  };
 
   const testConnection = async () => {
     setChecking(true);
     try {
       // Always hits the real backend, even in MOCK mode.
       const res = await realApi.health();
-      Alert.alert('Backend reachable', `Status: ${res.status} · v${res.version}`);
+      Alert.alert(t('settings.backendOk'), `Status: ${res.status} · v${res.version}`);
     } catch (err) {
-      Alert.alert('Connection failed', getErrorMessage(err));
+      Alert.alert(t('settings.connectionFailed'), getErrorMessage(err));
     } finally {
       setChecking(false);
     }
@@ -31,81 +41,97 @@ export function SettingsScreen() {
 
   return (
     <ScreenContainer>
-      <AppText variant="title">Settings</AppText>
+      <AppText variant="title" accessibilityRole="header">
+        {t('settings.title')}
+      </AppText>
+
+      {user && (
+        <AppCard style={styles.profile} enterIndex={0}>
+          <Avatar name={user.fullName || user.email} size={64} tone={user.role === 'doctor' ? 'accent' : 'primary'} />
+          <View style={styles.flex}>
+            <AppText variant="heading" numberOfLines={1}>
+              {user.fullName || t('settings.signedIn')}
+            </AppText>
+            <AppText variant="caption" color="textMuted" numberOfLines={1}>
+              {user.email}
+            </AppText>
+            {/* Read-only: the role is set in Supabase (public.profiles.role), never from the app. */}
+            <Badge label={t(`roles.${user.role}`)} color={user.role === 'doctor' ? colors.accent : colors.primary} />
+          </View>
+        </AppCard>
+      )}
 
       <View style={styles.section}>
-        <SectionHeader title="Account" />
+        <SectionHeader title={t('settings.account')} />
         <AppCard>
-          <SettingsRow icon="log-in-outline" title="Sign in" onPress={() => router.push('/login')} />
-          <SettingsRow icon="person-add-outline" title="Create account" onPress={() => router.push('/register')} />
+          {user ? (
+            <>
+              <SettingsRow
+                icon={user.role === 'doctor' ? 'medkit-outline' : 'person-outline'}
+                title={t('settings.activeRole')}
+                value={t(`roles.${user.role}`)}
+              />
+              {user.role === 'patient' && (
+                <SettingsRow icon="document-text-outline" title={t('settings.medicalProfile')} onPress={() => router.push('/patient/profile')} />
+              )}
+              {user.role === 'patient' && (
+                <SettingsRow icon="medkit-outline" title={t('settings.emergencyPassport')} onPress={() => router.push('/patient/emergency')} />
+              )}
+              <SettingsRow icon="sparkles-outline" title={t('settings.replayOnboarding')} onPress={() => router.push('/onboarding')} />
+              <SettingsRow icon="log-out-outline" title={t('settings.signOut')} onPress={signOut} />
+            </>
+          ) : (
+            <>
+              <SettingsRow icon="log-in-outline" title={t('common.signIn')} onPress={() => router.push('/login')} />
+              <SettingsRow icon="person-add-outline" title={t('common.createAccount')} onPress={() => router.push('/register')} />
+            </>
+          )}
         </AppCard>
       </View>
 
       <View style={styles.section}>
-        <SectionHeader title="Appearance" />
+        <SectionHeader title={t('settings.appearance')} />
         <AppCard style={styles.card}>
           <AppText variant="caption" color="textMuted">
-            Theme
+            {t('settings.theme')}
           </AppText>
           <ThemeSelector />
+          <AppText variant="caption" color="textMuted">
+            {t('settings.language')}
+          </AppText>
+          <LanguageSelector />
         </AppCard>
       </View>
 
       <View style={styles.section}>
-        <SectionHeader title="General" />
+        <SectionHeader title={t('settings.backend')} subtitle={t('settings.backendSubtitle')} />
         <AppCard>
-          <SettingsRow
-            icon="notifications-outline"
-            title="Notifications"
-            right={
-              <Switch
-                value={notifications}
-                onValueChange={setNotifications}
-                trackColor={{ true: colors.primary, false: colors.border }}
-              />
-            }
-          />
-          <SettingsRow icon="language-outline" title="Language" value="English" />
-        </AppCard>
-      </View>
-
-      <View style={styles.section}>
-        <SectionHeader title="Backend" subtitle="Configured in .env → src/constants/config.ts" />
-        <AppCard>
-          <SettingsRow icon="server-outline" title="API URL" value={API_BASE_URL} />
-          <SettingsRow icon="flask-outline" title="Data source" value={USE_MOCKS ? 'MOCK (demo data)' : 'API (FastAPI)'} />
+          <SettingsRow icon="server-outline" title={t('settings.apiUrl')} value={API_BASE_URL} />
+          <SettingsRow icon="flask-outline" title={t('settings.dataSource')} value={USE_MOCKS ? t('settings.dataMock') : t('settings.dataApi')} />
           <SettingsRow
             icon="pulse-outline"
-            title={checking ? 'Checking…' : 'Test connection'}
+            title={checking ? t('settings.checking') : t('settings.testConnection')}
             onPress={checking ? undefined : testConnection}
           />
         </AppCard>
       </View>
 
       <View style={styles.section}>
-        <SectionHeader title="Role" subtitle="Demo switch until Auth0 roles are implemented" />
+        <SectionHeader title={t('settings.integrations')} subtitle={t('settings.integrationsSubtitle')} />
         <AppCard>
-          <SettingsRow icon="person-outline" title="Patient area" value="Tabs" />
-          <SettingsRow icon="medkit-outline" title="Doctor Dashboard" onPress={() => router.push('/doctor')} />
+          <SettingsRow icon="shield-checkmark-outline" title={t('settings.supabaseLogin')} value={SUPABASE_ENABLED ? t('settings.connected') : t('settings.notConfigured')} />
+          <SettingsRow icon="scan-outline" title={t('settings.lungModel')} value="DenseNet121 (demo)" />
+          <SettingsRow icon="sparkles-outline" title={t('settings.geminiExtraction')} value="Backend" />
+          <SettingsRow icon="volume-high-outline" title={t('settings.elevenLabs')} value="Backend" />
         </AppCard>
       </View>
 
       <View style={styles.section}>
-        <SectionHeader title="Integrations" subtitle="Configured on the backend — not in the app" />
-        <AppCard>
-          <SettingsRow icon="shield-checkmark-outline" title="Auth0 login" value="Not connected" />
-          <SettingsRow icon="scan-outline" title="LungVision model" value="DenseNet121 (demo)" />
-          <SettingsRow icon="sparkles-outline" title="Gemini extraction" value="Backend" />
-          <SettingsRow icon="volume-high-outline" title="ElevenLabs voice" value="Backend" />
-        </AppCard>
-      </View>
-
-      <View style={styles.section}>
-        <SectionHeader title="About" />
+        <SectionHeader title={t('settings.about')} />
         <AppCard>
           <SettingsRow icon="information-circle-outline" title={APP_INFO.name} value={`v${APP_INFO.version}`} />
           <AppText variant="caption" color="textMuted" style={styles.about}>
-            {APP_INFO.description}
+            {t('app.description')}
           </AppText>
         </AppCard>
       </View>
@@ -115,6 +141,8 @@ export function SettingsScreen() {
 
 const styles = StyleSheet.create({
   section: { gap: spacing.md },
+  profile: { flexDirection: 'row', alignItems: 'center', gap: spacing.md },
+  flex: { flex: 1, gap: spacing.xs },
   card: { gap: spacing.sm },
   about: { paddingTop: spacing.xs },
 });

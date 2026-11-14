@@ -36,5 +36,5 @@ export function SectionHeader({ title, subtitle, actionLabel, onActionPress }: S
 const styles = StyleSheet.create({
   row: { flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between', gap: spacing.md },
   text: { flex: 1, gap: spacing.xxs },
-  action: { fontWeight: '600' },
+  action: { fontFamily: 'DMSans_700Bold' },
 });

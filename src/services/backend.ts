@@ -8,9 +8,14 @@
  * EXPO_PUBLIC_USE_MOCKS=false → realApi (FastAPI at EXPO_PUBLIC_API_BASE_URL)
  */
 import { USE_MOCKS } from '@/constants/config';
+import { getAccessToken } from '@/features/auth/authService';
 import type { WWHealthApi } from '@/types';
 
+import { setAuthTokenProvider } from './api/client';
 import { realApi } from './api/realApi';
 import { mockApi } from './mock/mockApi';
+
+// Every request carries the logged-in user's token; the backend scopes medical data to that user.
+setAuthTokenProvider(getAccessToken);
 
 export const api: WWHealthApi = USE_MOCKS ? mockApi : realApi;

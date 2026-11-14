@@ -1,22 +1,24 @@
-import { Stack } from 'expo-router';
+import { router, Stack } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 
-import { AppCard, AppText, Badge, ErrorState, IconBadge, InfoRow, LoadingState, ScreenContainer } from '@/components/ui';
+import { AppButton, AppCard, AppText, Badge, ErrorState, IconBadge, InfoRow, LoadingState, ScreenContainer } from '@/components/ui';
 import { spacing } from '@/constants/theme';
 import { getEventStyle } from '@/features/history/eventStyle';
 import { useAsync } from '@/hooks/useAsync';
 import { useTheme } from '@/hooks/useTheme';
 import { api } from '@/services/backend';
 import { formatDateTime } from '@/utils/format';
+import { useTranslation } from 'react-i18next';
 
 export function MedicalEventDetailScreen({ id }: { id: string }) {
   const { colors } = useTheme();
+  const { t } = useTranslation();
   const { data, isLoading, error, reload } = useAsync(api.getMyPatient);
   const event = data?.history.find((e) => e.id === id);
 
   if (isLoading) return <ScreenContainer edges={['bottom']}><LoadingState /></ScreenContainer>;
   if (error || !event) {
-    return <ScreenContainer edges={['bottom']}><ErrorState message={error ?? 'Event not found'} onRetry={reload} /></ScreenContainer>;
+    return <ScreenContainer edges={['bottom']}><ErrorState message={error ?? t('history.notFound')} onRetry={reload} /></ScreenContainer>;
   }
 
   const style = getEventStyle(event.type, colors);
@@ -31,12 +33,12 @@ export function MedicalEventDetailScreen({ id }: { id: string }) {
           <AppText variant="caption" color="textMuted">
             {formatDateTime(event.date)}
           </AppText>
-          <Badge label={style.label} color={style.color} />
+          <Badge label={t(`history.types.${event.type}`)} color={style.color} />
         </View>
       </AppCard>
       <AppCard style={styles.section}>
         <AppText variant="label" color="textMuted">
-          Description
+          {t('history.description')}
         </AppText>
         <AppText>{event.description}</AppText>
       </AppCard>
@@ -45,6 +47,14 @@ export function MedicalEventDetailScreen({ id }: { id: string }) {
           <InfoRow key={key} first={i === 0} label={key} value={value} />
         ))}
       </AppCard>
+      {event.documentId && (
+        <AppButton
+          title={t('history.openDocument')}
+          icon="eye-outline"
+          fullWidth
+          onPress={() => router.push({ pathname: '/patient/document/[id]', params: { id: event.documentId as string } })}
+        />
+      )}
     </ScreenContainer>
   );
 }

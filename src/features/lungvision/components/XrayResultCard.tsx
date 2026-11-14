@@ -7,16 +7,18 @@ import type { XrayAnalysis } from '@/types';
 import { formatDateTime, formatPercent } from '@/utils/format';
 
 import { HeatmapPreview } from './HeatmapPreview';
+import { useTranslation } from 'react-i18next';
 
 /** Full LungVision result: heatmap, probabilities, model info, disclaimer. */
 export function XrayResultCard({ result, showHeatmap = true }: { result: XrayAnalysis; showHeatmap?: boolean }) {
   const { colors } = useTheme();
+  const { t } = useTranslation();
   return (
     <AppCard style={styles.card}>
       <View style={styles.header}>
         <View style={styles.headerText}>
           <AppText variant="label" color="textMuted">
-            Top finding
+            {t('xray.topFinding')}
           </AppText>
           <AppText variant="title">{result.topLabel}</AppText>
         </View>

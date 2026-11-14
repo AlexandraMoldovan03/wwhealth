@@ -17,5 +17,5 @@ export function IconBadge({ icon, color, size = sizes.iconBadge }: { icon: IconN
 }
 
 const styles = StyleSheet.create({
-  badge: { borderRadius: radius.md, alignItems: 'center', justifyContent: 'center' },
+  badge: { borderRadius: radius.md + 2, alignItems: 'center', justifyContent: 'center' },
 });

@@ -10,6 +10,8 @@ export const FEATURES: Feature[] = [
   { id: 'xray-results', title: 'X-ray Results', description: 'Previous LungVision analyses.', icon: 'images-outline', category: 'AI', route: '/patient/xray-results', isAvailable: true },
   { id: 'history', title: 'Medical History', description: 'Timeline of visits, diagnoses and analyses.', icon: 'time-outline', category: 'Patient', route: '/history', isAvailable: true },
   { id: 'passport', title: 'Medical Passport QR', description: 'Temporary QR access for a doctor.', icon: 'qr-code-outline', category: 'Patient', route: '/patient/passport', isAvailable: true },
+  { id: 'emergency', title: 'Emergency Passport', description: 'Single-use 5-minute QR: blood type, allergies, conditions, medication.', icon: 'medkit-outline', category: 'Patient', route: '/patient/emergency', isAvailable: true },
   { id: 'doctor-dashboard', title: 'Doctor Dashboard', description: 'Doctor area (demo role).', icon: 'medkit-outline', category: 'Doctor', route: '/doctor', isAvailable: true },
+  { id: 'emergency-scan', title: 'Emergency scan', description: 'Scan a patient emergency QR (doctor accounts).', icon: 'medkit-outline', category: 'Doctor', route: '/doctor/emergency', isAvailable: true },
   { id: 'qr-scanner', title: 'QR Scanner', description: 'Scan a patient passport to get access.', icon: 'scan-circle-outline', category: 'Doctor', route: '/doctor/scan', isAvailable: true },
 ];
