@@ -39,6 +39,7 @@ export const realApi: WWHealthApi = {
 
   createEmergencyToken: () => apiClient.post(ENDPOINTS.emergencyTokens),
   revokeEmergencyToken: (tokenId) => apiClient.post(ENDPOINTS.emergencyRevoke(tokenId)),
+  getEmergencyTokenStatus: (tokenId) => apiClient.get(ENDPOINTS.emergencyTokenStatus(tokenId)),
   // The scanned token goes to FastAPI as-is; validation never happens in the app.
   redeemEmergencyToken: (request) => apiClient.post(ENDPOINTS.emergencyRedeem, { token: request.token }),
   getEmergencyAudit: () => apiClient.get(ENDPOINTS.emergencyAudit),

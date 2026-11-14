@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { useEffect, useState } from "react";
+import { AppState, StyleSheet, View } from "react-native";
 import QRCode from "react-native-qrcode-svg";
 import Animated from "react-native-reanimated";
 
@@ -22,7 +22,7 @@ import {
 import { useAsync } from "@/hooks/useAsync";
 import { useTheme } from "@/design-system/useTheme";
 import { api } from "@/services/backend";
-import type { EmergencyTokenResponse } from "@/types";
+import { useEmergencyToken } from "@/services/EmergencyTokenProvider";
 import { getErrorMessage } from "@/utils/errors";
 import { useTranslation } from "react-i18next";
 
@@ -34,12 +34,38 @@ import { useTranslation } from "react-i18next";
 export function EmergencyPassportScreen() {
   const { colors } = useTheme();
   const { t } = useTranslation();
-  const [code, setCode] = useState<EmergencyTokenResponse | null>(null);
+  const { token: code, isRestoring: restoringCode, saveToken, clearToken } = useEmergencyToken();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const audit = useAsync(api.getEmergencyAudit, { refetchOnFocus: true });
   const secondsLeft = useCountdown(code?.expiresAt ?? null);
   const active = !!code && secondsLeft > 0;
+
+  useEffect(() => {
+    if (!active || !code) return;
+    let mounted = true;
+    let checking = false;
+    const checkStatus = async () => {
+      if (checking) return;
+      checking = true;
+      try {
+        const result = await api.getEmergencyTokenStatus(code.tokenId);
+        if (mounted && result.status !== "active") {
+          await clearToken();
+        }
+      } catch {
+        // Keep displaying the locally saved QR while offline; retry on the next interval.
+      } finally {
+        checking = false;
+      }
+    };
+    void checkStatus();
+    const interval = setInterval(() => { void checkStatus(); }, 2_000);
+    const appState = AppState.addEventListener("change", (state) => {
+      if (state === "active") void checkStatus();
+    });
+    return () => { mounted = false; clearInterval(interval); appState.remove(); };
+  }, [active, code, clearToken]);
 
 
   const act = async (fn: () => Promise<void>) => {
@@ -57,14 +83,15 @@ export function EmergencyPassportScreen() {
 
   const generate = () =>
     act(async () => {
-      setCode(await api.createEmergencyToken());
+      const token = await api.createEmergencyToken();
+      await saveToken(token);
       tapFeedback("success");
     });
   const revoke = () =>
     act(async () => {
       if (code)
         await api.revokeEmergencyToken(code.tokenId).catch(() => undefined); // already used/expired → just hide it
-      setCode(null);
+      await clearToken();
     });
 
   return (
@@ -122,6 +149,7 @@ export function EmergencyPassportScreen() {
         </Animated.View>
       ) : (
         <View style={styles.actions}>
+          {restoringCode && <AppText color="textMuted" align="center">{t("common.loading")}</AppText>}
           {code && (
             <AppText color="textMuted" align="center">
               {t("emergency.expired")}
@@ -133,7 +161,8 @@ export function EmergencyPassportScreen() {
             variant="danger"
             size="lg"
             fullWidth
-            loading={busy}
+            loading={busy || restoringCode}
+            disabled={restoringCode}
             onPress={generate}
           />
         </View>

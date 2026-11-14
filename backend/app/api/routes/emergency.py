@@ -14,7 +14,7 @@ from fastapi import APIRouter, Depends, HTTPException, Response
 from app.api.supabase_errors import supabase_errors
 from app.core.config import settings
 from app.core.security import CurrentUser, get_current_doctor, get_current_user
-from app.schemas.emergency import EmergencyAccessEvent, EmergencyData, EmergencyRedeemRequest, EmergencyTokenResponse
+from app.schemas.emergency import EmergencyAccessEvent, EmergencyData, EmergencyRedeemRequest, EmergencyTokenResponse, EmergencyTokenStatus
 from app.services import emergency_service as es
 from app.services import supabase_repo
 
@@ -56,6 +56,16 @@ def revoke_token(token_id: str, user: CurrentUser = Depends(get_current_user)) -
     if not revoked:
         raise HTTPException(status_code=404, detail="No active emergency code to revoke")
     return Response(status_code=204)
+
+
+@router.get("/tokens/{token_id}/status", response_model=EmergencyTokenStatus)
+def token_status(response: Response, token_id: str, user: CurrentUser = Depends(get_current_user)) -> EmergencyTokenStatus:
+    with supabase_errors():
+        status = supabase_repo.emergency_token_status(user, token_id) if settings.supabase_enabled else es.demo_token_status(user.id, token_id)
+    response.headers.update(NO_STORE)
+    if status not in {"active", "used", "revoked", "expired", "not_found"}:
+        raise HTTPException(status_code=502, detail="Unexpected emergency token status", headers=NO_STORE)
+    return EmergencyTokenStatus(status=status)
 
 
 @router.post("/redeem", response_model=EmergencyData)

@@ -30,7 +30,7 @@ export const TABS: TabConfig[] = [
   { name: 'patients', title: 'Patients', icon: 'people-outline', iconFocused: 'people', roles: ['doctor'] },
   { name: 'scan', title: 'Scan QR', icon: 'qr-code-outline', iconFocused: 'qr-code', roles: ['doctor'] },
   { name: 'files', title: 'Records', icon: 'folder-open-outline', iconFocused: 'folder-open', roles: ['doctor'] },
-  { name: 'settings', title: 'Profile', icon: 'person-circle-outline', iconFocused: 'person-circle', roles: ['patient', 'doctor'] },
+  { name: 'settings', title: 'Settings', icon: 'settings-outline', iconFocused: 'settings', roles: ['patient', 'doctor'] },
   // Reached from the hubs above (never in the bar).
   { name: 'history', title: 'Timeline', icon: 'time-outline', iconFocused: 'time', roles: ['patient'], parent: 'records' },
   { name: 'analysis', title: 'LungVision', icon: 'scan-outline', iconFocused: 'scan', roles: ['patient'], parent: 'insights' },

@@ -82,7 +82,7 @@
     "explore": "Explore",
     "analysis": "LungVision",
     "history": "Timeline",
-    "settings": "Profile",
+    "settings": "Settings",
     "scan": "Scan QR",
     "access": "Accesses",
     "patients": "Patients",
@@ -249,6 +249,7 @@
       }
     },
     "emergencyQr": "Generate emergency QR",
+    "openEmergencyQr": "Open emergency QR",
     "headline": "Your health, calmly in one place",
     "emergency": {
       "title": "Emergency Passport",

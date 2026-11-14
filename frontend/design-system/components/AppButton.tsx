@@ -19,6 +19,8 @@ export interface AppButtonProps extends Omit<PressableProps, 'children' | 'style
   icon?: IconName;
   /** Icon at the end (e.g. arrow-forward). */
   trailingIcon?: IconName;
+  /** Optional icon/text colour override for buttons on custom backgrounds. */
+  contentColor?: string;
   loading?: boolean;
   fullWidth?: boolean;
 }
@@ -31,6 +33,7 @@ export function AppButton({
   size = 'md',
   icon,
   trailingIcon,
+  contentColor,
   loading = false,
   fullWidth = false,
   disabled,
@@ -53,7 +56,8 @@ export function AppButton({
     danger: { bg: colors.danger, fg: colors.onDanger, border: colors.danger },
     inverse: { bg: 'rgba(255,255,255,0.95)', fg: '#1C2E34', border: 'transparent' },
   };
-  const { bg, fg, border } = palette[variant];
+  const { bg, fg: variantFg, border } = palette[variant];
+  const fg = contentColor ?? variantFg;
   const height = size === 'sm' ? sizes.buttonHeightSmall : size === 'lg' ? sizes.buttonHeight + 8 : sizes.buttonHeight;
 
   return (

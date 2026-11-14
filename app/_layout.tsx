@@ -14,6 +14,7 @@ import { STACK_SCREENS } from '@/config/navigation';
 import { fonts } from '@/design-system/theme';
 import { ThemeProvider } from '@/design-system/ThemeContext';
 import { HelpProvider } from '@/help';
+import { EmergencyTokenProvider } from '@/services/EmergencyTokenProvider';
 import { useSignedIn } from '@/services/auth/useSignedIn';
 import { useTheme } from '@/design-system/useTheme';
 import { useTranslation } from 'react-i18next';
@@ -103,9 +104,11 @@ export default function RootLayout() {
   if (!fontsLoaded && !fontError) return null;
   return (
     <ThemeProvider>
-      <HelpProvider>
-        <RootNavigator />
-      </HelpProvider>
+      <EmergencyTokenProvider>
+        <HelpProvider>
+          <RootNavigator />
+        </HelpProvider>
+      </EmergencyTokenProvider>
     </ThemeProvider>
   );
 }

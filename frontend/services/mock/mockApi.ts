@@ -257,6 +257,16 @@ export const mockApi: WWHealthApi = {
     logEmergency('revoked');
   },
 
+  async getEmergencyTokenStatus(tokenId) {
+    await delay(MOCK_DELAY_MS);
+    const entry = [...emergencyTokens.values()].find((token) => token.id === tokenId);
+    if (!entry) return { status: 'not_found' as const };
+    if (entry.usedAt) return { status: 'used' as const };
+    if (entry.revokedAt) return { status: 'revoked' as const };
+    if (entry.expiresAt <= Date.now()) return { status: 'expired' as const };
+    return { status: 'active' as const };
+  },
+
   async redeemEmergencyToken({ token }) {
     await delay(MOCK_DELAY_MS);
     const entry = emergencyTokens.get(token.trim().replace(/^wwhealth:\/\/emergency\//i, ''));
