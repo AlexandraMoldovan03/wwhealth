@@ -1,5 +1,7 @@
 {
-  "voiceRecording": {"active":"Recording"},
+  "voiceRecording": {
+    "active": "Recording"
+  },
   "common": {
     "email": "Email",
     "password": "Password",
@@ -347,6 +349,7 @@
     }
   },
   "profile": {
+    "personalDetails": "Patient details",
     "name": "Name",
     "age": "Age",
     "sex": "Sex",
@@ -661,7 +664,7 @@
       "expired": "This QR expired or was revoked. Ask the patient to generate a new one."
     },
     "timeLeft": "{{time}} left"
-  },
+  },
   "family": {
     "title": "Family QR",
     "intro": "Add up to 3 family members and keep their emergency QR codes in one place. Each QR is valid for 5 minutes, and a new one is generated every time you press the button.",
@@ -1250,7 +1253,7 @@
     },
     "topics": {
       "home": {
-    "passportTap": "Tap the passport to open it",
+        "passportTap": "Tap the passport to open it",
         "title": "Home",
         "intro": "Your starting point: what to do next and how complete your record is.",
         "can": [
@@ -1886,7 +1889,8 @@
       "noteHint": "Don't write anything you don't want the doctor to see. Up to 500 characters.",
       "submit": "Send booking request",
       "sentTitle": "Request sent",
-      "sentText": "The doctor can accept it, reject it or propose another time. See the answer in My appointments."
+      "sentText": "The doctor can accept it, reject it or propose another time. See the answer in My appointments.",
+      "home": "Back to Home"
     },
     "slot": {
       "booked": "booked"

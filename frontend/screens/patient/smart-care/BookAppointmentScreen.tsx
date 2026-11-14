@@ -61,6 +61,8 @@ export function BookAppointmentScreen({ doctorId, specialtyId, doctorName, speci
           </AppCard>
           <AppointmentCard appointment={book.data} perspective="patient" enterIndex={1} />
           <AppButton title={t('care.myAppointments')} icon="calendar-outline" fullWidth onPress={() => router.replace('/patient/appointments')} />
+          {/* Closes every Smart Care screen opened on top of the tabs (search → doctors → booking) and shows Home. */}
+          <AppButton title={t('care.book.home')} icon="home-outline" variant="outline" fullWidth onPress={() => router.dismissTo('/')} />
         </>
       ) : (
         <>

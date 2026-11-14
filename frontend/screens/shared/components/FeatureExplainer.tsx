@@ -23,7 +23,7 @@ export function FeatureExplainer({ id, enterIndex }: { id: ExplainerId; enterInd
   const { colors } = useTheme();
   const { t } = useTranslation();
   return (
-    <AppCard tone="flat" enterIndex={enterIndex} style={styles.card}>
+    <AppCard tone="info" enterIndex={enterIndex} style={styles.card}>
       <View style={styles.row}>
         <Ionicons name={ICON[id]} size={18} color={colors.primary} />
         <View style={styles.flex}>

@@ -4,10 +4,10 @@ import Svg, { Defs, RadialGradient, Rect, Stop } from 'react-native-svg';
 import { AppText, ErrorState, ScreenContainer, SectionHeader } from '@/design-system';
 import { spacing } from '@/design-system/theme';
 import { useCurrentUser } from '@/services/auth/useCurrentUser';
-import { EmergencyCard } from './components/EmergencyCard';
 import { JourneyCards } from './components/JourneyCards';
 import { NextStepCard } from './components/NextStepCard';
 import { PassportButton } from './components/PassportButton';
+import { EmergencyCard } from './components/EmergencyCard';
 import { ProgressChecklist } from './components/ProgressChecklist';
 import { useRecordProgress } from './useRecordProgress';
 import { WelcomeHeader } from '@/screens/shared/components/WelcomeHeader';
@@ -52,7 +52,6 @@ export function PatientDashboardScreen() {
       </View>
 
       <PassportButton />
-
       <EmergencyCard enterIndex={1} />
 
       {error && !patient ? (

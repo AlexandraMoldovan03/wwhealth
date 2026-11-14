@@ -1,5 +1,7 @@
 {
-  "voiceRecording": {"active":"Se înregistrează"},
+  "voiceRecording": {
+    "active": "Se înregistrează"
+  },
   "common": {
     "email": "Email",
     "password": "Parolă",
@@ -347,6 +349,7 @@
     }
   },
   "profile": {
+    "personalDetails": "Datele pacientului",
     "name": "Nume",
     "age": "Vârstă",
     "sex": "Sex",
@@ -661,7 +664,7 @@
       "expired": "Acest QR a expirat sau a fost revocat. Roagă pacientul să genereze unul nou."
     },
     "timeLeft": "Mai sunt {{time}}"
-  },
+  },
   "family": {
     "title": "QR familiei",
     "intro": "Adaugă până la 3 membri ai familiei și păstrează QR-urile lor de urgență într-un singur loc. Fiecare QR este valabil 5 minute, iar unul nou este generat de fiecare dată când apeși butonul.",
@@ -1262,7 +1265,7 @@
     },
     "topics": {
       "home": {
-    "passportTap": "Apasă pe pașaport ca să-l deschizi",
+        "passportTap": "Apasă pe pașaport ca să-l deschizi",
         "title": "Acasă",
         "intro": "Punctul de plecare: ce ai de făcut mai departe și cât de complet e dosarul.",
         "can": [
@@ -1900,7 +1903,8 @@
       "noteHint": "Nu scrie date pe care nu vrei să le vadă medicul. Maximum 500 de caractere.",
       "submit": "Trimite cererea de programare",
       "sentTitle": "Cerere trimisă",
-      "sentText": "Medicul o poate accepta, respinge sau îți poate propune altă oră. Vezi răspunsul în Programările mele."
+      "sentText": "Medicul o poate accepta, respinge sau îți poate propune altă oră. Vezi răspunsul în Programările mele.",
+      "home": "Înapoi la pagina principală"
     },
     "slot": {
       "booked": "rezervat"
