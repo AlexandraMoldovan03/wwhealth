@@ -670,6 +670,8 @@
     "name": "Full name",
     "namePlaceholder": "e.g. Maria Popescu",
     "nameRequired": "Enter the family member's name.",
+    "email": "Email",
+    "emailPlaceholder": "e.g. maria@email.com",
     "relationship": "Relationship (optional)",
     "relationshipPlaceholder": "e.g. Mother, father, child",
     "save": "Add family member",

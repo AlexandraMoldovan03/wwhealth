@@ -670,6 +670,8 @@
     "name": "Nume complet",
     "namePlaceholder": "ex. Maria Popescu",
     "nameRequired": "Introdu numele membrului familiei.",
+    "email": "Email",
+    "emailPlaceholder": "ex. maria@email.com",
     "relationship": "Relație (opțional)",
     "relationshipPlaceholder": "ex. Mamă, tată, copil",
     "save": "Adaugă membrul familiei",

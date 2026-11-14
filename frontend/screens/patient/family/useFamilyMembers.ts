@@ -51,10 +51,11 @@ export function useFamilyMembers(userId: string | undefined) {
   );
 
   const addMember = useCallback(
-    (name: string, relationship: string) => {
+    (name: string, email: string, relationship: string) => {
       const member: FamilyMember = {
         id: createFamilyMemberId(),
         name: name.trim(),
+        email: email.trim(),
         relationship: relationship.trim(),
         qr: null,
       };

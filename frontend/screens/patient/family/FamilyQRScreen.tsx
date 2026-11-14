@@ -91,8 +91,8 @@ export function FamilyQRScreen() {
       <AddFamilyMemberSheet
         visible={sheetOpen}
         onClose={() => setSheetOpen(false)}
-        onAdd={(name, relationship) => {
-          addMember(name, relationship);
+        onAdd={(name, email, relationship) => {
+          addMember(name, email, relationship);
           setSheetOpen(false);
         }}
       />

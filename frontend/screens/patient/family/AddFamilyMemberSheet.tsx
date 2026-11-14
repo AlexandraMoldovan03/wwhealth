@@ -6,26 +6,31 @@ import { useTranslation } from 'react-i18next';
 import { AppButton, AppInput, AppText } from '@/design-system';
 import { radius, sizes, spacing } from '@/design-system/theme';
 import { useTheme } from '@/design-system/useTheme';
+import { validateEmail } from '@/screens/auth/validation';
 
 interface AddFamilyMemberSheetProps {
   visible: boolean;
   onClose: () => void;
-  onAdd: (name: string, relationship: string) => void;
+  onAdd: (name: string, email: string, relationship: string) => void;
 }
 
-/** Bottom sheet with the two fields needed for a family member. */
+/** Bottom sheet with the fields needed for a family member. */
 export function AddFamilyMemberSheet({ visible, onClose, onAdd }: AddFamilyMemberSheetProps) {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
   const [relationship, setRelationship] = useState('');
-  const [error, setError] = useState<string | null>(null);
+  const [nameError, setNameError] = useState<string | null>(null);
+  const [emailError, setEmailError] = useState<string | null>(null);
 
   const reset = () => {
     setName('');
+    setEmail('');
     setRelationship('');
-    setError(null);
+    setNameError(null);
+    setEmailError(null);
   };
 
   const close = () => {
@@ -35,11 +40,12 @@ export function AddFamilyMemberSheet({ visible, onClose, onAdd }: AddFamilyMembe
 
   const submit = () => {
     const cleanName = name.trim();
-    if (!cleanName) {
-      setError(t('family.nameRequired'));
-      return;
-    }
-    onAdd(cleanName, relationship.trim());
+    const nameProblem = cleanName ? null : t('family.nameRequired');
+    const emailProblem = validateEmail(email) ?? null;
+    setNameError(nameProblem);
+    setEmailError(emailProblem);
+    if (nameProblem || emailProblem) return;
+    onAdd(cleanName, email.trim(), relationship.trim());
     reset();
   };
 
@@ -80,13 +86,30 @@ export function AddFamilyMemberSheet({ visible, onClose, onAdd }: AddFamilyMembe
             value={name}
             onChangeText={(value) => {
               setName(value);
-              if (error) setError(null);
+              if (nameError) setNameError(null);
             }}
-            error={error ?? undefined}
+            error={nameError ?? undefined}
             autoCapitalize="words"
             maxLength={60}
             onClear={() => setName('')}
             autoFocus
+          />
+          <AppInput
+            label={t('family.email')}
+            placeholder={t('family.emailPlaceholder')}
+            icon="mail-outline"
+            value={email}
+            onChangeText={(value) => {
+              setEmail(value);
+              if (emailError) setEmailError(null);
+            }}
+            error={emailError ?? undefined}
+            keyboardType="email-address"
+            textContentType="emailAddress"
+            autoCapitalize="none"
+            autoCorrect={false}
+            maxLength={120}
+            onClear={() => setEmail('')}
           />
           <AppInput
             label={t('family.relationship')}

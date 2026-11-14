@@ -14,6 +14,7 @@ export interface FamilyQrCode {
 export interface FamilyMember {
   id: string;
   name: string;
+  email: string;
   /** Free text: mother, father, child, etc. */
   relationship: string;
   /** Active 5-minute QR, or null when none was generated / it expired. */

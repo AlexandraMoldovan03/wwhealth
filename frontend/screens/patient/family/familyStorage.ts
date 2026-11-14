@@ -48,6 +48,7 @@ export async function loadFamilyMembers(userId: string): Promise<FamilyMember[]>
       .map((member) => ({
         id: member.id,
         name: member.name,
+        email: typeof member.email === 'string' ? member.email : '',
         relationship: typeof member.relationship === 'string' ? member.relationship : '',
         qr: isActiveQr(member.qr, now) ? member.qr : null,
       }));

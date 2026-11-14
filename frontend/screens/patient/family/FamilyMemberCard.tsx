@@ -48,6 +48,11 @@ export function FamilyMemberCard({ member, enterIndex, onGenerate, onRemove, onE
               {member.relationship}
             </AppText>
           )}
+          {!!member.email && (
+            <AppText variant="caption" color="textMuted" numberOfLines={1}>
+              {member.email}
+            </AppText>
+          )}
         </View>
         <Pressable
           accessibilityRole="button"
