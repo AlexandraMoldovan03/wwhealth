@@ -236,23 +236,31 @@ def update_profile(user: CurrentUser, update: ProfileUpdate) -> PatientRecord | 
     if record is None:
         return None
     apply_profile_update(record, update)
-    body = {
-        "user_id": user.id,
-        "blood_type": record.blood_type,
-        "allergies": [a.model_dump() for a in record.allergies],
-        "conditions": [d.model_dump() for d in record.diagnoses],
-        "medications": [t.model_dump() for t in record.treatments],
-    }
-    if "surgeries" in update.model_fields_set:  # only sent when edited → older databases keep working
-        body["surgeries"] = [s.model_dump() for s in record.surgeries]
-    # Upsert: the row is created at sign-up, but this also covers users created before the trigger.
-    res = _request("POST", _rest("medical_profiles"), user, expected=(200, 201, 204, 400), json=body,
-                   params={"on_conflict": "user_id"},
-                   headers={"Prefer": "resolution=merge-duplicates,return=minimal"})
-    if res.status_code == 400:
-        if _missing_column(res, "surgeries"):
-            raise FeatureNotSetUp("Surgical history is not set up yet")
-        raise SupabaseError("Database error (400)")
+    sent = update.model_fields_set
+    body = update.model_dump(
+        mode="json", exclude_unset=True,
+        include={"date_of_birth", "sex", "height_cm", "weight_kg", "blood_type"},
+    )
+    for field, column in (
+        ("allergies", "allergies"), ("diagnoses", "conditions"),
+        ("treatments", "medications"), ("surgeries", "surgeries"),
+    ):
+        if field in sent and getattr(update, field) is not None:
+            body[column] = [item.model_dump() for item in getattr(record, field)]
+    if body:
+        # Upsert also covers accounts created before the sign-up trigger.
+        body["user_id"] = user.id
+        res = _request("POST", _rest("medical_profiles"), user, expected=(200, 201, 204, 400), json=body,
+                       params={"on_conflict": "user_id"},
+                       headers={"Prefer": "resolution=merge-duplicates,return=minimal"})
+        if res.status_code == 400:
+            if _missing_column(res, "surgeries"):
+                raise FeatureNotSetUp("Surgical history is not set up yet")
+            raise SupabaseError("Database error (400)")
+    if "full_name" in sent:
+        _request("PATCH", _rest("profiles"), user, expected=(200, 204),
+                 params={"id": f"eq.{user.id}"}, json={"full_name": record.full_name},
+                 headers={"Prefer": "return=minimal"})
     return get_record(user)
 
 

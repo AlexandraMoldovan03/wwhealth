@@ -31,7 +31,7 @@ export function LungVisionScreen() {
           <AppText variant="title" accessibilityRole="header">
             LungVision AI
           </AppText>
-          {USE_MOCKS && <Badge label="DEMO" color={colors.warning} />}
+          {USE_MOCKS && <Badge label={t('home.demoData')} color={colors.warning} />}
         </View>
       ) : (
         <GradientCard colors={gradients.patientHero} enterIndex={0}>
@@ -39,7 +39,7 @@ export function LungVisionScreen() {
             <View style={styles.heroIcon}>
               <Ionicons name="scan" size={24} color="#466C61" />
             </View>
-            {USE_MOCKS && <Badge label="DEMO" color="#FFFFFF" />}
+            {USE_MOCKS && <Badge label={t('home.demoData')} color="#FFFFFF" />}
           </View>
           <AppText variant="title" style={styles.white} accessibilityRole="header">
             LungVision AI

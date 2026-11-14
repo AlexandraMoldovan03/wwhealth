@@ -86,10 +86,10 @@ export function MedicalEventList({
                   <Ionicons name={style.icon} size={20} color={style.color} />
                 </View>
                 <View style={styles.text}>
-                  <AppText variant="subheading" numberOfLines={2}>
+                  <AppText variant="subheading">
                     {event.title}
                   </AppText>
-                  <AppText variant="caption" color="textMuted" numberOfLines={1}>
+                  <AppText variant="caption" color="textMuted">
                     {formatDateTime(event.date)} · {source}
                   </AppText>
                 </View>

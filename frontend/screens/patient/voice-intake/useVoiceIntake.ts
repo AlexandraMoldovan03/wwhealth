@@ -1,3 +1,4 @@
+import { i18n } from '@/i18n';
 import { AudioModule, RecordingPresets, setAudioModeAsync, useAudioRecorder } from 'expo-audio';
 import { useEffect, useRef, useState } from 'react';
 import { Platform } from 'react-native';
@@ -9,7 +10,7 @@ import type { IntakeForm, UploadFile } from '@/types';
 async function recordingFile(uri: string): Promise<UploadFile> {
   if (Platform.OS !== 'web') return { uri, name: 'symptoms.m4a', type: 'audio/mp4' };
   const blob = await (await fetch(uri)).blob();
-  if (!blob.size) throw new Error('The recording is empty. Please try again.');
+  if (!blob.size) throw new Error(i18n.t('voiceIntake.empty'));
   const type = blob.type.split(';')[0];
   const extension = type.endsWith('/mp4') ? 'mp4' : type.endsWith('/ogg') ? 'ogg' : 'webm';
   return { uri, name: 'symptoms.' + extension, type };
@@ -54,7 +55,7 @@ export function useVoiceIntake<T = IntakeForm>(upload: (file: UploadFile) => Pro
       if (!active.current) return;
       if (!permission.granted) {
         setPermissionDenied(true);
-        throw new Error('Allow microphone access in your device or browser settings.');
+        throw new Error(i18n.t('voiceIntake.mic'));
       }
       if (Platform.OS !== 'web') {
         await setAudioModeAsync({ allowsRecording: true, playsInSilentMode: true });
@@ -77,7 +78,7 @@ export function useVoiceIntake<T = IntakeForm>(upload: (file: UploadFile) => Pro
       setPhase('recording');
     } catch (cause) {
       if (active.current) {
-        setError(cause instanceof Error ? cause.message : 'Could not start the microphone.');
+        setError(cause instanceof Error ? cause.message : i18n.t('voiceIntake.micFailed'));
         setPhase('idle');
       }
     } finally {
@@ -96,7 +97,7 @@ export function useVoiceIntake<T = IntakeForm>(upload: (file: UploadFile) => Pro
       uri = recorder.uri;
       if (Platform.OS !== 'web' && active.current) await setAudioModeAsync({ allowsRecording: false });
       if (!active.current) return;
-      if (!uri) throw new Error('No recording was created. Please try again.');
+      if (!uri) throw new Error(i18n.t('voiceIntake.noRecording'));
       const file = await recordingFile(uri);
       if (!active.current) return;
       const result = await run(file);
@@ -105,7 +106,7 @@ export function useVoiceIntake<T = IntakeForm>(upload: (file: UploadFile) => Pro
         setRevision((current) => current + 1);
       }
     } catch (cause) {
-      if (active.current) setError(cause instanceof Error ? cause.message : 'Could not process the recording.');
+      if (active.current) setError(cause instanceof Error ? cause.message : i18n.t('voiceIntake.processingFailed'));
     } finally {
       if (uri && Platform.OS === 'web') URL.revokeObjectURL(uri);
       pending.current = false;

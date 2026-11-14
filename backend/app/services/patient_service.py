@@ -28,8 +28,11 @@ def apply_profile_update(record: PatientRecord, update: ProfileUpdate) -> Patien
     def keep_or_new(item_id: str | None, existing: set[str], prefix: str) -> str:
         return item_id if item_id and item_id in existing else f"{prefix}_{uuid.uuid4().hex[:8]}"
 
-    if "blood_type" in sent:
-        record.blood_type = update.blood_type
+    for field, value in update.model_dump(
+        mode="json", exclude_unset=True,
+        include={"full_name", "date_of_birth", "sex", "height_cm", "weight_kg", "blood_type"},
+    ).items():
+        setattr(record, field, value)
     if "allergies" in sent and update.allergies is not None:
         ids = {a.id for a in record.allergies}
         record.allergies = [

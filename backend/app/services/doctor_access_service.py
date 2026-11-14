@@ -36,7 +36,7 @@ class DoctorNotFound(Exception):
 
 # ─────────────────────────────────────────────────────────── demo store
 
-DEMO_DOCTORS = [{"id": "doc_demo_001", "full_name": "Dr. Demo Medic", "doctor_code": "DR-DEMO01"}]
+DEMO_DOCTORS = [{"id": "doc_demo_001", "full_name": "Dr. Alex Test", "doctor_code": "DR-DEMO01"}]
 
 
 @dataclass

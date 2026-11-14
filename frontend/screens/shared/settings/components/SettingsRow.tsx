@@ -25,7 +25,7 @@ export function SettingsRow({ icon, title, value, onPress, right }: SettingsRowP
         {title}
       </AppText>
       {value && (
-        <AppText variant="caption" color="textMuted" numberOfLines={1} style={styles.value}>
+        <AppText variant="caption" color="textMuted" style={styles.value}>
           {value}
         </AppText>
       )}

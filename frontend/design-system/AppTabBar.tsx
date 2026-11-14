@@ -167,7 +167,6 @@ function TabItem({ label, icon, focused, activeColor, onPress, onLongPress }: Ta
         <Ionicons name={icon} size={21} color={focused ? activeColor : colors.textMuted} />
         {focused && (
           <Animated.Text
-            numberOfLines={1}
             style={[styles.label, { color: colors.text, fontFamily: fonts.bodyBold }]}
           >
             {label}
@@ -198,6 +197,6 @@ const styles = StyleSheet.create({
   halo: { position: 'absolute', top: -14, bottom: -14, left: -15, right: -15 },
   selection: { flex: 1, borderRadius: radius.pill, borderWidth: StyleSheet.hairlineWidth },
   item: { flex: 1, minWidth: 0, minHeight: 52, justifyContent: 'center' },
-  content: { alignItems: 'center', gap: 2, paddingHorizontal: 5 },
-  label: { fontSize: 11, lineHeight: 14, textAlign: 'center' },
+  content: { alignItems: 'center', gap: 2, paddingHorizontal: 2, paddingVertical: 4 },
+  label: { maxWidth: '100%', fontSize: 11, lineHeight: 14, textAlign: 'center' },
 });

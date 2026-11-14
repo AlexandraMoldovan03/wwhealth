@@ -26,7 +26,7 @@ export function XrayResultCard({ result, showHeatmap = true }: { result: XrayAna
         </View>
         <View style={styles.badges}>
           <DataOriginBadge origin="ai" />
-          {result.isDemo && <Badge label="DEMO" color={colors.warning} />}
+          {result.isDemo && <Badge label={t('home.demoData')} color={colors.warning} />}
         </View>
       </View>
 
@@ -35,9 +35,9 @@ export function XrayResultCard({ result, showHeatmap = true }: { result: XrayAna
       <PredictionCards predictions={result.predictions} />
 
       <AppText variant="caption" color="textSubtle">
-        {result.modelVersion} · {result.processingTimeMs} ms · {formatDateTime(result.createdAt)}
+        {result.modelVersion.replace(/-demo$/i, '')} · {result.processingTimeMs} ms · {formatDateTime(result.createdAt)}
       </AppText>
-      <DemoNotice message={result.disclaimer} />
+      <DemoNotice message={result.disclaimer.replace(/^DEMO\s*[—–-]\s*/i, '')} />
     </AppCard>
   );
 }

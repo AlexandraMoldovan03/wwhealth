@@ -1,7 +1,8 @@
 """Mirror of frontend/types/medical.ts (mobile) and docs/API_CONTRACT.md."""
-from typing import Literal
+from datetime import date
+from typing import Annotated, Literal
 
-from pydantic import Field
+from pydantic import Field, StringConstraints, field_validator
 
 from app.schemas.base import CamelModel
 from app.schemas.document import MedicalDocument
@@ -116,8 +117,27 @@ class SurgeryInput(CamelModel):
 class ProfileUpdate(CamelModel):
     """Only the fields that are sent are changed. Lists replace the whole list."""
 
+    full_name: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=120)] | None = None
+    date_of_birth: date | None = None
+    sex: Literal["female", "male", "other"] | None = None
+    height_cm: float | None = Field(default=None, ge=30, le=260)
+    weight_kg: float | None = Field(default=None, ge=1, le=400)
     blood_type: BloodType | None = None
     allergies: list[AllergyInput] | None = Field(default=None, max_length=50)
     diagnoses: list[DiagnosisInput] | None = Field(default=None, max_length=50)
     treatments: list[TreatmentInput] | None = Field(default=None, max_length=50)
     surgeries: list[SurgeryInput] | None = Field(default=None, max_length=50)
+
+    @field_validator("full_name")
+    @classmethod
+    def require_name(cls, value: str | None) -> str:
+        if value is None:
+            raise ValueError("Name cannot be empty")
+        return value
+
+    @field_validator("date_of_birth")
+    @classmethod
+    def reject_future_birth_date(cls, value: date | None) -> date | None:
+        if value is not None and value > date.today():
+            raise ValueError("Date of birth cannot be in the future")
+        return value

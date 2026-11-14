@@ -11,11 +11,28 @@ import { useAsync } from '@/hooks/useAsync';
 import { useSubmit } from '@/hooks/useSubmit';
 import { useTheme } from '@/design-system/useTheme';
 import { api } from '@/services/backend';
-import type { AllergyInput, BloodType, DiagnosisInput, PatientRecord, ProfileUpdate, SurgeryInput, TreatmentInput } from '@/types';
+import type { AllergyInput, BloodType, DiagnosisInput, PatientRecord, ProfileUpdate, Sex, SurgeryInput, TreatmentInput } from '@/types';
 import { useTranslation } from 'react-i18next';
 
 const UNKNOWN = 'Unknown';
 type BloodChoice = BloodType | typeof UNKNOWN;
+const SEX_OPTIONS = [UNKNOWN, 'female', 'male', 'other'] as const;
+
+function validBirthDate(value: string) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value) || value.startsWith('0000')) return false;
+  const parsed = new Date(value + 'T00:00:00');
+  return Number.isFinite(parsed.getTime()) && parsed <= new Date()
+    && parsed.getFullYear() === Number(value.slice(0, 4))
+    && parsed.getMonth() + 1 === Number(value.slice(5, 7))
+    && parsed.getDate() === Number(value.slice(8, 10));
+}
+
+function measurement(value: string) {
+  const trimmed = value.trim();
+  if (!trimmed) return null;
+  return /^\d+(?:[.,]\d)?$/.test(trimmed) ? Number(trimmed.replace(',', '.')) : NaN;
+}
+
 const BLOOD_OPTIONS: readonly BloodChoice[] = [UNKNOWN, ...BLOOD_TYPES];
 const SURGERY_DATE = /^\d{4}(-\d{2}(-\d{2})?)?$/;
 
@@ -33,6 +50,11 @@ export function EditProfileScreen() {
 
 function EditForm({ patient }: { patient: PatientRecord }) {
   const { t } = useTranslation();
+  const [fullName, setFullName] = useState(patient.fullName);
+  const [birthDate, setBirthDate] = useState(patient.dateOfBirth ?? '');
+  const [sex, setSex] = useState<Sex | typeof UNKNOWN>(patient.sex ?? UNKNOWN);
+  const [height, setHeight] = useState(patient.heightCm?.toString() ?? '');
+  const [weight, setWeight] = useState(patient.weightKg?.toString() ?? '');
   const [bloodType, setBloodType] = useState<BloodChoice>((patient.bloodType as BloodType | null) ?? UNKNOWN);
   const [allergies, setAllergies] = useState<AllergyInput[]>(patient.allergies);
   const [diagnoses, setDiagnoses] = useState<DiagnosisInput[]>(patient.diagnoses);
@@ -57,10 +79,23 @@ function EditForm({ patient }: { patient: PatientRecord }) {
     surgeries.some((s) => !s.name.trim());
   const badDate = surgeries.some((s) => !!s.date && !SURGERY_DATE.test(s.date));
 
+  const heightCm = measurement(height);
+  const weightKg = measurement(weight);
+  const invalidBirthDate = !!birthDate.trim() && !validBirthDate(birthDate.trim());
+  const invalidHeight = heightCm !== null && !(heightCm >= 30 && heightCm <= 260);
+  const invalidWeight = weightKg !== null && !(weightKg >= 1 && weightKg <= 400);
+  const invalidName = fullName !== patient.fullName && !fullName.trim();
+
   const onSave = () => {
     setShowErrors(true);
-    if (missingName || badDate) return;
+    if (missingName || badDate || invalidBirthDate || invalidHeight || invalidWeight || invalidName) return;
     const update: ProfileUpdate = { bloodType: bloodType === UNKNOWN ? null : bloodType, allergies, diagnoses, treatments };
+    if (fullName !== patient.fullName) update.fullName = fullName.trim();
+    if (birthDate.trim() !== (patient.dateOfBirth ?? '')) update.dateOfBirth = birthDate.trim() || null;
+    const selectedSex = sex === UNKNOWN ? null : sex;
+    if (selectedSex !== patient.sex) update.sex = selectedSex;
+    if (heightCm !== patient.heightCm) update.heightCm = heightCm;
+    if (weightKg !== patient.weightKg) update.weightKg = weightKg;
     // Sent only when edited, so saving still works on a server without the surgeries migration.
     if (surgeriesTouched) update.surgeries = surgeries.map((s) => ({ ...s, date: s.date?.trim() || null }));
     void save.run(update);
@@ -73,6 +108,23 @@ function EditForm({ patient }: { patient: PatientRecord }) {
 
   return (
     <>
+      <View style={styles.section}>
+        <SectionHeader title={t('profile.personalDetails')} />
+        <AppCard style={styles.section}>
+          <AppInput label={t('profile.name')} value={fullName} onChangeText={setFullName} maxLength={120}
+            error={showErrors && invalidName ? t('editProfile.required') : undefined} />
+          <AppInput label={t('editProfile.birthDate')} placeholder="YYYY-MM-DD" value={birthDate} onChangeText={setBirthDate}
+            error={showErrors && invalidBirthDate ? t('editProfile.birthDateInvalid') : undefined} />
+          <AppText variant="label" color="textMuted">{t('profile.sex')}</AppText>
+          <CategoryFilter options={SEX_OPTIONS} value={sex} onChange={setSex}
+            getLabel={(value) => value === UNKNOWN ? t('editProfile.unknown') : t('enums.sex.' + value)} />
+          <AppInput label={t('editProfile.height')} value={height} onChangeText={setHeight} keyboardType="decimal-pad"
+            error={showErrors && invalidHeight ? t('editProfile.heightInvalid') : undefined} />
+          <AppInput label={t('editProfile.weight')} value={weight} onChangeText={setWeight} keyboardType="decimal-pad"
+            error={showErrors && invalidWeight ? t('editProfile.weightInvalid') : undefined} />
+        </AppCard>
+      </View>
+
       <View style={styles.section}>
         <SectionHeader title={t('profile.bloodType')} />
         <CategoryFilter
