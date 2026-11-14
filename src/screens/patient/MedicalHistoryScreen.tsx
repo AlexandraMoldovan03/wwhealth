@@ -2,53 +2,123 @@ import { router } from 'expo-router';
 import { useMemo, useState } from 'react';
 import { RefreshControl, StyleSheet, View } from 'react-native';
 
-import { AppText, ErrorState, LoadingState, ScreenContainer } from '@/components/ui';
+import { AppText, ErrorState, LoadingState, ScreenContainer, SegmentedControl } from '@/components/ui';
 import { spacing } from '@/constants/theme';
 import { CategoryFilter } from '@/features/explore/components/CategoryFilter';
 import { MedicalEventList } from '@/features/history/components/MedicalEventList';
+import { LabTrendsList } from '@/features/labs/components/LabTrendsList';
+import { buildLabSeries, labDate, labFlag } from '@/features/labs/labUtils';
 import { useAsync } from '@/hooks/useAsync';
 import { useTheme } from '@/hooks/useTheme';
 import { api } from '@/services/backend';
-import type { MedicalEvent } from '@/types';
+import type { MedicalEvent, PatientLabValue } from '@/types';
+import type { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
 
-const FILTERS = ['all', 'document', 'xray', 'diagnosis', 'treatment'] as const;
+const VIEWS = ['timeline', 'trends'] as const;
+const FILTERS = ['all', 'lab', 'document', 'xray', 'diagnosis', 'treatment'] as const;
+const PERIODS = ['all', '30d', '6m', '1y'] as const;
 type Filter = (typeof FILTERS)[number];
+type Period = (typeof PERIODS)[number];
+
+const PERIOD_DAYS: Record<Period, number | null> = { all: null, '30d': 30, '6m': 183, '1y': 365 };
+
+/** One timeline entry per document with confirmed lab values (date = analysis date, else upload date). */
+function labEvents(values: PatientLabValue[], t: TFunction): MedicalEvent[] {
+  const byDoc = new Map<string, PatientLabValue[]>();
+  for (const v of values) byDoc.set(v.documentId, [...(byDoc.get(v.documentId) ?? []), v]);
+  return [...byDoc.entries()].map(([documentId, vals]) => {
+    const outside = vals.filter((v) => {
+      const f = labFlag(v.value, v.referenceRange);
+      return f === 'low' || f === 'high';
+    }).length;
+    const description = [vals[0].documentTitle, outside ? t('labs.outsideCount', { count: outside }) : null].filter(Boolean).join(' · ');
+    return {
+      id: `lab-${documentId}`,
+      type: 'lab' as const,
+      title: t('labs.eventTitle', { count: vals.length }),
+      description,
+      date: labDate(vals[0]),
+      details: {},
+      documentId,
+    };
+  });
+}
 
 /**
- * Medical Timeline tab — built from real data in GET /api/v1/patients/me:
- * uploaded documents, saved LungVision results, conditions and medication. No synthetic entries.
+ * Medical Timeline tab — real data only: GET /patients/me (documents, LungVision, conditions, medication)
+ * + GET /documents/lab-values (confirmed lab values). "Trends" charts each analysis over time.
  */
 export function MedicalHistoryScreen() {
   const { colors } = useTheme();
   const { t } = useTranslation();
-  const { data, isLoading, error, reload } = useAsync(api.getMyPatient, { refetchOnFocus: true });
+  const patient = useAsync(api.getMyPatient, { refetchOnFocus: true });
+  // Lab values are optional: if lab storage isn't set up the timeline still works.
+  const labs = useAsync(api.listLabValues, { refetchOnFocus: true });
+  const [view, setView] = useState<(typeof VIEWS)[number]>('timeline');
   const [filter, setFilter] = useState<Filter>('all');
+  const [period, setPeriod] = useState<Period>('all');
+  const [now] = useState(() => Date.now());
 
+  const cutoff = useMemo(() => {
+    const days = PERIOD_DAYS[period];
+    return days === null ? null : new Date(now - days * 86_400_000).toISOString().slice(0, 10);
+  }, [period, now]);
 
-  const events = useMemo(
-    () => [...(data?.history ?? [])].sort((a, b) => (a.date < b.date ? 1 : -1)).filter((e) => filter === 'all' || e.type === filter),
-    [data, filter],
+  const events = useMemo(() => {
+    const all = [...(patient.data?.history ?? []), ...labEvents(labs.data ?? [], t)];
+    return all
+      .filter((e) => filter === 'all' || e.type === filter)
+      .filter((e) => !cutoff || e.date.slice(0, 10) >= cutoff)
+      .sort((a, b) => (a.date < b.date ? 1 : -1));
+  }, [patient.data, labs.data, filter, cutoff, t]);
+
+  const series = useMemo(
+    () => buildLabSeries((labs.data ?? []).filter((v) => !cutoff || labDate(v) >= cutoff)),
+    [labs.data, cutoff],
   );
 
-  // Documents open directly; other entries show their details.
+  // Documents and lab results open the original document; other entries show their details.
   const open = (e: MedicalEvent) =>
     e.documentId
       ? router.push({ pathname: '/patient/document/[id]', params: { id: e.documentId } })
       : router.push({ pathname: '/history/[id]', params: { id: e.id } });
 
+  const refresh = () => {
+    void patient.reload();
+    void labs.reload();
+  };
+  const loading = view === 'timeline' ? patient.isLoading && !patient.data : labs.isLoading && !labs.data;
+  const error = view === 'timeline' ? (!patient.data ? patient.error : null) : !labs.data ? labs.error : null;
+
   return (
-    <ScreenContainer refreshControl={<RefreshControl refreshing={isLoading && !!data} onRefresh={reload} tintColor={colors.primary} />}>
+    <ScreenContainer
+      refreshControl={
+        <RefreshControl
+          refreshing={(patient.isLoading && !!patient.data) || (labs.isLoading && !!labs.data)}
+          onRefresh={refresh}
+          tintColor={colors.primary}
+        />
+      }
+    >
       <View style={styles.header}>
         <AppText variant="title" accessibilityRole="header">
           {t('history.title')}
         </AppText>
         <AppText color="textMuted">{t('history.subtitle')}</AppText>
       </View>
-      <CategoryFilter options={FILTERS} value={filter} onChange={setFilter} getLabel={(f) => (f === 'all' ? t('history.all') : t(`history.types.${f}`))} />
-      {isLoading && !data && <LoadingState />}
-      {error && !data && <ErrorState message={error} onRetry={reload} />}
-      {data && <MedicalEventList events={events} onSelect={open} grouped />}
+      <SegmentedControl options={VIEWS} value={view} onChange={setView} getLabel={(v) => t(`history.views.${v}`)} />
+      {view === 'timeline' && (
+        <CategoryFilter options={FILTERS} value={filter} onChange={setFilter} getLabel={(f) => (f === 'all' ? t('history.all') : t(`history.types.${f}`))} />
+      )}
+      <CategoryFilter options={PERIODS} value={period} onChange={setPeriod} getLabel={(p) => t(`history.periods.${p}`)} />
+
+      {loading && <LoadingState />}
+      {error && <ErrorState message={error} onRetry={refresh} />}
+      {view === 'timeline' && patient.data && <MedicalEventList events={events} onSelect={open} grouped />}
+      {view === 'trends' && labs.data && (
+        <LabTrendsList series={series} onSelect={(s) => router.push({ pathname: '/patient/lab-trend', params: { id: s.id } })} />
+      )}
     </ScreenContainer>
   );
 }

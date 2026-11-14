@@ -30,7 +30,7 @@ function useAuthGuard() {
   }, [signedIn, segments, router]);
 }
 
-const SHEET_SCREENS = new Set(['patient/emergency', 'patient/upload-document', 'patient/edit-profile']);
+const SHEET_SCREENS = new Set(['patient/emergency', 'patient/upload-document', 'patient/edit-profile', 'patient/lab-review/[id]']);
 
 function RootNavigator() {
   const { colors, isDark } = useTheme();

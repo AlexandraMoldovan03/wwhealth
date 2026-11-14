@@ -20,6 +20,7 @@ const SOURCE_KEY: Record<MedicalEventType, string> = {
   treatment: 'history.source.profile',
   allergy: 'history.source.profile',
   visit: 'history.source.visit',
+  lab: 'history.source.scanner',
 };
 
 const monthLabel = (iso: string) => {

@@ -1,5 +1,5 @@
 import type { UploadFile } from './api';
-import type { LabExtractionResponse, LabValueEntry } from './labs';
+import type { LabExtractionResponse, LabValueEntry, PatientLabValue } from './labs';
 import type { EmergencyAccessEvent, EmergencyData, EmergencyRedeemRequest, EmergencyTokenResponse } from './emergency';
 import type { LungAnalysis } from './lungvision';
 import type {
@@ -40,6 +40,10 @@ export interface WWHealthApi {
   extractLabValues(file: UploadFile): Promise<LabExtractionResponse>;
   getLabValues(documentId: string): Promise<LabValueEntry[]>;
   saveLabValues(documentId: string, values: LabValueEntry[]): Promise<LabValueEntry[]>;
+  /** Re-reads an already uploaded document (PDF text / OCR). */
+  extractLabValuesFromDocument(documentId: string): Promise<LabExtractionResponse>;
+  /** Every confirmed value of the patient, across documents. */
+  listLabValues(): Promise<PatientLabValue[]>;
   // Emergency Medical Passport
   createEmergencyToken(): Promise<EmergencyTokenResponse>;
   revokeEmergencyToken(tokenId: string): Promise<void>;

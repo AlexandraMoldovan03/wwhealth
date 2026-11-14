@@ -52,7 +52,8 @@ export interface PatientProfile {
   treatments: Treatment[];
 }
 
-export type MedicalEventType = 'diagnosis' | 'treatment' | 'allergy' | 'document' | 'xray' | 'visit';
+/** 'lab' = confirmed lab values of a document (built in the app from GET /documents/lab-values). */
+export type MedicalEventType = 'diagnosis' | 'treatment' | 'allergy' | 'document' | 'xray' | 'visit' | 'lab';
 
 export interface MedicalEvent {
   id: string;

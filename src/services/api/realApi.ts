@@ -31,8 +31,10 @@ export const realApi: WWHealthApi = {
   voiceSummary: (request) =>
     apiClient.post(ENDPOINTS.voiceSummary, { patientId: request.patientId, language: request.language }),
 
-  extractLabValues: (file) => apiClient.upload(ENDPOINTS.documentsExtractLabs, { file }, {}, { timeoutMs: 60_000 }),
+  extractLabValues: (file) => apiClient.upload(ENDPOINTS.documentsExtractLabs, { file }, {}, { timeoutMs: 90_000 }),
   getLabValues: (documentId) => apiClient.get(ENDPOINTS.documentLabValues(documentId)),
+  extractLabValuesFromDocument: (documentId) => apiClient.post(ENDPOINTS.documentExtractLabs(documentId), undefined, { timeoutMs: 90_000 }),
+  listLabValues: () => apiClient.get(ENDPOINTS.labValues),
   saveLabValues: (documentId, values) =>
     apiClient.put(ENDPOINTS.documentLabValues(documentId), { values: JSON.parse(JSON.stringify(values)) as JsonValue }),
 

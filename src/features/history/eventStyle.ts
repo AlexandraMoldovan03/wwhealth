@@ -16,5 +16,7 @@ export function getEventStyle(type: MedicalEventType, colors: ThemeColors): { ic
       return { icon: 'scan-outline', label: 'X-ray', color: colors.accent };
     case 'visit':
       return { icon: 'person-outline', label: 'Visit', color: colors.success };
+    case 'lab':
+      return { icon: 'flask-outline', label: 'Lab results', color: colors.success };
   }
 }

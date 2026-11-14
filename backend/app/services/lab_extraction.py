@@ -1,13 +1,24 @@
 """
-Local lab-value extraction from DIGITAL PDFs (text layer only, pypdf — nothing leaves the server).
+Local lab-value extraction — nothing leaves this server, no external AI service.
+
+• Digital PDFs: text layer via pypdf.
+• Images and scanned PDFs: OCR with the local Tesseract binary *if installed* (`brew install tesseract
+  tesseract-lang`). Without it the API says so (`ocr_available=False`) instead of guessing.
 
 Rules (no guessing): a value is returned only when a line explicitly contains
   <name> <number> and at least a unit or a reference range, e.g. "Hemoglobina 13,5 g/dL 12,0 - 16,0".
-Values, units and ranges are copied exactly as written. No flags, no interpretation, no diagnosis.
-Scanned PDFs / images have no text layer → `text_found=False` (OCR is not available).
+Values, units and ranges are copied exactly as written. No interpretation, no diagnosis.
+Every OCR value is marked `needs_review` — the user must confirm it before it can be saved.
 """
 import io
 import re
+import shutil
+import subprocess
+import tempfile
+from datetime import date
+from pathlib import Path
+
+from PIL import Image, ImageOps
 
 from pypdf import PdfReader
 from pypdf.errors import PdfReadError
@@ -39,6 +50,127 @@ def _looks_like_unit(unit: str) -> bool:
 DATE_RE = re.compile(r"\b\d{1,2}([./-])\d{1,2}\1\d{2,4}\b|\b\d{4}-\d{2}-\d{2}\b")
 
 
+DATE_PARTS_RE = re.compile(r"\b(\d{1,2})([./-])(\d{1,2})\2(\d{4})\b|\b(\d{4})-(\d{2})-(\d{2})\b")
+DATE_KEYWORDS = re.compile(
+    r"recolt|data\s+(?:buletin|rezultat|analiz|prelev)|prelevat|sample|collect|specimen|data\s*:|date\s*:",
+    re.IGNORECASE,
+)
+
+
+def _parse_date(m: re.Match) -> date | None:
+    try:
+        if m.group(5):
+            d = date(int(m.group(5)), int(m.group(6)), int(m.group(7)))
+        else:
+            d = date(int(m.group(4)), int(m.group(3)), int(m.group(1)))  # RO/EU order: dd.mm.yyyy
+    except ValueError:
+        return None
+    return d if date(1990, 1, 1) <= d <= date.today() else None
+
+
+def find_document_date(text: str) -> str | None:
+    """ISO date of the analyses, only when the document states it unambiguously:
+    a date on a line labelled "recoltare / data / collected…", or the single date found in the whole text."""
+    labelled: list[date] = []
+    all_dates: set[date] = set()
+    for line in text.splitlines():
+        for m in DATE_PARTS_RE.finditer(line):
+            d = _parse_date(m)
+            if d is None:
+                continue
+            all_dates.add(d)
+            if DATE_KEYWORDS.search(line):
+                labelled.append(d)
+    if labelled:
+        return labelled[0].isoformat()
+    return next(iter(all_dates)).isoformat() if len(all_dates) == 1 else None
+
+
+# ─────────────────────────────────────────────────────────── OCR (optional, local)
+
+OCR_MAX_PAGES = 10
+OCR_TIMEOUT_S = 60
+
+
+def ocr_available() -> bool:
+    return shutil.which("tesseract") is not None
+
+
+def _ocr_languages() -> str:
+    try:
+        out = subprocess.run(["tesseract", "--list-langs"], capture_output=True, text=True, timeout=10).stdout
+    except (OSError, subprocess.SubprocessError):
+        return "eng"
+    langs = {line.strip() for line in out.splitlines()[1:]}
+    return "+".join(lang for lang in ("ron", "eng") if lang in langs) or "eng"
+
+
+def ocr_image(content: bytes) -> str:
+    """Text of one image (JPEG/PNG bytes) via local Tesseract. Raises ValueError if the image is unreadable."""
+    try:
+        img = Image.open(io.BytesIO(content))
+        img = ImageOps.exif_transpose(img).convert("L")
+    except Exception as exc:  # noqa: BLE001 — any decoder error = unreadable image
+        raise ValueError("Unreadable image") from exc
+    if max(img.size) < 1600:  # small phone crops → upscale helps Tesseract
+        scale = 1600 / max(img.size)
+        img = img.resize((int(img.width * scale), int(img.height * scale)), Image.LANCZOS)
+    img = ImageOps.autocontrast(img)
+    with tempfile.TemporaryDirectory() as tmp:
+        path = Path(tmp) / "page.png"
+        img.save(path)
+        try:
+            result = subprocess.run(
+                ["tesseract", str(path), "stdout", "-l", _ocr_languages(), "--psm", "6"],
+                capture_output=True, text=True, timeout=OCR_TIMEOUT_S,
+            )
+        except subprocess.TimeoutExpired as exc:
+            raise ValueError("OCR timed out") from exc
+    return result.stdout
+
+
+def pdf_page_images(content: bytes) -> list[bytes]:
+    """Embedded page images of a scanned PDF (one per page usually) — no rasteriser needed."""
+    reader = PdfReader(io.BytesIO(content))
+    images: list[bytes] = []
+    for page in reader.pages[:OCR_MAX_PAGES]:
+        try:
+            page_images = list(page.images)
+        except Exception:  # noqa: BLE001 — unsupported image filter → skip that page
+            continue
+        if page_images:
+            biggest = max(page_images, key=lambda im: len(im.data))
+            images.append(biggest.data)
+    return images
+
+
+def extract(content: bytes, mime_type: str) -> dict:
+    """Full pipeline → {text_found, page_count, method, ocr_available, document_date, values}."""
+    can_ocr = ocr_available()
+    text, pages, method = "", 1, "none"
+    if mime_type == "application/pdf":
+        text, pages = extract_text(content)
+        method = "text" if text.strip() else "none"
+        if not text.strip() and can_ocr:
+            text = "\n".join(ocr_image(img) for img in pdf_page_images(content))
+            method = "ocr" if text.strip() else "none"
+    elif can_ocr:
+        text = ocr_image(content)
+        method = "ocr" if text.strip() else "none"
+    values = parse_lab_values(text)
+    if method == "ocr":
+        for v in values:
+            v["needs_review"] = True
+    return {
+        "text_found": bool(text.strip()),
+        "page_count": pages,
+        "method": method,
+        "ocr_available": can_ocr,
+        "document_date": find_document_date(text) if text else None,
+        "values": values,
+    }
+
+
 # DEMO store (no Supabase): document_id → confirmed values. Lost on restart.
 _demo_values: dict[tuple[str, str], list[dict]] = {}
 
@@ -48,8 +180,19 @@ def demo_get(user_id: str, document_id: str) -> list[dict]:
 
 
 def demo_save(user_id: str, document_id: str, values: list[dict]) -> list[dict]:
-    _demo_values[(user_id, document_id)] = values
+    if values:
+        _demo_values[(user_id, document_id)] = values
+    else:
+        _demo_values.pop((user_id, document_id), None)
     return values
+
+
+def demo_list(user_id: str) -> list[dict]:
+    return [
+        {**v, "document_id": doc_id}
+        for (uid, doc_id), values in _demo_values.items() if uid == user_id
+        for v in values
+    ]
 
 
 def extract_text(content: bytes) -> tuple[str, int]:
@@ -88,7 +231,9 @@ def parse_lab_values(text: str) -> list[dict]:
             continue
         seen.add(key)
         values.append({"name": name, "value": m.group("value").replace(" ", ""), "unit": unit,
-                       "reference_range": ref, "source_line": line})
+                       "reference_range": ref, "source_line": line,
+                       # no unit (only a range) → less explicit → the user must confirm it
+                       "needs_review": unit is None})
         if len(values) >= MAX_VALUES:
             break
     return values
