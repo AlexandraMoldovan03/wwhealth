@@ -12,7 +12,7 @@ export function DemoNotice({ message = MEDICAL_DISCLAIMER }: { message?: string 
   const { colors } = useTheme();
   return (
     <View style={[styles.box, { backgroundColor: colors.accentMuted, borderColor: 'transparent' }]} accessibilityRole="text">
-      <Ionicons name="information-circle-outline" size={iconSize.md} color={colors.accent} />
+      <Ionicons name="help-circle-outline" size={iconSize.lg} color={colors.accent} />
       <AppText variant="caption" style={[styles.text, { color: colors.text }]}>
         {message}
       </AppText>

@@ -42,7 +42,7 @@ export function AppCard({
     styles.card,
     {
       backgroundColor: tone === 'muted' ? colors.surfaceAlt : tone === 'info' ? colors.accentMuted : colors.surface,
-      borderColor: tone === 'muted' ? 'transparent' : colors.border,
+      borderColor: tone === 'muted' ? 'transparent' : tone === 'info' ? colors.accent : colors.border,
     },
     !isDark && tone === 'default' && shadows.card,
     padded && styles.padded,

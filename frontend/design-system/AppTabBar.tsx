@@ -79,8 +79,8 @@ export function AppTabBar({ state, descriptors, emitter, navigateToTab }: Bottom
                 <Svg width="100%" height="100%">
                   <Defs>
                     <RadialGradient id={gradientId} cx="50%" cy="50%" rx="50%" ry="50%">
-                      <Stop offset="0" stopColor={activeColor} stopOpacity={isDark ? .94 : .64} />
-                      <Stop offset=".48" stopColor={activeColor} stopOpacity={isDark ? .48 : .31} />
+                      <Stop offset="0" stopColor={activeColor} stopOpacity={isDark ? .94 : .82} />
+                      <Stop offset=".48" stopColor={activeColor} stopOpacity={isDark ? .48 : .46} />
                       <Stop offset="1" stopColor={activeColor} stopOpacity={0} />
                     </RadialGradient>
                   </Defs>
@@ -88,8 +88,8 @@ export function AppTabBar({ state, descriptors, emitter, navigateToTab }: Bottom
                 </Svg>
               </Animated.View>
               <LinearGradient
-                colors={isDark ? ['#ECFFF22D', '#D4F8EB0A'] : ['#FFFFFFEA', '#FFFFFF45']}
-                style={[styles.selection, { borderColor: isDark ? '#B7E8DA66' : '#FFFFFF' }]}
+                colors={isDark ? ['#ECFFF22D', '#D4F8EB0A'] : ['#B8D0C6', '#D2E0D9']}
+                style={[styles.selection, { borderColor: isDark ? '#B7E8DA66' : '#91B0A3' }]}
               />
             </Animated.View>
           )}

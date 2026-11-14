@@ -31,7 +31,7 @@ export function NextStepCard({ next, enterIndex }: { next: ProgressStep | null; 
       <AppButton
         title={t(`${key}.cta`)}
         trailingIcon="arrow-forward"
-        size="sm"
+        size="md"
         onPress={() => router.navigate(next?.route ?? '/transfer')}
       />
     </AppCard>
