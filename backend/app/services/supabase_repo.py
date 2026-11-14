@@ -656,3 +656,159 @@ def availability_delete(user: CurrentUser, slot_id: str) -> bool:
     if res.status_code == 404:
         raise SmartCareUnavailable("Appointments are not set up yet")
     return bool(res.json())
+
+
+# ─────────────────────────────────────────────────────────── Care Journey (migration 20261118000000)
+# Schedule / time off / treatments are written only through security-definer RPCs (role + consent checked in
+# Postgres); reads go through RLS. Every call runs with the caller's own token.
+
+class CareJourneyUnavailable(FeatureNotSetUp):
+    """Care Journey tables / functions missing (migration 20261118000000 not applied) → 503."""
+
+
+def _cj(res: httpx.Response) -> httpx.Response:
+    if res.status_code == 404:
+        raise CareJourneyUnavailable("Care journey is not set up yet (migration 20261118000000)")
+    return res
+
+
+def _cj_rpc(name: str, user: CurrentUser, body: dict) -> object:
+    res = _cj(_request("POST", f"{_base()}/rest/v1/rpc/{name}", user, expected=(200, 204, 404), json=body))
+    return res.json() if res.content else None
+
+
+def _cj_get(table: str, user: CurrentUser, params: dict) -> list[dict]:
+    return _cj(_request("GET", _rest(table), user, expected=(200, 404), params=params)).json()
+
+
+def schedule_get(user: CurrentUser) -> tuple[dict | None, list[dict]]:
+    settings_rows = _cj_get("doctor_schedule_settings", user, {"doctor_id": f"eq.{user.id}",
+                                                               "select": "timezone,slot_minutes,horizon_days"})
+    hours = _cj_get("doctor_weekly_hours", user, {"doctor_id": f"eq.{user.id}", "select": "weekday,kind,start_time,end_time",
+                                                  "order": "weekday,start_time"})
+    return (settings_rows[0] if settings_rows else None), hours
+
+
+def schedule_save(user: CurrentUser, timezone: str, slot_minutes: int, horizon_days: int, hours: list[dict]) -> dict:
+    return _cj_rpc("save_doctor_schedule", user, {"p_timezone": timezone, "p_slot_minutes": slot_minutes,
+                                                  "p_horizon_days": horizon_days, "p_hours": hours})  # type: ignore[return-value]
+
+
+def time_off_list(user: CurrentUser) -> list[dict]:
+    return _cj_get("doctor_time_off", user, {"doctor_id": f"eq.{user.id}", "select": "id,kind,starts_at,ends_at,note",
+                                             "ends_at": f"gt.{datetime.now(UTC).isoformat()}", "order": "starts_at"})
+
+
+def time_off_add(user: CurrentUser, kind: str, starts_at: str, ends_at: str, note: str | None) -> dict:
+    return _cj_rpc("add_doctor_time_off", user, {"p_kind": kind, "p_starts_at": starts_at, "p_ends_at": ends_at,
+                                                 "p_note": note})  # type: ignore[return-value]
+
+
+def time_off_delete(user: CurrentUser, time_off_id: str) -> bool:
+    if not UUID_RE.match(time_off_id):
+        return False
+    return bool(_cj_rpc("delete_doctor_time_off", user, {"p_id": time_off_id}))
+
+
+def doctor_agenda(user: CurrentUser, starts_at: str, ends_at: str) -> dict:
+    return _cj_rpc("doctor_agenda", user, {"p_from": starts_at, "p_to": ends_at})  # type: ignore[return-value]
+
+
+def ensure_doctor_availability(user: CurrentUser, doctor_id: str) -> None:
+    """Extends the doctor's generated slots from their weekly schedule (idempotent; tolerated if not set up)."""
+    if not UUID_RE.match(doctor_id):
+        return
+    try:
+        _cj_rpc("ensure_doctor_availability", user, {"p_doctor": doctor_id})
+    except CareJourneyUnavailable:
+        return
+
+
+def ensure_specialty_availability(user: CurrentUser, specialty_id: str) -> None:
+    try:
+        _cj_rpc("ensure_specialty_availability", user, {"p_specialty": specialty_id})
+    except CareJourneyUnavailable:
+        return
+
+
+def preparation_get(user: CurrentUser, appointment_id: str) -> dict | None:
+    if not UUID_RE.match(appointment_id):
+        return None
+    rows = _cj_get("appointment_preparations", user, {"appointment_id": f"eq.{appointment_id}",
+                                                      "select": "reason,symptoms,questions,care_summary,updated_at"})
+    return rows[0] if rows else None
+
+
+def preparation_save(user: CurrentUser, appointment_id: str, body: dict) -> dict:
+    if not UUID_RE.match(appointment_id):
+        return {"status": "not_found"}
+    return _cj_rpc("save_appointment_preparation", user, {
+        "p_id": appointment_id, "p_reason": body.get("reason"), "p_symptoms": body.get("symptoms"),
+        "p_questions": body.get("questions") or [], "p_care_summary": body.get("care_summary")})  # type: ignore[return-value]
+
+
+def doctor_consultation(user: CurrentUser, appointment_id: str) -> dict:
+    if not UUID_RE.match(appointment_id):
+        return {"status": "not_found"}
+    return _cj_rpc("doctor_consultation", user, {"p_id": appointment_id})  # type: ignore[return-value]
+
+
+PLAN_SELECT = ("id,patient_id,prescriber_id,prescriber_name,appointment_id,kind,status,current_version,issued_at,"
+               "treatment_plan_versions(*)")
+
+
+def treatments_list(user: CurrentUser, patient_id: str) -> list[dict]:
+    """RLS: the patient's own plans, the prescriber's, or a doctor's with an active 'profile' grant."""
+    if not UUID_RE.match(patient_id):
+        return []
+    return _cj_get("treatment_plans", user, {"patient_id": f"eq.{patient_id}", "select": PLAN_SELECT,
+                                             "order": "issued_at.desc", "limit": "200"})
+
+
+def treatment_get(user: CurrentUser, plan_id: str) -> dict | None:
+    if not UUID_RE.match(plan_id):
+        return None
+    rows = _cj_get("treatment_plans", user, {"id": f"eq.{plan_id}", "select": PLAN_SELECT})
+    return rows[0] if rows else None
+
+
+def treatment_save(user: CurrentUser, plan_id: str | None, patient_id: str | None, appointment_id: str | None,
+                   kind: str | None, data: dict, reason: str | None) -> dict:
+    for value in (plan_id, patient_id, appointment_id):
+        if value and not UUID_RE.match(value):
+            return {"status": "not_found"}
+    return _cj_rpc("doctor_save_treatment", user, {"p_plan_id": plan_id, "p_patient_id": patient_id,
+                                                   "p_appointment_id": appointment_id, "p_kind": kind,
+                                                   "p_data": data, "p_reason": reason})  # type: ignore[return-value]
+
+
+def treatment_end(user: CurrentUser, plan_id: str, status: str, reason: str | None) -> dict:
+    if not UUID_RE.match(plan_id):
+        return {"status": "not_found"}
+    return _cj_rpc("doctor_end_treatment", user, {"p_plan_id": plan_id, "p_status": status, "p_reason": reason})  # type: ignore[return-value]
+
+
+def dose_log_list(user: CurrentUser, patient_id: str, since: str) -> list[dict]:
+    if not UUID_RE.match(patient_id):
+        return []
+    return _cj_get("medication_dose_log", user, {"patient_id": f"eq.{patient_id}", "scheduled_for": f"gte.{since}",
+                                                 "select": "plan_id,plan_version,scheduled_for,status,recorded_at",
+                                                 "order": "scheduled_for.desc", "limit": "1000"})
+
+
+def dose_log_mark(user: CurrentUser, plan_id: str, plan_version: int, scheduled_for: str, status: str) -> None:
+    """Upsert of the patient's own report (RLS: own plan, not more than a day ahead)."""
+    _cj(_request("POST", _rest("medication_dose_log"), user, expected=(200, 201, 204, 404),
+                 params={"on_conflict": "plan_id,scheduled_for"},
+                 json={"patient_id": user.id, "plan_id": plan_id, "plan_version": plan_version,
+                       "scheduled_for": scheduled_for, "status": status,
+                       "recorded_at": datetime.now(UTC).isoformat()},
+                 headers={"Prefer": "resolution=merge-duplicates,return=minimal"}))
+
+
+def log_fhir_export(user: CurrentUser, patient_id: str) -> None:
+    if UUID_RE.match(patient_id):
+        try:
+            _cj_rpc("log_fhir_export", user, {"p_patient": patient_id})
+        except CareJourneyUnavailable:
+            return

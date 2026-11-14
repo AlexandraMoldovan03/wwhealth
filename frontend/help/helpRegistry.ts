@@ -30,7 +30,14 @@ export type HelpTopic =
   | 'doctorPatients'
   | 'doctorScan'
   | 'doctorRecords'
-  | 'doctorPatient';
+  | 'doctorPatient'
+  | 'treatments'
+  | 'prepare'
+  | 'smartRecord'
+  | 'agenda'
+  | 'schedule'
+  | 'consultation'
+  | 'treatmentEditor';
 
 export interface HelpLink {
   /** Label key: `help.links.<id>`. */
@@ -61,6 +68,11 @@ const L = {
   specialties: { id: 'specialties', icon: 'search-outline', route: '/patient/specialties' },
   appointments: { id: 'appointments', icon: 'calendar-outline', route: '/patient/appointments' },
   doctorAppointments: { id: 'doctorAppointments', icon: 'calendar-outline', route: '/doctor/appointments' },
+  treatments: { id: 'treatments', icon: 'medkit-outline', route: '/patient/treatments' },
+  smartRecord: { id: 'smartRecord', icon: 'albums-outline', route: '/patient/record' },
+  grantAccess: { id: 'grantAccess', icon: 'shield-checkmark-outline', route: '/patient/grant-access' },
+  agenda: { id: 'agenda', icon: 'today-outline', route: '/doctor/agenda' },
+  schedule: { id: 'schedule', icon: 'settings-outline', route: '/doctor/schedule' },
 } satisfies Record<string, HelpLink>;
 
 export const HELP_LINKS: Record<HelpTopic, HelpLink[]> = {
@@ -80,11 +92,18 @@ export const HELP_LINKS: Record<HelpTopic, HelpLink[]> = {
   doctorAccess: [L.summary, L.emergency],
   intake: [L.profile, L.timeline],
   smartCare: [L.specialties, L.appointments, L.intelligence],
-  appointments: [L.smartCare, L.specialties],
+  appointments: [L.smartCare, L.specialties, L.treatments],
   doctorAppointments: [L.doctorPatients, L.doctorRecords],
-  doctorHome: [L.doctorScan, L.doctorAppointments, L.doctorPatients, L.doctorRecords],
+  doctorHome: [L.agenda, L.doctorScan, L.doctorAppointments, L.doctorPatients],
   doctorPatients: [L.doctorRecords, L.doctorScan],
   doctorScan: [L.accessLog, L.doctorPatients],
   doctorRecords: [L.doctorPatients, L.accessLog],
   doctorPatient: [L.doctorPatients, L.doctorRecords],
+  treatments: [L.smartRecord, L.appointments],
+  prepare: [L.grantAccess, L.smartRecord, L.appointments],
+  smartRecord: [L.documents, L.treatments, L.intelligence],
+  agenda: [L.schedule, L.doctorAppointments, L.doctorPatients],
+  schedule: [L.agenda, L.doctorAppointments],
+  consultation: [L.agenda, L.doctorPatients],
+  treatmentEditor: [L.agenda],
 };

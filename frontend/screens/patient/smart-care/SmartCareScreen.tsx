@@ -14,6 +14,7 @@ import { useSubmit } from '@/hooks/useSubmit';
 import { useVoiceIntake } from '@/screens/patient/voice-intake/useVoiceIntake';
 import { USE_MOCKS } from '@/config/config';
 import { api } from '@/services/backend';
+import { setCareSummaryDraft } from '@/services/careSummaryDraft';
 import type { ClarificationAnswer, Transcript, TriageResult } from '@/types';
 
 import { CareSheet } from './components/CareSheet';
@@ -76,6 +77,7 @@ export function SmartCareScreen() {
       if (!res) return;
       if (res.status === 'no_consent' && !USE_MOCKS) void consent.reload();
       setResult(res);
+      if (res.status === 'ok') setCareSummaryDraft({ symptomSummary: res.symptomSummary, specialties: res.specialties.map((x) => x.name) });
       setAnswers(nextAnswers);
       setDrafts({});
       setQuestionIndex(0);

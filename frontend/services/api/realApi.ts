@@ -6,6 +6,8 @@ import { ENDPOINTS } from './endpoints';
 
 
 const AI_TIMEOUT_MS = 60_000;
+/** Typed object → JsonValue (drops undefined fields). */
+const json = (value: unknown) => JSON.parse(JSON.stringify(value)) as JsonValue;
 export const realApi: WWHealthApi = {
   health: () => apiClient.get(ENDPOINTS.health, { timeoutMs: 5_000 }),
 
@@ -83,4 +85,31 @@ export const realApi: WWHealthApi = {
   listMyFreeSlots: () => apiClient.get(ENDPOINTS.careFreeSlots),
   addAvailability: (request) => apiClient.post(ENDPOINTS.careAvailability, JSON.parse(JSON.stringify(request)) as JsonValue),
   deleteAvailability: (slotId) => apiClient.delete(ENDPOINTS.careAvailabilitySlot(slotId)),
+
+  getMySchedule: () => apiClient.get(ENDPOINTS.cjSchedule),
+  saveMySchedule: (schedule) => apiClient.put(ENDPOINTS.cjSchedule, json(schedule)),
+  listMyTimeOff: () => apiClient.get(ENDPOINTS.cjTimeOff),
+  addTimeOff: (request) => apiClient.post(ENDPOINTS.cjTimeOff, json(request)),
+  deleteTimeOff: (id) => apiClient.delete(ENDPOINTS.cjTimeOffItem(id)),
+  getAgenda: (fromIso, toIso, language) => apiClient.get(ENDPOINTS.cjAgenda, { params: { from: fromIso, to: toIso, lang: language } }),
+  getConsultation: (appointmentId, language) => apiClient.get(ENDPOINTS.cjConsultation(appointmentId), { params: { lang: language } }),
+  listPatientTreatments: (patientId) => apiClient.get(ENDPOINTS.cjDoctorTreatments(patientId)),
+  createTreatment: (request) => apiClient.post(ENDPOINTS.cjTreatmentCreate, json(request)),
+  updateTreatment: (planId, request) => apiClient.put(ENDPOINTS.cjTreatmentItem(planId), json(request)),
+  endTreatment: (planId, status, reason) => apiClient.post(ENDPOINTS.cjTreatmentEnd(planId), { status, reason }),
+  getPatientRecordView: (patientId, view, appointmentId, language) =>
+    apiClient.get(ENDPOINTS.cjDoctorRecord(patientId), { params: { view, lang: language, ...(appointmentId ? { appointmentId } : {}) } }),
+  getPatientInsights: (patientId, language, reason) =>
+    apiClient.post(ENDPOINTS.cjDoctorInsights(patientId), { language, reason }, { timeoutMs: AI_TIMEOUT_MS }),
+  getPreparation: (appointmentId) => apiClient.get(ENDPOINTS.cjPreparation(appointmentId)),
+  savePreparation: (appointmentId, body) => apiClient.put(ENDPOINTS.cjPreparation(appointmentId), json(body)),
+  getMyTreatments: (timezone) => apiClient.get(ENDPOINTS.cjTreatments, { params: { tz: timezone } }),
+  getMyTreatment: (planId) => apiClient.get(ENDPOINTS.cjMyTreatment(planId)),
+  getReminderSchedule: (timezone) => apiClient.get(ENDPOINTS.cjReminders, { params: { tz: timezone } }),
+  markDose: (planId, scheduledFor, status, timezone) =>
+    apiClient.post(ENDPOINTS.cjDoses, { planId, scheduledFor, status }, { params: { tz: timezone } }),
+  getMyRecordView: (view, appointmentId, language) =>
+    apiClient.get(ENDPOINTS.cjRecord, { params: { view, lang: language, ...(appointmentId ? { appointmentId } : {}) } }),
+  getMyInsights: (language, reason) => apiClient.post(ENDPOINTS.cjInsights, { language, reason }, { timeoutMs: AI_TIMEOUT_MS }),
+  exportMyFhir: () => apiClient.get(ENDPOINTS.cjFhir),
 };

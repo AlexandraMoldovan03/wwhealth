@@ -16,6 +16,26 @@ import type {
   TriageResult,
   Transcript,
 } from './smartCare';
+import type {
+  CareInsights,
+  ConsultationSheet,
+  DoctorAgenda,
+  DoctorSchedule,
+  DoseEvent,
+  DoseSchedule,
+  OrganizedRecord,
+  Preparation,
+  PreparationInput,
+  RecordView,
+  ScheduleSaveResult,
+  TimeOff,
+  TimeOffCreate,
+  TimeOffResult,
+  TreatmentCreate,
+  TreatmentOverview,
+  TreatmentPlan,
+  TreatmentUpdate,
+} from './careJourney';
 import type { LabExtractionResponse, LabValueEntry, PatientLabValue } from './labs';
 import type { EmergencyAccessEvent, EmergencyData, EmergencyRedeemRequest, EmergencyTokenResponse, EmergencyTokenStatus } from './emergency';
 import type { LungAnalysis } from './lungvision';
@@ -107,4 +127,30 @@ export interface WWHealthApi {
   listMyFreeSlots(): Promise<Slot[]>;
   addAvailability(request: AvailabilityCreate): Promise<{ added: number }>;
   deleteAvailability(slotId: string): Promise<void>;
+
+  // Care Journey — doctor (role + consent checked on the server and by Postgres)
+  getMySchedule(): Promise<DoctorSchedule>;
+  saveMySchedule(schedule: DoctorSchedule): Promise<ScheduleSaveResult>;
+  listMyTimeOff(): Promise<TimeOff[]>;
+  addTimeOff(request: TimeOffCreate): Promise<TimeOffResult>;
+  deleteTimeOff(id: string): Promise<void>;
+  getAgenda(fromIso: string, toIso: string, language: Language): Promise<DoctorAgenda>;
+  getConsultation(appointmentId: string, language: Language): Promise<ConsultationSheet>;
+  listPatientTreatments(patientId: string): Promise<TreatmentPlan[]>;
+  createTreatment(request: TreatmentCreate): Promise<TreatmentPlan>;
+  updateTreatment(planId: string, request: TreatmentUpdate): Promise<TreatmentPlan>;
+  endTreatment(planId: string, status: 'discontinued' | 'cancelled', reason: string | null): Promise<TreatmentPlan>;
+  getPatientRecordView(patientId: string, view: RecordView, appointmentId: string | null, language: Language): Promise<OrganizedRecord>;
+  getPatientInsights(patientId: string, language: Language, reason: string | null): Promise<CareInsights>;
+  // Care Journey — patient
+  getPreparation(appointmentId: string): Promise<Preparation | null>;
+  savePreparation(appointmentId: string, body: PreparationInput): Promise<Preparation>;
+  getMyTreatments(timezone: string): Promise<TreatmentOverview>;
+  getMyTreatment(planId: string): Promise<TreatmentPlan>;
+  getReminderSchedule(timezone: string): Promise<DoseSchedule>;
+  markDose(planId: string, scheduledFor: string, status: 'taken' | 'skipped', timezone: string): Promise<DoseEvent>;
+  getMyRecordView(view: RecordView, appointmentId: string | null, language: Language): Promise<OrganizedRecord>;
+  getMyInsights(language: Language, reason: string | null): Promise<CareInsights>;
+  /** FHIR R4 Bundle (JSON) of the patient's own data. */
+  exportMyFhir(): Promise<Record<string, unknown>>;
 }

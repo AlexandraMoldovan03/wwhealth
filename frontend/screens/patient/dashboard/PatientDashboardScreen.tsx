@@ -4,6 +4,7 @@ import Svg, { Defs, RadialGradient, Rect, Stop } from 'react-native-svg';
 import { AppText, ErrorState, ScreenContainer, SectionHeader } from '@/design-system';
 import { spacing } from '@/design-system/theme';
 import { useCurrentUser } from '@/services/auth/useCurrentUser';
+import { CareJourneyCard } from '@/screens/patient/care-journey/CareJourneyCard';
 import { EmergencyCard } from './components/EmergencyCard';
 import { JourneyCards } from './components/JourneyCards';
 import { NextStepCard } from './components/NextStepCard';
@@ -54,6 +55,8 @@ export function PatientDashboardScreen() {
       <PassportButton />
 
       <EmergencyCard enterIndex={1} />
+
+      <CareJourneyCard enterIndex={2} />
 
       {error && !patient ? (
         <ErrorState message={error} onRetry={reload} />

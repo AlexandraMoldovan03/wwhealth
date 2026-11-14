@@ -38,7 +38,7 @@ const nameOf = (id: string | null, lang: Language) => {
   return row ? (lang === 'en' ? row[2] : row[1]) : null;
 };
 
-type MockSlot = Slot & { doctorId: string };
+type MockSlot = Slot & { doctorId: string; source?: 'manual' | 'schedule' };
 const slots: MockSlot[] = [];
 const appointments: Appointment[] = [];
 
@@ -66,8 +66,14 @@ function taken(doctorId: string, start: string, end: string, ignore?: string) {
   });
 }
 const nowIso = () => new Date().toISOString();
+/** Days off / blocked intervals (set by mockCareJourney). */
+export const mockTimeOff: { doctorId: string; startsAt: string; endsAt: string }[] = [];
+const blocked = (doctorId: string, start: string, end: string) =>
+  mockTimeOff.some((t) => t.doctorId === doctorId && overlaps(t.startsAt, t.endsAt, start, end));
 const free = (doctorId: string) =>
-  slots.filter((s) => s.doctorId === doctorId && s.startsAt > nowIso() && !taken(doctorId, s.startsAt, s.endsAt)).sort((a, b) => (a.startsAt < b.startsAt ? -1 : 1));
+  slots
+    .filter((s) => s.doctorId === doctorId && s.startsAt > nowIso() && !taken(doctorId, s.startsAt, s.endsAt) && !blocked(doctorId, s.startsAt, s.endsAt))
+    .sort((a, b) => (a.startsAt < b.startsAt ? -1 : 1));
 const plain = ({ id, startsAt, endsAt }: MockSlot): Slot => ({ id, startsAt, endsAt });
 const withNames = (a: Appointment, lang: Language): Appointment => ({ ...a, specialtyName: nameOf(a.specialtyId, lang) });
 const find = (id: string) => {
@@ -131,7 +137,7 @@ export const mockSmartCare: Pick<
     await delay(MOCK_DELAY_MS);
     const slot = slots.find((s) => s.id === request.slotId);
     if (!slot) throw new ApiError('Not found', 404);
-    if (slot.startsAt <= nowIso() || taken(slot.doctorId, slot.startsAt, slot.endsAt)) throw conflict();
+    if (slot.startsAt <= nowIso() || taken(slot.doctorId, slot.startsAt, slot.endsAt) || blocked(slot.doctorId, slot.startsAt, slot.endsAt)) throw conflict();
     const at = nowIso();
     const appt: Appointment = {
       id: createId('appt'), patientId: PATIENT_ID, doctorId: slot.doctorId, patientName: null,
@@ -222,3 +228,6 @@ export const mockSmartCare: Pick<
     slots.splice(i, 1);
   },
 };
+
+/** Shared with mockCareJourney (agenda, schedule, consultation) — same in-memory store, MOCK mode only. */
+export const mockCareStore = { slots, appointments, taken, blocked, DOCTORS, PATIENT_ID, nameOf };

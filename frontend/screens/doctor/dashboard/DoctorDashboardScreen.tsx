@@ -89,6 +89,15 @@ export function DoctorDashboardScreen({ inTab = false }: { inTab?: boolean }) {
       </GradientCard>
 
       <ListRow
+        icon="today-outline"
+        iconColor={colors.primary}
+        title={t('cj.agenda.entry')}
+        subtitle={t('cj.agenda.entryHint')}
+        enterIndex={2}
+        onPress={() => router.push('/doctor/agenda')}
+      />
+
+      <ListRow
         icon="calendar-outline"
         iconColor={colors.primary}
         title={t('care.doctor.entry')}

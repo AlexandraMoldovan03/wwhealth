@@ -12,6 +12,8 @@ const folders = [
   { title: 'documents', icon: 'documents-outline', href: '/patient/documents' },
   { title: 'symptoms', icon: 'mic-outline', href: '/patient/intake' },
   { title: 'history', icon: 'time-outline', href: '/history' },
+  { title: 'smartRecord', icon: 'albums-outline', href: '/patient/record' },
+  { title: 'treatments', icon: 'medkit-outline', href: '/patient/treatments' },
 ] as const satisfies readonly {
   title: string;
   icon: keyof typeof Ionicons.glyphMap;
