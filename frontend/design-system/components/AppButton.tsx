@@ -2,7 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { ActivityIndicator, Pressable, type PressableProps, StyleSheet, View } from 'react-native';
 import Animated, { useAnimatedStyle, useReducedMotion, useSharedValue, withTiming } from 'react-native-reanimated';
 
-import { iconSize, radius, sizes, spacing } from '@/design-system/theme';
+import { iconSize, sizes, spacing } from '@/design-system/theme';
 import { useTheme } from '@/design-system/useTheme';
 import type { IconName } from '@/types';
 
@@ -42,7 +42,7 @@ export function AppButton({
   onPressOut,
   ...rest
 }: AppButtonProps) {
-  const { colors } = useTheme();
+  const { colors, isDark } = useTheme();
   const reduceMotion = useReducedMotion();
   const scale = useSharedValue(1);
   const animatedStyle = useAnimatedStyle(() => ({ transform: [{ scale: scale.value }] }));
@@ -50,15 +50,19 @@ export function AppButton({
 
   const palette: Record<Variant, { bg: string; fg: string; border: string }> = {
     primary: { bg: colors.ink, fg: colors.onInk, border: colors.ink },
-    secondary: { bg: colors.primaryMuted, fg: colors.primary, border: 'transparent' },
-    outline: { bg: 'transparent', fg: colors.text, border: colors.border },
-    ghost: { bg: 'transparent', fg: colors.primary, border: 'transparent' },
+    secondary: { bg: colors.primary, fg: colors.onPrimary, border: colors.primary },
+    outline: { bg: colors.accent, fg: isDark ? '#121E22' : '#FFFFFF', border: colors.accent },
+    ghost: { bg: colors.primary, fg: colors.onPrimary, border: colors.primary },
     danger: { bg: colors.danger, fg: colors.onDanger, border: colors.danger },
     inverse: { bg: 'rgba(255,255,255,0.95)', fg: '#1C2E34', border: 'transparent' },
   };
-  const { bg, fg: variantFg, border } = palette[variant];
-  const fg = contentColor ?? variantFg;
+  const selected = palette[variant];
+  const bg = contentColor ? '#DCEBFA' : selected.bg;
+  const border = contentColor ? bg : selected.border;
+  const fg = contentColor ?? selected.fg;
+  const badgeIconColor = variant === 'danger' ? colors.danger : variant === 'inverse' ? colors.ink : colors.primary;
   const height = size === 'sm' ? sizes.buttonHeightSmall : size === 'lg' ? sizes.buttonHeight + 8 : sizes.buttonHeight;
+  const badgeSize = Math.max(28, height - 14);
 
   return (
     <AnimatedPressable
@@ -93,14 +97,16 @@ export function AppButton({
       {...rest}
     >
       {loading ? (
-        <ActivityIndicator color={fg} />
+        <ActivityIndicator color={fg} style={styles.foreground} />
       ) : (
-        <View style={styles.content}>
-          {icon && <Ionicons name={icon} size={size === 'sm' ? iconSize.sm : iconSize.md} color={fg} />}
-          <AppText variant="subheading" style={[{ color: fg }, size === 'sm' && styles.smallText]} numberOfLines={1}>
+          <View style={[styles.foreground, styles.content, fullWidth && styles.contentFullWidth]}>
+          <View style={[styles.iconBadge, { width: badgeSize, height: badgeSize, borderRadius: badgeSize / 2 }]}>
+            <Ionicons name={icon ?? 'ellipse-outline'} size={size === 'sm' ? iconSize.sm : iconSize.md} color={badgeIconColor} />
+          </View>
+          <AppText variant="subheading" style={[styles.buttonText, { color: fg }, size === 'sm' && styles.smallText]} numberOfLines={1}>
             {title}
           </AppText>
-          {trailingIcon && <Ionicons name={trailingIcon} size={iconSize.md} color={fg} />}
+          <Ionicons name={trailingIcon ?? 'chevron-forward-outline'} size={iconSize.md} color={fg} />
         </View>
       )}
     </AnimatedPressable>
@@ -109,12 +115,33 @@ export function AppButton({
 
 const styles = StyleSheet.create({
   base: {
-    borderRadius: radius.pill,
+    position: 'relative',
+    borderTopLeftRadius: 38,
+    borderTopRightRadius: 5,
+    borderBottomRightRadius: 38,
+    borderBottomLeftRadius: 5,
     borderWidth: 1,
+    overflow: 'hidden',
+    boxShadow: '0 7px 16px rgba(14, 31, 40, 0.2)',
     alignItems: 'center',
     justifyContent: 'center',
   },
   fullWidth: { alignSelf: 'stretch' },
-  content: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, maxWidth: '100%' },
-  smallText: { fontSize: 14 },
+  content: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, paddingHorizontal: 4 },
+  contentFullWidth: { width: '100%' },
+  foreground: { position: 'relative', zIndex: 1 },
+  iconBadge: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#FFFFFF',
+    flexShrink: 0,
+    boxShadow: '0 4px 11px rgba(0, 0, 0, 0.38)',
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.38,
+    shadowRadius: 8,
+    elevation: 8,
+  },
+  buttonText: { flex: 1, textAlign: 'center', textTransform: 'uppercase', letterSpacing: 1.5, fontSize: 13 },
+  smallText: { fontSize: 11, letterSpacing: 1 },
 });

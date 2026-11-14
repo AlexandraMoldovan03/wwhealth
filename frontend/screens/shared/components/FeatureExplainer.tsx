@@ -4,28 +4,18 @@ import { StyleSheet, View } from 'react-native';
 import { AppCard, AppText } from '@/design-system';
 import { spacing } from '@/design-system/theme';
 import { useTheme } from '@/design-system/useTheme';
-import type { IconName } from '@/types';
 import { useTranslation } from 'react-i18next';
 
 /** Short, plain explanations of the technology behind a feature (`explain.<id>` in i18n). */
 export type ExplainerId = 'ocr' | 'gemini' | 'lungvision' | 'qr' | 'consent' | 'voice';
 
-const ICON: Record<ExplainerId, IconName> = {
-  ocr: 'document-text-outline',
-  gemini: 'sparkles-outline',
-  lungvision: 'scan-outline',
-  qr: 'qr-code-outline',
-  consent: 'key-outline',
-  voice: 'mic-outline',
-};
-
 export function FeatureExplainer({ id, enterIndex }: { id: ExplainerId; enterIndex?: number }) {
   const { colors } = useTheme();
   const { t } = useTranslation();
   return (
-    <AppCard tone="flat" enterIndex={enterIndex} style={styles.card}>
+    <AppCard tone="info" enterIndex={enterIndex} style={styles.card}>
       <View style={styles.row}>
-        <Ionicons name={ICON[id]} size={18} color={colors.primary} />
+        <Ionicons name="help-circle-outline" size={24} color={colors.accent} />
         <View style={styles.flex}>
           <AppText variant="subheading">{t(`explain.${id}.title`)}</AppText>
           <AppText variant="caption" color="textMuted">

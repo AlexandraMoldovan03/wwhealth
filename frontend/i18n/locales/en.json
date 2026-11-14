@@ -355,6 +355,7 @@
     }
   },
   "profile": {
+    "personalDetails": "Patient details",
     "name": "Name",
     "age": "Age",
     "sex": "Sex",

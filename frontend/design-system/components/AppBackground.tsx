@@ -19,7 +19,7 @@ const WAVES_RATIO = 923 / 830;
 
 const clamp = (v: number, min: number, max: number) => Math.min(max, Math.max(min, v));
 
-export function AppBackground() {
+export function AppBackground({ showLungs = true }: { showLungs?: boolean }) {
   const { width, height } = useWindowDimensions();
   const { colors, isDark } = useTheme();
   const layers = LAYERS[isDark ? 'dark' : 'light'];
@@ -37,11 +37,11 @@ export function AppBackground() {
         <LinearGradient colors={[colors.background, `${colors.background}00`]} style={[styles.fade, { height: wavesBox * 0.35 }]} />
       </View>
       {/* Under a navigation header the lungs sit among the first rows of content, so they stay faint there. */}
-      <Image
+      {showLungs && <Image
         source={layers.lungs}
         style={[styles.lungs, { width: lungsW, height: lungsW / LUNGS_RATIO, opacity: 0.35 }]}
         resizeMode="contain"
-      />
+      />}
     </View>
   );
 }

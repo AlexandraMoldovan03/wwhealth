@@ -2,12 +2,13 @@ import { StyleSheet, View } from 'react-native';
 
 import { AppCard, AppText, Badge, DemoNotice } from '@/design-system';
 import { DataOriginBadge } from './DataOrigin';
-import { radius, spacing } from '@/design-system/theme';
+import { spacing } from '@/design-system/theme';
 import { useTheme } from '@/design-system/useTheme';
 import type { XrayAnalysis } from '@/types';
-import { formatDateTime, formatPercent } from '@/utils/format';
+import { formatDateTime } from '@/utils/format';
 
 import { HeatmapPreview } from './HeatmapPreview';
+import { PredictionCards } from './PredictionCards';
 import { useTranslation } from 'react-i18next';
 
 /** Full LungVision result: heatmap, probabilities, model info, disclaimer. */
@@ -31,21 +32,7 @@ export function XrayResultCard({ result, showHeatmap = true }: { result: XrayAna
 
       {showHeatmap && <HeatmapPreview imageUrl={result.imageUrl} heatmapUrl={result.heatmapUrl} />}
 
-      <View style={styles.labels}>
-        {result.predictions.map((p) => (
-          <View key={p.label} style={styles.labelRow}>
-            <View style={styles.labelText}>
-              <AppText variant="subheading">{p.label}</AppText>
-              <AppText variant="caption" color="textMuted">
-                {formatPercent(p.probability)}
-              </AppText>
-            </View>
-            <View style={[styles.track, { backgroundColor: colors.surfaceAlt }]}>
-              <View style={[styles.fill, { width: `${p.probability * 100}%`, backgroundColor: colors.primary }]} />
-            </View>
-          </View>
-        ))}
-      </View>
+      <PredictionCards predictions={result.predictions} />
 
       <AppText variant="caption" color="textSubtle">
         {result.modelVersion} · {result.processingTimeMs} ms · {formatDateTime(result.createdAt)}
@@ -60,9 +47,4 @@ const styles = StyleSheet.create({
   card: { gap: spacing.md },
   header: { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', gap: spacing.sm },
   headerText: { gap: spacing.xxs },
-  labels: { gap: spacing.md },
-  labelRow: { gap: spacing.xs },
-  labelText: { flexDirection: 'row', justifyContent: 'space-between' },
-  track: { height: 8, borderRadius: radius.pill, overflow: 'hidden' },
-  fill: { height: '100%', borderRadius: radius.pill },
 });

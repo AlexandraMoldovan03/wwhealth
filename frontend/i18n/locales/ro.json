@@ -355,6 +355,7 @@
     }
   },
   "profile": {
+    "personalDetails": "Datele pacientului",
     "name": "Nume",
     "age": "Vârstă",
     "sex": "Sex",

@@ -17,7 +17,7 @@ export interface AppCardProps extends PropsWithChildren {
   /** Animate in on mount; the number staggers siblings (0, 1, 2…). */
   enterIndex?: number;
   /** 'flat' = no shadow (nested cards / dense lists). */
-  tone?: 'default' | 'flat' | 'muted';
+  tone?: 'default' | 'flat' | 'muted' | 'info';
 }
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
@@ -41,8 +41,8 @@ export function AppCard({
   const cardStyle = [
     styles.card,
     {
-      backgroundColor: tone === 'muted' ? colors.surfaceAlt : colors.surface,
-      borderColor: tone === 'muted' ? 'transparent' : colors.border,
+      backgroundColor: tone === 'muted' ? colors.surfaceAlt : tone === 'info' ? colors.accentMuted : colors.surface,
+      borderColor: tone === 'muted' ? 'transparent' : tone === 'info' ? colors.accent : colors.border,
     },
     !isDark && tone === 'default' && shadows.card,
     padded && styles.padded,

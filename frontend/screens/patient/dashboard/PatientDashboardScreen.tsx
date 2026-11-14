@@ -5,10 +5,10 @@ import { AppText, ErrorState, ScreenContainer, SectionHeader } from '@/design-sy
 import { spacing } from '@/design-system/theme';
 import { useCurrentUser } from '@/services/auth/useCurrentUser';
 import { CareJourneyCard } from '@/screens/patient/care-journey/CareJourneyCard';
-import { EmergencyCard } from './components/EmergencyCard';
 import { JourneyCards } from './components/JourneyCards';
 import { NextStepCard } from './components/NextStepCard';
 import { PassportButton } from './components/PassportButton';
+import { EmergencyCard } from './components/EmergencyCard';
 import { ProgressChecklist } from './components/ProgressChecklist';
 import { useRecordProgress } from './useRecordProgress';
 import { WelcomeHeader } from '@/screens/shared/components/WelcomeHeader';
@@ -53,7 +53,6 @@ export function PatientDashboardScreen() {
       </View>
 
       <PassportButton />
-
       <EmergencyCard enterIndex={1} />
 
       <CareJourneyCard enterIndex={2} />
