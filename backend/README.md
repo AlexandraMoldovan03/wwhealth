@@ -44,7 +44,7 @@ app/
   core/security.py   auth (DEMO user → Auth0 JWT later)
   api/router.py      /api/v1 router
   api/routes/        one file per resource: patients, documents, xray, access, voice, health
-  schemas/           Pydantic models (camelCase JSON) — must match src/types/medical.ts
+  schemas/           Pydantic models (camelCase JSON) — must match frontend/types/medical.ts
   services/          business logic + integrations (Gemini, ElevenLabs, AI model)
   db/                SQLAlchemy engine/session + models (PostgreSQL)
 tests/

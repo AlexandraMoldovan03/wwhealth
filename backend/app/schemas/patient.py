@@ -1,4 +1,4 @@
-"""Mirror of src/types/medical.ts (mobile) and docs/API_CONTRACT.md."""
+"""Mirror of frontend/types/medical.ts (mobile) and docs/API_CONTRACT.md."""
 from typing import Literal
 
 from pydantic import Field

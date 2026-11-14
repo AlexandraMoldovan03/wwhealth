@@ -8,10 +8,10 @@ Recipes with real file names. Copy, paste, rename.
 
 ### a) A new bottom tab (e.g. "Camera")
 
-**Step 1 — create the screen** `src/screens/CameraScreen.tsx`:
+**Step 1 — create the screen** `frontend/screens/shared/camera/CameraScreen.tsx` (+ `index.ts` with `export * from './CameraScreen';`):
 
 ```tsx
-import { AppButton, AppText, ScreenContainer } from '@/components/ui';
+import { AppButton, AppText, ScreenContainer } from '@/design-system';
 
 export function CameraScreen() {
   return (
@@ -27,10 +27,10 @@ export function CameraScreen() {
 **Step 2 — create the route** `app/(tabs)/camera.tsx`:
 
 ```tsx
-export { CameraScreen as default } from '@/screens/CameraScreen';
+export { CameraScreen as default } from '@/screens/shared/camera';
 ```
 
-**Step 3 — register the tab** in `src/constants/navigation.ts`:
+**Step 3 — register the tab** in `frontend/config/navigation.ts`:
 
 ```ts
 export const TABS: TabConfig[] = [
@@ -49,7 +49,7 @@ export const TABS: TabConfig[] = [
 export { ProfileScreen as default } from '@/screens/ProfileScreen';
 ```
 
-**Header title** in `src/constants/navigation.ts` → `STACK_SCREENS`:
+**Header title** in `frontend/config/navigation.ts` → `STACK_SCREENS`:
 
 ```ts
 { name: 'profile', title: 'Profile' },
@@ -92,15 +92,15 @@ See the working examples in `app/history/[id].tsx` and `app/doctor/patient/[id]/
 
 ## 2. Add a component
 
-**Generic & reusable** (used by many features) → `src/components/ui/`.
-**Specific to one feature** → `src/features/<feature>/components/`.
+**Generic & reusable** (used by many features) → `frontend/design-system/components/` (export it from `frontend/design-system/index.ts`).
+**Specific to one feature** → `components/` next to that screen (e.g. `frontend/screens/patient/documents/components/`). Used by both patient and doctor → `frontend/screens/shared/components/`.
 
-Example `src/components/ui/InfoRow.tsx`:
+Example `frontend/design-system/components/InfoRow.tsx`:
 
 ```tsx
 import { StyleSheet, View } from 'react-native';
 
-import { spacing } from '@/constants/theme';
+import { spacing } from '@/design-system/theme';
 
 import { AppText } from './AppText';
 
@@ -123,15 +123,15 @@ const styles = StyleSheet.create({
 });
 ```
 
-Then export it from `src/components/ui/index.ts`:
+Then export it from `frontend/design-system/index.ts`:
 
 ```ts
 export * from './InfoRow';
 ```
 
-Use it: `import { InfoRow } from '@/components/ui';`
+Use it: `import { InfoRow } from '@/design-system';`
 
-Rules: use `AppText` for text, `useTheme()` for colours, tokens from `@/constants/theme` for sizes.
+Rules: use `AppText` for text, `useTheme()` for colours, tokens from `@/design-system/theme` for sizes.
 
 ### Available UI components
 
@@ -152,13 +152,13 @@ Icons: any name from the **Ionicons** set at https://icons.expo.fyi (`icon="hear
 
 ## 3. Connect a backend endpoint
 
-All HTTP goes through **one interface**, `WWHealthApi` (`src/types/wwhealthApi.ts`), implemented twice:
+All HTTP goes through **one interface**, `WWHealthApi` (`frontend/types/wwhealthApi.ts`), implemented twice:
 
 | File | Mode |
 |---|---|
-| `src/services/api/realApi.ts` | API — real `fetch` to FastAPI (via `apiClient`) |
-| `src/services/mock/mockApi.ts` | MOCK — in-memory demo data, no backend |
-| `src/services/backend.ts` | exports `api` = one of the two, based on `EXPO_PUBLIC_USE_MOCKS` |
+| `frontend/services/api/realApi.ts` | API — real `fetch` to FastAPI (via `apiClient`) |
+| `frontend/services/mock/mockApi.ts` | MOCK — in-memory demo data, no backend |
+| `frontend/services/backend.ts` | exports `api` = one of the two, based on `EXPO_PUBLIC_USE_MOCKS` |
 
 Screens and hooks only ever do `import { api } from '@/services/backend'`.
 
@@ -174,11 +174,11 @@ EXPO_PUBLIC_API_BASE_URL=http://192.168.1.10:8000   # laptop LAN IP (macOS: ipco
 ### Add a new endpoint (example: `GET /api/v1/appointments`)
 
 1. **Contract** — add it to `docs/API_CONTRACT.md` and agree with the backend dev.
-2. **Types** — `src/types/medical.ts`: `export interface Appointment { id: string; date: string; doctor: string }`
-3. **Path** — `src/services/api/endpoints.ts`: `appointments: '/api/v1/appointments',`
-4. **Interface** — `src/types/wwhealthApi.ts`: `getAppointments(): Promise<Appointment[]>;`
-5. **Real** — `src/services/api/realApi.ts`: `getAppointments: () => apiClient.get(ENDPOINTS.appointments),`
-6. **Mock** — `src/services/mock/mockApi.ts`:
+2. **Types** — `frontend/types/medical.ts`: `export interface Appointment { id: string; date: string; doctor: string }`
+3. **Path** — `frontend/services/api/endpoints.ts`: `appointments: '/api/v1/appointments',`
+4. **Interface** — `frontend/types/wwhealthApi.ts`: `getAppointments(): Promise<Appointment[]>;`
+5. **Real** — `frontend/services/api/realApi.ts`: `getAppointments: () => apiClient.get(ENDPOINTS.appointments),`
+6. **Mock** — `frontend/services/mock/mockApi.ts`:
    ```ts
    async getAppointments() {
      await delay(MOCK_DELAY_MS);
@@ -194,7 +194,7 @@ EXPO_PUBLIC_API_BASE_URL=http://192.168.1.10:8000   # laptop LAN IP (macOS: ipco
 
 `apiClient` methods: `get`, `post` (JSON), `put`, `delete`, `upload` (multipart/form-data). Errors throw
 `ApiError` (`status`, `userMessage`); FastAPI's `{"detail": "..."}` becomes the message.
-Auth (later, Auth0): `setAuthTokenProvider(async () => accessToken)` in `src/services/api/client.ts`
+Auth (later, Auth0): `setAuthTokenProvider(async () => accessToken)` in `frontend/services/api/client.ts`
 adds `Authorization: Bearer …` to every request.
 
 ---
@@ -215,7 +215,7 @@ Same pattern for documents (Gemini → `document_service.py`) and voice (ElevenL
 
 ## 5. Change the theme
 
-All in `src/constants/theme.ts`:
+All in `frontend/design-system/theme.ts`:
 
 - **Primary colour:** change `palette.brand` (light) and `palette.brandDark` (dark). Also update `primaryMuted`
   (same colour at ~12% opacity) in `lightColors` / `darkColors`.
@@ -228,7 +228,7 @@ TypeScript will tell you if one is missing. Use it with `const { colors } = useT
 Note: `Badge`/`IconBadge` tint by appending alpha to the colour (`${color}1F`), so keep semantic colours as 6-digit hex.
 
 **Default theme:** users pick Light / Dark / System in Settings (saved on the device).
-The default is `'system'` in `src/context/ThemeContext.tsx`.
+The default is `'system'` in `frontend/design-system/ThemeContext.tsx`.
 
 **Custom font:** `npx expo install expo-font @expo-google-fonts/inter`, load it in `app/_layout.tsx`
 with `useFonts`, then add `fontFamily` to the variants in `typography`.
@@ -249,11 +249,10 @@ with `useFonts`, then add `fontFamily` to the variants in `typography`.
 
 | File | Shown in |
 |---|---|
-| `src/data/quickActions.ts` | Patient dashboard → Quick actions |
-| `src/data/activity.ts` | Patient dashboard → Recent activity |
-| `src/data/features.ts` | Explore cards (each `route` opens a screen) |
-| `src/data/mockPatient.ts` | MOCK patient record: profile, history, documents, X-rays, demo QR code |
-| `src/services/mock/mockApi.ts` | Simulated AI / Gemini / access / voice responses |
+| `frontend/screens/patient/dashboard/quickActions.ts` | Patient dashboard → Quick actions |
+| `frontend/screens/shared/explore/features.ts` | Explore cards (each `route` opens a screen) |
+| `frontend/services/mock/mockPatient.ts` | MOCK patient record: profile, history, documents, X-rays, demo QR code |
+| `frontend/services/mock/mockApi.ts` | Simulated AI / Gemini / access / voice responses |
 
 ---
 

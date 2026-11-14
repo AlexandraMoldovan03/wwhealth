@@ -4,7 +4,7 @@
 
 | | Developer 1 — AI | Developer 2 — Mobile | Developer 3 — Backend |
 |---|---|---|---|
-| Owns | `ai/` | `app/`, `src/`, `assets/`, `app.json`, `package.json` | `backend/` |
+| Owns | `ai/` | `app/`, `frontend/`, `assets/`, `app.json`, `package.json` | `backend/` |
 | Builds | DenseNet121 training, Grad-CAM, evaluation, `predict_xray()` | screens, navigation, UI, Auth0 login in app, QR display/scan, API mode | FastAPI, PostgreSQL, Auth0 validation, Gemini, secure QR tokens, ElevenLabs, model integration |
 | Hands off | `predict_xray()` contract + weights file | — | endpoints from `docs/API_CONTRACT.md` |
 

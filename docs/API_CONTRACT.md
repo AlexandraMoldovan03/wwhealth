@@ -1,6 +1,6 @@
 # API contract — v1
 
-Source of truth for mobile ⇄ backend. Mirrors: `src/types/medical.ts` (TS) and `backend/app/schemas/` (Pydantic).
+Source of truth for mobile ⇄ backend. Mirrors: `frontend/types/medical.ts` (TS) and `backend/app/schemas/` (Pydantic).
 Live docs when the backend runs: `http://localhost:8000/docs`.
 
 ## Conventions
@@ -167,5 +167,5 @@ Response: `{ "text": "Maria Ionescu, born …", "audioUrl": "https://…/summary
 
 ## Changing the contract
 
-1. Edit this file in a PR, tag the other two devs. 2. Update `src/types/medical.ts` + `backend/app/schemas/`.
+1. Edit this file in a PR, tag the other two devs. 2. Update `frontend/types/medical.ts` + `backend/app/schemas/`.
 3. Prefer **adding** optional fields over renaming/removing during the hackathon.

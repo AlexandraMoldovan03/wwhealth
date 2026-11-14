@@ -1,1 +1,1 @@
-export { DoctorLungVisionScreen as default } from '@/screens/doctor/DoctorLungVisionScreen';
+export { DoctorLungVisionScreen as default } from '@/screens/doctor/patient-access';

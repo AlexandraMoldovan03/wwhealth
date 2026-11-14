@@ -1,1 +1,1 @@
-export { MedicalDocumentsScreen as default } from '@/screens/patient/MedicalDocumentsScreen';
+export { MedicalDocumentsScreen as default } from '@/screens/patient/documents';

@@ -49,7 +49,7 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "lint": "expo lint",
+    "lint": "expo lint app frontend",
     "typecheck": "tsc --noEmit",
     "doctor": "npx expo-doctor",
     "check": "npm run typecheck && npm run lint"

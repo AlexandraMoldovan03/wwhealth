@@ -1,1 +1,1 @@
-export { MedicalProfileScreen as default } from '@/screens/patient/MedicalProfileScreen';
+export { MedicalProfileScreen as default } from '@/screens/patient/medical-profile';

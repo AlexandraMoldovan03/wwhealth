@@ -25,7 +25,7 @@ Run lint and typecheck before declaring any task done.
 
 ## Navigation & Routing
 
-- Use **Expo Router** for all navigation. Routes live in the root `app/` directory — every file there is a screen, `_layout.tsx` files define navigators. Keep non-route code in `src/` (see docs/MOBILE_ARCHITECTURE.md). `backend/` and `ai/` are Python — not part of the Expo bundle. Do NOT create `src/app/` (it would take precedence over `app/`).
+- Use **Expo Router** for all navigation. Routes live in the root `app/` directory — every file there is a screen, `_layout.tsx` files define navigators. Keep non-route code in `frontend/` (see docs/PROJECT_MAP.md). `backend/` and `ai/` are Python — not part of the Expo bundle. Do NOT create `src/app/` (Expo Router would take it over `app/`).
 - Import `Link`, `router`, and `useLocalSearchParams` from `expo-router`.
 - Docs: https://docs.expo.dev/router/introduction.md
 

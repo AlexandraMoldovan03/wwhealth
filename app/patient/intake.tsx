@@ -1,1 +1,1 @@
-export { IntakeScreen as default } from '@/screens/patient/IntakeScreen';
+export { IntakeScreen as default } from '@/screens/patient/voice-intake/IntakeScreen';

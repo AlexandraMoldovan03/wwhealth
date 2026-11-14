@@ -1,2 +1,2 @@
-// Route "/settings" → src/screens/SettingsScreen.tsx
-export { SettingsScreen as default } from '@/screens/SettingsScreen';
+// Route "/settings" → frontend/screens/shared/settings/SettingsScreen.tsx
+export { SettingsScreen as default } from '@/screens/shared/settings';

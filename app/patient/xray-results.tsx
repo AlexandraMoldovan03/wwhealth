@@ -1,2 +1,2 @@
 // Optional query param: /patient/xray-results?id=<analysisId>
-export { XrayResultsScreen as default } from '@/screens/patient/XrayResultsScreen';
+export { XrayResultsScreen as default } from '@/screens/patient/lungvision';

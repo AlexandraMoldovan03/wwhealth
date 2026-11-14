@@ -1,1 +1,1 @@
-export { UploadDocumentScreen as default } from '@/screens/patient/UploadDocumentScreen';
+export { UploadDocumentScreen as default } from '@/screens/patient/documents';
