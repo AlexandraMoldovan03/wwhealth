@@ -7,6 +7,7 @@ import { useCurrentUser } from '@/services/auth/useCurrentUser';
 import { EmergencyCard } from './components/EmergencyCard';
 import { JourneyCards } from './components/JourneyCards';
 import { NextStepCard } from './components/NextStepCard';
+import { PassportButton } from './components/PassportButton';
 import { ProgressChecklist } from './components/ProgressChecklist';
 import { useRecordProgress } from './useRecordProgress';
 import { WelcomeHeader } from '@/screens/shared/components/WelcomeHeader';
@@ -45,6 +46,8 @@ export function PatientDashboardScreen() {
       <WelcomeHeader name={name} roleLabel={t('roles.patient')} headline={t('home.headline')} />
 
       <EmergencyCard enterIndex={1} />
+
+      <PassportButton />
 
       {error && !patient ? (
         <ErrorState message={error} onRetry={reload} />
