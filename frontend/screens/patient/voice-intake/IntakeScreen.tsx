@@ -1,7 +1,9 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 
-import { AppButton, AppCard, AppInput, AppText, DemoNotice, LoadingState, ScreenContainer } from '@/design-system';
+import { AppButton, AppCard, AppInput, AppText, DemoNotice, ScreenContainer } from '@/design-system';
+import { useTheme } from '@/design-system/useTheme';
 import { spacing } from '@/design-system/theme';
 import { useLocalPatientId } from '@/services/auth/useCurrentUser';
 import { RecordButton } from './RecordButton';
@@ -30,12 +32,10 @@ function VoiceIntake({ userId }: { userId?: string }) {
         You can review and edit the form before saving it.
       </AppText>
       <AppText color="textMuted">AI does not diagnose. In an emergency in the EU, call 112.</AppText>
-      {phase === 'processing' ? (
-        <LoadingState message="Preparing your symptom form…" />
-      ) : phase === 'recording' ? (
+      {phase === 'processing' || phase === 'recording' ? (
         <>
-          <RecordingFeedback recorder={intake.recorder} />
-          <RecordButton title="Stop and transcribe" stopping onPress={stop} />
+          <RecordingFeedback recorder={intake.recorder} processing={phase === 'processing'} />
+          {phase === 'recording' && <RecordButton title="Stop and transcribe" stopping onPress={stop} />}
         </>
       ) : (
         <RecordButton
@@ -46,12 +46,19 @@ function VoiceIntake({ userId }: { userId?: string }) {
         />
       )}
       {error && <AppText color="danger" accessibilityRole="alert">{error}</AppText>}
-      {form && userId && <IntakeEditor userId={userId} key={intake.revision} initialForm={form} disabled={phase !== 'idle'} />}
+      {form && userId && (
+        <View style={phase !== 'idle' && styles.hidden}>
+          <IntakeEditor userId={userId} key={intake.revision} initialForm={form} disabled={phase !== 'idle'} />
+        </View>
+      )}
     </ScreenContainer>
   );
 }
 
 function IntakeEditor({ initialForm, disabled, userId }: { initialForm: IntakeForm; disabled: boolean; userId: string }) {
+  const { t } = useTranslation();
+  const { colors } = useTheme();
+  const [sourceIndex, setSourceIndex] = useState<number | null>(null);
   const [form, setForm] = useState(initialForm);
   const [medications, setMedications] = useState(initialForm.medicationsMentioned.join(', '));
   const [allergies, setAllergies] = useState(initialForm.allergiesMentioned.join(', '));
@@ -89,9 +96,29 @@ function IntakeEditor({ initialForm, disabled, userId }: { initialForm: IntakeFo
       <AppText variant="heading">Review your form</AppText>
       <AppInput label="Summary" accessibilityLabel="Summary" value={form.summary} editable={!locked}
         onChangeText={(summary) => setForm((current) => ({ ...current, summary }))} />
-      {form.symptoms.map((symptom, index) => (
+      {form.symptoms.map((symptom, index) => {
+        const match = form.isDemo ? null : findTranscriptMatch(form.transcript, symptom.name);
+        return (
         <AppCard key={index} style={styles.fields}>
           <AppText variant="subheading">Symptom {index + 1}</AppText>
+          {match && (
+            <>
+              <AppButton
+                title={t('voiceRecording.source')}
+                size="sm"
+                variant="outline"
+                accessibilityState={{ expanded: sourceIndex === index }}
+                onPress={() => setSourceIndex(sourceIndex === index ? null : index)}
+              />
+              {sourceIndex === index && (
+                <AppText selectable color="textMuted">
+                  {match.before}
+                  <AppText style={{ backgroundColor: colors.accentMuted, color: colors.text, fontWeight: '700' }}>{match.text}</AppText>
+                  {match.after}
+                </AppText>
+              )}
+            </>
+          )}
           <AppInput label="Name" accessibilityLabel="Symptom name" value={symptom.name} editable={!locked}
             onChangeText={(name) => updateSymptom(index, { name })} />
           <AppInput label="Duration" accessibilityLabel="Duration" value={symptom.duration ?? ''} editable={!locked}
@@ -108,10 +135,12 @@ function IntakeEditor({ initialForm, disabled, userId }: { initialForm: IntakeFo
             ))}
           </View>
           <AppButton title="Remove symptom" variant="ghost" disabled={locked} onPress={() => {
+            setSourceIndex(null);
             setForm((current) => ({ ...current, symptoms: current.symptoms.filter((_, i) => i !== index) }));
           }} />
         </AppCard>
-      ))}
+      );
+      })}
       <AppButton title="Add symptom" variant="outline" disabled={locked} onPress={() => {
         setForm((current) => ({ ...current, symptoms: [...current.symptoms, EMPTY_SYMPTOM] }));
       }} />
@@ -120,6 +149,7 @@ function IntakeEditor({ initialForm, disabled, userId }: { initialForm: IntakeFo
       <AppInput label="Allergies (separate with commas)" accessibilityLabel="Allergies"
         value={allergies} onChangeText={setAllergies} editable={!locked} />
       <AppText variant="subheading">Original transcript</AppText>
+      <View accessible={false} style={{ height: 2, backgroundColor: colors.primary }} />
       <AppText color="textMuted" selectable>{form.transcript}</AppText>
       {save.error && <AppText color="danger" accessibilityRole="alert">{save.error}</AppText>}
       {save.data ? (
@@ -133,7 +163,26 @@ function IntakeEditor({ initialForm, disabled, userId }: { initialForm: IntakeFo
   );
 }
 
+function findTranscriptMatch(transcript: string, name: string) {
+  const label = name.trim();
+  if (label.length < 2) return null;
+
+  const escaped = label.replace(/[.*+?^$\{\}()|[\]\\]/g, '\\$&');
+  const match = new RegExp('(^|[^\\p{L}\\p{N}])' + escaped + '(?![\\p{L}\\p{N}])', 'iu').exec(transcript);
+  if (!match) return null;
+
+  const index = match.index + match[1].length;
+  const start = Math.max(0, index - 65);
+  const end = match.index + match[0].length;
+  return {
+    before: (start > 0 ? '…' : '') + transcript.slice(start, index),
+    text: transcript.slice(index, end),
+    after: transcript.slice(end, end + 65) + (end + 65 < transcript.length ? '…' : ''),
+  };
+}
+
 const styles = StyleSheet.create({
+  hidden: { display: 'none' },
   fields: { gap: spacing.md },
   choices: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.xs },
 });

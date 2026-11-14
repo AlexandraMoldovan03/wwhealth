@@ -1,5 +1,5 @@
 {
-  "voiceRecording": {
+  "voiceRecording": { "processing": "Pregătim transcrierea…", "source": "Vezi fragmentul din transcriere",
     "active": "Se înregistrează"
   },
   "common": {
@@ -189,9 +189,7 @@
     "passportTap": "Apasă pe pașaport ca să-l deschizi",
     "there": "acolo",
     "greeting": {
-      "morning": "Bună dimineața",
-      "afternoon": "Bună ziua",
-      "evening": "Bună seara"
+      "welcome": "Bun venit,"
     },
     "tagline": "dosarul tău medical, în buzunar.",
     "stats": {
@@ -267,7 +265,7 @@
     },
     "emergencyQr": "Generează QR de urgență",
     "openEmergencyQr": "Deschide QR-ul de urgență",
-    "headline": "Sănătatea ta, liniștit, într-un singur loc",
+    "headline": "Sănătate fără frontiere.",
     "emergency": {
       "title": "Pașaport de urgență",
       "text": "Un QR de unică folosință, valabil 5 minute, pentru un medic verificat."

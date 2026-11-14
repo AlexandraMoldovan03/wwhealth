@@ -60,10 +60,10 @@ export function AppTabBar({ state, descriptors, emitter, navigateToTab }: Bottom
   return (
     <View style={[styles.dock, { marginBottom: Math.max(insets.bottom, spacing.sm) }]}>
       <LinearGradient
-        colors={isDark ? ['#354D57E8', '#192B36F5'] : ['#FFFFFFF5', '#DDEFE9E8']}
+        colors={role === 'doctor' ? (isDark ? ['#263F60', '#162942'] : ['#FFFFFF', '#DBEAFE']) : (isDark ? ['#354D57E8', '#192B36F5'] : ['#FFFFFFF5', '#DDEFE9E8'])}
         start={{ x: 0, y: 0 }}
         end={{ x: 0.9, y: 1 }}
-        style={[styles.glass, { borderColor: isDark ? '#B7E8DA40' : '#FFFFFF' }]}
+        style={[styles.glass, { borderColor: role === 'doctor' ? colors.border : isDark ? '#B7E8DA40' : '#FFFFFF' }]}
       >
         <View
           accessibilityRole="tablist"
@@ -88,8 +88,8 @@ export function AppTabBar({ state, descriptors, emitter, navigateToTab }: Bottom
                 </Svg>
               </Animated.View>
               <LinearGradient
-                colors={isDark ? ['#ECFFF22D', '#D4F8EB0A'] : ['#B8D0C6', '#D2E0D9']}
-                style={[styles.selection, { borderColor: isDark ? '#B7E8DA66' : '#91B0A3' }]}
+                colors={role === 'doctor' ? (isDark ? ['#B9D7FF42', '#90BFFF10'] : ['#D9EAFE', '#BED9FA']) : (isDark ? ['#ECFFF22D', '#D4F8EB0A'] : ['#B8D0C6', '#D2E0D9'])}
+                style={[styles.selection, { borderColor: role === 'doctor' ? colors.border : isDark ? '#B7E8DA66' : '#91B0A3' }]}
               />
             </Animated.View>
           )}

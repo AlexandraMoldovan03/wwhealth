@@ -1,5 +1,5 @@
 {
-  "voiceRecording": {
+  "voiceRecording": { "processing": "Preparing your transcript…", "source": "Show transcript excerpt",
     "active": "Recording"
   },
   "common": {
@@ -189,9 +189,7 @@
     "passportTap": "Tap the passport to open it",
     "there": "there",
     "greeting": {
-      "morning": "Good morning",
-      "afternoon": "Good afternoon",
-      "evening": "Good evening"
+      "welcome": "Welcome"
     },
     "tagline": "your health record, in your pocket.",
     "stats": {
@@ -267,7 +265,7 @@
     },
     "emergencyQr": "Generate emergency QR",
     "openEmergencyQr": "Open emergency QR",
-    "headline": "Your health, calmly in one place",
+    "headline": "Health Without Borders.",
     "emergency": {
       "title": "Emergency Passport",
       "text": "A single-use QR, valid 5 minutes, for a verified doctor."

@@ -25,7 +25,7 @@ function PassportScene({ fullName, patient }: PassportProps) {
   function openProfile() {
     if (opened.current) return;
     opened.current = true;
-    router.push('/patient/profile');
+    router.push({ pathname: '/patient/profile', params: { from: 'passport' } });
   }
 
   return (

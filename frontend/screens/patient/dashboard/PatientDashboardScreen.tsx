@@ -76,7 +76,7 @@ export function PatientDashboardScreen() {
 }
 
 const styles = StyleSheet.create({
-  headline: { justifyContent: 'center', minHeight: 52 },
-  aura: { position: 'absolute', width: '100%', maxWidth: 390, height: 102, left: 0, top: -25 },
+  headline: { alignSelf: 'flex-start', justifyContent: 'center', minHeight: 52, maxWidth: '100%' },
+  aura: { position: 'absolute', left: -26, right: -26, top: -18, bottom: -18 },
   headlineText: { fontSize: 19, lineHeight: 26 },
 });

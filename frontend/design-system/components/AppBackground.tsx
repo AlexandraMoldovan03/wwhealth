@@ -21,7 +21,8 @@ const clamp = (v: number, min: number, max: number) => Math.min(max, Math.max(mi
 
 export function AppBackground({ showLungs = true }: { showLungs?: boolean }) {
   const { width, height } = useWindowDimensions();
-  const { colors, isDark } = useTheme();
+  const { colors, isDark, isDoctorTheme } = useTheme();
+  const tintColor = isDoctorTheme ? colors.primary : undefined;
   const layers = LAYERS[isDark ? 'dark' : 'light'];
 
   const lungsW = clamp(width * 0.36, 110, 230);
@@ -32,14 +33,14 @@ export function AppBackground({ showLungs = true }: { showLungs?: boolean }) {
   return (
     <View pointerEvents="none" style={StyleSheet.absoluteFill}>
       <View style={[styles.waves, { height: wavesBox }]}>
-        <Image source={layers.waves} style={{ width, height: wavesH }} resizeMode="stretch" />
+        <Image source={layers.waves} style={{ width, height: wavesH, tintColor, opacity: isDoctorTheme ? 0.20 : 1 }} resizeMode="stretch" />
         {/* Soft top edge, so the cut line of the waves never shows. */}
         <LinearGradient colors={[colors.background, `${colors.background}00`]} style={[styles.fade, { height: wavesBox * 0.35 }]} />
       </View>
       {/* Under a navigation header the lungs sit among the first rows of content, so they stay faint there. */}
       {showLungs && <Image
         source={layers.lungs}
-        style={[styles.lungs, { width: lungsW, height: lungsW / LUNGS_RATIO, opacity: 0.35 }]}
+        style={[styles.lungs, { width: lungsW, height: lungsW / LUNGS_RATIO, opacity: isDoctorTheme ? 0.18 : 0.35, tintColor }]}
         resizeMode="contain"
       />}
     </View>

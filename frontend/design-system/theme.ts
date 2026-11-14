@@ -120,6 +120,33 @@ export const darkColors: ThemeColors = {
 };
 
 /** Spacing scale (4pt grid). Use `spacing.md` instead of `16`. */
+export const doctorLightColors: ThemeColors = {
+  ...lightColors,
+  primary: '#285C94',
+  primaryMuted: '#DCEBFA',
+  ink: '#214D7E',
+  background: '#EFF5FC',
+  surfaceAlt: '#E7EFF9',
+  border: '#CADBED',
+  text: '#172D48',
+  textMuted: '#465E78',
+  textSubtle: '#55708C',
+};
+
+export const doctorDarkColors: ThemeColors = {
+  ...darkColors,
+  primary: '#A9CFFF',
+  primaryMuted: '#273F60',
+  ink: '#A9CFFF',
+  background: '#101B30',
+  surface: '#192D47',
+  surfaceAlt: '#223A58',
+  border: '#354E70',
+  textMuted: '#B0C4DC',
+  textSubtle: '#93ADC9',
+  tabBar: '#192D47',
+};
+
 export const spacing = {
   xxs: 2,
   xs: 4,
@@ -207,7 +234,7 @@ export const motion = {
 /** Background gradients (expo-linear-gradient). */
 export const gradients = {
   patientHero: ['#5E8B7E', '#7FA79A', '#A7C7E7'] as const,
-  doctorHero: ['#1C2E34', '#273E46', '#3F6E99'] as const,
+  doctorHero: ['#142A48', '#1E3F69', '#335E8D'] as const,
   emergency: ['#F2C6CD', '#FBEAE6'] as const, // light coral → dark text on top (AA)
   calm: ['#F7F5F0', '#E9F0EC'] as const,
   calmDark: ['#121E22', '#1A2A30'] as const,
