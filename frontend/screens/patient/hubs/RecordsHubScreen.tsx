@@ -21,9 +21,9 @@ const folders = [
 export function RecordsHubScreen() {
   const { colors, isDark } = useTheme();
   const { t } = useTranslation();
-  const back = isDark ? '#9BC9D32C' : '#FFFFFF78';
-  const face = isDark ? ['#B4E4EC44', '#41687438', '#9ED5D515'] as const : ['#FFFFFFCD', '#D6ECEF85', '#FFFFFF55'] as const;
-  const edge = isDark ? '#CFEFFF55' : '#FFFFFFD0';
+  const back = isDark ? '#9BC9D32C' : '#BCD5D9';
+  const face = isDark ? ['#B4E4EC44', '#41687438', '#9ED5D515'] as const : ['#D7E9EA', '#BAD7DB', '#CBDFE1'] as const;
+  const edge = isDark ? '#CFEFFF55' : '#8FB6BB';
 
   return (
     <ScreenContainer help="records">
@@ -55,7 +55,7 @@ export function RecordsHubScreen() {
         })}
       </View>
 
-      <AppButton title={t('hubs.records.upload')} icon="cloud-upload-outline" variant="outline"
+      <AppButton title={t('hubs.records.upload')} icon="cloud-upload-outline" variant="primary" size="lg" fullWidth
         onPress={() => router.push('/patient/upload-document')} />
     </ScreenContainer>
   );
