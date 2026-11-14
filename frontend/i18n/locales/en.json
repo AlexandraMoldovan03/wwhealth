@@ -247,8 +247,7 @@
         "subtitle": "Dr. Demo · 15 min access"
       }
     },
-    "emergencyQrHint": "Single use · 5 minutes",
-    "emergencyQr": "Emergency QR code",
+    "emergencyQr": "Generate emergency QR",
     "headline": "Your health, calmly in one place",
     "emergency": {
       "title": "Emergency Passport",
@@ -539,6 +538,7 @@
     "select": "Select an image",
     "hint": "Tap to choose from your gallery",
     "change": "Change image",
+    "remove": "Remove image",
     "selectA11y": "Select image"
   },
   "notFound": {
