@@ -1,46 +1,78 @@
 import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 
-import { AppButton, AppText, GradientCard } from '@/design-system';
-import { gradients, spacing } from '@/design-system/theme';
-import { useTranslation } from 'react-i18next';
+import { AppCard, AppText } from '@/design-system';
+import { gradients, radius, spacing } from '@/design-system/theme';
 
-/** Emergency Passport shortcut — kept one tap away on Home and in Transfer & Access. */
 export function EmergencyCard({ enterIndex }: { enterIndex?: number }) {
   const { t } = useTranslation();
+  const title = t('home.emergencyQr');
+  const hint = t('home.emergencyQrHint');
+
   return (
-    <GradientCard colors={gradients.emergency} enterIndex={enterIndex}>
-      <View style={styles.row}>
-        <View style={styles.icon}>
-          <Ionicons name="medkit" size={24} color="#B9505F" />
-        </View>
-        <View style={styles.flex}>
-          <AppText variant="heading" style={styles.ink}>
-            {t('home.emergency.title')}
-          </AppText>
-          <AppText variant="caption" style={styles.inkSoft}>
-            {t('home.emergency.text')}
-          </AppText>
-        </View>
-      </View>
-      <AppButton title={t('home.emergencyQr')} icon="qr-code-outline" variant="danger" fullWidth onPress={() => router.push('/patient/emergency')} />
-    </GradientCard>
+    <AppCard
+      onPress={() => router.push('/patient/emergency')}
+      enterIndex={enterIndex}
+      accessibilityLabel={title}
+      accessibilityHint={hint}
+      style={styles.button}
+      padded={false}
+      tone="flat"
+    >
+      <LinearGradient
+        colors={['#C36A7B', '#E29BA7', '#F2C6CD']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={styles.frame}
+      >
+        <LinearGradient colors={gradients.emergency} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={styles.row}>
+          <View style={styles.badge}>
+            <Ionicons name="qr-code-outline" size={23} color="#9D344A" />
+          </View>
+          <View style={styles.copy}>
+            <AppText variant="subheading" style={styles.title}>{title}</AppText>
+            <AppText variant="caption" style={styles.hint}>{hint}</AppText>
+          </View>
+          <Ionicons name="chevron-forward" size={19} color="#9D344A" />
+        </LinearGradient>
+      </LinearGradient>
+    </AppCard>
   );
 }
 
 const styles = StyleSheet.create({
-  row: { flexDirection: 'row', alignItems: 'center', gap: spacing.md },
-  icon: {
-    width: 52,
-    height: 52,
-    borderRadius: 18,
-    backgroundColor: 'rgba(255,255,255,0.92)',
+  button: {
+    width: '100%',
+    borderWidth: 0,
+    borderRadius: radius.lg,
+    shadowColor: '#C36A7B',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.18,
+    shadowRadius: 8,
+  },
+  frame: { borderRadius: radius.lg, padding: 1.5 },
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    minHeight: 62,
+    borderRadius: radius.lg - 1.5,
+    paddingVertical: spacing.xs,
+    paddingLeft: spacing.xs,
+    paddingRight: spacing.md,
+    gap: spacing.sm,
+  },
+  badge: {
     alignItems: 'center',
     justifyContent: 'center',
+    width: 44,
+    height: 44,
+    borderRadius: radius.md,
+    backgroundColor: 'rgba(255, 255, 255, 0.55)',
   },
-  flex: { flex: 1, gap: spacing.xxs },
-  // The coral card is light in both themes → fixed dark text keeps AA contrast.
-  ink: { color: '#1C2E34' },
-  inkSoft: { color: '#3E4F55' },
+  copy: { flex: 1, minWidth: 0 },
+  title: { color: '#36232B' },
+  hint: { color: '#664650' },
 });

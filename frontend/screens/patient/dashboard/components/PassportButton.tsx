@@ -1,40 +1,49 @@
-import { router, useFocusEffect } from 'expo-router';
-import { useCallback, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
-
+import { router, useIsFocused } from 'expo-router';
+import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Pressable, StyleSheet, View } from 'react-native';
 
 import { AppText } from '@/design-system';
-import { spacing } from '@/design-system/theme';
 import { HtmlScene } from '@/design-system/HtmlScene';
 import { isSceneMessage } from '@/design-system/HtmlScene.types';
 import passport from '@/design-system/html/medical-passport-button';
+import { spacing } from '@/design-system/theme';
 
 export function PassportButton() {
+  return useIsFocused() ? <PassportScene /> : null;
+}
+
+function PassportScene() {
   const { t } = useTranslation();
-  const [focused, setFocused] = useState(false);
+  const opened = useRef(false);
+  const title = t('home.actions.profile.title');
+  const hint = t('home.passportTap');
 
-  useFocusEffect(useCallback(() => {
-    setFocused(true);
-    return () => setFocused(false);
-  }, []));
-
-  if (!focused) return null;
+  function openProfile() {
+    if (opened.current) return;
+    opened.current = true;
+    router.push('/patient/profile');
+  }
 
   return (
     <View style={styles.card}>
-      <HtmlScene html={passport} height={244} title={t('navigation.patient/passport', { defaultValue: 'Medical passport' })} onMessage={(message) => {
-        if (isSceneMessage(message) && message.type === 'openPassport') router.push('/patient/profile');
-      }} />
-      <View style={styles.details}>
-        <AppText variant="heading">{t('home.actions.profile.title')}</AppText>
-        <AppText color="textMuted">{t('home.passportTap')}</AppText>
-      </View>
+      <HtmlScene
+        html={passport}
+        height={244}
+        title={title}
+        onMessage={(message) => {
+          if (isSceneMessage(message) && message.type === 'openPassport') openProfile();
+        }}
+      />
+      <Pressable style={styles.details} accessibilityRole="button" accessibilityLabel={title} onPress={openProfile}>
+        <AppText variant="heading" align="center">{title}</AppText>
+        <AppText color="textMuted" align="center">{hint}</AppText>
+      </Pressable>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  card: { gap: spacing.sm, alignItems: 'center' },
-  details: { gap: spacing.xxs, alignItems: 'center' },
+  card: { width: '100%', gap: spacing.xxs },
+  details: { alignItems: 'center', justifyContent: 'center', minHeight: 48, gap: spacing.xxs },
 });

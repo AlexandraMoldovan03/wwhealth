@@ -3,14 +3,16 @@ import { WebView } from 'react-native-webview';
 
 import type { HtmlSceneProps } from './HtmlScene.types';
 
+const sceneUrl = 'https://wwhealth.invalid/';
+
 export function HtmlScene({ html, height, title, onMessage }: HtmlSceneProps) {
   return (
-    <View style={{ height }}>
+    <View style={[styles.container, { height }]}>
       <WebView
         accessibilityLabel={title}
-        source={{ html }}
+        source={{ html, baseUrl: sceneUrl }}
         originWhitelist={['*']}
-        onShouldStartLoadWithRequest={({ url }) => url === 'about:blank'}
+        onShouldStartLoadWithRequest={({ url }) => url === 'about:blank' || url === sceneUrl}
         scrollEnabled={false}
         bounces={false}
         style={styles.scene}
@@ -29,5 +31,6 @@ export function HtmlScene({ html, height, title, onMessage }: HtmlSceneProps) {
 }
 
 const styles = StyleSheet.create({
-  scene: { backgroundColor: 'transparent' },
+  container: { width: '100%' },
+  scene: { flex: 1, width: '100%', backgroundColor: 'transparent' },
 });

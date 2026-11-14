@@ -12,11 +12,12 @@ import Animated, {
   useAnimatedStyle,
   useReducedMotion,
   useSharedValue,
+  withSpring,
   withTiming,
 } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { tapFeedback } from './motion';
+import { pressSpring, tapFeedback } from './motion';
 import { TABS, type TabConfig } from '@/config/navigation';
 import { fonts, radius, shadows, spacing } from './theme';
 import { useRole } from '@/services/auth/useCurrentUser';
@@ -107,11 +108,9 @@ function TabItem({ label, icon, focused, activeColor, onPress, onLongPress }: Ta
       onPress={onPress}
       onLongPress={onLongPress}
       onPressIn={() => {
-        if (!reduceMotion) press.set(withTiming(0.9, { duration: 90 }));
+        if (!reduceMotion) press.set(withSpring(0.9, pressSpring));
       }}
-      onPressOut={() => {
-        if (!reduceMotion) press.set(withTiming(1, { duration: 110 }));
-      }}
+      onPressOut={() => press.set(withSpring(1, pressSpring))}
       style={styles.item}
       hitSlop={4}
     >

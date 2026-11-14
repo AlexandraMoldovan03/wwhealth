@@ -10,7 +10,7 @@ import {
   ErrorState,
   ScreenContainer,
   SectionHeader,
-  fadeIn,
+  popIn,
   tapFeedback,
 } from "@/design-system";
 import { radius, spacing } from "@/design-system/theme";
@@ -78,7 +78,7 @@ export function EmergencyPassportScreen() {
       </AppCard>
 
       {active ? (
-        <Animated.View key={code.tokenId} entering={fadeIn()}>
+        <Animated.View key={code.tokenId} entering={popIn}>
           <AppCard style={styles.qrCard}>
             {/* White quiet zone so scanners work in dark mode too. */}
             <View style={styles.qrBox}>

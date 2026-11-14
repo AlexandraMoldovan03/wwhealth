@@ -2,7 +2,7 @@ import { CameraView, useCameraPermissions } from 'expo-camera';
 import { useRef, useState } from 'react';
 import { Platform, StyleSheet, View } from 'react-native';
 
-import { AppButton, AppInput, AppText, ErrorState, LoadingState, ScreenContainer, fadeIn, tapFeedback } from '@/design-system';
+import { AppButton, AppInput, AppText, ErrorState, LoadingState, ScreenContainer, popIn, tapFeedback } from '@/design-system';
 import Animated from 'react-native-reanimated';
 import { radius, spacing } from '@/design-system/theme';
 import { EmergencyDataView } from './components/EmergencyDataView';
@@ -51,7 +51,7 @@ export function EmergencyScanScreen({ inTab = false }: { inTab?: boolean }) {
   if (data) {
     return (
       <ScreenContainer help="doctorScan" edges={inTab ? ['top'] : ['bottom']}>
-        <Animated.View entering={fadeIn()}>
+        <Animated.View entering={popIn}>
           <EmergencyDataView data={data} />
         </Animated.View>
         <AppButton title={t('emergency.scanAnother')} icon="scan-outline" variant="outline" fullWidth onPress={() => setData(null)} />

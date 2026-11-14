@@ -1,13 +1,13 @@
 import { Ionicons } from '@expo/vector-icons';
 import { ActivityIndicator, Pressable, type PressableProps, StyleSheet, View } from 'react-native';
-import Animated, { useAnimatedStyle, useReducedMotion, useSharedValue, withTiming } from 'react-native-reanimated';
+import Animated, { useAnimatedStyle, useReducedMotion, useSharedValue, withSpring } from 'react-native-reanimated';
 
 import { iconSize, radius, sizes, spacing } from '@/design-system/theme';
 import { useTheme } from '@/design-system/useTheme';
 import type { IconName } from '@/types';
 
 import { AppText } from './AppText';
-import { tapFeedback } from '@/design-system/motion';
+import { pressSpring, tapFeedback } from '@/design-system/motion';
 
 /** inverse = for use on top of a dark / coloured background. */
 type Variant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger' | 'inverse';
@@ -63,11 +63,11 @@ export function AppButton({
       accessibilityState={{ disabled: !!isDisabled, busy: loading }}
       disabled={isDisabled}
       onPressIn={(e) => {
-        if (!reduceMotion) scale.set(withTiming(0.97, { duration: 90 }));
+        if (!reduceMotion) scale.set(withSpring(0.97, pressSpring));
         onPressIn?.(e);
       }}
       onPressOut={(e) => {
-        if (!reduceMotion) scale.set(withTiming(1, { duration: 110 }));
+        scale.set(withSpring(1, pressSpring));
         onPressOut?.(e);
       }}
       onPress={(e) => {
