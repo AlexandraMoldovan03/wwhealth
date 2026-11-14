@@ -1,4 +1,5 @@
 import type { UploadFile } from './api';
+import type { IntakeForm } from './intake';
 import type { LabExtractionResponse, LabValueEntry, PatientLabValue } from './labs';
 import type { EmergencyAccessEvent, EmergencyData, EmergencyRedeemRequest, EmergencyTokenResponse } from './emergency';
 import type { LungAnalysis } from './lungvision';
@@ -31,6 +32,7 @@ export interface WWHealthApi {
   uploadDocument(file: UploadFile, documentType: DocumentType, title: string): Promise<DocumentUploadResponse>;
   analyzeDocument(file: UploadFile, documentType: DocumentType, title: string): Promise<DocumentAnalyzeResponse>;
   analyzeXray(file: UploadFile): Promise<XrayAnalysis>;
+  analyzeIntake(file: UploadFile): Promise<IntakeForm>;
   /** LungVision (real model on the backend) — POST /api/ai/lung/analyze. */
   analyzeLung(file: UploadFile): Promise<LungAnalysis>;
   grantAccess(request: AccessGrantRequest): Promise<AccessGrantResponse>;

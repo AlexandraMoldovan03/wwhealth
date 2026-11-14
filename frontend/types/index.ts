@@ -3,6 +3,7 @@ export * from './auth';
 export * from './emergency';
 export * from './feature';
 export * from './icons';
+export * from './intake';
 export * from './labs';
 export * from './lungvision';
 export * from './medical';

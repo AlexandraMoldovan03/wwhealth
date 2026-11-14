@@ -13,6 +13,7 @@ export const ENDPOINTS = {
   accessGrant: '/api/v1/access/grant',
   accessRedeem: '/api/v1/access/redeem',
   voiceSummary: '/api/v1/voice/summary',
+  voiceIntake: '/api/v1/intake/voice',
   emergencyTokens: '/api/v1/emergency/tokens',
   emergencyRevoke: (tokenId: string) => `/api/v1/emergency/tokens/${encodeURIComponent(tokenId)}/revoke`,
   emergencyRedeem: '/api/v1/emergency/redeem',

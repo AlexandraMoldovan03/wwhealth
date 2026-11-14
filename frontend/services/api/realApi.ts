@@ -28,6 +28,8 @@ export const realApi: WWHealthApi = {
 
   redeemAccess: (request) => apiClient.post(ENDPOINTS.accessRedeem, { token: request.token }),
 
+  analyzeIntake: (file) => apiClient.upload(ENDPOINTS.voiceIntake, { file }, {}, { timeoutMs: 190_000 }),
+
   voiceSummary: (request) =>
     apiClient.post(ENDPOINTS.voiceSummary, { patientId: request.patientId, language: request.language }),
 

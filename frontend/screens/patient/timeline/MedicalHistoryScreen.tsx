@@ -1,13 +1,15 @@
 import { router } from 'expo-router';
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { RefreshControl, StyleSheet, View } from 'react-native';
 
-import { AppText, ErrorState, LoadingState, ScreenContainer, SegmentedControl } from '@/design-system';
+import { AppButton, AppCard, AppText, ErrorState, LoadingState, ScreenContainer, SegmentedControl } from '@/design-system';
 import { spacing } from '@/design-system/theme';
 import { CategoryFilter } from '@/design-system/components/CategoryFilter';
 import { MedicalEventList } from '@/screens/shared/components/MedicalEventList';
 import { LabTrendsList } from '@/screens/patient/lab-results/components/LabTrendsList';
 import { buildLabSeries, labDate, labFlag } from '@/screens/patient/lab-results/labUtils';
+import { useCurrentUser } from '@/services/auth/useCurrentUser';
+import { loadIntakes, type SavedIntake } from '@/screens/patient/voice-intake/intakeStorage';
 import { useAsync } from '@/hooks/useAsync';
 import { useTheme } from '@/design-system/useTheme';
 import { api } from '@/services/backend';
@@ -57,6 +59,11 @@ export function MedicalHistoryScreen() {
   const labs = useAsync(api.listLabValues, { refetchOnFocus: true });
   const [view, setView] = useState<(typeof VIEWS)[number]>('timeline');
   const [filter, setFilter] = useState<Filter>('all');
+  const user = useCurrentUser();
+  const userId = user?.id;
+  const loadSaved = useCallback(() => userId ? loadIntakes(userId) : Promise.resolve([]), [userId]);
+  const { data: savedIntakes, error: intakeError, isLoading: loadingIntakes, reload: reloadIntakes } =
+    useAsync(loadSaved, { refetchOnFocus: true });
   const [period, setPeriod] = useState<Period>('all');
   const [now] = useState(() => Date.now());
 
@@ -64,6 +71,10 @@ export function MedicalHistoryScreen() {
     const days = PERIOD_DAYS[period];
     return days === null ? null : new Date(now - days * 86_400_000).toISOString().slice(0, 10);
   }, [period, now]);
+
+  const visibleIntakes = view === 'timeline' && filter === 'all'
+    ? (savedIntakes ?? []).filter((entry) => entry.userId === userId && (!cutoff || entry.savedAt.slice(0, 10) >= cutoff))
+    : [];
 
   const events = useMemo(() => {
     const all = [...(patient.data?.history ?? []), ...labEvents(labs.data ?? [], t)];
@@ -87,6 +98,7 @@ export function MedicalHistoryScreen() {
   const refresh = () => {
     void patient.reload();
     void labs.reload();
+    void reloadIntakes();
   };
   const loading = view === 'timeline' ? patient.isLoading && !patient.data : labs.isLoading && !labs.data;
   const error = view === 'timeline' ? (!patient.data ? patient.error : null) : !labs.data ? labs.error : null;
@@ -95,7 +107,7 @@ export function MedicalHistoryScreen() {
     <ScreenContainer
       refreshControl={
         <RefreshControl
-          refreshing={(patient.isLoading && !!patient.data) || (labs.isLoading && !!labs.data)}
+          refreshing={(patient.isLoading && !!patient.data) || (labs.isLoading && !!labs.data) || loadingIntakes}
           onRefresh={refresh}
           tintColor={colors.primary}
         />
@@ -113,6 +125,16 @@ export function MedicalHistoryScreen() {
       )}
       <CategoryFilter options={PERIODS} value={period} onChange={setPeriod} getLabel={(p) => t(`history.periods.${p}`)} />
 
+      {view === 'timeline' && filter === 'all' && intakeError && (
+        <ErrorState message={intakeError} onRetry={reloadIntakes} />
+      )}
+      {visibleIntakes.length > 0 && (
+        <View style={styles.entries}>
+          <AppText variant="heading">Saved symptom forms</AppText>
+          <AppText color="textMuted">Saved on this device.</AppText>
+          {visibleIntakes.map((entry) => <SavedIntakeCard key={entry.id} entry={entry} />)}
+        </View>
+      )}
       {loading && <LoadingState />}
       {error && <ErrorState message={error} onRetry={refresh} />}
       {view === 'timeline' && patient.data && <MedicalEventList events={events} onSelect={open} grouped />}
@@ -123,6 +145,35 @@ export function MedicalHistoryScreen() {
   );
 }
 
+function SavedIntakeCard({ entry }: { entry: SavedIntake }) {
+  const [expanded, setExpanded] = useState(false);
+  const { form, savedAt } = entry;
+  return (
+    <AppCard style={styles.entries}>
+      <AppText variant="caption" color="textMuted">
+        {new Date(savedAt).toLocaleString()}{form.isDemo ? ' · Demo' : ''}
+      </AppText>
+      <AppText variant="subheading">{form.summary}</AppText>
+      {form.urgentWarning && <AppText color="danger">Possible urgent symptoms flagged</AppText>}
+      <AppButton title={expanded ? 'Hide form' : 'View form'} variant="outline" size="sm"
+        accessibilityState={{ expanded }} onPress={() => setExpanded(!expanded)} />
+      {expanded && (
+        <View style={styles.entries}>
+          {form.symptoms.map((symptom, index) => (
+            <AppText key={index}>{[symptom.name, symptom.duration, symptom.severity, symptom.notes].filter(Boolean).join(' · ')}</AppText>
+          ))}
+          <AppText>Medications: {form.medicationsMentioned.join(', ') || 'None mentioned'}</AppText>
+          <AppText>Allergies: {form.allergiesMentioned.join(', ') || 'None mentioned'}</AppText>
+          <AppText variant="subheading">Original transcript</AppText>
+          <AppText selectable>{form.transcript}</AppText>
+          <AppText variant="caption" color="textMuted">{form.disclaimer}</AppText>
+        </View>
+      )}
+    </AppCard>
+  );
+}
+
 const styles = StyleSheet.create({
+  entries: { gap: spacing.sm },
   header: { gap: spacing.xs },
 });

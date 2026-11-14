@@ -15,6 +15,7 @@ export interface QuickAction {
 }
 
 export const QUICK_ACTIONS: QuickAction[] = [
+  { id: 'intake', title: 'Voice intake', subtitle: 'Describe your symptoms', icon: 'mic-outline', route: '/patient/intake', tone: 'sage' },
   { id: 'profile', title: 'Medical profile', subtitle: 'Allergies, conditions', icon: 'person-outline', route: '/patient/profile', tone: 'sage' },
   { id: 'documents', title: 'Documents', subtitle: 'Upload & view', icon: 'folder-open-outline', route: '/patient/documents', tone: 'blue' },
   { id: 'lungvision', title: 'LungVision AI', subtitle: 'Chest X-ray', icon: 'scan-outline', route: '/analysis', tone: 'teal' },
