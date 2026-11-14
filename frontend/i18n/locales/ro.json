@@ -1113,6 +1113,7 @@
   },
   "hubs": {
     "records": {
+      "folders": { "symptoms": "Descrie simptomele", "documents": "Documente și analize", "history": "Istoric medical" },
       "title": "Dosarul meu",
       "subtitle": "Tot ce ține de sănătatea ta, adunat într-un singur loc.",
       "aboutYou": "Despre tine",
