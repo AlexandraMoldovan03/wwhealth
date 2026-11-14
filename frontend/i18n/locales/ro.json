@@ -168,6 +168,7 @@
     "description": "Dosarul tău medical, documentele și analiza radiografiilor asistată de AI — partajabile cu medici verificați, cu acces limitat în timp și revocabil."
   },
   "home": {
+    "passportTap": "Apasă pe pașaport ca să-l deschizi",
     "there": "acolo",
     "greeting": {
       "morning": "Bună dimineața",
@@ -545,6 +546,7 @@
     "home": "Mergi acasă"
   },
   "lung": {
+    "animatePreview": "Apasă pe plămâni pentru a alege radiografia",
     "subtitle": "Screening experimental pentru pneumonie cu DenseNet121 (antrenat pe PneumoniaMNIST) și explicații Grad-CAM.",
     "analyzeAnother": "Analizează altă radiografie",
     "select": "Selectează o radiografie toracică",
@@ -1211,6 +1213,7 @@
     },
     "topics": {
       "home": {
+    "passportTap": "Apasă pe pașaport ca să-l deschizi",
         "title": "Acasă",
         "intro": "Punctul de plecare: ce ai de făcut mai departe și cât de complet e dosarul.",
         "can": [

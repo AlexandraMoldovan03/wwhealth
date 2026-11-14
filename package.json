@@ -49,6 +49,7 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
+    "embed:html": "node scripts/embed-html.mjs",
     "lint": "expo lint app frontend",
     "typecheck": "tsc --noEmit",
     "doctor": "npx expo-doctor",
