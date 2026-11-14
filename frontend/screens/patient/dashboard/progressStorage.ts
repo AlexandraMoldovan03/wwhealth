@@ -30,3 +30,9 @@ export function subscribeProgressFlags(listener: () => void) {
     listeners.delete(listener);
   };
 }
+
+const journeyKey = (userId: string, stepId: string) => 'wwhealth.journey.opened.' + userId + '.' + stepId;
+
+export const wasJourneyStepOpened = (userId: string, stepId: string) => read(journeyKey(userId, stepId));
+export const markJourneyStepOpened = (userId: string, stepId: string) =>
+  AsyncStorage.setItem(journeyKey(userId, stepId), '1').catch(() => undefined);
