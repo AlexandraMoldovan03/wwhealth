@@ -258,6 +258,24 @@ export const mockApi: WWHealthApi = {
     return emergencyLog.filter((e) => e.event === 'viewed' || e.event === 'denied');
   },
 
+  async analyzeIntake() {
+    await delay(MOCK_DELAY_MS);
+    return {
+      transcript: 'I have had a headache and a fever for three days.',
+      language: 'en',
+      summary: 'Headache and fever for three days.',
+      symptoms: [
+        { name: 'Headache', duration: '3 days', severity: null, notes: null },
+        { name: 'Fever', duration: '3 days', severity: null, notes: null },
+      ],
+      medicationsMentioned: [],
+      allergiesMentioned: [],
+      urgentWarning: false,
+      isDemo: true,
+      disclaimer: 'AI organizes the reported symptoms. It does not diagnose.',
+    };
+  },
+
   async voiceSummary({ patientId }) {
     await delay(MOCK_DELAY_MS);
     if (patientId !== db.id) throw new ApiError('Patient not found', 404);

@@ -33,6 +33,7 @@ export const STACK_SCREENS: { name: string; title: string }[] = [
   { name: 'auth/callback', title: 'Signing in' },
   { name: 'history/[id]', title: 'Details' },
   // Patient
+  { name: 'patient/intake', title: 'Voice Intake' },
   { name: 'patient/profile', title: 'Medical Profile' },
   { name: 'patient/edit-profile', title: 'Edit Medical Profile' },
   { name: 'patient/document/[id]', title: 'Document' },

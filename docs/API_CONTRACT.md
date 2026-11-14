@@ -97,6 +97,35 @@ Response:
                   "labValues": [{ "name": "Ferritin", "value": "11", "unit": "ng/mL", "flag": "low" }] } } }
 ```
 
+### `POST /api/v1/intake/voice` — patient, multipart
+
+Send a recording in the required `file` field (up to 25 MiB). The backend sends
+audio to ElevenLabs for transcription, then sends the transcript to Gemini for
+structured extraction. It detects the spoken language and keeps descriptive
+fields in that language. The patient reviews the form before saving.
+
+```json
+{
+  "transcript": "De trei zile mă doare capul.",
+  "language": "ron",
+  "summary": "Durere de cap de trei zile.",
+  "symptoms": [{ "name": "Durere de cap", "duration": "3 zile", "severity": null, "notes": null }],
+  "medicationsMentioned": [],
+  "allergiesMentioned": [],
+  "urgentWarning": false,
+  "isDemo": false,
+  "disclaimer": "AI structures what the patient said. It does not diagnose. In an emergency call 112."
+}
+```
+
+`language` is the provider's language code or null. `severity` is `mild`,
+`moderate`, `severe`, or null. A missing provider key returns a fixed example
+with `isDemo: true`. Empty audio or speech returns 400, oversized audio returns
+413, and provider failures return 502. The endpoint does not save the audio
+or form. History stores confirmed forms on the current device, scoped to the
+signed-in patient. The forms are unavailable to the doctor and other devices.
+Use fictional patient data for the hackathon demo.
+
 ### `POST /api/v1/xray/analyze` — patient, multipart
 Fields: `file` (JPEG/PNG/WEBP chest X-ray). Response: `XrayAnalysis`
 ```json

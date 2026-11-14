@@ -40,6 +40,12 @@
           "cameraPermission": "The app needs camera access so doctors can scan an emergency passport QR code.",
           "recordAudioAndroid": false
         }
+      ],
+      [
+        "expo-audio",
+        {
+          "microphonePermission": "Allow WWHealth to record your symptom description."
+        }
       ]
     ],
     "scheme": "wwhealth",
