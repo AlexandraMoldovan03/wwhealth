@@ -111,7 +111,9 @@
     "doctor/index": "Medic",
     "doctor/patient/[id]/index": "Rezumat pacient",
     "doctor/patient/[id]/documents": "Documentele pacientului",
+    "patient/setup": "Datele tale",
     "patient/emergency": "Pașaport de urgență",
+    "patient/emergency-guardian/[patientId]": "Pașaport de urgență",
     "doctor/emergency": "Scanare de urgență",
     "patient/lab-review/[id]": "Valori de laborator",
     "patient/lab-trend": "Evoluție analiză",
@@ -556,7 +558,9 @@
     "networkFailed": "Cererea de rețea a eșuat",
     "status": "Cererea a eșuat cu statusul {{status}}",
     "camera": "Este necesară permisiunea camerei pentru a face o fotografie.",
-    "profileMissing": "Profilul tău medical nu a fost inițializat în baza de date. Contactează administratorul (lipsește rândul din profiles)."
+    "profileMissing": "Profilul tău medical nu a fost inițializat în baza de date. Contactează administratorul (lipsește rândul din profiles).",
+    "aiFailed": "Serviciul AI nu a dat un răspuns valid. Încearcă din nou.",
+    "aiTimeout": "Serviciul AI a răspuns prea încet. Încearcă din nou."
   },
   "image": {
     "select": "Selectează o imagine",
@@ -621,6 +625,7 @@
     "intro": "În caz de urgență, arată acest QR unui medic. Funcționează o singură dată, timp de 5 minute, și poate fi deschis doar dintr-un cont de medic verificat.",
     "sharedTitle": "Ce vede medicul",
     "sharedList": "Grupa sanguină · Alergii · Afecțiuni active · Medicație activă. Nimic altceva: fără nume, contacte, documente sau istoric.",
+    "sharedListPriority": "Alergii · Afecțiuni active · Medicație activă · Grupa sanguină · Antecedente chirurgicale · Analize anormale sau critice. Fără nume, contacte, documente sau rezultate normale.",
     "generate": "Generează QR de urgență",
     "generateNew": "Generează un QR nou",
     "revoke": "Revocă QR-ul",
@@ -2484,7 +2489,12 @@
     "analysisDeferred": "Analiza AI este temporar indisponibilă. Documentul și rezultatele locale sunt păstrate pentru verificare.",
     "reviewReady": "Document încărcat. Pregătit pentru verificare.",
     "importWorking": "Documentul se încarcă. Urmează extragerea textului și analiza, dacă este disponibilă.",
-    "ner": {"title": "Termeni identificați în document", "notice": "Termeni extrași automat și neverificați. Verifică-i în documentul original.", "Disease": "Boli menționate", "Chemical": "Substanțe chimice menționate"},
+    "ner": {
+      "title": "Termeni identificați în document",
+      "notice": "Termeni extrași automat și neverificați. Verifică-i în documentul original.",
+      "Disease": "Boli menționate",
+      "Chemical": "Substanțe chimice menționate"
+    },
     "structured": "Date structurate (FHIR / CSV)",
     "uploadTitle": "Import inteligent",
     "uploadIntro": "Detectăm automat formatul și tipul documentului, propunem un titlu și extragem datele. Le verifici înainte să fie salvate în fișă.",
@@ -2523,7 +2533,8 @@
       "ai_timeout": "Analiza AI a durat prea mult — s-a folosit extragerea locală.",
       "ai_invalid": "Răspunsul AI nu a fost valid — s-a folosit extragerea locală.",
       "ai_error": "Analiza AI nu a fost disponibilă — s-a folosit extragerea locală.",
-      "no_text": "Nu s-a găsit text în document."
+      "no_text": "Nu s-a găsit text în document.",
+      "ai_rate_limited": "Limita Gemini a fost atinsă — s-a folosit extragerea locală."
     },
     "originalFile": "Fișier original: {{name}}",
     "identity": {
@@ -2689,6 +2700,164 @@
       "noAllergies": "Nicio alergie înregistrată",
       "noActiveMedication": "Niciun tratament activ înregistrat",
       "relevanceExplain": "Ordinea „Relevanță” arată mereu întâi alergiile și tratamentele active, apoi ce se leagă de motivul consultației. Nu este un scor de gravitate."
+    },
+    "titleRequired": "Titlul este obligatoriu."
+  },
+  "guardians": {
+    "title": "Persoane de urgență",
+    "intro": "Invită un membru al familiei după emailul contului său WWHealth. După ce acceptă, poate deschide doar datele tale de urgență și îți poate genera QR-ul pentru un medic. Poți revoca accesul oricând.",
+    "emailLabel": "Emailul contului",
+    "relationLabel": "Relație (opțional)",
+    "relationPlaceholder": "ex. fiică, soț",
+    "invite": "Trimite invitația",
+    "empty": "Nicio persoană de urgență încă.",
+    "pending": "Așteaptă acceptarea",
+    "active": "Are acces",
+    "revoke": "Revocă",
+    "cancelInvite": "Anulează",
+    "invitationsTitle": "Invitații primite",
+    "invitedBy": "{{name}} te-a invitat ca persoană de urgență",
+    "accept": "Acceptă",
+    "decline": "Refuză",
+    "protectingTitle": "Sunt persoană de urgență pentru…",
+    "protectingHint": "Poți deschide doar datele de urgență ale acestor persoane. Fiecare deschidere apare în jurnalul lor.",
+    "open": "Deschide pașaportul",
+    "passportIntro": "Doar date de urgență: grupă sanguină, alergii, afecțiuni și medicație activă, contact de urgență. Accesarea este înregistrată și vizibilă pentru {{name}}.",
+    "contactTitle": "Contact de urgență",
+    "qrTitle": "QR pentru medic",
+    "qrIntro": "Generează QR-ul de urgență al acestei persoane și arată-l unui medic. Funcționează o singură dată, timp de 5 minute.",
+    "generateQr": "Generează QR de urgență",
+    "hideQr": "Ascunde QR-ul",
+    "stepDown": "Nu mai vreau să fiu persoană de urgență",
+    "notAvailable": "Pașaportul nu mai este disponibil. Accesul a fost revocat sau invitația nu a fost acceptată.",
+    "unnamed": "Fără nume"
+  },
+  "passport": {
+    "p1": "Critic pentru urgență",
+    "p2": "Informații esențiale",
+    "p3": "Investigații și analize",
+    "allergiesUnknown": "Alergii necunoscute",
+    "noCritical": "Nicio informație critică documentată.",
+    "groups": {
+      "allergy": "Alergii",
+      "condition": "Afecțiuni",
+      "medication": "Medicație",
+      "lab": "Analize",
+      "blood_type": "Grupa sanguină",
+      "history": "Antecedente",
+      "procedure": "Intervenții chirurgicale",
+      "finding": "Constatări",
+      "recommendation": "Recomandări"
+    },
+    "flags": {
+      "severe_allergy": "Alergie severă",
+      "anaphylaxis": "Anafilaxie",
+      "drug_allergy": "Medicament",
+      "anticoagulant": "Anticoagulant",
+      "antiplatelet": "Antiagregant",
+      "insulin": "Insulină",
+      "hypoglycemic": "Risc hipoglicemie",
+      "opioid": "Opioid",
+      "antiepileptic": "Antiepileptic",
+      "corticosteroid": "Corticosteroid",
+      "immunosuppressant": "Imunosupresor",
+      "cardiac_drug": "Antiaritmic / digitalic",
+      "lithium": "Litiu",
+      "emergency_condition": "Relevant în urgență",
+      "suspected": "Suspiciune",
+      "historical_medication": "Din document, nu în profil"
+    },
+    "criticalValue": "Valoare critică",
+    "needsConfirmation": "Necesită confirmare",
+    "conflict": "Surse contradictorii",
+    "conflictValues": "Valori diferite: {{values}}",
+    "reference": "Ref. {{range}}",
+    "previous": "Anterior: {{values}}",
+    "showNormal": "Arată rezultatele normale ({{count}})",
+    "hideNormal": "Ascunde rezultatele normale",
+    "sourceProfile": "Profil medical",
+    "sourceDocument": "Document",
+    "page": "p. {{page}}",
+    "previewTitle": "Ce vede medicul",
+    "reviewHint": "De verificat: {{unconfirmed}} neconfirmate, {{conflicts}} contradicții. Deschide sursa sau corectează profilul.",
+    "correct": "Confirmă / corectează profilul"
+  },
+  "docSummary": {
+    "emergency": "Relevant pentru pașaportul de urgență",
+    "abnormal": "Rezultate anormale",
+    "diagnoses": "Diagnostice și suspiciuni",
+    "findings": "Constatări",
+    "treatment": "Tratament și recomandări",
+    "abnormalCount_one": "{{count}} rezultat anormal",
+    "abnormalCount_few": "{{count}} rezultate anormale",
+    "abnormalCount_other": "{{count}} de rezultate anormale",
+    "criticalCount_one": "{{count}} valoare critică",
+    "criticalCount_few": "{{count}} valori critice",
+    "criticalCount_other": "{{count}} valori critice",
+    "mainDiagnosis": "diagnostic: {{names}}",
+    "noFindings": "Nicio constatare relevantă extrasă.",
+    "normalCount_one": "{{count}} rezultat normal",
+    "normalCount_few": "{{count}} rezultate normale",
+    "normalCount_other": "{{count}} rezultate normale",
+    "toConfirm_one": "{{count}} de confirmat",
+    "toConfirm_few": "{{count}} de confirmat",
+    "toConfirm_other": "{{count}} de confirmat"
+  },
+  "exports": {
+    "title": "Export date medicale",
+    "subtitle": "Descarcă sau trimite datele tale, inclusiv unui medic care nu folosește WWHealth.",
+    "doctorSubtitle": "Doar secțiunile partajate de pacient. Exportul este înregistrat în jurnalul de acces.",
+    "note": "Exporturile conțin doar date confirmate; suspiciunile și extragerile neconfirmate nu apar ca diagnostice.",
+    "kinds": {
+      "fhir": {
+        "title": "FHIR R4 (JSON)",
+        "hint": "Dosar complet, format standard pentru spitale și clinici"
+      },
+      "emergency-summary": {
+        "title": "Rezumat de urgență FHIR",
+        "hint": "Alergii, afecțiuni, medicație, rezultate critice (stil IPS)"
+      },
+      "summary.pdf": {
+        "title": "Rezumat medical PDF",
+        "hint": "Structurat, ușor de citit sau tipărit"
+      },
+      "labs.csv": {
+        "title": "Analize CSV",
+        "hint": "Istoric: valoare, unitate, interval de referință, dată, sursă"
+      },
+      "archive.zip": {
+        "title": "Arhivă ZIP",
+        "hint": "Documente originale permise + FHIR + CSV + PDF"
+      }
     }
+  },
+  "basicInfo": {
+    "title": "Date de bază",
+    "fullName": "Nume complet",
+    "dateOfBirth": "Data nașterii",
+    "datePlaceholder": "AAAA-LL-ZZ (ex. 1990-05-17)",
+    "sex": "Sex",
+    "sexes": {
+      "female": "Feminin",
+      "male": "Masculin",
+      "other": "Altul"
+    },
+    "height": "Înălțime (cm)",
+    "weight": "Greutate (kg)",
+    "contact": "Contact de urgență (opțional)",
+    "contactName": "Nume",
+    "contactPhone": "Telefon",
+    "contactRelation": "Relație",
+    "errors": {
+      "required": "Câmp obligatoriu",
+      "date": "Dată invalidă (AAAA-LL-ZZ, în trecut)",
+      "height": "Între 30 și 260 cm",
+      "weight": "Între 1 și 400 kg",
+      "phone": "Telefon invalid"
+    },
+    "fixErrors": "Verifică datele de bază marcate.",
+    "setupTitle": "Hai să completăm datele tale",
+    "setupIntro": "Numele, data nașterii și sexul sunt necesare pentru dosarul medical și pașaportul de urgență. Le poți modifica oricând din profil.",
+    "continue": "Continuă"
   }
 }

@@ -245,6 +245,15 @@ def update_profile(user: CurrentUser, update: ProfileUpdate) -> PatientRecord | 
     }
     if "surgeries" in update.model_fields_set:  # only sent when edited → older databases keep working
         body["surgeries"] = [s.model_dump() for s in record.surgeries]
+    for name in ("date_of_birth", "sex", "height_cm", "weight_kg"):
+        if name in update.model_fields_set:
+            body[name] = getattr(record, name)
+    if "emergency_contact" in update.model_fields_set:
+        body["emergency_contact"] = record.emergency_contact.model_dump() if record.emergency_contact else None
+    if "full_name" in update.model_fields_set and update.full_name:
+        # profiles: the user may update ONLY full_name (column grant); role stays untouchable.
+        _request("PATCH", _rest("profiles"), user, expected=(200, 204), params={"id": f"eq.{user.id}"},
+                 json={"full_name": record.full_name}, headers={"Prefer": "return=minimal"})
     # Upsert: the row is created at sign-up, but this also covers users created before the trigger.
     res = _request("POST", _rest("medical_profiles"), user, expected=(200, 201, 204, 400), json=body,
                    params={"on_conflict": "user_id"},
@@ -853,3 +862,48 @@ def log_fhir_export(user: CurrentUser, patient_id: str) -> None:
             _cj_rpc("log_fhir_export", user, {"p_patient": patient_id})
         except CareJourneyUnavailable:
             return
+
+
+# ─────────────────────────────────────────────────────────── emergency guardians (RPCs, security definer)
+
+class EmergencyGuardiansUnavailable(FeatureNotSetUp):
+    """Guardian functions missing (migration 20261120000000 not applied) → 503."""
+
+
+def _guardian_rpc(name: str, user: CurrentUser, body: dict) -> object:
+    res = _request("POST", f"{_base()}/rest/v1/rpc/{name}", user, expected=(200, 404), json=body)
+    if res.status_code == 404:
+        raise EmergencyGuardiansUnavailable("Emergency contacts are not set up yet")
+    return res.json()
+
+
+def invite_emergency_guardian(user: CurrentUser, email: str, relation: str) -> dict:
+    return _guardian_rpc("invite_emergency_guardian", user, {"p_email": email, "p_relation": relation})  # type: ignore[return-value]
+
+
+def revoke_emergency_guardian(user: CurrentUser, link_id: str) -> bool:
+    if not UUID_RE.match(link_id):
+        return False
+    return bool(_guardian_rpc("revoke_emergency_guardian", user, {"p_id": link_id}))
+
+
+def respond_emergency_guardian(user: CurrentUser, link_id: str, accept: bool) -> dict:
+    if not UUID_RE.match(link_id):
+        return {"status": "not_found"}
+    return _guardian_rpc("respond_emergency_guardian", user, {"p_id": link_id, "p_accept": accept})  # type: ignore[return-value]
+
+
+def my_emergency_guardians(user: CurrentUser) -> dict:
+    return _guardian_rpc("my_emergency_guardians", user, {})  # type: ignore[return-value]
+
+
+def guardian_emergency_view(user: CurrentUser, patient_id: str) -> dict:
+    if not UUID_RE.match(patient_id):
+        return {"status": "none"}
+    return _guardian_rpc("guardian_emergency_view", user, {"p_patient_id": patient_id})  # type: ignore[return-value]
+
+
+def guardian_create_emergency_token(user: CurrentUser, patient_id: str, token_hash: str) -> dict:
+    if not UUID_RE.match(patient_id):
+        return {"status": "none"}
+    return _guardian_rpc("guardian_create_emergency_token", user, {"p_patient_id": patient_id, "p_token_hash": token_hash})  # type: ignore[return-value]

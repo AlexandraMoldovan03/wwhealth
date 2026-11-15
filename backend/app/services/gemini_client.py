@@ -135,6 +135,43 @@ def _project_quota_exhausted(error) -> bool:
     return False
 
 
+def fit_to_model(model: type[BaseModel], data):
+    """Trim lists and strings that exceed the model's max_length (Gemini's schema has no length limits, see above), so a
+    long but otherwise valid answer — e.g. a summary citing 15 source ids for a large record — is not rejected.
+    Only shortens; types, required fields and every other rule are still enforced by the strict validation."""
+    if not isinstance(data, dict):
+        return data
+    out = dict(data)
+    for name, field in model.model_fields.items():
+        key = field.alias or name
+        if key not in out:
+            key = name if name in out else None
+        if key is None:
+            continue
+        out[key] = _fit_value(field.annotation, field.metadata, out[key])
+    return out
+
+
+def _fit_value(annotation, metadata, value):
+    import typing
+
+    limit = next((m.max_length for m in metadata if getattr(m, "max_length", None) is not None), None)
+    if isinstance(value, str) and limit is not None:
+        return value[:limit]
+    args = [a for a in typing.get_args(annotation) if a is not type(None)]
+    if isinstance(value, list):
+        inner = args[0] if args else None
+        items = value[:limit] if limit is not None else value
+        if isinstance(inner, type) and issubclass(inner, BaseModel):
+            return [fit_to_model(inner, v) for v in items]
+        return [_fit_value(inner, getattr(inner, "__metadata__", ()), v) for v in items]
+    if isinstance(value, dict):
+        for a in [annotation, *args]:
+            if isinstance(a, type) and issubclass(a, BaseModel):
+                return fit_to_model(a, value)
+    return value
+
+
 def generate_structured(model: type[M], system_instruction: str, contents: str, label: str,
                         repair: Callable[[dict], dict] | None = None, *, model_override: str | None = None,
                         usage: dict | None = None, max_output_tokens: int = 8192) -> M:
@@ -207,6 +244,7 @@ def generate_structured(model: type[M], system_instruction: str, contents: str, 
         data = json.loads(response.text or "")
         if repair is not None and isinstance(data, dict):
             data = repair(data)
+        data = fit_to_model(model, data)
         return model.model_validate(data)
     except (ValidationError, ValueError) as exc:
         count = exc.error_count() if isinstance(exc, ValidationError) else 1

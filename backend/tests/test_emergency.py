@@ -40,7 +40,7 @@ def test_redeem_returns_only_emergency_fields_and_is_single_use():
     res = client.post(f"{BASE}/redeem", json={"token": body["qrPayload"]})
     assert res.status_code == 200
     data = res.json()
-    assert set(data) == {"bloodType", "allergies", "conditions", "medications", "accessedAt"}
+    assert set(data) == {"bloodType", "allergies", "conditions", "medications", "accessedAt", "passport"}
     assert data["bloodType"] and data["allergies"]
     assert all(set(a) <= {"substance", "reaction", "severity"} for a in data["allergies"])
     assert client.post(f"{BASE}/redeem", json={"token": body["token"]}).status_code == 409

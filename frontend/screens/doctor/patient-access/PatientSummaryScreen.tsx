@@ -5,6 +5,7 @@ import { AppButton, AppCard, AppText, ListRow } from '@/design-system';
 import { useTheme } from '@/design-system/useTheme';
 import { spacing } from '@/design-system/theme';
 import { ScopeBadges } from '@/screens/shared/components/ConsentBadges';
+import { ExportPanel } from '@/screens/shared/components/ExportPanel';
 import { MedicalSummaryView } from '@/screens/shared/components/MedicalSummaryView';
 import { formatDateTime } from '@/utils/format';
 import { useTranslation } from 'react-i18next';
@@ -74,6 +75,7 @@ export function PatientSummaryScreen() {
               }
             />
           )}
+          <ExportPanel patientId={view.patientId} />
         </>
       )}
     </PatientGate>

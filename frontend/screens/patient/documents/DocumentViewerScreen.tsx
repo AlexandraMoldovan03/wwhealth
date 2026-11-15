@@ -18,6 +18,7 @@ import { api } from '@/services/backend';
 import type { DocumentDetail } from '@/types';
 import { formatDate, formatDateTime, formatFileSize } from '@/utils/format';
 
+import { DocumentSummaryCard } from './components/DocumentSummaryCard';
 import { LabValuesPanel } from './components/LabValuesPanel';
 
 /** View one document of the logged-in patient: preview, editable title, extracted data with sources, links to the record. */
@@ -112,6 +113,9 @@ function DocumentView({ initial }: { initial: DocumentDetail }) {
         )}
       </View>
       {downloadError && <AppText variant="caption" color="danger">{downloadError}</AppText>}
+      <ScrollView style={styles.summary} nestedScrollEnabled>
+        <DocumentSummaryCard documentId={doc.id} />
+      </ScrollView>
       {showFacts && (
         <ScrollView style={[styles.facts, { borderColor: colors.border }]} contentContainerStyle={styles.factsContent} nestedScrollEnabled>
           {detail.facts.map((f) => (
@@ -181,6 +185,7 @@ const styles = StyleSheet.create({
   row: { flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', gap: spacing.sm },
   flex: { flex: 1 },
   badges: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.xs },
+  summary: { maxHeight: 320, flexGrow: 0 },
   facts: { maxHeight: 220, borderWidth: StyleSheet.hairlineWidth, borderRadius: radius.md },
   factsContent: { padding: spacing.sm, gap: spacing.sm },
   fact: { gap: 2 },

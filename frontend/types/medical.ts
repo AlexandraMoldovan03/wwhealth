@@ -207,6 +207,13 @@ export interface SurgeryInput {
 
 /** PATCH /api/v1/patients/me — only the fields sent are changed; lists replace the whole list. */
 export interface ProfileUpdate {
+  fullName?: string;
+  /** YYYY-MM-DD */
+  dateOfBirth?: string | null;
+  sex?: Sex | null;
+  heightCm?: number | null;
+  weightKg?: number | null;
+  emergencyContact?: EmergencyContact | null;
   bloodType?: BloodType | null;
   allergies?: AllergyInput[];
   diagnoses?: DiagnosisInput[];

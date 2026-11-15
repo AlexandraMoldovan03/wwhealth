@@ -1,4 +1,5 @@
 /** Emergency Medical Passport — mirror of backend/app/schemas/emergency.py. */
+import type { PrioritizedPassport } from './emergencyPassport';
 
 export interface EmergencyTokenResponse {
   tokenId: string;
@@ -26,6 +27,8 @@ export interface EmergencyData {
   conditions: { name: string; icd10: string | null }[];
   medications: { name: string; dosage: string; frequency: string }[];
   accessedAt: string;
+  /** Same data prioritised (critical → essential → abnormal labs). Absent from older backends / MOCK. */
+  passport?: PrioritizedPassport | null;
 }
 
 export type EmergencyEventType = 'created' | 'revoked' | 'viewed' | 'denied';

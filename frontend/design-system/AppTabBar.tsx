@@ -80,7 +80,7 @@ export function AppTabBar({ state, descriptors, emitter, navigateToTab }: Bottom
                   <Defs>
                     <RadialGradient id={gradientId} cx="50%" cy="50%" rx="50%" ry="50%">
                       <Stop offset="0" stopColor={activeColor} stopOpacity={isDark ? .94 : .82} />
-                      <Stop offset=".48" stopColor={activeColor} stopOpacity={isDark ? .48 : .46} />
+                      <Stop offset={0.48} stopColor={activeColor} stopOpacity={isDark ? .48 : .46} />
                       <Stop offset="1" stopColor={activeColor} stopOpacity={0} />
                     </RadialGradient>
                   </Defs>

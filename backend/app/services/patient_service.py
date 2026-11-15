@@ -2,7 +2,7 @@
 import uuid
 from datetime import date
 
-from app.schemas.patient import Allergy, Diagnosis, PatientRecord, ProfileUpdate, Surgery, Treatment
+from app.schemas.patient import Allergy, Diagnosis, EmergencyContact, PatientRecord, ProfileUpdate, Surgery, Treatment
 from app.services.demo_data import DEMO_PATIENT_ID, demo_patient
 
 _patients: dict[str, PatientRecord] = {DEMO_PATIENT_ID: demo_patient()}
@@ -28,6 +28,15 @@ def apply_profile_update(record: PatientRecord, update: ProfileUpdate) -> Patien
     def keep_or_new(item_id: str | None, existing: set[str], prefix: str) -> str:
         return item_id if item_id and item_id in existing else f"{prefix}_{uuid.uuid4().hex[:8]}"
 
+    if "full_name" in sent and update.full_name:
+        record.full_name = update.full_name
+    for name in ("date_of_birth", "sex", "height_cm", "weight_kg"):
+        if name in sent:
+            setattr(record, name, getattr(update, name))
+    if "emergency_contact" in sent:
+        c = update.emergency_contact
+        record.emergency_contact = (EmergencyContact(name=c.name.strip(), phone=c.phone.strip(), relation=c.relation.strip())
+                                    if c else None)
     if "blood_type" in sent:
         record.blood_type = update.blood_type
     if "allergies" in sent and update.allergies is not None:

@@ -46,6 +46,16 @@ export const realApi: WWHealthApi = {
   redeemEmergencyToken: (request) => apiClient.post(ENDPOINTS.emergencyRedeem, { token: request.token }),
   getEmergencyAudit: () => apiClient.get(ENDPOINTS.emergencyAudit),
   getMyEmergencyAccesses: () => apiClient.get(ENDPOINTS.emergencyMyAccesses),
+  getEmergencyGuardians: () => apiClient.get(ENDPOINTS.emergencyGuardians),
+  getEmergencyPassportPreview: () => apiClient.get(ENDPOINTS.emergencyPassport),
+  getDocumentSummary: (documentId) => apiClient.get(ENDPOINTS.documentSummary(documentId)),
+  inviteEmergencyGuardian: (request) =>
+    apiClient.post(ENDPOINTS.emergencyGuardians, { email: request.email, relation: request.relation }),
+  revokeEmergencyGuardian: (id) => apiClient.post(ENDPOINTS.emergencyGuardianAction(id, 'revoke')),
+  respondEmergencyGuardian: (id, accept) =>
+    apiClient.post(ENDPOINTS.emergencyGuardianAction(id, accept ? 'accept' : 'decline')),
+  getGuardianEmergencyView: (patientId) => apiClient.get(ENDPOINTS.emergencyGuardianPatient(patientId)),
+  createGuardianEmergencyToken: (patientId) => apiClient.post(ENDPOINTS.emergencyGuardianPatientToken(patientId)),
 
   getMySummary: () => apiClient.get(ENDPOINTS.patientsMeSummary),
   searchDoctors: (query) => apiClient.get(ENDPOINTS.doctorAccessDoctors, { params: { q: query } }),

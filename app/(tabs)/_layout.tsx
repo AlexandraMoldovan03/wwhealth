@@ -4,7 +4,8 @@ import { Tabs } from 'expo-router/js-tabs';
 
 import { AppTabBar } from '@/design-system/AppTabBar';
 import { TABS } from '@/config/navigation';
-import { useRole } from '@/services/auth/useCurrentUser';
+import { useCurrentUser, useRole } from '@/services/auth/useCurrentUser';
+import { useNeedsProfileSetup } from '@/services/profileSetup';
 import { useSignedIn } from '@/services/auth/useSignedIn';
 import { useTheme } from '@/design-system/useTheme';
 import { useTranslation } from 'react-i18next';
@@ -14,10 +15,14 @@ export default function TabsLayout() {
   const signedIn = useSignedIn();
   const { t } = useTranslation();
   const role = useRole();
+  const user = useCurrentUser();
+  const needsSetup = useNeedsProfileSetup(signedIn && user?.role === 'patient' ? user.id : undefined);
 
   // Don't mount the tabs (they fetch /patients/me) before the saved session is restored → no token-less 401.
   if (signedIn === null) return null;
   if (!signedIn) return <Redirect href="/login" />;
+  // New patient accounts fill in name, birth date and sex first.
+  if (needsSetup) return <Redirect href="/patient/setup" />;
 
   return (
     <Tabs

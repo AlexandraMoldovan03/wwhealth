@@ -11,6 +11,7 @@ import {
 } from '@/design-system';
 import { spacing } from '@/design-system/theme';
 import { useTheme } from '@/design-system/useTheme';
+import { ProtectingSection } from '@/screens/patient/emergency-guardians';
 import { useLocalPatientId } from '@/services/auth/useCurrentUser';
 
 import { AddFamilyMemberSheet } from './AddFamilyMemberSheet';
@@ -43,6 +44,8 @@ export function FamilyQRScreen() {
         </AppText>
         <AppText color="textMuted">{t('family.intro')}</AppText>
       </View>
+
+      <ProtectingSection />
 
       {loading ? (
         <LoadingState count={2} />

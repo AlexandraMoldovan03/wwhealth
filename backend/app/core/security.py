@@ -23,6 +23,8 @@ JWT_ALGORITHMS = ["ES256", "RS256", "EdDSA"]
 class CurrentUser(BaseModel):
     id: str
     role: Role
+    # Email from the token (informational; Postgres checks the confirmed email in auth.users itself).
+    email: str | None = None
     # Supabase access token of this request (None in demo mode). Never logged or returned.
     access_token: str | None = Field(default=None, repr=False, exclude=True)
 
@@ -69,7 +71,8 @@ def get_current_user(authorization: str | None = Header(default=None)) -> Curren
     claims = verify_supabase_token(token)
     # Informational only (user_metadata is client-editable); authoritative role checks read public.profiles.
     meta_role = (claims.get("user_metadata") or {}).get("role")
-    return CurrentUser(id=claims["sub"], role="doctor" if meta_role == "doctor" else "patient", access_token=token)
+    return CurrentUser(id=claims["sub"], role="doctor" if meta_role == "doctor" else "patient",
+                       email=claims.get("email"), access_token=token)
 
 
 def get_current_doctor(authorization: str | None = Header(default=None)) -> CurrentUser:

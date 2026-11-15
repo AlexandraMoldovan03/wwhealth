@@ -19,6 +19,14 @@ export const ENDPOINTS = {
   emergencyRedeem: '/api/v1/emergency/redeem',
   emergencyAudit: '/api/v1/emergency/audit',
   emergencyMyAccesses: '/api/v1/emergency/my-accesses',
+  emergencyGuardians: '/api/v1/emergency/guardians',
+  emergencyPassport: '/api/v1/emergency/passport',
+  documentSummary: (id: string) => `/api/v1/documents/${encodeURIComponent(id)}/summary`,
+  emergencyGuardianAction: (id: string, action: 'revoke' | 'accept' | 'decline') =>
+    `/api/v1/emergency/guardians/${encodeURIComponent(id)}/${action}`,
+  emergencyGuardianPatient: (patientId: string) => `/api/v1/emergency/guardians/patients/${encodeURIComponent(patientId)}`,
+  emergencyGuardianPatientToken: (patientId: string) =>
+    `/api/v1/emergency/guardians/patients/${encodeURIComponent(patientId)}/tokens`,
   doctorAccessDoctors: '/api/v1/doctor-access/doctors',
   doctorAccessGrants: '/api/v1/doctor-access/grants',
   doctorAccessRevoke: (grantId: string) => `/api/v1/doctor-access/grants/${encodeURIComponent(grantId)}/revoke`,

@@ -77,3 +77,31 @@ def test_rejects_wrong_type_and_fake_pdf() -> None:
 
 def test_path_traversal_id_is_404() -> None:
     assert client.get("/api/v1/documents/..%2F..%2Fetc/file").status_code == 404
+
+
+# ─────────────────────────────────────────────────────────── basic data (name, birth date, sex, ...)
+
+def test_basic_data_can_be_set_and_changed(monkeypatch):
+    from app.services import patient_service
+    from app.services.demo_data import DEMO_PATIENT_ID, demo_patient
+    monkeypatch.setitem(patient_service._patients, DEMO_PATIENT_ID, demo_patient())
+    body = {"fullName": " Ana Pop ", "dateOfBirth": "1990-05-17", "sex": "female", "heightCm": 168, "weightKg": 60.5,
+            "emergencyContact": {"name": "Ion Pop", "phone": "+40 722 000 000", "relation": "soț"}}
+    res = client.patch("/api/v1/patients/me", json=body)
+    assert res.status_code == 200
+    data = res.json()
+    assert (data["fullName"], data["dateOfBirth"], data["sex"], data["heightCm"], data["weightKg"]) == \
+        ("Ana Pop", "1990-05-17", "female", 168, 60.5)
+    assert data["emergencyContact"] == {"name": "Ion Pop", "phone": "+40 722 000 000", "relation": "soț"}
+    assert data["allergies"]  # fields not sent are kept
+    res = client.patch("/api/v1/patients/me", json={"sex": "male", "emergencyContact": None})
+    assert res.json()["sex"] == "male" and res.json()["emergencyContact"] is None and res.json()["dateOfBirth"] == "1990-05-17"
+
+
+@pytest.mark.parametrize("body", [
+    {"dateOfBirth": "2999-01-01"}, {"dateOfBirth": "1850-01-01"}, {"dateOfBirth": "1990-02-30"}, {"dateOfBirth": "17.05.1990"},
+    {"sex": "unknown"}, {"heightCm": 500}, {"weightKg": 0}, {"fullName": "   "},
+    {"emergencyContact": {"name": "X", "phone": "abc"}},
+])
+def test_basic_data_validation(body):
+    assert client.patch("/api/v1/patients/me", json=body).status_code == 422

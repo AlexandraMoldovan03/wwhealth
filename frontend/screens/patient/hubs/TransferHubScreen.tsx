@@ -2,6 +2,7 @@ import { router } from 'expo-router';
 import { RefreshControl, StyleSheet, View } from 'react-native';
 
 import { ListRow, ScreenContainer, SectionHeader } from '@/design-system';
+import { ExportPanel } from '@/screens/shared/components/ExportPanel';
 import { spacing } from '@/design-system/theme';
 import { useAsync } from '@/hooks/useAsync';
 import { useTheme } from '@/design-system/useTheme';
@@ -62,6 +63,7 @@ export function TransferHubScreen() {
         />
         <FeatureExplainer id="consent" />
       </View>
+      <ExportPanel />
     </ScreenContainer>
   );
 }

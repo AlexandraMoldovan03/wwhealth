@@ -39,6 +39,8 @@ import type {
 import type { LabExtractionResponse, LabValueEntry, PatientLabValue } from './labs';
 import type { AiUsageSummary, CsvMapping, DocumentDetail, DocumentUpdate, ImportConfirm, ImportPreview, LibraryPage, LibraryQuery } from './smartImport';
 import type { EmergencyAccessEvent, EmergencyData, EmergencyRedeemRequest, EmergencyTokenResponse, EmergencyTokenStatus } from './emergency';
+import type { GuardianEmergencyView, GuardianInviteRequest, GuardianOverview } from './emergencyGuardians';
+import type { DocumentSummary, PrioritizedPassport } from './emergencyPassport';
 import type { LungAnalysis } from './lungvision';
 import type {
   DocumentAnalyzeResponse,
@@ -85,6 +87,22 @@ export interface WWHealthApi {
   getEmergencyAudit(): Promise<EmergencyAccessEvent[]>;
   /** Doctor: own emergency scans (opened / refused). */
   getMyEmergencyAccesses(): Promise<EmergencyAccessEvent[]>;
+  // Emergency guardians (family members linked to the emergency passport, confirmed by the invited account)
+  /** My guardians (patient) + invitations sent to me + people I am an emergency contact for. */
+  getEmergencyGuardians(): Promise<GuardianOverview>;
+  /** Patient: what a doctor would see, prioritised, with sources / conflicts / "needs confirmation". null in MOCK. */
+  getEmergencyPassportPreview(): Promise<PrioritizedPassport | null>;
+  /** Structured summary of one of my documents (no AI prose). null in MOCK. */
+  getDocumentSummary(documentId: string): Promise<DocumentSummary | null>;
+  inviteEmergencyGuardian(request: GuardianInviteRequest): Promise<{ id: string }>;
+  /** Patient: remove a guardian or cancel an invitation. */
+  revokeEmergencyGuardian(id: string): Promise<void>;
+  /** Guardian: accept / decline an invitation (decline also stops an active link). */
+  respondEmergencyGuardian(id: string, accept: boolean): Promise<void>;
+  /** Guardian: ONLY the patient's emergency data (audited). */
+  getGuardianEmergencyView(patientId: string): Promise<GuardianEmergencyView>;
+  /** Guardian: the patient's 5-minute single-use QR, for a doctor to scan. */
+  createGuardianEmergencyToken(patientId: string): Promise<EmergencyTokenResponse>;
   // Doctor Access & Consent — patient side (own data only)
   /** Patient's own structured summary (same view a doctor gets with every section shared). */
   getMySummary(): Promise<MedicalSummary>;

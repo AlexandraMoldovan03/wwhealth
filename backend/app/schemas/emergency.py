@@ -4,6 +4,7 @@ from typing import Literal
 from pydantic import Field
 
 from app.schemas.base import CamelModel
+from app.schemas.emergency_passport import PrioritizedPassport
 
 
 class EmergencyTokenResponse(CamelModel):
@@ -46,6 +47,8 @@ class EmergencyData(CamelModel):
     conditions: list[EmergencyCondition] = []    # active only
     medications: list[EmergencyMedication] = []  # active only
     accessed_at: str
+    # Same data, prioritised (critical → essential → abnormal labs). Normal labs are never sent here.
+    passport: PrioritizedPassport | None = None
 
 
 class EmergencyAccessEvent(CamelModel):

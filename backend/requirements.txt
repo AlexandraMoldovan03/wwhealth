@@ -11,3 +11,5 @@ pyjwt[crypto]>=2.9     # Supabase JWT (JWKS) verification
 pypdf>=5.0  # local text extraction from digital PDFs (no external service)
 pillow>=10  # lab image extraction
 google-genai>=1.0  # Gemini (AI Medical Intelligence) — key only in backend/.env
+fhir.resources>=8,<9  # FHIR R4/R4B model validation of exports
+fpdf2>=2.7,<3  # structured medical PDF export

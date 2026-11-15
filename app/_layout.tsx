@@ -84,6 +84,7 @@ function RootNavigator() {
               title: t(`screens.${screen.name}`, { defaultValue: screen.title }),
               // Short, focused tasks open as an iOS sheet (swipe down to close).
               ...(SHEET_SCREENS.has(screen.name) && { presentation: 'modal' as const }),
+              ...(screen.name === 'patient/import/[id]' && { presentation: 'modal' as const }),
             }}
           />
         ))}

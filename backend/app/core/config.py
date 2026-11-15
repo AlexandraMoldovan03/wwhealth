@@ -34,7 +34,7 @@ class Settings(BaseSettings):
     # Smart Import (documents → structured data). Gemini is used ONLY for classification / semantic extraction of
     # PDFs and images, never on record open; FHIR / CSV are parsed locally. Cheap model by default; the escalation
     # model is tried once only when the cheap model's answer is unusable (empty = no escalation).
-    gemini_document_ner_hints: bool = False
+    gemini_document_ner_hints: bool = True   # the local NER model's terms are passed to Gemini as hints
     gemini_document_model: str = "gemini-3.5-flash-lite"
     gemini_document_escalation_model: str = ""
     gemini_document_max_input_chars: int = 24000      # ≈ 6k tokens; longer documents are truncated

@@ -111,7 +111,9 @@
     "doctor/index": "Doctor",
     "doctor/patient/[id]/index": "Patient Summary",
     "doctor/patient/[id]/documents": "Patient Documents",
+    "patient/setup": "Your details",
     "patient/emergency": "Emergency Passport",
+    "patient/emergency-guardian/[patientId]": "Emergency Passport",
     "doctor/emergency": "Emergency scan",
     "patient/lab-review/[id]": "Lab values",
     "patient/lab-trend": "Lab trend",
@@ -556,7 +558,9 @@
     "networkFailed": "Network request failed",
     "status": "Request failed with status {{status}}",
     "camera": "Camera permission is required to take a photo.",
-    "profileMissing": "Your medical profile has not been initialised in the database. Contact the administrator (profiles row missing)."
+    "profileMissing": "Your medical profile has not been initialised in the database. Contact the administrator (profiles row missing).",
+    "aiFailed": "The AI service didn't return a valid answer. Try again.",
+    "aiTimeout": "The AI service took too long. Try again."
   },
   "image": {
     "select": "Select an image",
@@ -621,6 +625,7 @@
     "intro": "In an emergency, show this QR to a doctor. It works once, for 5 minutes, and only a verified doctor account can open it.",
     "sharedTitle": "What the doctor sees",
     "sharedList": "Blood type · Allergies · Active conditions · Active medication. Nothing else: no name, contacts, documents or history.",
+    "sharedListPriority": "Allergies · Active conditions · Active medication · Blood type · Surgical history · Abnormal or critical results. No name, contacts, documents or normal results.",
     "generate": "Generate emergency QR",
     "generateNew": "Generate a new QR",
     "revoke": "Revoke QR",
@@ -2456,7 +2461,12 @@
     "analysisDeferred": "AI analysis is temporarily unavailable. The document and local results are saved for review.",
     "reviewReady": "Document uploaded. Ready for review.",
     "importWorking": "Uploading document. Text extraction and analysis follow when available.",
-    "ner": {"title": "Terms found in the document", "notice": "Automatically extracted, unverified terms. Check them against the original document.", "Disease": "Diseases mentioned", "Chemical": "Chemicals mentioned"},
+    "ner": {
+      "title": "Terms found in the document",
+      "notice": "Automatically extracted, unverified terms. Check them against the original document.",
+      "Disease": "Diseases mentioned",
+      "Chemical": "Chemicals mentioned"
+    },
     "structured": "Structured data (FHIR / CSV)",
     "uploadTitle": "Smart import",
     "uploadIntro": "We detect the format and document type, propose a title and extract the data. You review it before anything is saved to your record.",
@@ -2495,7 +2505,8 @@
       "ai_timeout": "AI analysis took too long — local extraction was used.",
       "ai_invalid": "The AI answer was invalid — local extraction was used.",
       "ai_error": "AI analysis was unavailable — local extraction was used.",
-      "no_text": "No text was found in the document."
+      "no_text": "No text was found in the document.",
+      "ai_rate_limited": "Gemini limit reached — local extraction was used."
     },
     "originalFile": "Original file: {{name}}",
     "identity": {
@@ -2661,6 +2672,160 @@
       "noAllergies": "No allergies recorded",
       "noActiveMedication": "No active treatment recorded",
       "relevanceExplain": "“Relevance” always shows allergies and active treatments first, then what relates to the visit reason. It is not a severity score."
+    },
+    "titleRequired": "A title is required."
+  },
+  "guardians": {
+    "title": "Emergency contacts",
+    "intro": "Invite a family member by the email of their WWHealth account. Once they accept, they can open only your emergency data and generate your QR for a doctor. You can revoke access anytime.",
+    "emailLabel": "Account email",
+    "relationLabel": "Relationship (optional)",
+    "relationPlaceholder": "e.g. daughter, husband",
+    "invite": "Send invitation",
+    "empty": "No emergency contacts yet.",
+    "pending": "Waiting for acceptance",
+    "active": "Has access",
+    "revoke": "Revoke",
+    "cancelInvite": "Cancel",
+    "invitationsTitle": "Invitations received",
+    "invitedBy": "{{name}} invited you as an emergency contact",
+    "accept": "Accept",
+    "decline": "Decline",
+    "protectingTitle": "I am an emergency contact for…",
+    "protectingHint": "You can open only their emergency data. Every opening appears in their log.",
+    "open": "Open passport",
+    "passportIntro": "Emergency data only: blood type, allergies, active conditions and medication, emergency contact. This access is logged and visible to {{name}}.",
+    "contactTitle": "Emergency contact",
+    "qrTitle": "QR for a doctor",
+    "qrIntro": "Generate this person's emergency QR and show it to a doctor. It works once, for 5 minutes.",
+    "generateQr": "Generate emergency QR",
+    "hideQr": "Hide QR",
+    "stepDown": "Stop being an emergency contact",
+    "notAvailable": "This passport is no longer available. Access was revoked or the invitation was not accepted.",
+    "unnamed": "No name"
+  },
+  "passport": {
+    "p1": "Critical in an emergency",
+    "p2": "Essential information",
+    "p3": "Tests and results",
+    "allergiesUnknown": "Allergies unknown",
+    "noCritical": "No critical information documented.",
+    "groups": {
+      "allergy": "Allergies",
+      "condition": "Conditions",
+      "medication": "Medication",
+      "lab": "Results",
+      "blood_type": "Blood type",
+      "history": "History",
+      "procedure": "Surgery",
+      "finding": "Findings",
+      "recommendation": "Recommendations"
+    },
+    "flags": {
+      "severe_allergy": "Severe allergy",
+      "anaphylaxis": "Anaphylaxis",
+      "drug_allergy": "Drug",
+      "anticoagulant": "Anticoagulant",
+      "antiplatelet": "Antiplatelet",
+      "insulin": "Insulin",
+      "hypoglycemic": "Hypoglycaemia risk",
+      "opioid": "Opioid",
+      "antiepileptic": "Antiepileptic",
+      "corticosteroid": "Corticosteroid",
+      "immunosuppressant": "Immunosuppressant",
+      "cardiac_drug": "Antiarrhythmic / digitalis",
+      "lithium": "Lithium",
+      "emergency_condition": "Emergency-relevant",
+      "suspected": "Suspected",
+      "historical_medication": "From a document, not in profile"
+    },
+    "criticalValue": "Critical value",
+    "needsConfirmation": "Needs confirmation",
+    "conflict": "Conflicting sources",
+    "conflictValues": "Different values: {{values}}",
+    "reference": "Ref. {{range}}",
+    "previous": "Previously: {{values}}",
+    "showNormal": "Show normal results ({{count}})",
+    "hideNormal": "Hide normal results",
+    "sourceProfile": "Medical profile",
+    "sourceDocument": "Document",
+    "page": "p. {{page}}",
+    "previewTitle": "What a doctor sees",
+    "reviewHint": "To check: {{unconfirmed}} unconfirmed, {{conflicts}} conflicts. Open the source or correct your profile.",
+    "correct": "Confirm / correct profile"
+  },
+  "docSummary": {
+    "emergency": "Relevant for the emergency passport",
+    "abnormal": "Abnormal results",
+    "diagnoses": "Diagnoses and suspicions",
+    "findings": "Findings",
+    "treatment": "Treatment and recommendations",
+    "abnormalCount_one": "{{count}} abnormal result",
+    "abnormalCount_other": "{{count}} abnormal results",
+    "criticalCount_one": "{{count}} critical value",
+    "criticalCount_other": "{{count}} critical values",
+    "mainDiagnosis": "diagnosis: {{names}}",
+    "noFindings": "No relevant findings extracted.",
+    "normalCount_one": "{{count}} normal result",
+    "normalCount_other": "{{count}} normal results",
+    "toConfirm_one": "{{count}} to confirm",
+    "toConfirm_other": "{{count}} to confirm"
+  },
+  "exports": {
+    "title": "Export medical data",
+    "subtitle": "Download or send your data, including to a doctor who doesn't use WWHealth.",
+    "doctorSubtitle": "Only the sections the patient shared. The export is recorded in the access log.",
+    "note": "Exports contain confirmed data only; suspicions and unconfirmed extractions never appear as diagnoses.",
+    "kinds": {
+      "fhir": {
+        "title": "FHIR R4 (JSON)",
+        "hint": "Full record, standard format for hospitals and clinics"
+      },
+      "emergency-summary": {
+        "title": "FHIR emergency summary",
+        "hint": "Allergies, conditions, medication, critical results (IPS-style)"
+      },
+      "summary.pdf": {
+        "title": "Medical summary PDF",
+        "hint": "Structured, easy to read or print"
+      },
+      "labs.csv": {
+        "title": "Lab results CSV",
+        "hint": "History: value, unit, reference range, date, source"
+      },
+      "archive.zip": {
+        "title": "ZIP archive",
+        "hint": "Permitted original documents + FHIR + CSV + PDF"
+      }
     }
+  },
+  "basicInfo": {
+    "title": "Basic details",
+    "fullName": "Full name",
+    "dateOfBirth": "Date of birth",
+    "datePlaceholder": "YYYY-MM-DD (e.g. 1990-05-17)",
+    "sex": "Sex",
+    "sexes": {
+      "female": "Female",
+      "male": "Male",
+      "other": "Other"
+    },
+    "height": "Height (cm)",
+    "weight": "Weight (kg)",
+    "contact": "Emergency contact (optional)",
+    "contactName": "Name",
+    "contactPhone": "Phone",
+    "contactRelation": "Relationship",
+    "errors": {
+      "required": "Required",
+      "date": "Invalid date (YYYY-MM-DD, in the past)",
+      "height": "Between 30 and 260 cm",
+      "weight": "Between 1 and 400 kg",
+      "phone": "Invalid phone"
+    },
+    "fixErrors": "Check the highlighted basic details.",
+    "setupTitle": "Let's fill in your details",
+    "setupIntro": "Name, date of birth and sex are needed for your medical record and emergency passport. You can change them anytime from your profile.",
+    "continue": "Continue"
   }
 }

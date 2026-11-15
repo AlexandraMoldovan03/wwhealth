@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
 import { AppState, StyleSheet, View } from "react-native";
-import QRCode from "react-native-qrcode-svg";
-import Animated from "react-native-reanimated";
 
 import {
   AppButton,
@@ -10,15 +8,14 @@ import {
   ErrorState,
   ScreenContainer,
   SectionHeader,
-  fadeIn,
   tapFeedback,
 } from "@/design-system";
-import { radius, spacing } from "@/design-system/theme";
+import { spacing } from "@/design-system/theme";
 import { EmergencyAuditList } from "@/screens/shared/components/EmergencyAuditList";
-import {
-  formatCountdown,
-  useCountdown,
-} from "./useCountdown";
+import { PassportPreview } from "./PassportPreview";
+import { EmergencyGuardiansSection } from "@/screens/patient/emergency-guardians";
+import { EmergencyQrCard } from "./EmergencyQrCard";
+import { useCountdown } from "./useCountdown";
 import { useAsync } from "@/hooks/useAsync";
 import { useTheme } from "@/design-system/useTheme";
 import { api } from "@/services/backend";
@@ -101,52 +98,20 @@ export function EmergencyPassportScreen() {
         <AppText variant="label" color="textMuted">
           {t("emergency.sharedTitle")}
         </AppText>
-        <AppText>{t("emergency.sharedList")}</AppText>
+        <AppText>{t("emergency.sharedListPriority")}</AppText>
       </AppCard>
 
       {active ? (
-        <Animated.View key={code.tokenId} entering={fadeIn()}>
-          <AppCard style={styles.qrCard}>
-            {/* White quiet zone so scanners work in dark mode too. */}
-            <View style={styles.qrBox}>
-              <QRCode value={code.qrPayload} size={220} ecl="M" />
-            </View>
-            <AppText
-              variant="display"
-              color={secondsLeft <= 60 ? "danger" : "text"}
-              accessibilityLabel={t("emergency.timeLeft", {
-                time: formatCountdown(secondsLeft),
-              })}
-            >
-              {formatCountdown(secondsLeft)}
-            </AppText>
-            <View
-              style={[styles.track, { backgroundColor: colors.surfaceAlt }]}
-            >
-              <View
-                style={[
-                  styles.bar,
-                  {
-                    width: `${Math.min(100, (secondsLeft / code.ttlSeconds) * 100)}%`,
-                    backgroundColor:
-                      secondsLeft <= 60 ? colors.danger : colors.primary,
-                  },
-                ]}
-              />
-            </View>
-            <AppText variant="caption" color="textMuted" align="center">
-              {t("emergency.singleUse")}
-            </AppText>
-            <AppButton
-              title={t("emergency.revoke")}
-              icon="close-circle-outline"
-              variant="outline"
-              fullWidth
-              loading={busy}
-              onPress={revoke}
-            />
-          </AppCard>
-        </Animated.View>
+        <EmergencyQrCard code={code} secondsLeft={secondsLeft}>
+          <AppButton
+            title={t("emergency.revoke")}
+            icon="close-circle-outline"
+            variant="outline"
+            fullWidth
+            loading={busy}
+            onPress={revoke}
+          />
+        </EmergencyQrCard>
       ) : (
         <View style={styles.actions}>
           {restoringCode && <AppText color="textMuted" align="center">{t("common.loading")}</AppText>}
@@ -169,6 +134,10 @@ export function EmergencyPassportScreen() {
       )}
       {error && <ErrorState message={error} />}
 
+      <PassportPreview />
+
+      <EmergencyGuardiansSection />
+
       <View style={styles.section}>
         <SectionHeader title={t("emergency.audit.title")} />
         {audit.error ? (
@@ -188,19 +157,6 @@ export function EmergencyPassportScreen() {
 
 const styles = StyleSheet.create({
   shared: { gap: spacing.xs },
-  qrCard: { alignItems: "center", gap: spacing.md },
-  qrBox: {
-    padding: spacing.md,
-    backgroundColor: "#FFFFFF",
-    borderRadius: radius.lg,
-  },
-  track: {
-    height: 6,
-    alignSelf: "stretch",
-    borderRadius: radius.pill,
-    overflow: "hidden",
-  },
-  bar: { height: "100%", borderRadius: radius.pill },
   actions: { gap: spacing.sm },
   section: { gap: spacing.sm },
   hint: { borderTopWidth: StyleSheet.hairlineWidth, paddingTop: spacing.md },

@@ -6,7 +6,7 @@ from threading import Lock
 from app.schemas.smart_import import NerTerm
 
 MODEL_DIR = Path(__file__).resolve().parents[2] / "models" / "medical_ner"
-MODEL_VERSION = "wwhealth-bc5cdr-v1"
+MODEL_VERSION = "wwhealth-bc5cdr-v1.1"  # .1: word-level spans
 MAX_CHARS = 80_000
 MAX_TERMS = 200
 OVERLAP = 96
@@ -54,6 +54,22 @@ def _spans(tokens):
         yield span
 
 
+def _words(text, spans):
+    """Snap spans to whole words and merge pieces of one word ("di" + "zziness" → "dizziness")."""
+    merged = []
+    for kind, start, end, scores in spans:
+        while start > 0 and text[start - 1].isalnum():
+            start -= 1
+        while end < len(text) and text[end].isalnum():
+            end += 1
+        if merged and merged[-1][2] >= start:
+            prev = merged[-1]
+            merged[-1] = (prev[0], prev[1], max(prev[2], end), [*prev[3], *scores])
+        else:
+            merged.append((kind, start, end, list(scores)))
+    return merged
+
+
 def _page(text, tokenizer, model, torch):
     chunks = tokenizer(text, max_length=min(512, model.config.max_position_embeddings),
                        truncation=True, stride=OVERLAP, return_overflowing_tokens=True,
@@ -93,7 +109,7 @@ def extract(pages: list[str], paginated: bool) -> list[NerTerm] | None:
             text = original[:remaining]
             remaining -= len(text)
             if text.strip():
-                for kind, start, end, scores in _page(text, *runtime):
+                for kind, start, end, scores in _words(text, _page(text, *runtime)):
                     terms.append(NerTerm(text=text[start:end], kind=kind, start=offset + start,
                                          end=offset + end, page=page if paginated else None,
                                          confidence=sum(scores) / len(scores),

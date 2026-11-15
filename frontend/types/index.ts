@@ -2,6 +2,8 @@ export * from './api';
 export * from './auth';
 export * from './consent';
 export * from './emergency';
+export * from './emergencyGuardians';
+export * from './emergencyPassport';
 export * from './family';
 export * from './feature';
 export * from './icons';

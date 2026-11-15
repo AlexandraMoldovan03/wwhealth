@@ -376,6 +376,17 @@ def test_no_consent_no_ai(monkeypatch):
     assert fake.calls == [] and p["method"] == "local_fallback" and p["fallbackReason"] == "no_consent"
 
 
+def test_reupload_after_consent_uses_gemini_once(monkeypatch):
+    fake = FakeGemini(answer=gemini_answer())
+    enable_ai(monkeypatch, fake, consent=False)
+    first = upload(F_HTA).json()
+    assert first["method"] == "local_fallback" and fake.calls == []
+    enable_ai(monkeypatch, fake, consent=True)
+    again = upload(F_HTA).json()
+    assert again["method"] == "gemini" and again["id"] == first["id"] and len(fake.calls) == 1
+    assert upload(F_HTA).json()["cached"] is True and len(fake.calls) == 1  # now cached with the AI result
+
+
 def test_gemini_unavailable_falls_back_to_local(monkeypatch):
     fake = FakeGemini(error=gemini_client.GeminiFailed("busy"))
     enable_ai(monkeypatch, fake)

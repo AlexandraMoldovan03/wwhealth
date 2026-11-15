@@ -17,7 +17,8 @@ from datetime import UTC, datetime, timedelta
 from pydantic import ValidationError
 
 from app.schemas.emergency import EmergencyAllergy, EmergencyCondition, EmergencyData, EmergencyMedication
-from app.services import patient_service
+from app.services import lab_extraction, patient_service
+from app.services.emergency_passport import build_passport
 
 TTL = timedelta(minutes=5)
 QR_PREFIX = "wwhealth://emergency/"
@@ -57,7 +58,16 @@ def emergency_data(result: dict) -> EmergencyData:
         conditions=_models(conditions, EmergencyCondition),
         medications=_models(medications, EmergencyMedication),
         accessed_at=str(result.get("accessed_at")),
+        passport=emergency_passport(result),
     )
+
+
+def emergency_passport(result: dict):
+    """Doctor / guardian view: profile + confirmed labs, prioritised; normal labs stay out of the emergency screen."""
+    labs = result.get("labs") if isinstance(result.get("labs"), list) else []
+    passport = build_passport(result, facts=None, labs=[r for r in labs if isinstance(r, dict)])
+    passport.normal_labs = []
+    return passport
 
 
 # ─────────────────────────────────────────────────────────── DEMO store (no Supabase)
@@ -82,15 +92,17 @@ class _Store:
 _store = _Store()
 
 
-def _log(event: str, token: _Token | None, actor_id: str, reason: str | None = None, actor_name: str | None = None):
+def _log(event: str, token: _Token | None, actor_id: str, reason: str | None = None, actor_name: str | None = None,
+         patient_id: str | None = None):
     _store.log.append({
         "id": str(len(_store.log) + 1), "event": event, "reason": reason, "actor_id": actor_id,
-        "actor_name": actor_name, "patient_id": token.patient_id if token else None,
+        "actor_name": actor_name, "patient_id": token.patient_id if token else patient_id,
         "created_at": datetime.now(UTC).isoformat(),
     })
 
 
-def demo_create(patient_id: str, token_hash: str) -> dict:
+def demo_create(patient_id: str, token_hash: str, actor_id: str | None = None, actor_name: str | None = None) -> dict:
+    """`actor_*` set when an emergency guardian generates the patient's QR (default: the patient)."""
     now = datetime.now(UTC)
     with _store.lock:
         for t in _store.tokens.values():
@@ -98,7 +110,7 @@ def demo_create(patient_id: str, token_hash: str) -> dict:
                 t.revoked_at = now
         token = _Token(id=str(uuid.uuid4()), patient_id=patient_id, token_hash=token_hash, expires_at=now + TTL)
         _store.tokens[token_hash] = token
-        _log("created", token, patient_id)
+        _log("created", token, actor_id or patient_id, actor_name=actor_name)
     return {"token_id": token.id, "expires_at": token.expires_at.isoformat()}
 
 
@@ -147,7 +159,15 @@ def demo_redeem(doctor_id: str, token_hash: str, doctor_name: str = "Demo Doctor
         "allergies": [a.model_dump() for a in record.allergies] if record else [],
         "conditions": [d.model_dump() for d in record.diagnoses] if record else [],
         "medications": [m.model_dump() for m in record.treatments] if record else [],
+        "surgeries": [s.model_dump() for s in record.surgeries] if record else [],
+        "labs": lab_extraction.demo_list(t.patient_id),
     }
+
+
+def demo_log_view(patient_id: str, actor_id: str, actor_name: str | None) -> None:
+    """An emergency guardian opened the passport (visible in the patient's audit log)."""
+    with _store.lock:
+        _log("viewed", None, actor_id, None, actor_name, patient_id=patient_id)
 
 
 def demo_doctor_accesses(doctor_id: str, limit: int = 50) -> list[dict]:

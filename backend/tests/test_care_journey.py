@@ -338,7 +338,9 @@ def test_fhir_bundle_maps_resources_without_inventing_codes():
     assert order["dosageInstruction"][0]["timing"]["repeat"]["timeOfDay"] == ["08:00:00", "20:00:00"]
     assert "coding" not in order["medicationCodeableConcept"]
     statement = next(e["resource"] for e in b["entry"] if e["resource"]["resourceType"] == "MedicationStatement")
-    assert statement["informationSource"]["reference"].startswith("Patient/")
+    patient_url = next(e["fullUrl"] for e in b["entry"] if e["resource"]["resourceType"] == "Patient")
+    assert statement["informationSource"]["reference"] == patient_url  # resolves inside the Bundle
+    fhir_service.validate(b)
     cond = next(e["resource"] for e in b["entry"] if e["resource"]["resourceType"] == "Condition")
     assert cond["code"]["coding"][0] == {"system": "http://hl7.org/fhir/sid/icd-10", "code": "J45.30"}
     assert {"AllergyIntolerance", "DocumentReference", "Patient"} <= set(types)

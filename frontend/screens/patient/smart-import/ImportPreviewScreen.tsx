@@ -2,6 +2,7 @@ import { MedicalTerms } from '@/screens/patient/documents/MedicalTerms';
 import { Stack, router } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { StyleSheet, Switch, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 
 import { AppButton, AppCard, AppInput, AppText, Badge, ErrorState, ListRow, LoadingState, ScreenContainer, SectionHeader } from '@/design-system';
@@ -47,6 +48,7 @@ function SourceLine({ source }: { source: SourceRef }) {
 function ImportForm({ preview, reload }: { preview: ImportPreview; reload: () => Promise<void> }) {
   const { colors } = useTheme();
   const { t } = useTranslation();
+  const insets = useSafeAreaInsets();
   const ex = preview.extraction;
   const [title, setTitle] = useState(ex.proposedTitle || preview.originalFilename || '');
   const [category, setCategory] = useState<DocumentType>(ex.category);
@@ -63,6 +65,7 @@ function ImportForm({ preview, reload }: { preview: ImportPreview; reload: () =>
   const locked = preview.status === 'rejected';
   const needsIdentity = preview.identity.requiresConfirmation;
   const dateInvalid = !!eventDate.trim() && !ISO_DATE.test(eventDate.trim());
+  const confirmLabel = t(preview.status === 'confirmed' ? 'smart.saveChanges' : 'smart.confirm');
   const canConfirm = !locked && !!title.trim() && !dateInvalid && (!needsIdentity || identityConfirmed);
 
   const setItem = (key: string, patch: Partial<ExtractedItem>) => setItems((xs) => xs.map((x) => (x.key === key ? { ...x, ...patch } : x)));
@@ -100,9 +103,11 @@ function ImportForm({ preview, reload }: { preview: ImportPreview; reload: () =>
   const groups = KIND_ORDER.map((k) => ({ kind: k, rows: items.filter((i) => i.kind === k) })).filter((g) => g.rows.length);
 
   return (
-    <ScreenContainer edges={['bottom']}>
-      <MedicalTerms terms={ex.nerTerms} />
+    <View style={styles.flex}>
+    <ScreenContainer edges={[]}>
       <Stack.Screen options={{ title: t('smart.previewTitle') }} />
+      <MedicalTerms terms={ex.nerTerms} />
+      {error && <AppText accessibilityRole="alert" variant="caption" color="danger">{error}</AppText>}
 
       <View style={styles.badges}>
         <Badge label={t(`smart.method.${preview.method}`)} color={preview.method === 'gemini' ? colors.primary : colors.info} />
@@ -130,7 +135,7 @@ function ImportForm({ preview, reload }: { preview: ImportPreview; reload: () =>
           {needsIdentity && !locked && (
             <View style={styles.switchRow}>
               <AppText variant="body" style={styles.flex}>{t('smart.identityConfirm')}</AppText>
-              <Switch value={identityConfirmed} onValueChange={setIdentityConfirmed} trackColor={{ true: colors.primary, false: colors.border }} />
+              <Switch accessibilityLabel={t('smart.identityConfirm')} value={identityConfirmed} onValueChange={setIdentityConfirmed} trackColor={{ true: colors.primary, false: colors.border }} />
             </View>
           )}
         </AppCard>
@@ -220,12 +225,8 @@ function ImportForm({ preview, reload }: { preview: ImportPreview; reload: () =>
         </View>
       )}
 
-      {error && <AppText variant="caption" color="danger">{error}</AppText>}
       {!locked && (
         <View style={styles.field}>
-          <AppButton title={t(preview.status === 'confirmed' ? 'smart.saveChanges' : 'smart.confirm')} icon="checkmark-circle-outline" fullWidth
-            disabled={!canConfirm || !!busy} loading={busy === 'confirm'} onPress={() => void confirm()} />
-          {needsIdentity && !identityConfirmed && <AppText variant="caption" color="textMuted">{t('smart.identityRequired')}</AppText>}
           <AppButton title={t(retryable ? 'smart.retryAnalysis' : 'smart.reanalyze')} icon="refresh-outline" variant="outline" fullWidth disabled={!!busy} loading={busy === 'reanalyze'} onPress={() => void reanalyze()} />
           <AppText variant="caption" color="textMuted">{t('smart.reanalyzeHint')}</AppText>
           <AppButton title={t('smart.reject')} icon="close-circle-outline" variant="ghost" fullWidth disabled={!!busy} loading={busy === 'reject'} onPress={reject} />
@@ -238,6 +239,22 @@ function ImportForm({ preview, reload }: { preview: ImportPreview; reload: () =>
           onSave={(label, detail) => { setItem(editing.key, { label, detail, edited: true }); setEditing(null); }} />
       )}
     </ScreenContainer>
+    {/* Always-visible save bar: the confirm action never hides at the end of a long preview. */}
+    {!locked && (
+      <View style={[styles.footer, { backgroundColor: colors.surface, borderTopColor: colors.border, paddingBottom: Math.max(insets.bottom, spacing.md) }]}>
+        {needsIdentity && !identityConfirmed && (
+          <View style={styles.switchRow}>
+            <AppText variant="caption" style={styles.flex}>{t('smart.identityConfirm')}</AppText>
+            <Switch accessibilityLabel={t('smart.identityConfirm')} value={identityConfirmed} onValueChange={setIdentityConfirmed}
+              trackColor={{ true: colors.primary, false: colors.border }} />
+          </View>
+        )}
+        {(!title.trim() || dateInvalid) && <AppText variant="caption" color="danger">{t(!title.trim() ? 'smart.titleRequired' : 'smart.dateInvalid')}</AppText>}
+        <AppButton title={confirmLabel} icon="checkmark-circle-outline" fullWidth
+          disabled={!canConfirm || !!busy} loading={busy === 'confirm'} onPress={() => void confirm()} />
+      </View>
+    )}
+    </View>
   );
 }
 
@@ -262,4 +279,5 @@ const styles = StyleSheet.create({
   field: { gap: spacing.sm },
   flex: { flex: 1 },
   switchRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
+  footer: { paddingHorizontal: spacing.lg, paddingTop: spacing.sm, gap: spacing.xs, borderTopWidth: StyleSheet.hairlineWidth },
 });

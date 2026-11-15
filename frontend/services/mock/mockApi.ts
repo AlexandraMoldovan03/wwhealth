@@ -10,6 +10,7 @@ import type {
   DoctorGrant,
   DoctorScope,
   EmergencyAccessEvent,
+  GuardianLink,
   LabValueEntry,
   MedicalDocument,
   MedicalSummary,
@@ -76,6 +77,7 @@ function mockSummary(record: PatientRecord | null, documents: MedicalDocument[] 
 // Emergency passport (MOCK): same rules as the backend — 5 min, single use, revocable, audited.
 const emergencyTokens = new Map<string, { id: string; expiresAt: number; usedAt?: number; revokedAt?: number }>();
 const emergencyLog: EmergencyAccessEvent[] = [];
+const guardianLinks: GuardianLink[] = [];
 const logEmergency = (event: EmergencyAccessEvent['event'], reason: EmergencyAccessEvent['reason'] = null, actorName: string | null = null) =>
   emergencyLog.unshift({ id: createId('log'), event, reason, actorName, createdAt: new Date().toISOString() });
 
@@ -107,6 +109,12 @@ export const mockApi: WWHealthApi = {
     await delay(MOCK_DELAY_MS);
     const today = new Date().toISOString().slice(0, 10);
     if (update.bloodType !== undefined) db.bloodType = update.bloodType;
+    if (update.fullName) db.fullName = update.fullName.trim();
+    if (update.dateOfBirth !== undefined) db.dateOfBirth = update.dateOfBirth;
+    if (update.sex !== undefined) db.sex = update.sex;
+    if (update.heightCm !== undefined) db.heightCm = update.heightCm;
+    if (update.weightKg !== undefined) db.weightKg = update.weightKg;
+    if (update.emergencyContact !== undefined) db.emergencyContact = update.emergencyContact;
     if (update.allergies) db.allergies = update.allergies.map((a) => ({ ...a, id: a.id ?? createId('al') }));
     if (update.diagnoses) {
       db.diagnoses = update.diagnoses.map((d) => ({
@@ -300,6 +308,58 @@ export const mockApi: WWHealthApi = {
   async getMyEmergencyAccesses() {
     await delay(MOCK_DELAY_MS);
     return emergencyLog.filter((e) => e.event === 'viewed' || e.event === 'denied');
+  },
+
+  // Emergency guardians (MOCK): invitations stay pending — nobody else can accept in this demo.
+  async getEmergencyGuardians() {
+    await delay(MOCK_DELAY_MS);
+    return { guardians: [...guardianLinks], invitations: [], protecting: [] };
+  },
+
+  async getEmergencyPassportPreview() {
+    await delay(MOCK_DELAY_MS);
+    return null; // prioritisation runs on the backend only (no duplicated clinical rules in the app)
+  },
+
+  async getDocumentSummary() {
+    await delay(MOCK_DELAY_MS);
+    return null;
+  },
+
+  async inviteEmergencyGuardian({ email, relation }) {
+    await delay(MOCK_DELAY_MS);
+    const normalized = email.trim().toLowerCase();
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(normalized)) throw new ApiError('Enter a valid email address', 422);
+    if (guardianLinks.some((g) => g.email === normalized)) throw new ApiError('This person is already invited', 409);
+    if (guardianLinks.length >= 5) throw new ApiError('You can add at most 5 emergency contacts', 409);
+    const link = {
+      id: createId('grd'), email: normalized, relation: relation.trim().slice(0, 40), status: 'pending' as const,
+      guardianName: null, createdAt: new Date().toISOString(), respondedAt: null,
+    };
+    guardianLinks.unshift(link);
+    return { id: link.id };
+  },
+
+  async revokeEmergencyGuardian(id) {
+    await delay(MOCK_DELAY_MS);
+    const index = guardianLinks.findIndex((g) => g.id === id);
+    if (index < 0) throw new ApiError('Emergency contact not found', 404);
+    guardianLinks.splice(index, 1);
+  },
+
+  async respondEmergencyGuardian() {
+    await delay(MOCK_DELAY_MS);
+    throw new ApiError('Invitation not found', 404);
+  },
+
+  async getGuardianEmergencyView() {
+    await delay(MOCK_DELAY_MS);
+    throw new ApiError('Emergency passport not available', 404);
+  },
+
+  async createGuardianEmergencyToken() {
+    await delay(MOCK_DELAY_MS);
+    throw new ApiError('Emergency passport not available', 404);
   },
 
   async analyzeIntake() {

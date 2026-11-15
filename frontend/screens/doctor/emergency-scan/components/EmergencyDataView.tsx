@@ -1,6 +1,7 @@
 import { StyleSheet, View } from 'react-native';
 
 import { AppCard, AppText, Badge, SectionHeader } from '@/design-system';
+import { PrioritizedPassportView } from '@/screens/shared/components/PrioritizedPassportView';
 import { spacing } from '@/design-system/theme';
 import { useTheme } from '@/design-system/useTheme';
 import type { EmergencyData } from '@/types';
@@ -12,6 +13,17 @@ export function EmergencyDataView({ data }: { data: EmergencyData }) {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const severityColor = { mild: colors.info, moderate: colors.warning, severe: colors.danger } as const;
+
+  if (data.passport) {
+    return (
+      <View style={styles.wrap}>
+        <PrioritizedPassportView passport={data.passport} />
+        <AppText variant="caption" color="textMuted" align="center">
+          {t('emergency.accessedAt', { date: formatDateTime(data.accessedAt) })}
+        </AppText>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.wrap}>

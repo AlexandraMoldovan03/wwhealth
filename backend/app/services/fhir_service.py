@@ -16,13 +16,15 @@ FHIR R4 export (Bundle, type "collection") of the data the caller may read. No i
 """
 import hashlib
 import re
+import uuid
 from datetime import UTC, datetime
 
 from app.schemas.care import TreatmentPlan
 from app.schemas.document import MedicalDocument
 from app.schemas.patient import PatientRecord
 from app.schemas.smart_care import Appointment
-from app.services.medical_summary import latest_labs
+from app.services import fhir_terminology as terms
+from app.services.clinical_rules import lab_status, parse_number, parse_range
 
 SYSTEM = "urn:wwhealth"
 CNAS_NOTE = "Recorded in WWHealth. Not an official CNAS electronic prescription."
@@ -151,23 +153,9 @@ def bundle(patient_id: str, record: PatientRecord | None, documents: list[Medica
             "informationSource": subject, "effectiveDateTime": r["scheduled_for"],
             "note": [{"text": "Reported by the patient in WWHealth (not a clinical administration)."}]}))
 
+    exported_docs = {d.id for d in documents or [] if include_demo or not d.is_demo}
     if labs is not None:
-        for lab in latest_labs(labs):
-            res = {"resourceType": "Observation", "id": "obs-" + hashlib.sha1(f"{lab.name}|{lab.unit}".encode()).hexdigest()[:16],
-                   "meta": {"source": f"{SYSTEM}:document_lab_values"}, "status": "unknown",
-                   "category": [{"coding": [{"system": "http://terminology.hl7.org/CodeSystem/observation-category",
-                                             "code": "laboratory"}]}],
-                   "code": {"text": lab.name}, "subject": subject}
-            number = _num(lab.value)
-            if number is not None:
-                res["valueQuantity"] = {"value": number, **({"unit": lab.unit} if lab.unit else {})}
-            else:
-                res["valueString"] = f"{lab.value} {lab.unit or ''}".strip()
-            if lab.reference_range:
-                res["referenceRange"] = [{"text": lab.reference_range}]
-            if lab.date:
-                res["effectiveDateTime"] = lab.date
-            entries.append(_entry(res))
+        entries.extend(lab_entries(labs, subject, exported_docs, {d.id: d for d in documents or []}))
 
     for a in appointments or []:
         if a.status != "confirmed":
@@ -193,10 +181,9 @@ def bundle(patient_id: str, record: PatientRecord | None, documents: list[Medica
             "content": [{"attachment": {k: v for k, v in {"contentType": doc.mime_type, "title": doc.title,
                                                           "url": doc.file_url}.items() if v}}]}))
 
-    entries.extend(_fact_entries([f for f in facts or [] if include_demo or not f.get("is_demo")], subject,
-                                 {d.id for d in documents or [] if include_demo or not d.is_demo}))
-    return {"resourceType": "Bundle", "type": "collection", "timestamp": datetime.now(UTC).isoformat(),
-            "entry": entries}
+    entries.extend(_fact_entries([f for f in facts or [] if include_demo or not f.get("is_demo")], subject, exported_docs))
+    return finalize({"resourceType": "Bundle", "type": "collection", "timestamp": datetime.now(UTC).isoformat(),
+                     "entry": entries})
 
 
 VERIFICATION = {"confirmed": "confirmed", "suspected": "provisional", "ruled_out": "refuted", "history": "confirmed"}
@@ -270,3 +257,224 @@ def _fact_entries(facts: list[dict], subject: dict, exported_docs: set[str]) -> 
             continue  # recommendations / follow-ups / reasons stay in the document
         out.append(_entry(res))
     return out
+
+
+# ─────────────────────────────────────────────────────────── lab history → Observation + DiagnosticReport
+
+INTERPRETATION = {"high": ("H", "High"), "low": ("L", "Low"), "normal": ("N", "Normal")}
+V2_0074 = "http://terminology.hl7.org/CodeSystem/v2-0074"
+
+
+def _quantity(value: float, unit: str | None) -> dict:
+    q: dict = {"value": value}
+    if unit:
+        q["unit"] = unit
+        code = terms.ucum(unit)
+        if code:
+            q.update(system=terms.UCUM_SYSTEM, code=code)
+    return q
+
+
+def observation(row: dict, subject: dict, doc_ref: dict | None, index: int) -> dict:
+    """One CONFIRMED lab value (the patient reviewed it) → Observation, status final. No unit conversion."""
+    name, value, unit = str(row["name"]), str(row["value"]), row.get("unit") or None
+    when = row.get("measured_at") or None
+    key = "|".join(str(x) for x in (row.get("document_id"), name, unit, value, when, index))
+    code: dict = {"text": name}
+    coding = terms.loinc(name, unit)
+    if coding:
+        code["coding"] = [coding]
+    res: dict = {"resourceType": "Observation", "id": "obs-" + hashlib.sha1(key.encode()).hexdigest()[:20],
+                 "meta": {"source": f"{SYSTEM}:document_lab_values"}, "status": "final",
+                 "category": [{"coding": [{"system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                                           "code": "laboratory", "display": "Laboratory"}]}],
+                 "code": code, "subject": subject}
+    number = parse_number(value)
+    if number is not None and not value.strip().startswith(("<", ">", "≤", "≥")):
+        res["valueQuantity"] = _quantity(number, unit)
+    else:
+        res["valueString"] = f"{value} {unit or ''}".strip()
+    rng = row.get("reference_range")
+    if rng:
+        ref: dict = {"text": str(rng)}
+        bounds = parse_range(rng)
+        if bounds:
+            if bounds[0] is not None:
+                ref["low"] = _quantity(bounds[0], unit)
+            if bounds[1] is not None:
+                ref["high"] = _quantity(bounds[1], unit)
+        res["referenceRange"] = [ref]
+        status = lab_status(value, rng)
+        if status in INTERPRETATION:
+            c, d = INTERPRETATION[status]
+            res["interpretation"] = [{"coding": [{
+                "system": "http://terminology.hl7.org/CodeSystem/v3-ObservationInterpretation", "code": c, "display": d}]}]
+    if when:
+        res["effectiveDateTime"] = str(when)[:10]
+    elif row.get("document_date"):
+        res["effectiveDateTime"] = str(row["document_date"])[:10]
+        res["note"] = [{"text": "Measurement date not stated; the document date is used."}]
+    if doc_ref:
+        res["derivedFrom"] = [doc_ref]
+    return res
+
+
+def lab_entries(labs: list[dict], subject: dict, exported_docs: set[str], docs: dict) -> list[dict]:
+    """Full history (every confirmed value), grouped per source document in a DiagnosticReport."""
+    out: list[dict] = []
+    by_doc: dict[str, list[dict]] = {}
+    for index, row in enumerate(labs):
+        if not row.get("name") or row.get("value") in (None, ""):
+            continue
+        doc_id = str(row.get("document_id") or "")
+        doc_ref = {"reference": f"DocumentReference/{_safe('doc-' + doc_id)}"} if doc_id in exported_docs else None
+        obs = observation(row, subject, doc_ref, index)
+        out.append(_entry(obs))
+        by_doc.setdefault(doc_id, []).append(obs)
+    for doc_id, observations in by_doc.items():
+        if not doc_id:
+            continue
+        dates = sorted(o["effectiveDateTime"] for o in observations if o.get("effectiveDateTime"))
+        doc = docs.get(doc_id)
+        title = (doc.title if doc else None) or next((r.get("document_title") for r in labs
+                                                      if str(r.get("document_id")) == doc_id and r.get("document_title")), None)
+        report: dict = {
+            "resourceType": "DiagnosticReport", "id": _safe(f"dr-{doc_id}"), "identifier": [_id("document", doc_id)],
+            "meta": {"source": f"{SYSTEM}:document_lab_values"}, "status": "final",
+            "category": [{"coding": [{"system": V2_0074, "code": "LAB", "display": "Laboratory"}]}],
+            "code": {"coding": [{"system": terms.LOINC_SYSTEM, "code": "11502-2", "display": "Laboratory report"}],
+                     "text": title or "Laboratory report"},
+            "subject": subject, "result": [{"reference": f"Observation/{o['id']}"} for o in observations],
+        }
+        if dates:
+            report["effectivePeriod" if dates[0] != dates[-1] else "effectiveDateTime"] = (
+                {"start": dates[0], "end": dates[-1]} if dates[0] != dates[-1] else dates[0])
+        if doc_id in exported_docs and doc and doc.file_url:
+            report["presentedForm"] = [{k: v for k, v in {"contentType": doc.mime_type, "title": doc.title,
+                                                         "url": doc.file_url}.items() if v}]
+        out.append(_entry(report))
+    return out
+
+
+# ─────────────────────────────────────────────────────────── references + validation
+
+def _uuid_for(key: str) -> str:
+    return "urn:uuid:" + str(uuid.uuid5(uuid.NAMESPACE_URL, f"{SYSTEM}:{key}"))
+
+
+def finalize(bundle: dict) -> dict:
+    """fullUrl = urn:uuid (stable), and every in-bundle reference "Type/id" rewritten to it so it resolves in the Bundle.
+    References to resources not in the Bundle stay as they are."""
+    mapping = {}
+    for e in bundle.get("entry", []):
+        r = e["resource"]
+        key = f"{r['resourceType']}/{r['id']}"
+        mapping[key] = _uuid_for(key)
+        e["fullUrl"] = mapping[key]
+
+    def walk(node):
+        if isinstance(node, dict):
+            ref = node.get("reference")
+            if isinstance(ref, str) and ref in mapping:
+                node["reference"] = mapping[ref]
+            for v in node.values():
+                walk(v)
+        elif isinstance(node, list):
+            for v in node:
+                walk(v)
+
+    for e in bundle.get("entry", []):
+        walk(e["resource"])
+    return bundle
+
+
+# Required bindings (R4) for the codes WWHealth emits — the models check structure/types, this checks the values.
+REQUIRED_CODES: dict[str, dict[str, set[str]]] = {
+    "Observation": {"status": {"registered", "preliminary", "final", "amended", "corrected", "cancelled", "entered-in-error", "unknown"}},
+    "DiagnosticReport": {"status": {"registered", "partial", "preliminary", "final", "amended", "corrected", "appended",
+                                    "cancelled", "entered-in-error", "unknown"}},
+    "MedicationStatement": {"status": {"active", "completed", "entered-in-error", "intended", "stopped", "on-hold",
+                                       "unknown", "not-taken"}},
+    "MedicationRequest": {"status": {"active", "on-hold", "cancelled", "completed", "entered-in-error", "stopped", "draft",
+                                     "unknown"},
+                          "intent": {"proposal", "plan", "order", "original-order", "reflex-order", "filler-order",
+                                     "instance-order", "option"}},
+    "Procedure": {"status": {"preparation", "in-progress", "not-done", "on-hold", "stopped", "completed",
+                             "entered-in-error", "unknown"}},
+    "DocumentReference": {"status": {"current", "superseded", "entered-in-error"}},
+    "Composition": {"status": {"preliminary", "final", "amended", "entered-in-error"}},
+    "Encounter": {"status": {"planned", "arrived", "triaged", "in-progress", "onleave", "finished", "cancelled",
+                             "entered-in-error", "unknown"}},
+    "Immunization": {"status": {"completed", "entered-in-error", "not-done"}},
+}
+CODED_STATUS = {  # CodeableConcept statuses with a required value set
+    ("Condition", "clinicalStatus"): {"active", "recurrence", "relapse", "inactive", "remission", "resolved"},
+    ("Condition", "verificationStatus"): {"unconfirmed", "provisional", "differential", "confirmed", "refuted", "entered-in-error"},
+    ("AllergyIntolerance", "clinicalStatus"): {"active", "inactive", "resolved"},
+    ("AllergyIntolerance", "verificationStatus"): {"unconfirmed", "confirmed", "refuted", "entered-in-error"},
+}
+
+
+def _check_codes(res: dict) -> list[str]:
+    bad = []
+    for field, allowed in REQUIRED_CODES.get(res.get("resourceType", ""), {}).items():
+        if field in res and res[field] not in allowed:
+            bad.append(field)
+    for (rtype, field), allowed in CODED_STATUS.items():
+        if res.get("resourceType") == rtype and field in res:
+            codes = [c.get("code") for c in (res[field] or {}).get("coding", [])]
+            if not codes or any(c not in allowed for c in codes):
+                bad.append(field)
+    return bad
+
+
+class FhirValidationError(Exception):
+    def __init__(self, errors: list[str]):
+        super().__init__(f"{len(errors)} FHIR validation error(s)")
+        self.errors = errors
+
+
+def validate(bundle: dict) -> dict:
+    """Validates the Bundle and every resource against the FHIR R4B models of `fhir.resources` (R4-compatible for the
+    resources used here), plus: unique fullUrls, in-bundle references resolve, document bundles start with a Composition.
+    Raises FhirValidationError (messages without patient data)."""
+    from fhir.resources.R4B import get_fhir_model_class
+    from pydantic import ValidationError
+
+    errors: list[str] = []
+    entries = bundle.get("entry") or []
+    urls = [e.get("fullUrl") for e in entries]
+    if len(urls) != len(set(urls)):
+        errors.append("duplicate fullUrl")
+    known = set(urls)
+    for i, e in enumerate(entries):
+        res = e.get("resource") or {}
+        try:
+            get_fhir_model_class(res.get("resourceType", "")).model_validate(res)
+        except (ValidationError, KeyError, ValueError) as exc:
+            locs = sorted({".".join(str(x) for x in err.get("loc", ())) for err in getattr(exc, "errors", lambda: [])()})[:5]
+            errors.append(f"entry[{i}] {res.get('resourceType')}: invalid {', '.join(locs) or type(exc).__name__}")
+        bad = _check_codes(res)
+        if bad:
+            errors.append(f"entry[{i}] {res.get('resourceType')}: code not allowed in {', '.join(bad)}")
+
+        def walk(node):
+            if isinstance(node, dict):
+                ref = node.get("reference")
+                if isinstance(ref, str) and ref.startswith("urn:uuid:") and ref not in known:
+                    errors.append(f"entry[{i}] unresolved reference")
+                for v in node.values():
+                    walk(v)
+            elif isinstance(node, list):
+                for v in node:
+                    walk(v)
+        walk(res)
+    if bundle.get("type") == "document" and (not entries or entries[0]["resource"].get("resourceType") != "Composition"):
+        errors.append("document bundle must start with a Composition")
+    try:
+        get_fhir_model_class("Bundle").model_validate(bundle)
+    except Exception as exc:  # noqa: BLE001 — reported as a validation error
+        errors.append(f"Bundle: {type(exc).__name__}")
+    if errors:
+        raise FhirValidationError(errors)
+    return bundle

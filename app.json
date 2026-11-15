@@ -47,7 +47,8 @@
           "microphonePermission": "Allow WWHealth to record your symptom description."
         }
       ],
-      "expo-secure-store"
+      "expo-secure-store",
+      "expo-sharing"
     ],
     "scheme": "wwhealth",
     "experiments": {

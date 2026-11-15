@@ -7,6 +7,7 @@ import { AppButton, AppCard, AppInput, AppText, ErrorState, LoadingState, Screen
 import { iconSize, spacing } from '@/design-system/theme';
 import { CategoryFilter } from '@/design-system/components/CategoryFilter';
 import { BLOOD_TYPES, SEVERITIES } from './profileMeta';
+import { type BasicInfo, BasicInfoFields, basicInfoErrors, basicInfoFrom, basicInfoUpdate } from './BasicInfoFields';
 import { useAsync } from '@/hooks/useAsync';
 import { useSubmit } from '@/hooks/useSubmit';
 import { useTheme } from '@/design-system/useTheme';
@@ -19,7 +20,7 @@ type BloodChoice = BloodType | typeof UNKNOWN;
 const BLOOD_OPTIONS: readonly BloodChoice[] = [UNKNOWN, ...BLOOD_TYPES];
 const SURGERY_DATE = /^\d{4}(-\d{2}(-\d{2})?)?$/;
 
-/** Edit blood type, allergies, conditions, medication and surgeries → PATCH /api/v1/patients/me. */
+/** Edit basic data (name, birth date, sex, height, weight, emergency contact), blood type, allergies, conditions, medication and surgeries → PATCH /api/v1/patients/me. */
 export function EditProfileScreen() {
   const { data, isLoading, error, reload } = useAsync(api.getMyPatient);
   return (
@@ -44,6 +45,8 @@ function EditForm({ patient }: { patient: PatientRecord }) {
     setSurgeriesTouched(true);
   };
   const [showErrors, setShowErrors] = useState(false);
+  const [basics, setBasics] = useState<BasicInfo>(() => basicInfoFrom(patient));
+  const [basicErrors, setBasicErrors] = useState<ReturnType<typeof basicInfoErrors>>({});
   const save = useSubmit(api.updateMyProfile);
 
   useEffect(() => {
@@ -59,8 +62,12 @@ function EditForm({ patient }: { patient: PatientRecord }) {
 
   const onSave = () => {
     setShowErrors(true);
-    if (missingName || badDate) return;
-    const update: ProfileUpdate = { bloodType: bloodType === UNKNOWN ? null : bloodType, allergies, diagnoses, treatments };
+    const bErrors = basicInfoErrors(basics, new Date().toISOString().slice(0, 10));
+    setBasicErrors(bErrors);
+    if (missingName || badDate || Object.keys(bErrors).length > 0) return;
+    const update: ProfileUpdate = {
+      ...basicInfoUpdate(basics), bloodType: bloodType === UNKNOWN ? null : bloodType, allergies, diagnoses, treatments,
+    };
     // Sent only when edited, so saving still works on a server without the surgeries migration.
     if (surgeriesTouched) update.surgeries = surgeries.map((s) => ({ ...s, date: s.date?.trim() || null }));
     void save.run(update);
@@ -73,6 +80,8 @@ function EditForm({ patient }: { patient: PatientRecord }) {
 
   return (
     <>
+      <BasicInfoFields value={basics} onChange={setBasics} errors={basicErrors} />
+
       <View style={styles.section}>
         <SectionHeader title={t('profile.bloodType')} />
         <CategoryFilter
@@ -170,6 +179,7 @@ function EditForm({ patient }: { patient: PatientRecord }) {
       </EditableSection>
 
       {showErrors && missingName && <AppText color="danger">{t('editProfile.fillOrRemove')}</AppText>}
+      {Object.keys(basicErrors).length > 0 && <AppText color="danger">{t('basicInfo.fixErrors')}</AppText>}
       {save.error && <ErrorState title={t('editProfile.couldNotSave')} message={save.error} />}
       <AppButton title={t('editProfile.save')} icon="checkmark" fullWidth loading={save.isLoading} onPress={onSave} />
     </>

@@ -132,6 +132,23 @@ def _ai_block_reason(user: CurrentUser) -> str | None:
     return None
 
 
+# Fallback reasons that may have disappeared since (consent given, budget reset, AI back up). "no_text" never does.
+RETRY_WITH_AI = {"no_consent", "not_configured", "budget", "rate_limited", "ai_rate_limited", "ai_busy", "ai_timeout",
+                 "ai_invalid", "ai_error"}
+
+
+def _ai_now_available(user: CurrentUser) -> bool:
+    """Cheap check (no rate slot, no call): would a new analysis be allowed to use Gemini?"""
+    return (gemini_client.configured() and intelligence_service.get_consent(user).granted
+            and not ai_usage.over_budget(user))
+
+
+def _upgrade_to_ai(user: CurrentUser, cached: dict) -> bool:
+    """A cached local-only analysis is redone with Gemini when the patient uploads the file again and AI is now allowed."""
+    reason = (cached.get("extraction") or {}).get("fallbackReason")
+    return cached.get("method") == "local_fallback" and reason in RETRY_WITH_AI and _ai_now_available(user)
+
+
 def _call_gemini(user: CurrentUser, contents: str, model: str) -> GeminiDocument:
     started = time.perf_counter()
     usage: dict = {}
@@ -339,6 +356,8 @@ def upload(user: CurrentUser, content: bytes, filename: str, csv_mapping: dict |
 def _upload(user: CurrentUser, content: bytes, filename: str, csv_mapping: dict | None) -> ImportPreview:
     sha = import_parsers.sha256(content)
     cached = import_repo.find_import(user, sha, PIPELINE_VERSION)
+    if cached and cached["status"] not in ("rejected", "confirmed") and cached.get("document_id") and _upgrade_to_ai(user, cached):
+        return _resume(user, str(cached["id"]))  # the per-file lock is already held by upload()
     if cached and cached["status"] != "rejected" and cached.get("document_id"):
         ex = ImportExtraction.model_validate(cached.get("extraction") or {})
         if ex.ner_model_version != medical_ner.MODEL_VERSION and medical_ner.available() and cached["source_format"] in {
@@ -364,7 +383,7 @@ def _upload(user: CurrentUser, content: bytes, filename: str, csv_mapping: dict 
     if raw_synthetic and not demo_allowed(record):
         raise ImportFailure("demo_document_not_allowed")
 
-    if cached and cached["status"] == "rejected":
+    if cached and cached["status"] == "rejected" and not _upgrade_to_ai(user, cached):
         # Re-import of a file the patient rejected before: reuse the stored analysis (no AI), new preview.
         extraction = ImportExtraction.model_validate(cached.get("extraction") or {})
         result = {"extraction": extraction, "method": cached["method"], "model": cached.get("model"),
@@ -379,7 +398,7 @@ def _upload(user: CurrentUser, content: bytes, filename: str, csv_mapping: dict 
         identity = identity_check.check(result["identity"] or {}, profile_data, synthetic=synthetic)
         result["synthetic"] = synthetic
     extraction: ImportExtraction = result["extraction"]
-    if cached and cached["status"] == "rejected" and extraction.ner_model_version != medical_ner.MODEL_VERSION:
+    if cached and cached["status"] == "rejected" and result["identity"] is None and extraction.ner_model_version != medical_ner.MODEL_VERSION:
         _attach_ner(parsed, extraction)
 
     same_file = import_repo.find_document_by_sha(user, sha)

@@ -25,6 +25,9 @@ export class ApiError extends Error {
     if (this.status === 404 && this.message === 'Patient not found') return i18n.t('errors.profileMissing');
     if (this.status === 404) return i18n.t('errors.notFound');
     if (this.status === 422) return i18n.t('errors.invalidData');
+    // 502 / 504 only come from AI / external services (Gemini, ElevenLabs): say so instead of "server problem".
+    if (this.status === 502) return i18n.t('errors.aiFailed');
+    if (this.status === 504) return i18n.t('errors.aiTimeout');
     if (this.status >= 500) return i18n.t('errors.server');
     return this.message;
   }
