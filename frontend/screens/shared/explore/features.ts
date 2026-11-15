@@ -13,7 +13,7 @@ export const FEATURES: Feature[] = [
   { id: 'intelligence', title: 'AI Medical Intelligence', description: 'Gemini summary of your record, safety items first, every claim linked to its source. Needs your consent.', icon: 'sparkles-outline', category: 'AI', route: '/patient/intelligence', isAvailable: true },
   { id: 'summary', title: 'Medical summary', description: 'Allergies, conditions, medication, latest labs and documents in one place.', icon: 'reader-outline', category: 'Patient', route: '/patient/summary', isAvailable: true },
   { id: 'emergency', title: 'Emergency Passport', description: 'Single-use 5-minute QR: blood type, allergies, conditions, medication.', icon: 'medkit-outline', category: 'Patient', route: '/patient/emergency', isAvailable: true },
-  { id: 'doctor-dashboard', title: 'Doctor Dashboard', description: 'Doctor area (demo role).', icon: 'medkit-outline', category: 'Doctor', route: '/doctor', isAvailable: true },
+  { id: 'doctor-dashboard', title: 'Doctor Dashboard', description: 'Doctor area.', icon: 'medkit-outline', category: 'Doctor', route: '/doctor', isAvailable: true },
   { id: 'emergency-scan', title: 'Emergency scan', description: 'Scan a patient emergency QR (doctor accounts).', icon: 'medkit-outline', category: 'Doctor', route: '/doctor/emergency', isAvailable: true },
   { id: 'doctor-patients', title: 'My patients', description: 'Patients who granted you access (doctor accounts).', icon: 'people-outline', category: 'Doctor', route: '/patients', isAvailable: true },
 ];

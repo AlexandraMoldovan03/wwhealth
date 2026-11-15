@@ -38,7 +38,7 @@ function demoPreview(fileName: string, documentId: string): ImportPreview {
           labs: [{ key: 'lab-demo-hb-0', name: 'Hemoglobina', value: '13,5', unit: 'g/dL', referenceRange: '12-16', measuredAt: '2024-03-12',
             source: { page: null, excerpt: 'CSV line 2', verified: true }, uncertain: false, include: true, edited: false }] }
       : { category: 'discharge_summary', specialty: 'cardiology', proposedTitle: 'Externare pentru hipertensiune arterială', eventDate: '2023-06-12',
-          documentDate: '2023-06-12', institution: 'Spital demo', physician: 'Dr. Demo', pageCount: 2, truncated: false, textFound: true,
+          documentDate: '2023-06-12', institution: 'Spital de exemplu', physician: 'Dr. Alex Test', pageCount: 2, truncated: false, textFound: true,
           toVerify: ['placeholder_values'], labs: [],
           items: [
             item('diagnosis', 'Hipertensiune arterială', 'confirmed', 'Diagnosis: Arterial Hypertension'),

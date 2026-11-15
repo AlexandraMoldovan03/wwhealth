@@ -198,7 +198,7 @@ def test_create_update_end_with_full_version_history():
     assert upd.status_code == 200
     hist = upd.json()["history"]
     assert [v["version"] for v in hist] == [2, 1] and hist[0]["doseAmount"] == 2 and hist[1]["doseAmount"] == 1
-    assert hist[0]["changeReason"] == "Doză ajustată" and hist[0]["changedByName"] == "Dr. Demo Medic"
+    assert hist[0]["changeReason"] == "Doză ajustată" and hist[0]["changedByName"] == "Dr. Alex Test"
     with pytest.raises(treatment_service.Forbidden):
         treatment_service.update(OTHER_DOCTOR, plan["id"], TreatmentUpdate(**{k: v for k, v in plan_body().items()
                                                                                if k not in ("patientId", "kind")}))
@@ -307,7 +307,7 @@ def test_chronological_and_category_views_keep_provenance_and_skip_empty_section
     dated = [i["date"] for i in chrono if i["date"]]
     assert dated == sorted(dated, reverse=True)
     prescribed = next(i for i in chrono if i["verification"] == "doctor_prescribed")
-    assert prescribed["author"] == "Dr. Demo Medic" and prescribed["provenance"] == "treatment_plans"
+    assert prescribed["author"] == "Dr. Alex Test" and prescribed["provenance"] == "treatment_plans"
     doc = next(i for i in chrono if i["documentId"])
     assert doc["source"] == "uploaded_document" and doc["documentType"] == "lab_result"
     cats = [s["category"] for s in client.get(f"{API}/record", params={"view": "category"}).json()["sections"]]

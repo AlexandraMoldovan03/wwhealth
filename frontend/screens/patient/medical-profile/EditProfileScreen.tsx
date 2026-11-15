@@ -17,6 +17,7 @@ import { useTranslation } from 'react-i18next';
 
 const UNKNOWN = 'Unknown';
 type BloodChoice = BloodType | typeof UNKNOWN;
+
 const BLOOD_OPTIONS: readonly BloodChoice[] = [UNKNOWN, ...BLOOD_TYPES];
 const SURGERY_DATE = /^\d{4}(-\d{2}(-\d{2})?)?$/;
 

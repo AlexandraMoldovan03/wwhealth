@@ -29,16 +29,16 @@ export function ListRow({ icon, title, subtitle, right, onPress, iconColor, ente
       <View style={styles.row}>
         <IconBadge icon={icon} color={iconColor} />
         <View style={styles.text}>
-          <AppText variant="subheading" numberOfLines={1}>
+          <AppText variant="subheading">
             {title}
           </AppText>
           {subtitle && (
-            <AppText variant="caption" color="textMuted" numberOfLines={2}>
+            <AppText variant="caption" color="textMuted">
               {subtitle}
             </AppText>
           )}
         </View>
-        {right}
+        {right && <View style={styles.right}>{right}</View>}
         {onPress && !right && <Ionicons name="chevron-forward" size={iconSize.md} color={colors.textSubtle} />}
       </View>
     </AppCard>
@@ -47,5 +47,6 @@ export function ListRow({ icon, title, subtitle, right, onPress, iconColor, ente
 
 const styles = StyleSheet.create({
   row: { flexDirection: 'row', alignItems: 'center', gap: spacing.md },
-  text: { flex: 1, gap: spacing.xxs },
+  right: { maxWidth: '36%', flexShrink: 1 },
+  text: { flex: 1, minWidth: 0, gap: spacing.xxs },
 });

@@ -113,7 +113,7 @@ function ImportForm({ preview, reload }: { preview: ImportPreview; reload: () =>
         <Badge label={t(`smart.method.${preview.method}`)} color={preview.method === 'gemini' ? colors.primary : colors.info} />
         <Badge label={t(`smart.format.${preview.sourceFormat}`)} color={colors.textMuted} />
         {preview.cached && <Badge label={t('smart.cached')} color={colors.success} />}
-        {preview.isDemo && <Badge label="DEMO" color={colors.warning} />}
+        {preview.isDemo && <Badge label={t('home.demoData')} color={colors.warning} />}
         {preview.status === 'confirmed' && <Badge label={t('smart.status.confirmed')} color={colors.success} />}
         {locked && <Badge label={t('smart.status.rejected')} color={colors.danger} />}
       </View>

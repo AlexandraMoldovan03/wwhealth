@@ -26,7 +26,7 @@ const SPECIALTIES: [string, string, string][] = [
   ['pediatrics', 'Pediatrie', 'Paediatrics'],
 ];
 const DOCTORS = [
-  { id: 'doc_demo_001', fullName: 'Dr. Demo Medic', doctorCode: 'DR-DEMO01', specialties: ['family_medicine', 'internal_medicine', 'cardiology'] },
+  { id: 'doc_demo_001', fullName: 'Dr. Alex Test', doctorCode: 'DR-DEMO01', specialties: ['family_medicine', 'internal_medicine', 'cardiology'] },
   { id: 'doc_demo_002', fullName: 'Dr. Ana Exemplu', doctorCode: 'DR-DEMO02', specialties: ['pulmonology', 'allergology', 'family_medicine'] },
   { id: 'doc_demo_003', fullName: 'Dr. Radu Test', doctorCode: 'DR-DEMO03', specialties: ['neurology', 'orthopedics', 'gastroenterology'] },
 ];

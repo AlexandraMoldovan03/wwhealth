@@ -23,7 +23,7 @@ const strands = Array.from({ length: 22 }, (_, strand) => (
   }).join(' ')
 ));
 
-export function RecordingFeedback({ recorder }: { recorder: Pick<AudioRecorder, 'getStatus'> }) {
+export function RecordingFeedback({ recorder, processing = false }: { recorder: Pick<AudioRecorder, 'getStatus'>; processing?: boolean }) {
   const { t } = useTranslation();
   const { colors } = useTheme();
   const reducedMotion = useReducedMotion();
@@ -31,13 +31,14 @@ export function RecordingFeedback({ recorder }: { recorder: Pick<AudioRecorder, 
   const [seconds, setSeconds] = useState(0);
 
   useEffect(() => {
+    if (processing) return;
     const startedAt = Date.now();
     const timer = setInterval(() => setSeconds(Math.floor((Date.now() - startedAt) / 1000)), 250);
     return () => clearInterval(timer);
-  }, []);
+  }, [processing]);
 
   useEffect(() => {
-    if (reducedMotion) return;
+    if (processing || reducedMotion) return;
     const timer = setInterval(() => {
       const { metering } = recorder.getStatus();
       const level = typeof metering === 'number' && Number.isFinite(metering)
@@ -49,10 +50,15 @@ export function RecordingFeedback({ recorder }: { recorder: Pick<AudioRecorder, 
       clearInterval(timer);
       cancelAnimation(motion);
     };
-  }, [motion, recorder, reducedMotion]);
+  }, [motion, processing, recorder, reducedMotion]);
+
+  const collapse = useSharedValue(1);
+  useEffect(() => {
+    collapse.set(withTiming(processing ? 0.025 : 1, { duration: reducedMotion ? 0 : 350 }));
+  }, [collapse, processing, reducedMotion]);
 
   const waveStyle = useAnimatedStyle(() => ({
-    transform: [{ scaleY: reducedMotion ? 1 : .18 + motion.value * 1.41 }],
+    transform: [{ scaleY: collapse.value * (reducedMotion ? 1 : .18 + motion.value * 1.41) }],
   }));
   const elapsed = [Math.floor(seconds / 60), seconds % 60].map((value) => String(value).padStart(2, '0')).join(':');
 
@@ -60,7 +66,7 @@ export function RecordingFeedback({ recorder }: { recorder: Pick<AudioRecorder, 
     <AppCard tone="flat" style={styles.panel}>
       <View style={styles.status} accessibilityLiveRegion="polite">
         <View style={[styles.dot, { backgroundColor: colors.danger }]} />
-        <AppText variant="subheading">{t('voiceRecording.active')}</AppText>
+        <AppText variant="subheading">{processing ? t('voiceRecording.processing') : t('voiceRecording.active')}</AppText>
       </View>
       <Animated.View accessible={false} style={[styles.wave, waveStyle]}>
         <Svg width="100%" height={100} viewBox="0 0 320 112">

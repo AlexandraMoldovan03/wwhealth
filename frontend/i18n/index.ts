@@ -4,11 +4,10 @@
  *   const { t } = useTranslation();   t('settings.title')       // in components (re-renders on change)
  *   import { i18n } from './.';    i18n.t('validation.x')    // in plain functions
  *
- * Language: saved preference (AsyncStorage) → phone language (expo-localization) → English.
+ * Language: saved English or Romanian preference, defaulting to English.
  * Only UI text is translated — never user-entered medical data or technical values from the API.
  */
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { getLocales } from 'expo-localization';
 import { createInstance } from 'i18next';
 import { initReactI18next } from 'react-i18next';
 
@@ -20,52 +19,41 @@ export const LANGUAGES = [
   { code: 'ro', label: 'Română' },
 ] as const;
 export type Language = (typeof LANGUAGES)[number]['code'];
-export type LanguagePreference = Language | 'system';
 
 const STORAGE_KEY = 'wwhealth.language';
 const isLanguage = (value: unknown): value is Language => LANGUAGES.some((l) => l.code === value);
-
-export function getDeviceLanguage(): Language {
-  try {
-    const code = getLocales()[0]?.languageCode;
-    return isLanguage(code) ? code : 'en';
-  } catch {
-    return 'en';
-  }
-}
 
 const i18n = createInstance();
 
 i18n.use(initReactI18next).init({
   resources: { en: { translation: en }, ro: { translation: ro } },
-  lng: getDeviceLanguage(),
+  lng: 'en',
   fallbackLng: 'en',
   interpolation: { escapeValue: false }, // React already escapes
 });
 
-/** The saved choice ('system' = follow the phone). */
-export async function getLanguagePreference(): Promise<LanguagePreference> {
+/** The saved app language. */
+export async function getLanguagePreference(): Promise<Language> {
   try {
     const saved = await AsyncStorage.getItem(STORAGE_KEY);
-    return isLanguage(saved) ? saved : 'system';
+    return isLanguage(saved) ? saved : 'en';
   } catch {
-    return 'system';
+    return 'en';
   }
 }
 
-export async function setLanguagePreference(preference: LanguagePreference): Promise<void> {
-  await i18n.changeLanguage(preference === 'system' ? getDeviceLanguage() : preference);
+export async function setLanguagePreference(preference: Language): Promise<void> {
+  await i18n.changeLanguage(preference);
   try {
-    if (preference === 'system') await AsyncStorage.removeItem(STORAGE_KEY);
-    else await AsyncStorage.setItem(STORAGE_KEY, preference);
+    await AsyncStorage.setItem(STORAGE_KEY, preference);
   } catch {
     // Storage unavailable: the choice still applies for this session.
   }
 }
 
-// Apply a saved choice at startup (overrides the phone language).
+// Apply the saved language at startup.
 getLanguagePreference().then((preference) => {
-  if (preference !== 'system' && preference !== i18n.language) i18n.changeLanguage(preference);
+  if (preference !== i18n.language) i18n.changeLanguage(preference);
 });
 
 /** Locale for dates/numbers (Intl), e.g. "ro-RO". */

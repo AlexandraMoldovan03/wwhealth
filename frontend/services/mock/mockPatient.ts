@@ -27,9 +27,9 @@ export const MOCK_PATIENT: PatientRecord = {
     { id: 'tr2', name: 'Amoxicillin-clavulanate', dosage: '875/125 mg', frequency: '2× daily', startDate: '2025-01-12', endDate: '2025-01-19', active: false },
   ],
   history: [
-    { id: 'ev1', type: 'xray', title: 'Chest X-ray (LungVision)', description: 'No acute findings (DEMO).', date: minutesAgo(3 * DAY), details: { Result: 'Normal', Confidence: '88%', Model: 'densenet121-demo' } },
+    { id: 'ev1', type: 'xray', title: 'Chest X-ray (LungVision)', description: 'Sample finding: no acute findings.', date: minutesAgo(3 * DAY), details: { Result: 'Normal', Confidence: '88%', Model: 'densenet121-demo' } },
     { id: 'ev2', type: 'document', title: 'Blood test uploaded', description: 'Complete blood count, analysed with Gemini (DEMO).', date: minutesAgo(10 * DAY), details: { Lab: 'City Lab', Flags: 'Low ferritin' } },
-    { id: 'ev3', type: 'visit', title: 'Pulmonology check-up', description: 'Asthma well controlled.', date: minutesAgo(40 * DAY), details: { Doctor: 'Dr. Demo Pulmonologist', Clinic: 'Demo Clinic' } },
+    { id: 'ev3', type: 'visit', title: 'Pulmonology check-up', description: 'Asthma well controlled.', date: minutesAgo(40 * DAY), details: { Doctor: 'Dr. Alex Test', Clinic: 'Sample Clinic' } },
     { id: 'ev4', type: 'diagnosis', title: 'Pneumonia (resolved)', description: 'Right lower lobe pneumonia, treated with antibiotics.', date: '2025-01-12T09:00:00.000Z', details: { ICD10: 'J18.9', Status: 'Resolved' } },
     { id: 'ev5', type: 'allergy', title: 'Penicillin allergy recorded', description: 'Skin rash after penicillin.', date: '2018-06-20T09:00:00.000Z', details: { Severity: 'Moderate' } },
   ],

@@ -1,7 +1,6 @@
 """Mirror of frontend/types/medical.ts (mobile) and docs/API_CONTRACT.md."""
-from typing import Literal
-
 from datetime import date
+from typing import Literal
 
 from pydantic import Field, field_validator
 

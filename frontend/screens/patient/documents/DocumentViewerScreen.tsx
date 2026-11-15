@@ -89,7 +89,7 @@ function DocumentView({ initial }: { initial: DocumentDetail }) {
           <AppText variant="caption" color="textMuted">{t('smart.originalFile', { name: doc.originalFilename })}</AppText>
         )}
         <View style={styles.badges}>
-          {doc.isDemo && <Badge label="DEMO" color={colors.warning} />}
+          {doc.isDemo && <Badge label={t('home.demoData')} color={colors.warning} />}
           {!!doc.processingStatus && (
             <Badge label={t(`smart.status.${doc.processingStatus}`)} color={doc.processingStatus === 'confirmed' ? colors.success : colors.warning} />
           )}

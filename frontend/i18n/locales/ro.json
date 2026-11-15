@@ -1,5 +1,6 @@
 {
-  "voiceRecording": {
+  "voiceIntake": {"title":"Descrie simptomele","instructions":"Vorbește în română sau în engleză. ElevenLabs transcrie înregistrarea, iar Gemini organizează textul. Poți verifica și edita formularul înainte de salvare.","notice":"Rezultatele AI sunt informative. În caz de urgență în UE, sună la 112.","stop":"Oprește și transcrie","again":"Înregistrează din nou","start":"Începe înregistrarea","sample":"Simptome de exemplu. Verifică-le înainte de salvare.","urgent":"Au fost semnalate simptome posibil urgente. În caz de urgență în UE, sună la 112.","review":"Verifică formularul","summary":"Rezumat","symptom":"Simptomul {{number}}","name":"Numele simptomului","duration":"Durată","notes":"Observații","severity":"Severitate","unspecified":"Nespecificată","remove":"Elimină simptomul","add":"Adaugă un simptom","medsInput":"Medicamente (separate prin virgulă)","allergiesInput":"Alergii (separate prin virgulă)","transcript":"Transcrierea originală","saved":"Salvat în Istoric pe acest dispozitiv.","save":"Salvează în Istoric","savedForms":"Formulare de simptome salvate","local":"Salvate pe acest dispozitiv.","flagged":"Simptome posibil urgente semnalate","hide":"Ascunde formularul","view":"Vezi formularul","meds":"Medicamente","allergies":"Alergii","none":"Nicio mențiune","mic":"Permite accesul la microfon din setările dispozitivului sau ale browserului.","empty":"Înregistrarea este goală. Încearcă din nou.","noRecording":"Înregistrarea nu a fost creată. Încearcă din nou.","micFailed":"Microfonul nu a putut fi pornit.","processingFailed":"Înregistrarea nu a putut fi procesată."},
+  "voiceRecording": { "processing": "Pregătim transcrierea…", "source": "Vezi fragmentul din transcriere",
     "active": "Se înregistrează"
   },
   "common": {
@@ -28,7 +29,7 @@
       "failed": "Autentificarea a eșuat",
       "noAccount": "Nu ai cont?",
       "createOne": "Creează unul",
-      "demo": "DEMO — autentificarea nu este conectată. Orice email și parolă funcționează."
+      "demo": "Autentificarea nu este conectată. Orice email și parolă funcționează."
     },
     "register": {
       "title": "Creează-ți contul",
@@ -42,7 +43,7 @@
       "terms": "Sunt de acord cu Termenii și condițiile și cu prelucrarea datelor mele medicale (GDPR).",
       "failed": "Înregistrarea a eșuat",
       "haveAccount": "Ai deja cont?",
-      "demo": "DEMO — înregistrarea nu este conectată. Nu se creează niciun cont.",
+      "demo": "Înregistrarea nu este conectată. Nu se creează niciun cont.",
       "doctorNote": "Conturile noi sunt de pacient. Conturile de medic sunt activate de un administrator, după verificare."
     },
     "role": {
@@ -122,8 +123,8 @@
     "patient/summary": "Rezumat medical",
     "doctor/patient/[id]/labs": "Istoric analize",
     "doctor/patient/[id]/document/[docId]": "Document",
-    "patient/intelligence": "AI Medical Intelligence",
-    "doctor/patient/[id]/intelligence": "AI Medical Intelligence",
+    "patient/intelligence": "Rezumat medical AI",
+    "doctor/patient/[id]/intelligence": "Rezumat medical AI",
     "patient/smart-care": "Smart Care",
     "patient/specialties": "Caută o specialitate",
     "patient/specialty/[id]": "Medici",
@@ -150,21 +151,20 @@
     "themeDark": "Întunecată",
     "themeSystem": "Sistem",
     "language": "Limbă",
-    "languageSystem": "Telefon",
     "general": "General",
     "notifications": "Notificări",
     "backend": "Backend",
     "backendSubtitle": "Configurat în .env → frontend/config/config.ts",
     "apiUrl": "URL API",
     "dataSource": "Sursa datelor",
-    "dataMock": "MOCK (date demo)",
+    "dataMock": "Date de exemplu",
     "dataApi": "API (FastAPI)",
     "checking": "Se verifică…",
     "testConnection": "Testează conexiunea",
     "backendOk": "Backend accesibil",
     "connectionFailed": "Conexiunea a eșuat",
     "role": "Rol",
-    "roleSubtitle": "Comutator demo — rolul contului vine din Supabase",
+    "roleSubtitle": "Comutator de test — rolul contului vine din Supabase",
     "patientArea": "Zona pacientului",
     "patientAreaValue": "Taburi",
     "doctorDashboard": "Panou medic",
@@ -172,7 +172,7 @@
     "integrationsSubtitle": "Configurate pe backend — nu în aplicație",
     "supabaseLogin": "Autentificare Supabase",
     "connected": "Conectat",
-    "notConfigured": "Neconfigurat (demo)",
+    "notConfigured": "Neconfigurat",
     "lungModel": "Model LungVision",
     "geminiExtraction": "Extragere Gemini",
     "elevenLabs": "Voce ElevenLabs",
@@ -191,9 +191,7 @@
     "passportTap": "Apasă pe pașaport ca să-l deschizi",
     "there": "acolo",
     "greeting": {
-      "morning": "Bună dimineața",
-      "afternoon": "Bună ziua",
-      "evening": "Bună seara"
+      "welcome": "Bun venit,"
     },
     "tagline": "dosarul tău medical, în buzunar.",
     "stats": {
@@ -204,16 +202,16 @@
     },
     "quickActions": "Acțiuni rapide",
     "recentActivity": "Activitate recentă",
-    "demoData": "Date demo",
+    "demoData": "Date de exemplu",
     "medicalHistory": "Istoric medical",
     "doctorArea": "Zona medicului",
-    "doctorAreaSubtitle": "Comutator demo de rol",
+    "doctorAreaSubtitle": "Comutator de rol pentru testare",
     "openDoctor": "Deschide panoul medicului",
     "openDoctorSubtitle": "Scanează pașaportul QR al unui pacient",
     "hero": {
       "text": "Încarcă o radiografie toracică și primește o analiză DenseNet121 + Grad-CAM.",
       "button": "Analizează radiografia",
-      "kicker": "Screening AI"
+      "kicker": "Evaluare AI"
     },
     "actions": {
       "profile": {
@@ -256,20 +254,20 @@
     "activity": {
       "a1": {
         "title": "Analiză LungVision",
-        "subtitle": "Radiografie toracică · Normal (DEMO)"
+        "subtitle": "Radiografie toracică · Normal (exemplu)"
       },
       "a2": {
         "title": "Document analizat",
-        "subtitle": "Hemoleucogramă completă · Gemini (DEMO)"
+        "subtitle": "Hemoleucogramă completă · Gemini (exemplu)"
       },
       "a3": {
         "title": "Pașaport partajat",
-        "subtitle": "Dr. Demo · acces 15 min"
+        "subtitle": "Medic de exemplu · acces 15 min"
       }
     },
     "emergencyQr": "Generează QR de urgență",
     "openEmergencyQr": "Deschide QR-ul de urgență",
-    "headline": "Sănătatea ta, liniștit, într-un singur loc",
+    "headline": "Sănătate fără frontiere.",
     "emergency": {
       "title": "Pașaport de urgență",
       "text": "Un QR de unică folosință, valabil 5 minute, pentru un medic verificat."
@@ -316,7 +314,7 @@
       },
       "doctor-dashboard": {
         "title": "Panou medic",
-        "description": "Zona medicului (rol demo)."
+        "description": "Zona medicului."
       },
       "emergency": {
         "title": "Pașaport de urgență",
@@ -339,7 +337,7 @@
         "description": "Pacienții care ți-au acordat acces (conturi de medic)."
       },
       "intelligence": {
-        "title": "AI Medical Intelligence",
+        "title": "Rezumat medical AI",
         "description": "Rezumat Gemini al dosarului tău: siguranța întâi, fiecare afirmație legată de sursa ei. Necesită acordul tău."
       }
     },
@@ -396,6 +394,12 @@
     }
   },
   "editProfile": {
+    "birthDate": "Data nașterii",
+    "birthDateInvalid": "Introdu o dată validă în format AAAA-LL-ZZ, cel târziu astăzi.",
+    "height": "Înălțime (cm)",
+    "heightInvalid": "Introdu între 30 și 260 cm, cu cel mult o zecimală.",
+    "weight": "Greutate (kg)",
+    "weightInvalid": "Introdu între 1 și 400 kg, cu cel mult o zecimală.",
     "unknown": "Necunoscută",
     "required": "Obligatoriu",
     "allergies": "Alergii",
@@ -457,7 +461,7 @@
     "noPdfAndroidHint": "Deocamdată deschide-l pe iOS sau pe web.",
     "notFound": "Documentul nu a fost găsit",
     "noFile": "Niciun fișier atașat",
-    "noFileHint": "Aceasta este o intrare demo fără fișier încărcat."
+    "noFileHint": "Aceasta este o intrare de exemplu fără fișier încărcat."
   },
   "upload": {
     "done": "Document încărcat",
@@ -706,7 +710,7 @@
     "generate": "Generează QR-ul familiei",
     "generateNew": "Generează QR nou",
     "qrNote": "Valabil 5 minute · un QR nou îl înlocuiește pe acesta",
-    "footer": "Deocamdată o demonstrație: aceste QR-uri sunt salvate doar pe acest dispozitiv și nu deschid încă date medicale."
+    "footer": "Aceste QR-uri sunt salvate doar pe acest dispozitiv și nu deschid încă date medicale."
   },
   "roles": {
     "patient": "Pacient",
@@ -957,7 +961,7 @@
     }
   },
   "ai": {
-    "title": "AI Medical Intelligence",
+    "title": "Rezumat medical AI",
     "intro": "Rezumat generat cu Google Gemini doar din datele tale salvate. Informațiile importante pentru siguranță apar primele, iar fiecare afirmație are sursa ei. Nu oferă diagnostice, scoruri de risc sau recomandări de tratament.",
     "doctorIntro": "Rezumat AI din secțiunile pe care pacientul ți le-a partajat. Fiecare afirmație trimite la datele originale; verifică-le înainte de orice decizie.",
     "doctorEntryHint": "Rezumat Gemini cu surse, dacă pacientul a consimțit",
@@ -1074,7 +1078,7 @@
       "text": "Alegi medicul, secțiunile (profil, documente, analize) și durata: 1 oră, 24 de ore sau 7 zile. Poți revoca oricând; după revocare medicul nu mai vede nimic."
     },
     "voice": {
-      "title": "Voice intake",
+      "title": "Descriere vocală a simptomelor",
       "text": "Descrii simptomele cu vocea; înregistrarea e transcrisă (ElevenLabs) și transformată într-un formular (Gemini). Tu verifici formularul."
     }
   },
@@ -1175,7 +1179,7 @@
       "profileCount_few": "{{count}} înregistrări (alergii, afecțiuni, tratamente, intervenții)",
       "profileCount_other": "{{count}} de înregistrări (alergii, afecțiuni, tratamente, intervenții)",
       "profileEmpty": "Adaugă alergii, afecțiuni, tratamente și intervenții.",
-      "intake": "Voice intake",
+      "intake": "Descriere vocală a simptomelor",
       "intakeHint": "Descrie simptomele cu vocea; primești un formular de verificat.",
       "documentsTitle": "Documente și analize",
       "documentsSubtitle": "Încarci documentul, verifici valorile citite automat, le confirmi.",
@@ -1200,7 +1204,7 @@
       "timelineEmpty": "Evenimentele apar aici pe măsură ce completezi dosarul."
     },
     "insights": {
-      "title": "AI Medical Insights",
+      "title": "Analize medicale AI",
       "subtitle": "Te ajută să înțelegi dosarul. Rezultatele AI sunt marcate clar și nu sunt diagnostice.",
       "summaryTitle": "Rezumat AI",
       "summarySubtitle": "Siguranța întâi, fiecare afirmație cu sursa ei.",
@@ -1270,7 +1274,7 @@
       "documents": "Documente medicale",
       "upload": "Încarcă document",
       "timeline": "Istoric medical",
-      "intake": "Voice intake",
+      "intake": "Descriere vocală a simptomelor",
       "intelligence": "Rezumat AI",
       "lungvision": "LungVision",
       "xrays": "Analize LungVision anterioare",
@@ -1341,7 +1345,7 @@
         ]
       },
       "insights": {
-        "title": "AI Medical Insights",
+        "title": "Analize medicale AI",
         "intro": "Instrumente AI care te ajută să înțelegi dosarul. Sunt informative și nu pun diagnostice.",
         "can": [
           "Generezi un rezumat AI cu sursa fiecărei afirmații.",
@@ -1594,7 +1598,7 @@
         ]
       },
       "intake": {
-        "title": "Voice intake",
+        "title": "Descriere vocală a simptomelor",
         "intro": "Descrii simptomele vorbind; primești un formular de verificat.",
         "can": [
           "Înregistrezi simptomele în română sau engleză.",
@@ -1951,7 +1955,7 @@
       "permissions": "Permisiuni",
       "audioConsent": "Cu acordul tău, înregistrarea este trimisă către ElevenLabs pentru transcriere. Verifici textul înainte să îl trimiți pentru analiză.",
       "allowAudio": "Sunt de acord și pornesc microfonul",
-      "mock": "Înregistrarea este indisponibilă în modul demo.",
+      "mock": "Înregistrarea este indisponibilă cu date de exemplu.",
       "review": "Confirmă simptomele",
       "aiConsent": "Cu acordul tău, Gemini primește simptomele confirmate pentru recomandarea specialității. Acordul este comun cu Rezumatul AI. Îl poți retrage aici oricând.",
       "granted": "Acordul AI este activ.",
@@ -1967,7 +1971,7 @@
       "bookingTime": "De la {{start}} până la {{end}}",
       "noNote": "Niciun mesaj",
       "bookingPending": "Medicul va primi cererea și îți va răspunde în Programările mele.",
-      "appointmentDemo": "Medici și intervale de exemplu pentru modul demo."
+      "appointmentDemo": "Medici și intervale de exemplu."
     },
     "intro": "Descrie ce simți. Îți sugerăm 1–3 specialități din catalogul WWHealth și medicii verificați cu ore libere. Nu este un diagnostic.",
     "emergencyNote": "Dacă ai o urgență (durere în piept, nu poți respira, semne de AVC, leșin), sună la 112.",
@@ -1982,7 +1986,7 @@
       "again": "Înregistrează din nou",
       "stop": "Oprește și transcrie",
       "processing": "Se transcrie înregistrarea…",
-      "demo": "Mod demo: text de exemplu, nu ce ai spus. Verifică-l înainte de trimitere."
+      "demo": "Acesta este text de exemplu. Verifică-l înainte de trimitere."
     },
     "confirmLabel": "Am verificat textul și îl confirm",
     "confirmHint": "Doar textul confirmat este folosit pentru recomandare.",
@@ -2351,7 +2355,7 @@
         "doctor_prescribed": "Medic (WWHealth)",
         "document": "Document",
         "patient_confirmed_lab": "Valoare confirmată",
-        "ai_screening": "Screening AI",
+        "ai_screening": "Evaluare AI",
         "booking": "Programare"
       },
       "why": {
@@ -2547,7 +2551,7 @@
     "identityReason": {
       "placeholder_identity": "Numele din document este un exemplu / substituent",
       "placeholder_birth_date": "Data nașterii din document este un substituent",
-      "synthetic_document": "Documentul este marcat ca sintetic / demo",
+      "synthetic_document": "Documentul este marcat ca sintetic",
       "name_match": "Numele corespunde",
       "name_mismatch": "Numele diferă de profil",
       "dob_match": "Data nașterii corespunde",

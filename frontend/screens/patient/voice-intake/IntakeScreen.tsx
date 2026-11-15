@@ -1,7 +1,9 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 
-import { AppButton, AppCard, AppInput, AppText, DemoNotice, LoadingState, ScreenContainer } from '@/design-system';
+import { AppButton, AppCard, AppInput, AppText, DemoNotice, ScreenContainer } from '@/design-system';
+import { useTheme } from '@/design-system/useTheme';
 import { spacing } from '@/design-system/theme';
 import { useLocalPatientId } from '@/services/auth/useCurrentUser';
 import { RecordButton } from './RecordButton';
@@ -19,39 +21,44 @@ export function IntakeScreen() {
 }
 
 function VoiceIntake({ userId }: { userId?: string }) {
+  const { t } = useTranslation();
   const intake = useVoiceIntake();
   const { form, phase, start, stop, error } = intake;
 
   return (
     <ScreenContainer help="intake" edges={['bottom']}>
-      <AppText variant="title">Describe your symptoms</AppText>
+      <AppText variant="title">{t('voiceIntake.title')}</AppText>
       <AppText color="textMuted">
-        Speak in Romanian or English. ElevenLabs transcribes your recording and Gemini organizes the transcript.
-        You can review and edit the form before saving it.
+        {t('voiceIntake.instructions')}
       </AppText>
-      <AppText color="textMuted">AI does not diagnose. In an emergency in the EU, call 112.</AppText>
-      {phase === 'processing' ? (
-        <LoadingState message="Preparing your symptom form…" />
-      ) : phase === 'recording' ? (
+      <AppText color="textMuted">{t('voiceIntake.notice')}</AppText>
+      {phase === 'processing' || phase === 'recording' ? (
         <>
-          <RecordingFeedback recorder={intake.recorder} />
-          <RecordButton title="Stop and transcribe" stopping onPress={stop} />
+          <RecordingFeedback recorder={intake.recorder} processing={phase === 'processing'} />
+          {phase === 'recording' && <RecordButton title={t('voiceIntake.stop')} stopping onPress={stop} />}
         </>
       ) : (
         <RecordButton
-          title={form ? 'Record again' : 'Start recording'}
+          title={t(form ? 'voiceIntake.again' : 'voiceIntake.start')}
           loading={phase === 'starting'}
           disabled={!userId}
           onPress={start}
         />
       )}
       {error && <AppText color="danger" accessibilityRole="alert">{error}</AppText>}
-      {form && userId && <IntakeEditor userId={userId} key={intake.revision} initialForm={form} disabled={phase !== 'idle'} />}
+      {form && userId && (
+        <View style={phase !== 'idle' && styles.hidden}>
+          <IntakeEditor userId={userId} key={intake.revision} initialForm={form} disabled={phase !== 'idle'} />
+        </View>
+      )}
     </ScreenContainer>
   );
 }
 
 function IntakeEditor({ initialForm, disabled, userId }: { initialForm: IntakeForm; disabled: boolean; userId: string }) {
+  const { t } = useTranslation();
+  const { colors } = useTheme();
+  const [sourceIndex, setSourceIndex] = useState<number | null>(null);
   const [form, setForm] = useState(initialForm);
   const [medications, setMedications] = useState(initialForm.medicationsMentioned.join(', '));
   const [allergies, setAllergies] = useState(initialForm.allergiesMentioned.join(', '));
@@ -78,54 +85,77 @@ function IntakeEditor({ initialForm, disabled, userId }: { initialForm: IntakeFo
 
   return (
     <View style={styles.fields}>
-      {form.isDemo && <DemoNotice message="Demo form with example symptoms. Review before saving." />}
+      {form.isDemo && <DemoNotice message={t('voiceIntake.sample')} />}
       {form.urgentWarning && (
         <AppCard>
           <AppText color="danger" accessibilityRole="alert">
-            Possible urgent symptoms were flagged. If this is an emergency in the EU, call 112.
+            {t('voiceIntake.urgent')}
           </AppText>
         </AppCard>
       )}
-      <AppText variant="heading">Review your form</AppText>
-      <AppInput label="Summary" accessibilityLabel="Summary" value={form.summary} editable={!locked}
+      <AppText variant="heading">{t('voiceIntake.review')}</AppText>
+      <AppInput label={t('voiceIntake.summary')} accessibilityLabel={t('voiceIntake.summary')} value={form.summary} editable={!locked}
         onChangeText={(summary) => setForm((current) => ({ ...current, summary }))} />
-      {form.symptoms.map((symptom, index) => (
+      {form.symptoms.map((symptom, index) => {
+        const match = form.isDemo ? null : findTranscriptMatch(form.transcript, symptom.name);
+        return (
         <AppCard key={index} style={styles.fields}>
-          <AppText variant="subheading">Symptom {index + 1}</AppText>
-          <AppInput label="Name" accessibilityLabel="Symptom name" value={symptom.name} editable={!locked}
+          <AppText variant="subheading">{t('voiceIntake.symptom', { number: index + 1 })}</AppText>
+          {match && (
+            <>
+              <AppButton
+                title={t('voiceRecording.source')}
+                size="sm"
+                variant="outline"
+                accessibilityState={{ expanded: sourceIndex === index }}
+                onPress={() => setSourceIndex(sourceIndex === index ? null : index)}
+              />
+              {sourceIndex === index && (
+                <AppText selectable color="textMuted">
+                  {match.before}
+                  <AppText style={{ backgroundColor: colors.accentMuted, color: colors.text, fontWeight: '700' }}>{match.text}</AppText>
+                  {match.after}
+                </AppText>
+              )}
+            </>
+          )}
+          <AppInput label={t('voiceIntake.name')} accessibilityLabel={t('voiceIntake.name')} value={symptom.name} editable={!locked}
             onChangeText={(name) => updateSymptom(index, { name })} />
-          <AppInput label="Duration" accessibilityLabel="Duration" value={symptom.duration ?? ''} editable={!locked}
+          <AppInput label={t('voiceIntake.duration')} accessibilityLabel={t('voiceIntake.duration')} value={symptom.duration ?? ''} editable={!locked}
             onChangeText={(duration) => updateSymptom(index, { duration: duration || null })} />
-          <AppInput label="Notes" accessibilityLabel="Notes" value={symptom.notes ?? ''} editable={!locked}
+          <AppInput label={t('voiceIntake.notes')} accessibilityLabel={t('voiceIntake.notes')} value={symptom.notes ?? ''} editable={!locked}
             onChangeText={(notes) => updateSymptom(index, { notes: notes || null })} />
-          <AppText variant="label" color="textMuted">Severity</AppText>
+          <AppText variant="label" color="textMuted">{t('voiceIntake.severity')}</AppText>
           <View style={styles.choices}>
             {([null, 'mild', 'moderate', 'severe'] as const).map((severity) => (
-              <AppButton key={severity ?? 'unknown'} title={severity ?? 'Unspecified'} size="sm"
+              <AppButton key={severity ?? 'unknown'} title={severity ? t('enums.severity.' + severity) : t('voiceIntake.unspecified')} size="sm"
                 variant={symptom.severity === severity ? 'secondary' : 'outline'}
                 accessibilityState={{ selected: symptom.severity === severity, disabled: locked }}
                 disabled={locked} onPress={() => updateSymptom(index, { severity })} />
             ))}
           </View>
-          <AppButton title="Remove symptom" variant="ghost" disabled={locked} onPress={() => {
+          <AppButton title={t('voiceIntake.remove')} variant="ghost" disabled={locked} onPress={() => {
+            setSourceIndex(null);
             setForm((current) => ({ ...current, symptoms: current.symptoms.filter((_, i) => i !== index) }));
           }} />
         </AppCard>
-      ))}
-      <AppButton title="Add symptom" variant="outline" disabled={locked} onPress={() => {
+      );
+      })}
+      <AppButton title={t('voiceIntake.add')} variant="outline" disabled={locked} onPress={() => {
         setForm((current) => ({ ...current, symptoms: [...current.symptoms, EMPTY_SYMPTOM] }));
       }} />
-      <AppInput label="Medications (separate with commas)" accessibilityLabel="Medications"
+      <AppInput label={t('voiceIntake.medsInput')} accessibilityLabel={t('voiceIntake.meds')}
         value={medications} onChangeText={setMedications} editable={!locked} />
-      <AppInput label="Allergies (separate with commas)" accessibilityLabel="Allergies"
+      <AppInput label={t('voiceIntake.allergiesInput')} accessibilityLabel={t('voiceIntake.allergies')}
         value={allergies} onChangeText={setAllergies} editable={!locked} />
-      <AppText variant="subheading">Original transcript</AppText>
+      <AppText variant="subheading">{t('voiceIntake.transcript')}</AppText>
+      <View accessible={false} style={{ height: 2, backgroundColor: colors.primary }} />
       <AppText color="textMuted" selectable>{form.transcript}</AppText>
       {save.error && <AppText color="danger" accessibilityRole="alert">{save.error}</AppText>}
       {save.data ? (
-        <AppText color="primary" accessibilityRole="alert">Saved to History on this device.</AppText>
+        <AppText color="primary" accessibilityRole="alert">{t('voiceIntake.saved')}</AppText>
       ) : (
-        <AppButton title="Save to History" loading={save.isLoading}
+        <AppButton title={t('voiceIntake.save')} loading={save.isLoading}
           disabled={locked || !form.summary.trim() || form.symptoms.some((item) => !item.name.trim())}
           onPress={submit} />
       )}
@@ -133,7 +163,26 @@ function IntakeEditor({ initialForm, disabled, userId }: { initialForm: IntakeFo
   );
 }
 
+function findTranscriptMatch(transcript: string, name: string) {
+  const label = name.trim();
+  if (label.length < 2) return null;
+
+  const escaped = label.replace(/[.*+?^$\{\}()|[\]\\]/g, '\\$&');
+  const match = new RegExp('(^|[^\\p{L}\\p{N}])' + escaped + '(?![\\p{L}\\p{N}])', 'iu').exec(transcript);
+  if (!match) return null;
+
+  const index = match.index + match[1].length;
+  const start = Math.max(0, index - 65);
+  const end = match.index + match[0].length;
+  return {
+    before: (start > 0 ? '…' : '') + transcript.slice(start, index),
+    text: transcript.slice(index, end),
+    after: transcript.slice(end, end + 65) + (end + 65 < transcript.length ? '…' : ''),
+  };
+}
+
 const styles = StyleSheet.create({
+  hidden: { display: 'none' },
   fields: { gap: spacing.md },
   choices: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.xs },
 });

@@ -1,10 +1,9 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
-import { useState } from 'react';
-import { Alert, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 import { AppCard, AppText, Avatar, Badge, ScreenContainer, SectionHeader } from '@/design-system';
-import { API_BASE_URL, APP_INFO, SUPABASE_ENABLED, USE_MOCKS } from '@/config/config';
+import { APP_INFO } from '@/config/config';
 import { radius, spacing } from '@/design-system/theme';
 import { logout } from '@/services/auth/authService';
 import { setChecklistHidden } from '@/screens/patient/dashboard/progressStorage';
@@ -13,32 +12,16 @@ import { SettingsRow } from './components/SettingsRow';
 import { LanguageSelector } from './components/LanguageSelector';
 import { ThemeSelector } from './components/ThemeSelector';
 import { useTheme } from '@/design-system/useTheme';
-import { realApi } from '@/services/api/realApi';
-import { getErrorMessage } from '@/utils/errors';
 import { useTranslation } from 'react-i18next';
 
 export function SettingsScreen() {
   const { colors } = useTheme();
   const { t } = useTranslation();
-  const [checking, setChecking] = useState(false);
   const user = useCurrentUser();
 
   const signOut = async () => {
     await logout();
     router.replace('/login');
-  };
-
-  const testConnection = async () => {
-    setChecking(true);
-    try {
-      // Always hits the real backend, even in MOCK mode.
-      const res = await realApi.health();
-      Alert.alert(t('settings.backendOk'), `Status: ${res.status} · v${res.version}`);
-    } catch (err) {
-      Alert.alert(t('settings.connectionFailed'), getErrorMessage(err));
-    } finally {
-      setChecking(false);
-    }
   };
 
   return (
@@ -122,29 +105,6 @@ export function SettingsScreen() {
             {t('settings.language')}
           </AppText>
           <LanguageSelector />
-        </AppCard>
-      </View>
-
-      <View style={styles.section}>
-        <SectionHeader title={t('settings.backend')} subtitle={t('settings.backendSubtitle')} />
-        <AppCard style={styles.group}>
-          <SettingsRow icon="server-outline" title={t('settings.apiUrl')} value={API_BASE_URL} />
-          <SettingsRow icon="flask-outline" title={t('settings.dataSource')} value={USE_MOCKS ? t('settings.dataMock') : t('settings.dataApi')} />
-          <SettingsRow
-            icon="pulse-outline"
-            title={checking ? t('settings.checking') : t('settings.testConnection')}
-            onPress={checking ? undefined : testConnection}
-          />
-        </AppCard>
-      </View>
-
-      <View style={styles.section}>
-        <SectionHeader title={t('settings.integrations')} subtitle={t('settings.integrationsSubtitle')} />
-        <AppCard style={styles.group}>
-          <SettingsRow icon="shield-checkmark-outline" title={t('settings.supabaseLogin')} value={SUPABASE_ENABLED ? t('settings.connected') : t('settings.notConfigured')} />
-          <SettingsRow icon="scan-outline" title={t('settings.lungModel')} value="DenseNet121 (demo)" />
-          <SettingsRow icon="sparkles-outline" title={t('settings.geminiExtraction')} value="Backend" />
-          <SettingsRow icon="volume-high-outline" title={t('settings.elevenLabs')} value="Backend" />
         </AppCard>
       </View>
 

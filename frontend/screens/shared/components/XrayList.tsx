@@ -38,7 +38,7 @@ export function XrayList({
           icon="scan-outline"
           title={`${x.topLabel} · ${formatPercent(x.predictions[0]?.probability ?? 0)}`}
           subtitle={formatDateTime(x.createdAt)}
-          right={x.isDemo ? <Badge label="DEMO" color={colors.warning} /> : undefined}
+          right={x.isDemo ? <Badge label={t('home.demoData')} color={colors.warning} /> : undefined}
           onPress={onSelect ? () => onSelect(x) : undefined}
         />
       ))}

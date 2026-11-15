@@ -69,6 +69,7 @@ Response: `PatientRecord`.
 
 ### `PATCH /api/v1/patients/me` — patient (Smart Medical Profile)
 Only the fields sent are changed; lists replace the whole list. Items without `id` are new (server assigns ids).
+Personal details accept fullName, dateOfBirth (YYYY-MM-DD, no future dates), sex (female, male or other), heightCm (30-260) and weightKg (1-400). Use null to clear any of these fields except fullName.
 ```json
 { "bloodType": "O-",                       // A+ A- B+ B- AB+ AB- O+ O- or null
   "allergies":  [{ "id": "al1", "substance": "Penicillin", "reaction": "Rash", "severity": "moderate" }],

@@ -2,8 +2,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createContext, type PropsWithChildren, useCallback, useEffect, useMemo, useState } from 'react';
 import { useColorScheme } from 'react-native';
 
-import { darkColors, lightColors, type ThemeColors } from './theme';
+import { darkColors, doctorDarkColors, doctorLightColors, lightColors, type ThemeColors } from './theme';
 import type { ColorSchemeName, ThemePreference } from '@/types';
+
+import { useCurrentUser } from '@/services/auth/useCurrentUser';
 
 const STORAGE_KEY = 'app.themePreference';
 
@@ -11,6 +13,7 @@ export interface ThemeContextValue {
   colors: ThemeColors;
   scheme: ColorSchemeName;
   isDark: boolean;
+  isDoctorTheme: boolean;
   preference: ThemePreference;
   setPreference: (preference: ThemePreference) => void;
 }
@@ -23,6 +26,7 @@ function isThemePreference(value: string | null): value is ThemePreference {
 
 /** Provides colours + Light/Dark switching. The choice is persisted on the device. */
 export function ThemeProvider({ children }: PropsWithChildren) {
+  const isDoctorTheme = useCurrentUser()?.role === 'doctor';
   const systemScheme = useColorScheme();
   const [preference, setPreferenceState] = useState<ThemePreference>('system');
 
@@ -43,13 +47,16 @@ export function ThemeProvider({ children }: PropsWithChildren) {
     const scheme: ColorSchemeName =
       preference === 'system' ? (systemScheme === 'dark' ? 'dark' : 'light') : preference;
     return {
-      colors: scheme === 'dark' ? darkColors : lightColors,
+      colors: scheme === 'dark'
+        ? (isDoctorTheme ? doctorDarkColors : darkColors)
+        : (isDoctorTheme ? doctorLightColors : lightColors),
+      isDoctorTheme,
       scheme,
       isDark: scheme === 'dark',
       preference,
       setPreference,
     };
-  }, [preference, systemScheme, setPreference]);
+  }, [isDoctorTheme, preference, systemScheme, setPreference]);
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
 }

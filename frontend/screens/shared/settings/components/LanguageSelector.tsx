@@ -1,48 +1,28 @@
-import { Ionicons } from '@expo/vector-icons';
-import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, View } from 'react-native';
 
 import { AppText } from '@/design-system';
-import { iconSize, radius, spacing } from '@/design-system/theme';
+import { radius, spacing } from '@/design-system/theme';
 import { useTheme } from '@/design-system/useTheme';
-import { getLanguagePreference, LANGUAGES, setLanguagePreference, type LanguagePreference } from '@/i18n';
+import { LANGUAGES, setLanguagePreference } from '@/i18n';
 
-/** Segmented control: System / English / Română. The choice is saved on the device. */
+/** English and Romanian language choices. */
 export function LanguageSelector() {
   const { colors } = useTheme();
-  const { t } = useTranslation();
-  const [preference, setPreference] = useState<LanguagePreference>('system');
-
-  useEffect(() => {
-    getLanguagePreference().then(setPreference);
-  }, []);
-
-  const options: { value: LanguagePreference; label: string }[] = [
-    { value: 'system', label: t('settings.languageSystem') },
-    ...LANGUAGES.map((l) => ({ value: l.code, label: l.label })), // language names stay in their own language
-  ];
-
-  const select = (value: LanguagePreference) => {
-    setPreference(value);
-    setLanguagePreference(value);
-  };
+  const { i18n } = useTranslation();
 
   return (
     <View style={[styles.container, { backgroundColor: colors.surfaceAlt }]}>
-      {options.map((option) => {
-        const active = option.value === preference;
+      {LANGUAGES.map((option) => {
+        const active = option.code === i18n.language;
         return (
           <Pressable
-            key={option.value}
-            onPress={() => select(option.value)}
+            key={option.code}
+            onPress={() => void setLanguagePreference(option.code)}
             accessibilityRole="button"
             accessibilityState={{ selected: active }}
             style={[styles.option, active && { backgroundColor: colors.surface }]}
           >
-            {option.value === 'system' && (
-              <Ionicons name="phone-portrait-outline" size={iconSize.sm} color={active ? colors.primary : colors.textMuted} />
-            )}
             <AppText variant="caption" color={active ? 'primary' : 'textMuted'} style={styles.label}>
               {option.label}
             </AppText>

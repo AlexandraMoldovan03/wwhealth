@@ -3,7 +3,7 @@ from app.schemas.document import DocumentExtraction, LabValue, MedicalDocument
 from app.schemas.patient import Allergy, Diagnosis, EmergencyContact, MedicalEvent, PatientRecord, Treatment
 
 DEMO_PATIENT_ID = "pat_demo_001"
-DISCLAIMER = "DEMO — not a medical device. AI output must be reviewed by a qualified clinician."
+DISCLAIMER = "Not a medical device. AI output must be reviewed by a qualified clinician."
 
 
 def demo_patient() -> PatientRecord:
@@ -26,7 +26,7 @@ def demo_patient() -> PatientRecord:
         ],
         history=[
             MedicalEvent(id="ev1", type="visit", title="Pulmonology check-up", description="Asthma well controlled.",
-                         date="2026-10-01T09:00:00Z", details={"Clinic": "Demo Clinic"})
+                         date="2026-10-01T09:00:00Z", details={"Clinic": "Sample Clinic"})
         ],
         documents=[
             MedicalDocument(

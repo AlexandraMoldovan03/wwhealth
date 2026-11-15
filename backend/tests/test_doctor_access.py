@@ -42,7 +42,7 @@ def test_verified_doctor_directory_and_code():
     assert grant(["profile"], doctorCode="dr-demo01").status_code == 201  # code, case-insensitive
     assert grant(["profile"], doctorCode="DR-NOPE00").status_code == 404
     assert grant(["profile"], doctorId="pat_demo_001").status_code == 404  # not a doctor / self
-    assert client.get(f"{API}/me").json() == {"fullName": "Dr. Demo Medic", "doctorCode": "DR-DEMO01"}
+    assert client.get(f"{API}/me").json() == {"fullName": "Dr. Alex Test", "doctorCode": "DR-DEMO01"}
 
 
 @pytest.mark.parametrize("body", [
@@ -60,7 +60,7 @@ def test_invalid_grants_are_rejected(body):
 def test_allowed_sections_only():
     lab_extraction.demo_save(DEMO_PATIENT_ID, "doc_x", [{"name": "Glicemie", "value": "98", "unit": "mg/dL"}])
     g = grant(["labs", "profile"]).json()
-    assert g["status"] == "active" and g["scopes"] == ["labs", "profile"] and g["doctorName"] == "Dr. Demo Medic"
+    assert g["status"] == "active" and g["scopes"] == ["labs", "profile"] and g["doctorName"] == "Dr. Alex Test"
     view = client.get(f"{API}/patients/{DEMO_PATIENT_ID}").json()
     assert view["status"] == "ok" and view["patientName"]
     s = view["summary"]

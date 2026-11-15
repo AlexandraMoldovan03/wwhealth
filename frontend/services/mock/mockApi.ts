@@ -34,7 +34,7 @@ const clone = <T,>(value: T): T => JSON.parse(JSON.stringify(value)) as T;
 const db: PatientRecord = clone(MOCK_PATIENT);
 // Doctor access (MOCK): same rules as the backend — verified doctor, sections, 1 h / 24 h / 7 d, revocable, audited.
 // In MOCK mode the app is both the demo patient and the demo doctor, so the whole flow can be tried on one phone.
-const MOCK_DOCTOR: VerifiedDoctor = { id: 'doc_demo_001', fullName: 'Dr. Demo Medic', doctorCode: 'DR-DEMO01' };
+const MOCK_DOCTOR: VerifiedDoctor = { id: 'doc_demo_001', fullName: 'Dr. Alex Test', doctorCode: 'DR-DEMO01' };
 const doctorGrants: DoctorGrant[] = [];
 let aiConsentAt: string | null = null;
 const accessEvents: AccessEvent[] = [];
@@ -108,6 +108,11 @@ export const mockApi: WWHealthApi = {
   async updateMyProfile(update) {
     await delay(MOCK_DELAY_MS);
     const today = new Date().toISOString().slice(0, 10);
+    if (update.fullName !== undefined) db.fullName = update.fullName;
+    if (update.dateOfBirth !== undefined) db.dateOfBirth = update.dateOfBirth;
+    if (update.sex !== undefined) db.sex = update.sex;
+    if (update.heightCm !== undefined) db.heightCm = update.heightCm;
+    if (update.weightKg !== undefined) db.weightKg = update.weightKg;
     if (update.bloodType !== undefined) db.bloodType = update.bloodType;
     if (update.fullName) db.fullName = update.fullName.trim();
     if (update.dateOfBirth !== undefined) db.dateOfBirth = update.dateOfBirth;

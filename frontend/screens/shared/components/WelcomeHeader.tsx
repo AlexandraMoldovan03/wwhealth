@@ -6,12 +6,6 @@ import { spacing } from '@/design-system/theme';
 import { useTheme } from '@/design-system/useTheme';
 import { useTranslation } from 'react-i18next';
 
-function getGreetingKey(hour: number) {
-  if (hour < 12) return 'home.greeting.morning' as const;
-  if (hour < 18) return 'home.greeting.afternoon' as const;
-  return 'home.greeting.evening' as const;
-}
-
 /** Avatar + greeting + role badge, then a large headline. */
 export function WelcomeHeader({
   name,
@@ -32,7 +26,7 @@ export function WelcomeHeader({
         <Avatar name={name} tone={tone} />
         <View style={styles.flex}>
           <AppText variant="caption" color="textMuted">
-            {t(getGreetingKey(new Date().getHours()))}
+            {t('home.greeting.welcome')}
           </AppText>
           <AppText variant="heading" numberOfLines={1}>
             {name}

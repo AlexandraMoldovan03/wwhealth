@@ -31,7 +31,7 @@ import { mockCareStore, mockTimeOff } from './mockSmartCare';
 type Deps = { hasGrant: (scope: 'profile' | 'documents' | 'labs') => boolean; record: () => PatientRecord };
 
 const DOCTOR_ID = 'doc_demo_001';
-const DOCTOR_NAME = 'Dr. Demo Medic';
+const DOCTOR_NAME = 'Dr. Alex Test';
 const nowIso = () => new Date().toISOString();
 const ymd = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 const forbidden = (msg: string) => new ApiError(msg, 403);

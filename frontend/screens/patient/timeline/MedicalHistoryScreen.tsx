@@ -1,3 +1,4 @@
+import { formatDateTime } from '@/utils/format';
 import { router } from 'expo-router';
 import { useCallback, useMemo, useState } from 'react';
 import { RefreshControl, StyleSheet, View } from 'react-native';
@@ -130,8 +131,8 @@ export function MedicalHistoryScreen() {
       )}
       {visibleIntakes.length > 0 && (
         <View style={styles.entries}>
-          <AppText variant="heading">Saved symptom forms</AppText>
-          <AppText color="textMuted">Saved on this device.</AppText>
+          <AppText variant="heading">{t('voiceIntake.savedForms')}</AppText>
+          <AppText color="textMuted">{t('voiceIntake.local')}</AppText>
           {visibleIntakes.map((entry) => <SavedIntakeCard key={entry.id} entry={entry} />)}
         </View>
       )}
@@ -151,25 +152,26 @@ export function MedicalHistoryScreen() {
 }
 
 function SavedIntakeCard({ entry }: { entry: SavedIntake }) {
+  const { t } = useTranslation();
   const [expanded, setExpanded] = useState(false);
   const { form, savedAt } = entry;
   return (
     <AppCard style={styles.entries}>
       <AppText variant="caption" color="textMuted">
-        {new Date(savedAt).toLocaleString()}{form.isDemo ? ' · Demo' : ''}
+        {formatDateTime(new Date(savedAt).toISOString())}{form.isDemo ? ' · ' + t('home.demoData') : ''}
       </AppText>
       <AppText variant="subheading">{form.summary}</AppText>
-      {form.urgentWarning && <AppText color="danger">Possible urgent symptoms flagged</AppText>}
-      <AppButton title={expanded ? 'Hide form' : 'View form'} variant="outline" size="sm"
+      {form.urgentWarning && <AppText color="danger">{t('voiceIntake.flagged')}</AppText>}
+      <AppButton title={t(expanded ? 'voiceIntake.hide' : 'voiceIntake.view')} variant="outline" size="sm"
         accessibilityState={{ expanded }} onPress={() => setExpanded(!expanded)} />
       {expanded && (
         <View style={styles.entries}>
           {form.symptoms.map((symptom, index) => (
-            <AppText key={index}>{[symptom.name, symptom.duration, symptom.severity, symptom.notes].filter(Boolean).join(' · ')}</AppText>
+            <AppText key={index}>{[symptom.name, symptom.duration, symptom.severity && t('enums.severity.' + symptom.severity), symptom.notes].filter(Boolean).join(' · ')}</AppText>
           ))}
-          <AppText>Medications: {form.medicationsMentioned.join(', ') || 'None mentioned'}</AppText>
-          <AppText>Allergies: {form.allergiesMentioned.join(', ') || 'None mentioned'}</AppText>
-          <AppText variant="subheading">Original transcript</AppText>
+          <AppText>{t('voiceIntake.meds')}: {form.medicationsMentioned.join(', ') || t('voiceIntake.none')}</AppText>
+          <AppText>{t('voiceIntake.allergies')}: {form.allergiesMentioned.join(', ') || t('voiceIntake.none')}</AppText>
+          <AppText variant="subheading">{t('voiceIntake.transcript')}</AppText>
           <AppText selectable>{form.transcript}</AppText>
           <AppText variant="caption" color="textMuted">{form.disclaimer}</AppText>
         </View>

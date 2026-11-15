@@ -64,4 +64,4 @@ export const APP_INFO = {
 
 /** Shown next to every AI output. */
 export const MEDICAL_DISCLAIMER =
-  'DEMO — not a medical device. AI output must be reviewed by a qualified clinician.';
+  'Not a medical device. AI output must be reviewed by a qualified clinician.';

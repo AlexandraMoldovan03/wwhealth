@@ -32,7 +32,7 @@ export function DocumentList({ documents, onSelect }: { documents: MedicalDocume
               icon={meta.icon}
               title={doc.title}
               subtitle={[t(`documentTypes.${meta.value}`), doc.institution, format, when].filter(Boolean).join(' · ')}
-              right={doc.isDemo ? <Badge label="DEMO" color={colors.warning} />
+              right={doc.isDemo ? <Badge label={t('home.demoData')} color={colors.warning} />
                 : doc.processingStatus && doc.processingStatus !== 'confirmed' ? <Badge label={t(`smart.status.${doc.processingStatus}`)} color={doc.processingStatus === 'failed' ? colors.danger : colors.warning} />
                 : doc.extraction ? <DataOriginBadge origin="extracted" /> : undefined}
               onPress={canOpen ? () => onSelect(doc) : undefined}

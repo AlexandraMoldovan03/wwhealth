@@ -42,7 +42,7 @@ WINDOW_DAYS = 14
 # ─────────────────────────────────────────────────────────── demo store
 
 DEMO_CARE_DOCTORS = [
-    {"id": "doc_demo_001", "full_name": "Dr. Demo Medic", "doctor_code": "DR-DEMO01",
+    {"id": "doc_demo_001", "full_name": "Dr. Alex Test", "doctor_code": "DR-DEMO01",
      "specialties": ["family_medicine", "internal_medicine", "cardiology"]},
     {"id": "doc_demo_002", "full_name": "Dr. Ana Exemplu", "doctor_code": "DR-DEMO02",
      "specialties": ["pulmonology", "allergology", "family_medicine"]},

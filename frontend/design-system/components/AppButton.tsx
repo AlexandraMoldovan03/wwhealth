@@ -61,8 +61,8 @@ export function AppButton({
   const border = contentColor ? bg : selected.border;
   const fg = contentColor ?? selected.fg;
   const badgeIconColor = variant === 'danger' ? colors.danger : variant === 'inverse' ? colors.ink : colors.primary;
-  const height = size === 'sm' ? sizes.buttonHeightSmall : size === 'lg' ? sizes.buttonHeight + 8 : sizes.buttonHeight;
-  const badgeSize = Math.max(28, height - 14);
+  const minHeight = size === 'sm' ? sizes.buttonHeightSmall : size === 'lg' ? sizes.buttonHeight + 8 : sizes.buttonHeight;
+  const badgeSize = Math.max(28, minHeight - 14);
 
   return (
     <AnimatedPressable
@@ -87,8 +87,8 @@ export function AppButton({
         {
           backgroundColor: bg,
           borderColor: border,
-          height,
-          paddingHorizontal: size === 'sm' ? spacing.md : spacing.lg,
+          minHeight,
+          paddingHorizontal: size === 'lg' ? spacing.md : spacing.sm,
           opacity: isDisabled ? 0.45 : 1,
         },
         fullWidth && styles.fullWidth,
@@ -99,14 +99,14 @@ export function AppButton({
       {loading ? (
         <ActivityIndicator color={fg} style={styles.foreground} />
       ) : (
-          <View style={[styles.foreground, styles.content, fullWidth && styles.contentFullWidth]}>
+          <View style={[styles.foreground, styles.content]}>
           <View style={[styles.iconBadge, { width: badgeSize, height: badgeSize, borderRadius: badgeSize / 2 }]}>
             <Ionicons name={icon ?? 'ellipse-outline'} size={size === 'sm' ? iconSize.sm : iconSize.md} color={badgeIconColor} />
           </View>
-          <AppText variant="subheading" style={[styles.buttonText, { color: fg }, size === 'sm' && styles.smallText]} numberOfLines={1}>
+          <AppText variant="subheading" style={[styles.buttonText, { color: fg }, size === 'sm' && styles.smallText]}>
             {title}
           </AppText>
-          <Ionicons name={trailingIcon ?? 'chevron-forward-outline'} size={iconSize.md} color={fg} />
+          {trailingIcon && <Ionicons name={trailingIcon} size={iconSize.sm} color={fg} style={styles.trailing} />}
         </View>
       )}
     </AnimatedPressable>
@@ -121,14 +121,15 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 38,
     borderBottomLeftRadius: 5,
     borderWidth: 1,
-    overflow: 'hidden',
+    maxWidth: '100%',
+    flexShrink: 1,
+    paddingVertical: spacing.xs,
     boxShadow: '0 7px 16px rgba(14, 31, 40, 0.2)',
     alignItems: 'center',
     justifyContent: 'center',
   },
   fullWidth: { alignSelf: 'stretch' },
-  content: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, paddingHorizontal: 4 },
-  contentFullWidth: { width: '100%' },
+  content: { flexDirection: 'row', alignItems: 'center', gap: spacing.xs, alignSelf: 'stretch', justifyContent: 'center' },
   foreground: { position: 'relative', zIndex: 1 },
   iconBadge: {
     alignItems: 'center',
@@ -142,6 +143,7 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 8,
   },
-  buttonText: { flex: 1, textAlign: 'center', textTransform: 'uppercase', letterSpacing: 1.5, fontSize: 13 },
+  trailing: { flexShrink: 0 },
+  buttonText: { flexShrink: 1, minWidth: 0, textAlign: 'center', textTransform: 'uppercase', letterSpacing: 1, fontSize: 13, lineHeight: 19 },
   smallText: { fontSize: 11, letterSpacing: 1 },
 });

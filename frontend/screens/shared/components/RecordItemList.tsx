@@ -41,7 +41,7 @@ export function RecordItemCard({ item, onPress, showWhy = false }: { item: Recor
       {(item.isDemo || (!!item.status && STATUS_BADGE.has(item.status))) && (
         <View style={styles.badges}>
           {!!item.status && STATUS_BADGE.has(item.status) && <Badge label={t(`smart.itemStatus.${item.status}`)} color={colors.info} />}
-          {item.isDemo && <Badge label="DEMO" color={colors.warning} />}
+          {item.isDemo && <Badge label={t('home.demoData')} color={colors.warning} />}
         </View>
       )}
       {!!item.detail && <AppText variant="caption">{item.detail}</AppText>}

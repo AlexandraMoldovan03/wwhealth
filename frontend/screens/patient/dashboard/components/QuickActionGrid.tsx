@@ -38,10 +38,10 @@ export function QuickActionGrid({ actions, startIndex = 0 }: { actions: QuickAct
               <Ionicons name="arrow-forward" size={16} color={colors.textSubtle} />
             </View>
             <View style={styles.text}>
-              <AppText variant="subheading" numberOfLines={1}>
+              <AppText variant="subheading">
                 {title}
               </AppText>
-              <AppText variant="caption" color="textMuted" numberOfLines={1}>
+              <AppText variant="caption" color="textMuted">
                 {subtitle}
               </AppText>
             </View>

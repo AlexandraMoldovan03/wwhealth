@@ -1,5 +1,6 @@
 {
-  "voiceRecording": {
+  "voiceIntake": {"title":"Describe your symptoms","instructions":"Speak in Romanian or English. ElevenLabs transcribes your recording and Gemini organizes the transcript. You can review and edit the form before saving it.","notice":"AI does not diagnose. In an emergency in the EU, call 112.","stop":"Stop and transcribe","again":"Record again","start":"Start recording","sample":"Sample symptoms. Review before saving.","urgent":"Possible urgent symptoms were flagged. If this is an emergency in the EU, call 112.","review":"Review your form","summary":"Summary","symptom":"Symptom {{number}}","name":"Symptom name","duration":"Duration","notes":"Notes","severity":"Severity","unspecified":"Unspecified","remove":"Remove symptom","add":"Add symptom","medsInput":"Medications (separate with commas)","allergiesInput":"Allergies (separate with commas)","transcript":"Original transcript","saved":"Saved to History on this device.","save":"Save to History","savedForms":"Saved symptom forms","local":"Saved on this device.","flagged":"Possible urgent symptoms flagged","hide":"Hide form","view":"View form","meds":"Medications","allergies":"Allergies","none":"None mentioned","mic":"Allow microphone access in your device or browser settings.","empty":"The recording is empty. Please try again.","noRecording":"No recording was created. Please try again.","micFailed":"Could not start the microphone.","processingFailed":"Could not process the recording."},
+  "voiceRecording": { "processing": "Preparing your transcript…", "source": "Show transcript excerpt",
     "active": "Recording"
   },
   "common": {
@@ -28,7 +29,7 @@
       "failed": "Sign in failed",
       "noAccount": "Don’t have an account?",
       "createOne": "Create one",
-      "demo": "DEMO — login is not connected yet. Any email + password works."
+      "demo": "Login is not connected yet. Any email + password works."
     },
     "register": {
       "title": "Create your account",
@@ -42,7 +43,7 @@
       "terms": "I agree to the Terms of Service and to the processing of my health data (GDPR).",
       "failed": "Registration failed",
       "haveAccount": "Already have an account?",
-      "demo": "DEMO — registration is not connected yet. No account is created.",
+      "demo": "Registration is not connected yet. No account is created.",
       "doctorNote": "New accounts are patient accounts. Doctor accounts are activated by an administrator after verification."
     },
     "role": {
@@ -150,21 +151,20 @@
     "themeDark": "Dark",
     "themeSystem": "System",
     "language": "Language",
-    "languageSystem": "Phone",
     "general": "General",
     "notifications": "Notifications",
     "backend": "Backend",
     "backendSubtitle": "Configured in .env → frontend/config/config.ts",
     "apiUrl": "API URL",
     "dataSource": "Data source",
-    "dataMock": "MOCK (demo data)",
+    "dataMock": "Sample data",
     "dataApi": "API (FastAPI)",
     "checking": "Checking…",
     "testConnection": "Test connection",
     "backendOk": "Backend reachable",
     "connectionFailed": "Connection failed",
     "role": "Role",
-    "roleSubtitle": "Demo switch — the account role comes from Supabase",
+    "roleSubtitle": "Test switch — the account role comes from Supabase",
     "patientArea": "Patient area",
     "patientAreaValue": "Tabs",
     "doctorDashboard": "Doctor Dashboard",
@@ -172,7 +172,7 @@
     "integrationsSubtitle": "Configured on the backend — not in the app",
     "supabaseLogin": "Supabase login",
     "connected": "Connected",
-    "notConfigured": "Not configured (demo)",
+    "notConfigured": "Not configured",
     "lungModel": "LungVision model",
     "geminiExtraction": "Gemini extraction",
     "elevenLabs": "ElevenLabs voice",
@@ -191,9 +191,7 @@
     "passportTap": "Tap the passport to open it",
     "there": "there",
     "greeting": {
-      "morning": "Good morning",
-      "afternoon": "Good afternoon",
-      "evening": "Good evening"
+      "welcome": "Welcome"
     },
     "tagline": "your health record, in your pocket.",
     "stats": {
@@ -204,10 +202,10 @@
     },
     "quickActions": "Quick actions",
     "recentActivity": "Recent activity",
-    "demoData": "Demo data",
+    "demoData": "Sample data",
     "medicalHistory": "Medical history",
     "doctorArea": "Doctor area",
-    "doctorAreaSubtitle": "Demo role switch",
+    "doctorAreaSubtitle": "Test role switch",
     "openDoctor": "Open Doctor Dashboard",
     "openDoctorSubtitle": "Scan a patient QR passport",
     "hero": {
@@ -256,20 +254,20 @@
     "activity": {
       "a1": {
         "title": "LungVision analysis",
-        "subtitle": "Chest X-ray · Normal (DEMO)"
+        "subtitle": "Chest X-ray · Normal (sample)"
       },
       "a2": {
         "title": "Document analysed",
-        "subtitle": "Complete blood count · Gemini (DEMO)"
+        "subtitle": "Complete blood count · Gemini (sample)"
       },
       "a3": {
         "title": "Passport shared",
-        "subtitle": "Dr. Demo · 15 min access"
+        "subtitle": "Sample doctor · 15 min access"
       }
     },
     "emergencyQr": "Generate emergency QR",
     "openEmergencyQr": "Open emergency QR",
-    "headline": "Your health, calmly in one place",
+    "headline": "Health Without Borders.",
     "emergency": {
       "title": "Emergency Passport",
       "text": "A single-use QR, valid 5 minutes, for a verified doctor."
@@ -316,7 +314,7 @@
       },
       "doctor-dashboard": {
         "title": "Doctor Dashboard",
-        "description": "Doctor area (demo role)."
+        "description": "Doctor area."
       },
       "emergency": {
         "title": "Emergency Passport",
@@ -396,6 +394,12 @@
     }
   },
   "editProfile": {
+    "birthDate": "Date of birth",
+    "birthDateInvalid": "Enter a valid date in YYYY-MM-DD format, no later than today.",
+    "height": "Height (cm)",
+    "heightInvalid": "Enter 30 to 260 cm, with at most one decimal place.",
+    "weight": "Weight (kg)",
+    "weightInvalid": "Enter 1 to 400 kg, with at most one decimal place.",
     "unknown": "Unknown",
     "required": "Required",
     "allergies": "Allergies",
@@ -457,7 +461,7 @@
     "noPdfAndroidHint": "Open it on iOS or the web for now.",
     "notFound": "Document not found",
     "noFile": "No file attached",
-    "noFileHint": "This is a demo entry without an uploaded file."
+    "noFileHint": "This is a sample entry without an uploaded file."
   },
   "upload": {
     "done": "Document uploaded",
@@ -706,7 +710,7 @@
     "generate": "Generate family QR",
     "generateNew": "Generate new QR",
     "qrNote": "Valid for 5 minutes · a new QR replaces this one",
-    "footer": "Demo for now: these QRs are stored only on this device and do not open medical data yet."
+    "footer": "These QRs are stored only on this device and do not open medical data yet."
   },
   "roles": {
     "patient": "Patient",
@@ -1939,7 +1943,7 @@
       "permissions": "Permissions",
       "audioConsent": "With your permission, the recording goes to ElevenLabs for transcription. You review the text before sending it for analysis.",
       "allowAudio": "I agree and want to start recording",
-      "mock": "Recording is unavailable in demo mode.",
+      "mock": "Recording is unavailable with sample data.",
       "review": "Confirm your symptoms",
       "aiConsent": "With your consent, Gemini receives your confirmed symptoms to suggest a specialty. This consent also covers AI Summary. You can withdraw it here at any time.",
       "granted": "AI consent is active.",
@@ -1955,7 +1959,7 @@
       "bookingTime": "From {{start}} to {{end}}",
       "noNote": "No message",
       "bookingPending": "The doctor will receive the request and reply in My appointments.",
-      "appointmentDemo": "Sample doctors and times for demo mode."
+      "appointmentDemo": "Sample doctors and appointment times."
     },
     "intro": "Describe how you feel. We suggest 1–3 specialties from the WWHealth catalog and verified doctors with free slots. This is not a diagnosis.",
     "emergencyNote": "In an emergency (chest pain, can't breathe, stroke signs, fainting), call 112.",
@@ -1970,7 +1974,7 @@
       "again": "Record again",
       "stop": "Stop and transcribe",
       "processing": "Transcribing the recording…",
-      "demo": "Demo mode: example text, not what you said. Check it before sending."
+      "demo": "This is sample text. Check it before sending."
     },
     "confirmLabel": "I checked the text and confirm it",
     "confirmHint": "Only the confirmed text is used for the recommendation.",
@@ -2514,12 +2518,12 @@
       "unverified": "Identity not confirmed",
       "mismatch": "Warning: the document's details don't match your profile",
       "insufficient": "The document lacks identifying details",
-      "demo": "Demo (synthetic) document"
+      "demo": "Synthetic document"
     },
     "identityReason": {
       "placeholder_identity": "The name in the document is a placeholder",
       "placeholder_birth_date": "The birth date in the document is a placeholder",
-      "synthetic_document": "The document is marked synthetic / demo",
+      "synthetic_document": "The document is marked synthetic",
       "name_match": "Name matches",
       "name_mismatch": "Name differs from your profile",
       "dob_match": "Birth date matches",
@@ -2640,7 +2644,7 @@
       "too_many_resources": "The file contains too many resources.",
       "unreadable_pdf": "The PDF cannot be read.",
       "unsupported_format": "Unsupported format. Use PDF, JPG/PNG, FHIR JSON/NDJSON or CSV.",
-      "demo_document_not_allowed": "Demo documents can't be imported into a real account.",
+      "demo_document_not_allowed": "Synthetic documents can't be imported into a real account.",
       "identity_confirmation_required": "Confirm the document is yours.",
       "import_rejected": "The import was rejected.",
       "not_found": "Import not found."
