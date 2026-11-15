@@ -1,3 +1,4 @@
+import { DocumentPickerButton } from './DocumentPickerButton';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
@@ -156,7 +157,9 @@ export function UploadDocumentScreen() {
       </View>
       <AppInput label={t('upload.titleLabel')} placeholder={t('upload.titlePlaceholder')} value={title} onChangeText={setTitle} maxLength={120} />
 
-      {picker.file?.isPdf || structured ? (
+      {!picker.file ? (
+        <DocumentPickerButton title={t('upload.select')} hint={t('upload.hint')} onPress={picker.pickFile} />
+      ) : picker.file.isPdf || structured ? (
         <ListRow
           icon={structured ? 'code-slash-outline' : 'document-text-outline'}
           iconColor={structured ? colors.primary : colors.danger}
