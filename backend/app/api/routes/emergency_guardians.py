@@ -11,7 +11,9 @@ Guardian:  POST /emergency/guardians/{id}/accept | decline → answer an invitat
 from fastapi import APIRouter, Depends, HTTPException, Response
 
 from app.api.supabase_errors import supabase_errors
-from app.core.security import CurrentUser, get_current_user
+from app.core.security import CurrentUser, get_current_user, get_sensitive_user
+from app.core import rate_limit
+from app.core.config import settings
 from app.schemas.emergency import EmergencyTokenResponse
 from app.schemas.emergency_guardians import GuardianEmergencyView, GuardianInviteRequest, GuardianOverview
 from app.services import emergency_guardian_service as svc
@@ -37,7 +39,9 @@ def overview(response: Response, user: CurrentUser = Depends(get_current_user)) 
 
 
 @router.post("", status_code=201)
-def invite(body: GuardianInviteRequest, user: CurrentUser = Depends(get_current_user)) -> dict[str, str]:
+def invite(body: GuardianInviteRequest, user: CurrentUser = Depends(get_sensitive_user)) -> dict[str, str]:
+    # Adding someone who may open the passport is high-risk (recent sign-in); revoking never needs step-up.
+    rate_limit.hit(f"guardian-invite:{user.id}", settings.guardian_invites_per_hour, 3600)
     try:
         with supabase_errors():
             link_id = svc.invite(user, body.email, body.relation)
@@ -89,6 +93,8 @@ def emergency_view(patient_id: str, response: Response,
 @router.post("/patients/{patient_id}/tokens", response_model=EmergencyTokenResponse)
 def create_token(patient_id: str, response: Response,
                  user: CurrentUser = Depends(get_current_user)) -> EmergencyTokenResponse:
+    # Emergency flow: no re-authentication, only a rate limit against abuse.
+    rate_limit.hit(f"qr-create:{user.id}", settings.emergency_token_create_per_minute, 60)
     token = es.new_token()
     with supabase_errors():
         created = svc.create_token(user, patient_id, es.hash_token(token))

@@ -16,6 +16,7 @@ import { ThemeProvider } from '@/design-system/ThemeContext';
 import { HelpProvider } from '@/help';
 import { EmergencyTokenProvider } from '@/services/EmergencyTokenProvider';
 import { useSignedIn } from '@/services/auth/useSignedIn';
+import { AppLockProvider } from '@/services/security/AppLockProvider';
 import { useTheme } from '@/design-system/useTheme';
 import { useTranslation } from 'react-i18next';
 
@@ -107,7 +108,9 @@ export default function RootLayout() {
     <ThemeProvider>
       <EmergencyTokenProvider>
         <HelpProvider>
-          <RootNavigator />
+          <AppLockProvider>
+            <RootNavigator />
+          </AppLockProvider>
         </HelpProvider>
       </EmergencyTokenProvider>
     </ThemeProvider>

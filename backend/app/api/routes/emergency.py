@@ -12,6 +12,7 @@ The token is validated here (hash + atomic consume in the database), never in th
 from fastapi import APIRouter, Depends, HTTPException, Response
 
 from app.api.supabase_errors import supabase_errors
+from app.core import rate_limit
 from app.core.config import settings
 from app.core.security import CurrentUser, get_current_doctor, get_current_user
 from app.schemas.emergency import EmergencyAccessEvent, EmergencyData, EmergencyRedeemRequest, EmergencyTokenResponse, EmergencyTokenStatus
@@ -32,6 +33,8 @@ REJECTIONS = {
 
 @router.post("/tokens", response_model=EmergencyTokenResponse)
 def create_token(response: Response, user: CurrentUser = Depends(get_current_user)) -> EmergencyTokenResponse:
+    # Emergency flow: never behind Face ID / re-authentication on the server, only a rate limit.
+    rate_limit.hit(f"qr-create:{user.id}", settings.emergency_token_create_per_minute, 60)
     token = es.new_token()
     token_hash = es.hash_token(token)
     with supabase_errors():
@@ -71,6 +74,12 @@ def token_status(response: Response, token_id: str, user: CurrentUser = Depends(
 @router.post("/redeem", response_model=EmergencyData)
 def redeem(body: EmergencyRedeemRequest, response: Response,
            doctor: CurrentUser = Depends(get_current_doctor)) -> EmergencyData:
+    # Anti brute-force / replay: every attempt is counted, and too many rejected codes lock the doctor out for a while.
+    fail_key = f"qr-redeem-fail:{doctor.id}"
+    if rate_limit.blocked(fail_key, settings.emergency_redeem_failures_per_15_min, 900):
+        raise HTTPException(status_code=429, detail="Too many invalid emergency codes. Try again later.",
+                            headers={**NO_STORE, "Retry-After": "900"})
+    rate_limit.hit(f"qr-redeem:{doctor.id}", settings.emergency_redeem_per_minute, 60)
     token_hash = es.hash_token(es.parse_token(body.token))
     with supabase_errors():
         if settings.supabase_enabled:
@@ -79,6 +88,8 @@ def redeem(body: EmergencyRedeemRequest, response: Response,
             result = es.demo_redeem(doctor.id, token_hash)
     status = result.get("status") if isinstance(result, dict) else None
     if status != "ok":
+        if status in ("not_found", "expired", "revoked", "used"):
+            rate_limit.record(fail_key)
         code, detail = REJECTIONS.get(status or "", (502, "Unexpected response"))
         raise HTTPException(status_code=code, detail=detail, headers=NO_STORE)
     response.headers.update(NO_STORE)

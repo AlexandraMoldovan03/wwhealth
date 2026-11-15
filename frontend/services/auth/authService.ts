@@ -166,10 +166,86 @@ export async function completeOAuthSignIn(url: string): Promise<AuthResponse> {
   return { user, accessToken: data.session.access_token };
 }
 
-export async function logout(): Promise<void> {
+/**
+ * Sign out and remove sensitive local data: the session (Keychain), the cached emergency QR, voice-intake
+ * drafts, the care-summary draft, scheduled medication reminders and the biometric-lock preference.
+ * `everywhere` also ends the sessions on the user's other devices.
+ */
+export async function logout(options: { everywhere?: boolean } = {}): Promise<void> {
+  const userId = currentUser?.id;
   setCurrentUser(null);
   demoToken = null;
-  if (supabase) await supabase.auth.signOut();
+  const { clearLocalSensitiveData } = await import('@/services/security/localData');
+  await clearLocalSensitiveData(userId).catch(() => undefined);
+  if (supabase) await supabase.auth.signOut({ scope: options.everywhere ? 'global' : 'local' }).catch(() => supabase!.auth.signOut({ scope: 'local' }));
+}
+
+/**
+ * The backend answered 401 (token rejected). Try one refresh; if the refresh token is no longer valid the
+ * user must sign in again (no silent retry loop).
+ */
+let handlingUnauthorized: Promise<void> | null = null;
+export function handleUnauthorized(): Promise<void> {
+  if (!supabase) return Promise.resolve();
+  handlingUnauthorized ??= (async () => {
+    const { data, error } = await supabase!.auth.refreshSession();
+    if (error || !data.session) await logout();
+  })().finally(() => {
+    handlingUnauthorized = null;
+  });
+  return handlingUnauthorized;
+}
+
+/**
+ * Re-authentication for high-risk actions: a real password sign-in (fresh `amr` time on the server).
+ * A Face ID unlock does not count.
+ */
+export async function reauthenticateWithPassword(password: string): Promise<void> {
+  if (!supabase) return;
+  const email = currentUser?.email;
+  if (!email) throw new Error(i18n.t('auth.errors.generic'));
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+  if (error || !data.session) throw friendlyError(error?.message ?? '', error?.code);
+  setCurrentUser(await userFromSession(data.session));
+}
+
+/** Whether this account signs in with email + password (Google-only accounts have no password to change). */
+export async function hasPasswordIdentity(): Promise<boolean> {
+  if (!supabase) return false;
+  const { data } = await supabase.auth.getUser();
+  return (data.user?.identities ?? []).some((i) => i.provider === 'email');
+}
+
+/**
+ * Changes the password. The current password is checked first with a separate, immediately revoked
+ * sign-in (the current session stays as it is). Supabase may additionally demand a
+ * recent sign-in ("Secure password change") → the user is sent to re-authenticate.
+ */
+export async function changePassword(currentPassword: string, newPassword: string): Promise<void> {
+  if (!supabase) throw new Error(i18n.t('security.notInDemo'));
+  const email = currentUser?.email;
+  if (!email) throw new Error(i18n.t('auth.errors.generic'));
+  const { SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY } = await import('@/config/config');
+  const res = await fetch(`${SUPABASE_URL.replace(/\/+$/, '')}/auth/v1/token?grant_type=password`, {
+    method: 'POST',
+    headers: { apikey: SUPABASE_PUBLISHABLE_KEY, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password: currentPassword }),
+  }).catch(() => null);
+  if (!res) throw new Error(i18n.t('auth.errors.network'));
+  if (!res.ok) throw new Error(i18n.t('security.password.wrongCurrent'));
+  const probe = (await res.json().catch(() => null)) as { access_token?: string } | null;
+  if (probe?.access_token) {
+    // End the probe session at once (scope local = only that session). Its token is never stored or logged.
+    await fetch(`${SUPABASE_URL.replace(/\/+$/, '')}/auth/v1/logout?scope=local`, {
+      method: 'POST',
+      headers: { apikey: SUPABASE_PUBLISHABLE_KEY, Authorization: `Bearer ${probe.access_token}` },
+    }).catch(() => undefined);
+  }
+  const { error } = await supabase.auth.updateUser({ password: newPassword, current_password: currentPassword });
+  if (!error) return;
+  if (error.code === 'reauthentication_needed' || error.code === 'insufficient_aal') throw new Error(i18n.t('security.password.reauthNeeded'));
+  if (error.code === 'same_password') throw new Error(i18n.t('security.password.same'));
+  throw friendlyError(error.message, error.code);
 }
 
 export function getCurrentUser(): AuthUser | null {

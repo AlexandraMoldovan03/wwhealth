@@ -56,7 +56,8 @@
     "notAvailable": "—",
     "clear": "Clear",
     "edit": "Edit",
-    "close": "Close"
+    "close": "Close",
+    "done": "Done"
   },
   "auth": {
     "emailPlaceholder": "you@example.com",
@@ -179,7 +180,9 @@
     "doctor/schedule": "Work schedule",
     "doctor/consultation/[id]": "Consultation sheet",
     "doctor/treatment": "Treatment",
-    "patient/import/[id]": "Check import"
+    "patient/import/[id]": "Check import",
+    "security/index": "Security",
+    "security/reauth": "Confirm it's you"
   },
   "settings": {
     "title": "Profile",
@@ -223,7 +226,8 @@
     "emergencyPassport": "Emergency Passport",
     "replayOnboarding": "Show the introduction again",
     "doctorAccess": "Doctor access",
-    "allFeatures": "All features"
+    "allFeatures": "All features",
+    "security": "Security"
   },
   "app": {
     "description": "Your medical record, documents and AI-assisted X-ray insights — shareable with verified doctors through time-limited, revocable consent."
@@ -637,7 +641,10 @@
       "badRequest": "The request could not be processed.",
       "conflict": "This conflicts with the current state. Reload and try again.",
       "gone": "This item is no longer valid.",
-      "notSetUp": "This feature is not set up on the server yet."
+      "notSetUp": "This feature is not set up on the server yet.",
+      "reauthRequired": "For your safety, confirm your password again to continue.",
+      "confirmationCancelled": "Confirmation cancelled. Nothing was changed.",
+      "authUnavailable": "The sign-in service is not responding. Try again in a moment."
     }
   },
   "image": {
@@ -2939,5 +2946,65 @@
     "check": "Check: {{parts}}",
     "translate": "Translate into the app language",
     "useTranslation": "Use the translation in the field"
+  },
+  "security": {
+    "title": "Security",
+    "errorTitle": "Something went wrong",
+    "notInDemo": "Not available in demo mode (no Supabase account).",
+    "reasons": {
+      "export": "Confirm to export your medical record",
+      "share": "Confirm to share your record with a doctor",
+      "guardian": "Confirm to add an emergency contact",
+      "password": "Confirm to change your password",
+      "lock": "Unlock WWHealth"
+    },
+    "lock": {
+      "title": "WWHealth is locked",
+      "subtitle": "Unlock with Face ID, fingerprint or your phone's passcode.",
+      "unlock": "Unlock",
+      "signInAgain": "Sign out and sign in again",
+      "unavailable": "Biometrics and passcode are not available on this phone. Sign in again with your password."
+    },
+    "biometric": {
+      "title": "App lock",
+      "toggle": "Lock with {{kind}}",
+      "usePasscode": "Use passcode",
+      "explain": "Asks for it when you reopen the app and before sensitive actions (export, sharing, emergency contacts). The emergency passport and QR stay one tap away. Your face or fingerprint never leaves the phone.",
+      "unavailable": "No Face ID, fingerprint or passcode is set up on this phone.",
+      "web": "Not available on the web.",
+      "expoGo": "Expo Go on iPhone cannot use Face ID (it uses the passcode). Face ID works in a development build.",
+      "kind": {
+        "face": "Face ID / face unlock",
+        "fingerprint": "fingerprint",
+        "iris": "iris",
+        "passcode": "passcode",
+        "none": "biometrics"
+      }
+    },
+    "password": {
+      "title": "Password",
+      "current": "Current password",
+      "new": "New password",
+      "confirm": "Repeat new password",
+      "change": "Change password",
+      "changed": "Password changed.",
+      "mismatch": "The new passwords do not match.",
+      "wrongCurrent": "The current password is not correct.",
+      "same": "Choose a password you have not used here.",
+      "reauthNeeded": "For your safety, sign in again and then change the password."
+    },
+    "sessions": {
+      "title": "Sessions",
+      "all": "Sign out on all devices",
+      "allTitle": "Sign out everywhere?",
+      "allBody": "You will be signed out on this phone and every other device.",
+      "explain": "Use it if you lost a phone or signed in on someone else's device."
+    },
+    "reauth": {
+      "title": "Confirm it's you",
+      "subtitle": "This action needs a recent sign-in. Face ID alone is not enough here.",
+      "confirm": "Confirm",
+      "google": "Continue with Google"
+    }
   }
 }

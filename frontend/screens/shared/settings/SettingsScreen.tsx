@@ -81,6 +81,7 @@ export function SettingsScreen() {
                   }}
                 />
               )}
+              <SettingsRow icon="lock-closed-outline" title={t('settings.security')} onPress={() => router.push('/security')} />
               <SettingsRow icon="compass-outline" title={t('settings.allFeatures')} onPress={() => router.navigate('/explore')} />
               <SettingsRow icon="sparkles-outline" title={t('settings.replayOnboarding')} onPress={() => router.push('/onboarding')} />
               <SettingsRow icon="log-out-outline" title={t('settings.signOut')} onPress={signOut} />

@@ -57,6 +57,19 @@ class Settings(BaseSettings):
     documents_storage_dir: Path = BACKEND_DIR / "storage" / "documents"
     access_token_max_ttl_minutes: int = 240
 
+    # ── Security hardening
+    # High-risk actions (exports, sharing with a doctor, adding an emergency contact) need a sign-in
+    # (password / OAuth) at most this old. 0 disables the check.
+    sensitive_reauth_max_age_minutes: int = 1440
+    # In-memory, per-process rate limits (one uvicorn worker; use a shared store behind several workers).
+    rate_limit_enabled: bool = True
+    emergency_redeem_per_minute: int = 10       # per doctor, every attempt
+    emergency_redeem_failures_per_15_min: int = 8  # per doctor, invalid / used / expired codes
+    emergency_token_create_per_minute: int = 6  # per patient or emergency contact
+    guardian_invites_per_hour: int = 10
+    doctor_grants_per_hour: int = 20
+    exports_per_hour: int = 30
+
     @property
     def supabase_enabled(self) -> bool:
         return bool(self.supabase_url and self.supabase_publishable_key)

@@ -48,7 +48,13 @@
         }
       ],
       "expo-secure-store",
-      "expo-sharing"
+      "expo-sharing",
+      [
+        "expo-local-authentication",
+        {
+          "faceIDPermission": "WWHealth uses Face ID to unlock the app and to confirm sensitive actions. No face data leaves your device."
+        }
+      ]
     ],
     "scheme": "wwhealth",
     "experiments": {

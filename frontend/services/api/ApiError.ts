@@ -35,6 +35,9 @@ const KNOWN_DETAILS: readonly [string, string][] = [
   ['Document scanning needs the backend', 'errors.api.needsBackend'],
   ['Export is available with the WWHealth server only', 'errors.api.needsBackend'],
   ['Sharing is not available', 'errors.api.sharingUnavailable'],
+  ['Recent sign-in required', 'errors.api.reauthRequired'],
+  ['Confirmation cancelled', 'errors.api.confirmationCancelled'],
+  ['Authentication service unavailable', 'errors.api.authUnavailable'],
 ];
 
 const STATUS_FALLBACK: Record<number, string> = {

@@ -56,7 +56,8 @@
     "notAvailable": "—",
     "clear": "Șterge",
     "edit": "Editează",
-    "close": "Închide"
+    "close": "Închide",
+    "done": "Gata"
   },
   "auth": {
     "emailPlaceholder": "tu@exemplu.com",
@@ -179,7 +180,9 @@
     "doctor/schedule": "Program de lucru",
     "doctor/consultation/[id]": "Fișa de consultație",
     "doctor/treatment": "Tratament",
-    "patient/import/[id]": "Verifică importul"
+    "patient/import/[id]": "Verifică importul",
+    "security/index": "Securitate",
+    "security/reauth": "Confirmă că ești tu"
   },
   "settings": {
     "title": "Profil",
@@ -223,7 +226,8 @@
     "emergencyPassport": "Pașaport de urgență",
     "replayOnboarding": "Revezi introducerea",
     "doctorAccess": "Acces medici",
-    "allFeatures": "Toate funcționalitățile"
+    "allFeatures": "Toate funcționalitățile",
+    "security": "Securitate"
   },
   "app": {
     "description": "Dosarul tău medical, documentele și analiza radiografiilor asistată de AI — partajabile cu medici verificați, cu acces limitat în timp și revocabil."
@@ -637,7 +641,10 @@
       "badRequest": "Cererea nu a putut fi procesată.",
       "conflict": "Acțiunea intră în conflict cu starea actuală. Reîncarcă și încearcă din nou.",
       "gone": "Elementul nu mai este valabil.",
-      "notSetUp": "Această funcție nu este configurată încă pe server."
+      "notSetUp": "Această funcție nu este configurată încă pe server.",
+      "reauthRequired": "Pentru siguranță, confirmă din nou parola ca să continui.",
+      "confirmationCancelled": "Confirmare anulată. Nu s-a modificat nimic.",
+      "authUnavailable": "Serviciul de autentificare nu răspunde. Încearcă din nou peste puțin timp."
     }
   },
   "image": {
@@ -2971,5 +2978,65 @@
     "check": "De verificat: {{parts}}",
     "translate": "Tradu în limba aplicației",
     "useTranslation": "Folosește traducerea în câmp"
+  },
+  "security": {
+    "title": "Securitate",
+    "errorTitle": "A apărut o problemă",
+    "notInDemo": "Indisponibil în modul demo (fără cont Supabase).",
+    "reasons": {
+      "export": "Confirmă exportul dosarului medical",
+      "share": "Confirmă partajarea dosarului cu medicul",
+      "guardian": "Confirmă adăugarea unei persoane de urgență",
+      "password": "Confirmă schimbarea parolei",
+      "lock": "Deblochează WWHealth"
+    },
+    "lock": {
+      "title": "WWHealth este blocată",
+      "subtitle": "Deblochează cu Face ID, amprentă sau codul telefonului.",
+      "unlock": "Deblochează",
+      "signInAgain": "Deconectează-te și autentifică-te din nou",
+      "unavailable": "Biometria și codul telefonului nu sunt disponibile. Autentifică-te din nou cu parola."
+    },
+    "biometric": {
+      "title": "Blocarea aplicației",
+      "toggle": "Blocare cu {{kind}}",
+      "usePasscode": "Folosește codul",
+      "explain": "Se cere la redeschiderea aplicației și înaintea acțiunilor sensibile (export, partajare, persoane de urgență). Pașaportul și QR-ul de urgență rămân la o atingere. Fața sau amprenta nu părăsesc telefonul.",
+      "unavailable": "Pe acest telefon nu sunt configurate Face ID, amprentă sau cod.",
+      "web": "Indisponibil pe web.",
+      "expoGo": "Expo Go pe iPhone nu poate folosi Face ID (folosește codul). Face ID funcționează într-un development build.",
+      "kind": {
+        "face": "Face ID / recunoaștere facială",
+        "fingerprint": "amprentă",
+        "iris": "iris",
+        "passcode": "cod",
+        "none": "biometrie"
+      }
+    },
+    "password": {
+      "title": "Parolă",
+      "current": "Parola actuală",
+      "new": "Parola nouă",
+      "confirm": "Repetă parola nouă",
+      "change": "Schimbă parola",
+      "changed": "Parola a fost schimbată.",
+      "mismatch": "Parolele noi nu coincid.",
+      "wrongCurrent": "Parola actuală nu este corectă.",
+      "same": "Alege o parolă pe care nu ai mai folosit-o aici.",
+      "reauthNeeded": "Pentru siguranță, autentifică-te din nou și apoi schimbă parola."
+    },
+    "sessions": {
+      "title": "Sesiuni",
+      "all": "Deconectare de pe toate dispozitivele",
+      "allTitle": "Te deconectezi peste tot?",
+      "allBody": "Vei fi deconectat de pe acest telefon și de pe orice alt dispozitiv.",
+      "explain": "Folosește opțiunea dacă ai pierdut un telefon sau te-ai autentificat pe dispozitivul altcuiva."
+    },
+    "reauth": {
+      "title": "Confirmă că ești tu",
+      "subtitle": "Această acțiune necesită o autentificare recentă. Face ID nu este suficient aici.",
+      "confirm": "Confirmă",
+      "google": "Continuă cu Google"
+    }
   }
 }

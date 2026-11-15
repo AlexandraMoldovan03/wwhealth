@@ -21,7 +21,8 @@ USER_A = "11111111-1111-1111-1111-111111111111"
 
 def make_token(sub: str = USER_A, key=KEY, **overrides) -> str:
     claims = {"sub": sub, "aud": "authenticated", "iss": f"{URL}/auth/v1", "exp": int(time.time()) + 300,
-              "role": "authenticated", **overrides}
+              "role": "authenticated",
+              "amr": [{"method": "password", "timestamp": int(time.time()) - 60}], **overrides}
     return jwt.encode(claims, key, algorithm="ES256", headers={"kid": "test"})
 
 
