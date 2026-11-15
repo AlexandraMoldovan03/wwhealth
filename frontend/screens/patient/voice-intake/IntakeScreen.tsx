@@ -1,3 +1,4 @@
+import { router } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
@@ -10,6 +11,7 @@ import { RecordButton } from './RecordButton';
 import { RecordingFeedback } from './RecordingFeedback';
 import { saveIntake } from './intakeStorage';
 import { useVoiceIntake } from './useVoiceIntake';
+import { setIntakeBookingDraft } from '@/services/careSummaryDraft';
 import { useSubmit } from '@/hooks/useSubmit';
 import { VoiceTranslationPanel } from '@/screens/shared/components/VoiceTranslationPanel';
 import type { IntakeForm, Symptom } from '@/types';
@@ -161,6 +163,20 @@ function IntakeEditor({ initialForm, disabled, userId }: { initialForm: IntakeFo
           disabled={locked || !form.summary.trim() || form.symptoms.some((item) => !item.name.trim())}
           onPress={submit} />
       )}
+      <AppButton
+        title={t('hubs.insights.care')}
+        icon="calendar-outline"
+        variant="secondary"
+        fullWidth
+        disabled={disabled || save.isLoading}
+        onPress={() => {
+          const symptoms = form.isDemo ? '' : form.symptoms
+            .map(({ name, duration, notes }) => [name.trim(), duration?.trim(), notes?.trim()].filter(Boolean).join(' · '))
+            .filter(Boolean).join('\n');
+          setIntakeBookingDraft(userId, form.isDemo ? '' : (symptoms || form.summary.trim()));
+          router.push({ pathname: '/patient/smart-care', params: { from: 'intake' } });
+        }}
+      />
     </View>
   );
 }

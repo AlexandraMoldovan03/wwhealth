@@ -166,7 +166,7 @@
     "doctor/patient/[id]/document/[docId]": "Document",
     "patient/intelligence": "AI Medical Intelligence",
     "doctor/patient/[id]/intelligence": "AI Medical Intelligence",
-    "patient/smart-care": "Smart Care",
+    "patient/smart-care": "Appointments",
     "patient/specialties": "Find a specialty",
     "patient/specialty/[id]": "Doctors",
     "patient/book/[doctorId]": "Book",
@@ -1285,13 +1285,19 @@
       "xraysCount_one": "{{count}} analysis",
       "xraysCount_other": "{{count}} analyses",
       "xraysEmpty": "No analyses yet.",
-      "careTitle": "Smart Care",
+      "careTitle": "Appointments",
       "careSubtitle": "From symptoms to an appointment.",
-      "care": "Which specialty do I need?",
-      "careHint": "Describe your symptoms, get 1–3 specialties and doctors with free slots.",
-      "careAction": "Describe symptoms",
-      "specialties": "Find a specialty",
-      "specialtiesHint": "No AI: pick the specialty and doctor directly."
+      "care": "Book a consultation",
+      "careHint": "Describe your symptoms to find a relevant specialty, then choose a doctor and an available time.",
+      "careAction": "Start with symptoms",
+      "appointmentsHint": "Check requests and confirmed consultations.",
+      "stepsSymptoms": "Symptoms",
+      "stepsDoctor": "Doctor",
+      "stepsTime": "Time",
+      "bookingContinue": "See matching specialties",
+      "bookingDoctors": "See doctors and available times",
+      "specialties": "Search by specialty",
+      "specialtiesHint": "If you already know the specialty, choose a doctor and time directly."
     },
     "transfer": {
       "title": "Transfer & Access",
@@ -1349,8 +1355,8 @@
       "doctorScan": "Scan QR",
       "doctorRecords": "Medical records",
       "accessLog": "Access log",
-      "smartCare": "Smart Care",
-      "specialties": "Find a specialty",
+      "smartCare": "Appointments",
+      "specialties": "Search by specialty",
       "appointments": "My appointments",
       "doctorAppointments": "Appointments",
       "treatments": "My treatments",
@@ -1775,11 +1781,11 @@
         ]
       },
       "smartCare": {
-        "title": "Smart Care",
+        "title": "Appointments",
         "intro": "From symptoms to an appointment request.",
         "faq": [
           {
-            "q": "What does Smart Care do?",
+            "q": "How do appointments work?",
             "a": "It helps you choose a specialty, see available times, and request an appointment."
           },
           {
@@ -1796,7 +1802,7 @@
           },
           {
             "q": "How do I manage permissions?",
-            "a": "Open Permissions in Smart Care to withdraw AI consent. Control microphone access in your device settings."
+            "a": "Open Permissions in Appointments to withdraw AI consent. Control microphone access in your device settings."
           }
         ]
       },
@@ -1809,7 +1815,7 @@
           "Cancel an appointment."
         ],
         "steps": [
-          "Send a request from Smart Care or search.",
+          "Send a request from Appointments or search.",
           "Wait for the doctor's answer.",
           "If the doctor proposes another time, confirm or decline it."
         ],
@@ -1869,7 +1875,7 @@
         "intro": "Tell the doctor in advance why you're coming and what you want to ask.",
         "can": [
           "Write the reason, symptoms and questions.",
-          "Attach the Smart Care summary, if you want.",
+          "Attach the symptom summary, if you want.",
           "Share your record separately."
         ],
         "steps": [
@@ -1994,10 +2000,10 @@
   "care": {
     "flow": {
       "step": "Step {{current}} of 3",
-      "describe": "How can we help?",
-      "purpose": "Describe how you feel to find a relevant specialty.",
+      "describe": "Describe your symptoms",
+      "purpose": "Type or dictate your symptoms. Then you can see available doctors and request an appointment.",
       "continue": "Continue",
-      "guidance": "Medical guidance",
+      "guidance": "Choose a specialty",
       "recording": "Recording. Tap stop when you’re done.",
       "demoVoice": "Live transcription is unavailable. You can type your symptoms.",
       "voiceError": "Voice input is unavailable right now. Try again or type your symptoms.",
@@ -2167,7 +2173,7 @@
       "doctorNote": "Doctor's message",
       "new": "New appointment",
       "empty": "No appointments yet",
-      "emptyHint": "Describe your symptoms in Smart Care or search a specialty directly.",
+      "emptyHint": "Describe your symptoms in Appointments or search a specialty directly.",
       "active": "Active",
       "past": "History",
       "acceptProposal": "Accept the proposed time",
@@ -2257,8 +2263,8 @@
       "questionsHint": "Up to 10 questions.",
       "questionN": "Question {{n}}",
       "addQuestion": "Add a question",
-      "attachSummary": "Attach the Smart Care summary",
-      "attachHint": "The symptom summary from your last Smart Care session. Not a diagnosis.",
+      "attachSummary": "Attach the symptom summary",
+      "attachHint": "The symptom summary from your last booking session. Not a diagnosis.",
       "saved": "Saved. The doctor will see it in the consultation sheet.",
       "shareTitle": "Share your record with the doctor",
       "shareHint": "Allergies, conditions, treatments, documents — only the sections you choose, for a limited time, revocable anytime.",
@@ -2267,8 +2273,8 @@
     "consult": {
       "preparation": "Prepared by the patient",
       "notPrepared": "The patient hasn't prepared anything for this consultation.",
-      "careSummary": "Smart Care summary (attached by the patient)",
-      "careSummaryNote": "Symptom orientation produced by Smart Care — not a diagnosis.",
+      "careSummary": "symptom summary (attached by the patient)",
+      "careSummaryNote": "Symptom orientation generated for booking — not a diagnosis.",
       "access": "Record access",
       "until": "until {{date}}",
       "grantHint": "Medical data is shown only after the patient grants access from the app.",

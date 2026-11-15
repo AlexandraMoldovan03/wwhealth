@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
-import { router } from 'expo-router';
-import { useRef, useState } from 'react';
+import { router, useLocalSearchParams } from 'expo-router';
+import { useEffect, useRef, useState } from 'react';
 import { Keyboard, Pressable, StyleSheet, Switch, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
@@ -14,7 +14,8 @@ import { useSubmit } from '@/hooks/useSubmit';
 import { useVoiceIntake } from '@/screens/patient/voice-intake/useVoiceIntake';
 import { USE_MOCKS } from '@/config/config';
 import { api } from '@/services/backend';
-import { setCareSummaryDraft } from '@/services/careSummaryDraft';
+import { useLocalPatientId } from '@/services/auth/useCurrentUser';
+import { clearIntakeBookingDraft, getIntakeBookingDraft, setCareSummaryDraft } from '@/services/careSummaryDraft';
 import { VoiceTranslationPanel } from '@/screens/shared/components/VoiceTranslationPanel';
 import type { ClarificationAnswer, Transcript, TriageResult, VoiceTranslation } from '@/types';
 
@@ -25,6 +26,12 @@ const MAX_ANSWERS = 3;
 type Panel = 'review' | 'permissions' | 'voice';
 
 export function SmartCareScreen() {
+  const userId = useLocalPatientId();
+  const { from } = useLocalSearchParams<{ from?: string }>();
+  return <AppointmentForm key={userId} userId={userId} fromIntake={from === 'intake'} />;
+}
+
+function AppointmentForm({ userId, fromIntake }: { userId?: string; fromIntake: boolean }) {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const language = useLanguage();
@@ -34,7 +41,12 @@ export function SmartCareScreen() {
   const voice = useVoiceIntake<Transcript>(api.transcribeSymptoms);
   const pending = useRef(false);
   const [panel, setPanel] = useState<Panel | null>(null);
-  const [symptoms, setSymptoms] = useState('');
+  const [draft] = useState(() => fromIntake ? getIntakeBookingDraft(userId) : null);
+  const [symptoms, setSymptoms] = useState(() => draft?.symptoms.slice(0, 2000) ?? '');
+
+  useEffect(() => {
+    if (draft) clearIntakeBookingDraft(draft);
+  }, [draft]);
   const [source, setSource] = useState<'text' | 'voice'>('text');
   const [useHistory, setUseHistory] = useState(false);
   const [result, setResult] = useState<TriageResult | null>(null);
@@ -209,7 +221,7 @@ export function SmartCareScreen() {
             </VoiceTranslationPanel>
           )}
           {source === 'voice' && <AppText variant="caption" color="textMuted">{t('care.confirmHintVoice')}</AppText>}
-          <AppButton title={t('care.flow.continue')} fullWidth disabled={!canReview} loading={busy} onPress={review} />
+          <AppButton title={t('hubs.insights.bookingContinue')} fullWidth disabled={!canReview} loading={busy} onPress={review} />
         </>
       )}
 
@@ -251,7 +263,7 @@ export function SmartCareScreen() {
                 )}
               </AppCard>
               <AppText variant="caption" color="textMuted">{t('care.flow.disclaimer')}</AppText>
-              {activeSpecialty && <AppButton title={t('care.flow.findDoctor')} fullWidth onPress={() => router.push({ pathname: '/patient/specialty/[id]', params: { id: activeSpecialty.id, name: activeSpecialty.name, fromCare: 'true' } })} />}
+              {activeSpecialty && <AppButton title={t('hubs.insights.bookingDoctors')} fullWidth onPress={() => router.push({ pathname: '/patient/specialty/[id]', params: { id: activeSpecialty.id, name: activeSpecialty.name, fromCare: 'true' } })} />}
             </>
           )}
         </>

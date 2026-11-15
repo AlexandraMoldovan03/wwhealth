@@ -15,7 +15,7 @@ import { formatDateTime } from '@/utils/format';
 import { useTranslation } from 'react-i18next';
 
 const tabs = [
-  { id: 'care', title: 'hubs.insights.careTitle', icon: 'medkit-outline' },
+  { id: 'care', title: 'hubs.insights.careTitle', icon: 'calendar-outline' },
   { id: 'summary', title: 'hubs.insights.summaryTitle', icon: 'document-text-outline' },
   { id: 'imaging', title: null, icon: 'scan-outline' },
 ] as const;
@@ -23,7 +23,7 @@ const tabs = [
 function aiStatusKey(view: IntelligenceView | null, failed: boolean) {
   if (failed || !view) return failed ? 'hubs.insights.aiUnknown' : 'hubs.insights.aiLoading';
   if (!view.aiConfigured) return 'hubs.insights.aiNotConfigured';
-  if (!view.consent) return 'hubs.insights.aiNeedsConsent';
+  if (!view.consent) return null;
   return view.summary ? 'hubs.insights.aiReady' : 'hubs.insights.aiNotGenerated';
 }
 
@@ -37,6 +37,7 @@ export function InsightsHubScreen() {
   const patient = useAsync(api.getMyPatient, { refetchOnFocus: true });
   const xrays = patient.data?.xrays.length ?? 0;
   const summary = ai.data?.summary;
+  const statusKey = aiStatusKey(ai.data, !!ai.error && !ai.data);
 
   return (
     <ScreenContainer help="insights" showBackgroundLungs={false} refreshControl={<RefreshControl refreshing={ai.isLoading && !!ai.data} onRefresh={ai.reload} tintColor={colors.primary} />}>
@@ -73,13 +74,26 @@ export function InsightsHubScreen() {
         <View style={styles.section}>
           <AppCard style={[styles.lead, { backgroundColor: isDark ? '#182F36' : '#E9F4F1' }]}>
             <View style={styles.leadTop}>
-              <IconBadge icon="medkit-outline" color={colors.primary} />
+              <IconBadge icon="calendar-outline" color={colors.primary} />
               <DataOriginBadge origin="ai" />
             </View>
             <AppText variant="heading" accessibilityRole="header">{t('hubs.insights.care')}</AppText>
             <AppText color="textMuted">{t('hubs.insights.careHint')}</AppText>
+            <View style={[styles.bookingSteps, { borderColor: colors.border }]}>
+              {([
+                ['chatbubble-ellipses-outline', 'stepsSymptoms'],
+                ['person-outline', 'stepsDoctor'],
+                ['time-outline', 'stepsTime'],
+              ] as const).map(([icon, label]) => (
+                <View key={label} style={styles.bookingStep}>
+                  <Ionicons name={icon} size={19} color={colors.primary} />
+                  <AppText variant="caption" align="center">{t('hubs.insights.' + label)}</AppText>
+                </View>
+              ))}
+            </View>
             <AppButton
               title={t('hubs.insights.careAction')}
+              icon="chatbubble-ellipses-outline"
               trailingIcon="arrow-forward"
               fullWidth
               onPress={() => router.push('/patient/smart-care')}
@@ -93,6 +107,14 @@ export function InsightsHubScreen() {
             enterIndex={1}
             onPress={() => router.push('/patient/specialties')}
           />
+          <ListRow
+            icon="calendar-clear-outline"
+            iconColor={colors.primary}
+            title={t('screens.patient/appointments')}
+            subtitle={t('hubs.insights.appointmentsHint')}
+            enterIndex={2}
+            onPress={() => router.push('/patient/appointments')}
+          />
         </View>
       )}
 
@@ -102,7 +124,7 @@ export function InsightsHubScreen() {
             icon="sparkles-outline"
             iconColor={colors.accent}
             title={t('ai.title')}
-            subtitle={t(aiStatusKey(ai.data, !!ai.error && !ai.data), { date: summary ? formatDateTime(summary.generatedAt) : '' })}
+            subtitle={statusKey ? t(statusKey, { date: summary ? formatDateTime(summary.generatedAt) : '' }) : undefined}
             right={<DataOriginBadge origin="ai" />}
             enterIndex={1}
             onPress={() => router.push('/patient/intelligence')}
@@ -165,6 +187,8 @@ const styles = StyleSheet.create({
   pressed: { opacity: 0.72 },
   section: { gap: spacing.md },
   lead: { gap: spacing.md, borderRadius: radius.xl },
+  bookingSteps: { flexDirection: 'row', gap: spacing.sm, paddingVertical: spacing.sm, borderTopWidth: StyleSheet.hairlineWidth },
+  bookingStep: { flex: 1, minWidth: 0, alignItems: 'center', gap: spacing.xs },
   leadTop: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: spacing.sm },
   disclosure: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, minHeight: 44 },
   disclosureTitle: { flex: 1 },
