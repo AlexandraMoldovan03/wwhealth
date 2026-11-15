@@ -133,19 +133,32 @@ def test_schedule_change_keeps_booked_slots_and_confirmed_appointments():
     assert mine[0]["status"] == "confirmed" and mine[0]["startsAt"] == slot["startsAt"]
 
 
+def _same_day_pair(slots: list[dict], window: timedelta = timedelta(hours=6)) -> tuple[dict, dict]:
+    """First two consecutive slots inside one time-off window. The first free slot can be the LAST one of
+    today (test run late in the working day), with the next one tomorrow — outside the window."""
+    return next((a, b) for a, b in zip(slots, slots[1:])
+                if datetime.fromisoformat(b["startsAt"]) - datetime.fromisoformat(a["startsAt"]) < window)
+
+
+def test_same_day_pair_skips_a_lone_slot_left_today():
+    slots = [{"startsAt": "2026-11-15T09:30:00+00:00"}, {"startsAt": "2026-11-16T06:00:00+00:00"},
+             {"startsAt": "2026-11-16T06:30:00+00:00"}]
+    assert _same_day_pair(slots) == (slots[1], slots[2])
+
+
 def test_time_off_hides_slots_blocks_booking_and_reports_conflicts():
     _save_week()
-    slots = client.get(f"{CARE}/doctors/doc_demo_001/slots").json()
-    booked = client.post(f"{CARE}/appointments", json={"slotId": slots[0]["id"], "specialtyId": None, "note": None}).json()
-    day_start, day_end = slots[0]["startsAt"], (datetime.fromisoformat(slots[0]["startsAt"]) + timedelta(hours=6)).isoformat()
+    first, second = _same_day_pair(client.get(f"{CARE}/doctors/doc_demo_001/slots").json())
+    booked = client.post(f"{CARE}/appointments", json={"slotId": first["id"], "specialtyId": None, "note": None}).json()
+    day_start, day_end = first["startsAt"], (datetime.fromisoformat(first["startsAt"]) + timedelta(hours=6)).isoformat()
     r = client.post(f"{API}/doctor/time-off", json={"kind": "day_off", "startsAt": day_start, "endsAt": day_end})
     assert r.status_code == 201 and r.json()["conflicts"] == 1  # reported, NOT cancelled
     after = client.get(f"{CARE}/doctors/doc_demo_001/slots").json()
-    assert slots[1]["id"] not in {s["id"] for s in after}
-    assert client.post(f"{CARE}/appointments", json={"slotId": slots[1]["id"], "specialtyId": None, "note": None}).status_code == 409
+    assert second["id"] not in {s["id"] for s in after}
+    assert client.post(f"{CARE}/appointments", json={"slotId": second["id"], "specialtyId": None, "note": None}).status_code == 409
     assert client.get(f"{CARE}/appointments").json()[0]["id"] == booked["id"]
     assert client.delete(f"{API}/doctor/time-off/{r.json()['timeOff']['id']}").status_code == 204
-    assert slots[1]["id"] in {s["id"] for s in client.get(f"{CARE}/doctors/doc_demo_001/slots").json()}
+    assert second["id"] in {s["id"] for s in client.get(f"{CARE}/doctors/doc_demo_001/slots").json()}
 
 
 def test_doctor_endpoints_refuse_patients(supabase_mode, monkeypatch):  # noqa: F811
