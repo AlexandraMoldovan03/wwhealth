@@ -23,9 +23,9 @@ const folders = [
 export function RecordsHubScreen() {
   const { colors, isDark } = useTheme();
   const { t } = useTranslation();
-  const back = isDark ? '#9BC9D32C' : '#BCD5D9';
-  const face = isDark ? ['#B4E4EC44', '#41687438', '#9ED5D515'] as const : ['#D7E9EA', '#BAD7DB', '#CBDFE1'] as const;
-  const edge = isDark ? '#CFEFFF55' : '#8FB6BB';
+  const back = isDark ? '#9BC9D32C' : '#9DC9CF38';
+  const face = isDark ? ['#B4E4EC44', '#41687438', '#9ED5D515'] as const : ['#FFFFFFA8', '#E6F8F44A', '#84BFC43D'] as const;
+  const edge = isDark ? '#CFEFFF55' : '#7EABB566';
 
   return (
     <ScreenContainer help="records">
@@ -49,8 +49,16 @@ export function RecordsHubScreen() {
               <View pointerEvents="none" style={[styles.tab, { backgroundColor: back, borderColor: edge }]} />
               <View pointerEvents="none" style={[styles.back, { backgroundColor: back, borderColor: edge }]} />
               <LinearGradient colors={face} start={{ x: 0, y: 0 }} end={{ x: .92, y: 1 }} style={[styles.front, featured && styles.featuredFront, { borderColor: edge }]}>
+                {!isDark && (
+                  <View pointerEvents="none" style={styles.reflection}>
+                    <LinearGradient
+                      colors={['#FFFFFFD9', '#FFFFFF00']}
+                      style={StyleSheet.absoluteFill}
+                    />
+                  </View>
+                )}
                 <Ionicons name={icon} size={featured ? 32 : 25} color={colors.primary} />
-                <AppText variant={featured ? 'heading' : 'subheading'} align="center">{label}</AppText>
+                <AppText variant={featured ? 'heading' : 'subheading'} align="center" style={styles.label}>{label}</AppText>
               </LinearGradient>
             </Pressable>
           );
@@ -72,6 +80,17 @@ const styles = StyleSheet.create({
   pressed: { opacity: .83, transform: [{ scale: .97 }] },
   tab: { position: 'absolute', top: 0, left: 3, width: '43%', height: 30, borderWidth: 1, borderRadius: 6 },
   back: { position: 'absolute', top: 9, bottom: 4, left: 3, right: 5, borderWidth: 1, borderRadius: 7 },
+  reflection: {
+    position: 'absolute',
+    top: 1,
+    left: 1,
+    right: 1,
+    height: 36,
+    borderTopLeftRadius: 6,
+    borderTopRightRadius: 6,
+    overflow: 'hidden',
+  },
+  label: { flexShrink: 1 },
   front: {
     flex: 1,
     justifyContent: 'center',
