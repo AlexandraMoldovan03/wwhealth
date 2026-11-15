@@ -19,11 +19,13 @@ from app.schemas.smart_care import (
     Slot,
     SpecialtyOut,
     Transcript,
+    TranslateRequest,
     TriageRequest,
     TriageResult,
 )
 from app.services import appointment_service as appts
-from app.services import gemini_client, intake_service, intelligence_service, smart_care_service, supabase_repo
+from app.services import gemini_client, intake_service, intelligence_service, smart_care_service, supabase_repo, voice_translation
+from app.services.voice_translation import VoiceTranslation
 
 router = APIRouter(prefix="/smart-care", tags=["smart-care"])
 Lang = Literal["ro", "en"]
@@ -100,11 +102,19 @@ async def transcribe(file: UploadFile = File(...), elevenlabs_consent: bool = Fo
         if settings.supabase_enabled:
             raise HTTPException(503, "Voice is not configured on the server (ELEVENLABS_API_KEY missing in backend/.env)")
         return Transcript(transcript=DEMO_TRANSCRIPT, language="ro", is_demo=True)
-    text, language = await intake_service.transcribe(audio, file.filename or "recording.m4a",
-                                                     file.content_type or "application/octet-stream")
-    if not text:
+    heard = await intake_service.transcribe(audio, file.filename or "recording.m4a",
+                                            file.content_type or "application/octet-stream")
+    if not heard.text:
         raise HTTPException(400, "No speech detected in the recording")
-    return Transcript(transcript=text[:2000], language=language, is_demo=False)
+    return Transcript(transcript=heard.text[:2000], language=heard.language, language_probability=heard.probability,
+                      is_demo=False)
+
+
+@router.post("/translate", response_model=VoiceTranslation)
+async def translate(body: TranslateRequest, _user: CurrentUser = Depends(get_current_user)) -> VoiceTranslation:
+    """Gemini translation of the voice transcript into the app language (the patient taps "Translate").
+    Medication names, doses, units and numbers are kept; doubtful parts are reported, never guessed."""
+    return await voice_translation.translate(body.text, body.source_language, None, body.target_language)
 
 
 @router.get("/specialties/{specialty_id}/doctors", response_model=list[DoctorAvailabilityOut])

@@ -15,7 +15,8 @@ import { useVoiceIntake } from '@/screens/patient/voice-intake/useVoiceIntake';
 import { USE_MOCKS } from '@/config/config';
 import { api } from '@/services/backend';
 import { setCareSummaryDraft } from '@/services/careSummaryDraft';
-import type { ClarificationAnswer, Transcript, TriageResult } from '@/types';
+import { VoiceTranslationPanel } from '@/screens/shared/components/VoiceTranslationPanel';
+import type { ClarificationAnswer, Transcript, TriageResult, VoiceTranslation } from '@/types';
 
 import { CareSheet } from './components/CareSheet';
 import { EmergencyGuidanceCard } from './components/EmergencyGuidanceCard';
@@ -44,9 +45,13 @@ export function SmartCareScreen() {
   const [expanded, setExpanded] = useState(false);
   const [specialtyId, setSpecialtyId] = useState<string | null>(null);
   const [voiceRevision, setVoiceRevision] = useState(0);
+  const [translation, setTranslation] = useState<VoiceTranslation | null>(null);
+  const translate = useSubmit(api.translateTranscript);
 
   if (voice.form && voice.revision !== voiceRevision) {
     setVoiceRevision(voice.revision);
+    setTranslation(null);
+    translate.reset();
     if (!voice.form.isDemo) {
       setSymptoms(voice.form.transcript);
       setSource('voice');
@@ -179,6 +184,30 @@ export function SmartCareScreen() {
           {voice.phase === 'processing' && <LoadingState message={t('care.voice.processing')} />}
           {voice.form?.isDemo && voice.phase === 'idle' && <DemoNotice message={t('care.flow.demoVoice')} />}
           {voice.error && <ErrorState compact message={t(voice.permissionDenied ? 'care.flow.microphoneDenied' : 'care.flow.voiceError')} />}
+          {source === 'voice' && voice.form && !voice.form.isDemo && voice.phase === 'idle' && voice.form.language !== language && (
+            <VoiceTranslationPanel language={voice.form.language} translation={translation}>
+              {!translation && (
+                <AppButton
+                  title={t('voiceTranslation.translate')}
+                  icon="language-outline"
+                  variant="outline"
+                  size="sm"
+                  loading={translate.isLoading}
+                  disabled={busy}
+                  onPress={() => {
+                    void translate.run(voice.form?.transcript ?? '', voice.form?.language ?? null).then((res) => {
+                      if (res) setTranslation(res);
+                    });
+                  }}
+                />
+              )}
+              {!!translation?.text && symptoms !== translation.text && (
+                <AppButton title={t('voiceTranslation.useTranslation')} variant="ghost" size="sm" disabled={busy}
+                  onPress={() => { setSymptoms(translation.text ?? ''); triage.reset(); }} />
+              )}
+              {translate.error && <ErrorState compact message={translate.error} />}
+            </VoiceTranslationPanel>
+          )}
           {source === 'voice' && <AppText variant="caption" color="textMuted">{t('care.confirmHintVoice')}</AppText>}
           <AppButton title={t('care.flow.continue')} fullWidth disabled={!canReview} loading={busy} onPress={review} />
         </>

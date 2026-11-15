@@ -5,12 +5,12 @@ import { api } from '@/services/backend';
 import type { UploadFile } from '@/types';
 import { toUploadFile } from '@/utils/files';
 
-/** Keeps the backend's explanation for 503 (model not set up) instead of a generic "server problem". */
+/** Keeps a specific (translated) explanation for 503 (model not set up) instead of a generic "server problem". */
 async function analyzeLung(file: UploadFile) {
   try {
     return await api.analyzeLung(file);
   } catch (err) {
-    if (err instanceof ApiError && err.status === 503) throw new Error(err.message);
+    if (err instanceof ApiError && err.status === 503) throw new Error(err.userMessage);
     throw err;
   }
 }

@@ -1,6 +1,46 @@
 {
-  "voiceIntake": {"title":"Describe your symptoms","instructions":"Speak in Romanian or English. ElevenLabs transcribes your recording and Gemini organizes the transcript. You can review and edit the form before saving it.","notice":"AI does not diagnose. In an emergency in the EU, call 112.","stop":"Stop and transcribe","again":"Record again","start":"Start recording","sample":"Sample symptoms. Review before saving.","urgent":"Possible urgent symptoms were flagged. If this is an emergency in the EU, call 112.","review":"Review your form","summary":"Summary","symptom":"Symptom {{number}}","name":"Symptom name","duration":"Duration","notes":"Notes","severity":"Severity","unspecified":"Unspecified","remove":"Remove symptom","add":"Add symptom","medsInput":"Medications (separate with commas)","allergiesInput":"Allergies (separate with commas)","transcript":"Original transcript","saved":"Saved to History on this device.","save":"Save to History","savedForms":"Saved symptom forms","local":"Saved on this device.","flagged":"Possible urgent symptoms flagged","hide":"Hide form","view":"View form","meds":"Medications","allergies":"Allergies","none":"None mentioned","mic":"Allow microphone access in your device or browser settings.","empty":"The recording is empty. Please try again.","noRecording":"No recording was created. Please try again.","micFailed":"Could not start the microphone.","processingFailed":"Could not process the recording."},
-  "voiceRecording": { "processing": "Preparing your transcript…", "source": "Show transcript excerpt",
+  "voiceIntake": {
+    "title": "Describe your symptoms",
+    "instructions": "Speak in Romanian or English. ElevenLabs transcribes your recording and Gemini organizes the transcript. You can review and edit the form before saving it.",
+    "notice": "AI does not diagnose. In an emergency in the EU, call 112.",
+    "stop": "Stop and transcribe",
+    "again": "Record again",
+    "start": "Start recording",
+    "sample": "Sample symptoms. Review before saving.",
+    "urgent": "Possible urgent symptoms were flagged. If this is an emergency in the EU, call 112.",
+    "review": "Review your form",
+    "summary": "Summary",
+    "symptom": "Symptom {{number}}",
+    "name": "Symptom name",
+    "duration": "Duration",
+    "notes": "Notes",
+    "severity": "Severity",
+    "unspecified": "Unspecified",
+    "remove": "Remove symptom",
+    "add": "Add symptom",
+    "medsInput": "Medications (separate with commas)",
+    "allergiesInput": "Allergies (separate with commas)",
+    "transcript": "Original transcript",
+    "saved": "Saved to History on this device.",
+    "save": "Save to History",
+    "savedForms": "Saved symptom forms",
+    "local": "Saved on this device.",
+    "flagged": "Possible urgent symptoms flagged",
+    "hide": "Hide form",
+    "view": "View form",
+    "meds": "Medications",
+    "allergies": "Allergies",
+    "none": "None mentioned",
+    "mic": "Allow microphone access in your device or browser settings.",
+    "empty": "The recording is empty. Please try again.",
+    "noRecording": "No recording was created. Please try again.",
+    "micFailed": "Could not start the microphone.",
+    "processingFailed": "Could not process the recording.",
+    "disclaimer": "AI structures what the patient said. It does not diagnose. In an emergency call 112."
+  },
+  "voiceRecording": {
+    "processing": "Preparing your transcript…",
+    "source": "Show transcript excerpt",
     "active": "Recording"
   },
   "common": {
@@ -70,7 +110,8 @@
       "generic": "Something went wrong. Please try again.",
       "confirmEmail": "Account created. Check your email to confirm it, then sign in.",
       "googleNotConfigured": "Google sign-in needs Supabase to be configured.",
-      "googleIncomplete": "Google sign-in did not complete. Please try again."
+      "googleIncomplete": "Google sign-in did not complete. Please try again.",
+      "weakPassword": "The password is too weak. Use at least 8 characters with letters and numbers."
     }
   },
   "validation": {
@@ -530,7 +571,8 @@
     "noAnalyses": "No X-ray analyses",
     "topFinding": "Top finding",
     "heatmapPlaceholder": "Grad-CAM heatmap placeholder",
-    "noAnalysesHint": "Upload a chest X-ray for an experimental LungVision analysis."
+    "noAnalysesHint": "Upload a chest X-ray for an experimental LungVision analysis.",
+    "disclaimer": "Not a medical device. AI output must be reviewed by a qualified clinician."
   },
   "doctor": {
     "scanPatientQr": "Scan patient QR",
@@ -564,7 +606,39 @@
     "camera": "Camera permission is required to take a photo.",
     "profileMissing": "Your medical profile has not been initialised in the database. Contact the administrator (profiles row missing).",
     "aiFailed": "The AI service didn't return a valid answer. Try again.",
-    "aiTimeout": "The AI service took too long. Try again."
+    "aiTimeout": "The AI service took too long. Try again.",
+    "accountNotReady": "Your signed-in account is not ready yet. Please try again.",
+    "api": {
+      "invalidEmail": "Enter a valid email address.",
+      "inviteSelf": "You cannot add yourself.",
+      "inviteDuplicate": "This person is already invited.",
+      "inviteLimit": "You can add at most 5 emergency contacts.",
+      "guardianNotFound": "Emergency contact not found.",
+      "invitationNotFound": "This invitation no longer exists.",
+      "passportUnavailable": "The emergency passport is not available.",
+      "doctorRequired": "A doctor account is required.",
+      "emptyAudio": "The audio recording is empty.",
+      "noSpeech": "No speech was detected in the recording.",
+      "audioTooLarge": "The audio file is too large (max 25 MB).",
+      "fileTooLarge": "The file is too large.",
+      "unsupportedFile": "Unsupported file type.",
+      "emptyFile": "The file is empty.",
+      "invalidDocument": "The document cannot be read.",
+      "locked": "This item can no longer be changed.",
+      "tooManyRequests": "Too many requests. Please try again later.",
+      "aiBusy": "The AI service is busy. Please try again later.",
+      "aiNotConfigured": "AI is not configured on the server.",
+      "voiceNotConfigured": "Voice is not configured on the server.",
+      "lungUnavailable": "LungVision is not available on this server.",
+      "lungNeedsBackend": "LungVision needs the server model. Set EXPO_PUBLIC_USE_MOCKS=false, start the backend and restart Expo.",
+      "surgeriesNotSetUp": "Surgical history is not set up on the server yet.",
+      "needsBackend": "This feature needs the WWHealth server.",
+      "sharingUnavailable": "Sharing is not available on this device.",
+      "badRequest": "The request could not be processed.",
+      "conflict": "This conflicts with the current state. Reload and try again.",
+      "gone": "This item is no longer valid.",
+      "notSetUp": "This feature is not set up on the server yet."
+    }
   },
   "image": {
     "select": "Select an image",
@@ -623,7 +697,8 @@
       "processingTime": "Processing time",
       "imageStorage": "Image storage",
       "notStored": "Not stored"
-    }
+    },
+    "resultDisclaimer": "Educational prototype, not a medical device. The score is the raw output of a model trained on PneumoniaMNIST, not a clinical probability or diagnosis. The heatmap shows image regions that influenced the model, not a confirmed location of pneumonia. Always consult a qualified clinician."
   },
   "emergency": {
     "intro": "In an emergency, show this QR to a doctor. It works once, for 5 minutes, and only a verified doctor account can open it.",
@@ -2846,5 +2921,17 @@
     "setupTitle": "Let's fill in your details",
     "setupIntro": "Name, date of birth and sex are needed for your medical record and emergency passport. You can change them anytime from your profile.",
     "continue": "Continue"
+  },
+  "voiceTranslation": {
+    "detected": "Detected language: {{language}}",
+    "notDetected": "The spoken language could not be identified.",
+    "title": "Translation into {{language}}",
+    "originalKept": "The original transcript stays unchanged, above.",
+    "uncertain": "The translation may be inaccurate. Check the parts below before using it.",
+    "unknownLanguage": "The language could not be identified reliably. The translation (if any) may be wrong.",
+    "unavailable": "Translation is not available right now. Use the original transcript or type the text.",
+    "check": "Check: {{parts}}",
+    "translate": "Translate into the app language",
+    "useTranslation": "Use the translation in the field"
   }
 }

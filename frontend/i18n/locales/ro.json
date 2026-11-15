@@ -1,6 +1,46 @@
 {
-  "voiceIntake": {"title":"Descrie simptomele","instructions":"Vorbește în română sau în engleză. ElevenLabs transcrie înregistrarea, iar Gemini organizează textul. Poți verifica și edita formularul înainte de salvare.","notice":"Rezultatele AI sunt informative. În caz de urgență în UE, sună la 112.","stop":"Oprește și transcrie","again":"Înregistrează din nou","start":"Începe înregistrarea","sample":"Simptome de exemplu. Verifică-le înainte de salvare.","urgent":"Au fost semnalate simptome posibil urgente. În caz de urgență în UE, sună la 112.","review":"Verifică formularul","summary":"Rezumat","symptom":"Simptomul {{number}}","name":"Numele simptomului","duration":"Durată","notes":"Observații","severity":"Severitate","unspecified":"Nespecificată","remove":"Elimină simptomul","add":"Adaugă un simptom","medsInput":"Medicamente (separate prin virgulă)","allergiesInput":"Alergii (separate prin virgulă)","transcript":"Transcrierea originală","saved":"Salvat în Istoric pe acest dispozitiv.","save":"Salvează în Istoric","savedForms":"Formulare de simptome salvate","local":"Salvate pe acest dispozitiv.","flagged":"Simptome posibil urgente semnalate","hide":"Ascunde formularul","view":"Vezi formularul","meds":"Medicamente","allergies":"Alergii","none":"Nicio mențiune","mic":"Permite accesul la microfon din setările dispozitivului sau ale browserului.","empty":"Înregistrarea este goală. Încearcă din nou.","noRecording":"Înregistrarea nu a fost creată. Încearcă din nou.","micFailed":"Microfonul nu a putut fi pornit.","processingFailed":"Înregistrarea nu a putut fi procesată."},
-  "voiceRecording": { "processing": "Pregătim transcrierea…", "source": "Vezi fragmentul din transcriere",
+  "voiceIntake": {
+    "title": "Descrie simptomele",
+    "instructions": "Vorbește în română sau în engleză. ElevenLabs transcrie înregistrarea, iar Gemini organizează textul. Poți verifica și edita formularul înainte de salvare.",
+    "notice": "Rezultatele AI sunt informative. În caz de urgență în UE, sună la 112.",
+    "stop": "Oprește și transcrie",
+    "again": "Înregistrează din nou",
+    "start": "Începe înregistrarea",
+    "sample": "Simptome de exemplu. Verifică-le înainte de salvare.",
+    "urgent": "Au fost semnalate simptome posibil urgente. În caz de urgență în UE, sună la 112.",
+    "review": "Verifică formularul",
+    "summary": "Rezumat",
+    "symptom": "Simptomul {{number}}",
+    "name": "Numele simptomului",
+    "duration": "Durată",
+    "notes": "Observații",
+    "severity": "Severitate",
+    "unspecified": "Nespecificată",
+    "remove": "Elimină simptomul",
+    "add": "Adaugă un simptom",
+    "medsInput": "Medicamente (separate prin virgulă)",
+    "allergiesInput": "Alergii (separate prin virgulă)",
+    "transcript": "Transcrierea originală",
+    "saved": "Salvat în Istoric pe acest dispozitiv.",
+    "save": "Salvează în Istoric",
+    "savedForms": "Formulare de simptome salvate",
+    "local": "Salvate pe acest dispozitiv.",
+    "flagged": "Simptome posibil urgente semnalate",
+    "hide": "Ascunde formularul",
+    "view": "Vezi formularul",
+    "meds": "Medicamente",
+    "allergies": "Alergii",
+    "none": "Nicio mențiune",
+    "mic": "Permite accesul la microfon din setările dispozitivului sau ale browserului.",
+    "empty": "Înregistrarea este goală. Încearcă din nou.",
+    "noRecording": "Înregistrarea nu a fost creată. Încearcă din nou.",
+    "micFailed": "Microfonul nu a putut fi pornit.",
+    "processingFailed": "Înregistrarea nu a putut fi procesată.",
+    "disclaimer": "AI structurează ce a spus pacientul. Nu pune diagnostice. În caz de urgență sună la 112."
+  },
+  "voiceRecording": {
+    "processing": "Pregătim transcrierea…",
+    "source": "Vezi fragmentul din transcriere",
     "active": "Se înregistrează"
   },
   "common": {
@@ -70,7 +110,8 @@
       "generic": "Ceva n-a mers bine. Încearcă din nou.",
       "confirmEmail": "Cont creat. Verifică emailul pentru confirmare, apoi autentifică-te.",
       "googleNotConfigured": "Autentificarea cu Google necesită configurarea Supabase.",
-      "googleIncomplete": "Autentificarea cu Google nu s-a finalizat. Încearcă din nou."
+      "googleIncomplete": "Autentificarea cu Google nu s-a finalizat. Încearcă din nou.",
+      "weakPassword": "Parola e prea slabă. Folosește cel puțin 8 caractere, cu litere și cifre."
     }
   },
   "validation": {
@@ -90,7 +131,7 @@
     "access": "Accesări",
     "patients": "Pacienți",
     "records": "Dosarul meu",
-    "insights": "AI Insights",
+    "insights": "Informații AI",
     "transfer": "Transfer",
     "family": "Familie",
     "files": "Dosare",
@@ -530,7 +571,8 @@
     "noAnalyses": "Nicio analiză de radiografie",
     "topFinding": "Rezultat principal",
     "heatmapPlaceholder": "Loc rezervat pentru harta Grad-CAM",
-    "noAnalysesHint": "Încarcă o radiografie toracică pentru o analiză experimentală LungVision."
+    "noAnalysesHint": "Încarcă o radiografie toracică pentru o analiză experimentală LungVision.",
+    "disclaimer": "Nu este un dispozitiv medical. Rezultatul AI trebuie verificat de un medic calificat."
   },
   "doctor": {
     "scanPatientQr": "Scanează QR pacient",
@@ -564,7 +606,39 @@
     "camera": "Este necesară permisiunea camerei pentru a face o fotografie.",
     "profileMissing": "Profilul tău medical nu a fost inițializat în baza de date. Contactează administratorul (lipsește rândul din profiles).",
     "aiFailed": "Serviciul AI nu a dat un răspuns valid. Încearcă din nou.",
-    "aiTimeout": "Serviciul AI a răspuns prea încet. Încearcă din nou."
+    "aiTimeout": "Serviciul AI a răspuns prea încet. Încearcă din nou.",
+    "accountNotReady": "Contul tău nu este încă pregătit. Încearcă din nou.",
+    "api": {
+      "invalidEmail": "Introdu o adresă de email validă.",
+      "inviteSelf": "Nu te poți adăuga pe tine.",
+      "inviteDuplicate": "Această persoană este deja invitată.",
+      "inviteLimit": "Poți adăuga cel mult 5 persoane de urgență.",
+      "guardianNotFound": "Persoana de urgență nu a fost găsită.",
+      "invitationNotFound": "Invitația nu mai există.",
+      "passportUnavailable": "Pașaportul de urgență nu este disponibil.",
+      "doctorRequired": "Este necesar un cont de medic.",
+      "emptyAudio": "Înregistrarea audio este goală.",
+      "noSpeech": "Nu s-a detectat vorbire în înregistrare.",
+      "audioTooLarge": "Fișierul audio este prea mare (max. 25 MB).",
+      "fileTooLarge": "Fișierul este prea mare.",
+      "unsupportedFile": "Tip de fișier neacceptat.",
+      "emptyFile": "Fișierul este gol.",
+      "invalidDocument": "Documentul nu poate fi citit.",
+      "locked": "Acest element nu mai poate fi modificat.",
+      "tooManyRequests": "Prea multe cereri. Încearcă din nou mai târziu.",
+      "aiBusy": "Serviciul AI este ocupat. Încearcă din nou mai târziu.",
+      "aiNotConfigured": "AI nu este configurat pe server.",
+      "voiceNotConfigured": "Vocea nu este configurată pe server.",
+      "lungUnavailable": "LungVision nu este disponibil pe acest server.",
+      "lungNeedsBackend": "LungVision necesită modelul de pe server. Setează EXPO_PUBLIC_USE_MOCKS=false, pornește backend-ul și repornește Expo.",
+      "surgeriesNotSetUp": "Istoricul chirurgical nu este configurat încă pe server.",
+      "needsBackend": "Această funcție necesită serverul WWHealth.",
+      "sharingUnavailable": "Partajarea nu este disponibilă pe acest dispozitiv.",
+      "badRequest": "Cererea nu a putut fi procesată.",
+      "conflict": "Acțiunea intră în conflict cu starea actuală. Reîncarcă și încearcă din nou.",
+      "gone": "Elementul nu mai este valabil.",
+      "notSetUp": "Această funcție nu este configurată încă pe server."
+    }
   },
   "image": {
     "select": "Selectează o imagine",
@@ -623,7 +697,8 @@
       "processingTime": "Timp de procesare",
       "imageStorage": "Stocarea imaginii",
       "notStored": "Nestocată"
-    }
+    },
+    "resultDisclaimer": "Prototip educațional, nu este un dispozitiv medical. Scorul este ieșirea brută a unui model antrenat pe PneumoniaMNIST, nu o probabilitate clinică sau un diagnostic. Harta termică arată zonele imaginii care au influențat modelul, nu localizarea confirmată a unei pneumonii. Consultă întotdeauna un medic."
   },
   "emergency": {
     "intro": "În caz de urgență, arată acest QR unui medic. Funcționează o singură dată, timp de 5 minute, și poate fi deschis doar dintr-un cont de medic verificat.",
@@ -793,7 +868,7 @@
     "uncertainHint_one": "{{count}} valoare incertă trebuie confirmată sau eliminată înainte de salvare.",
     "uncertainHint_few": "{{count}} valori incerte trebuie confirmate sau eliminate înainte de salvare.",
     "uncertainHint_other": "{{count}} de valori incerte trebuie confirmate sau eliminate înainte de salvare.",
-    "confirm": "Confirm",
+    "confirm": "Confirmă",
     "reading": "Se citește documentul…",
     "noValuesTitle": "Nicio valoare",
     "noValuesText": "Nu există valori de laborator explicite pentru acest document.",
@@ -1140,7 +1215,7 @@
     "complete": {
       "title": "Dosarul tău e complet",
       "why": "Îl poți partaja temporar cu un medic sau poți genera QR-ul de urgență.",
-      "cta": "Transfer & Access"
+      "cta": "Transfer și acces"
     }
   },
   "nextSteps": {
@@ -1230,7 +1305,7 @@
       "specialtiesHint": "Fără AI: alegi direct specialitatea și medicul."
     },
     "transfer": {
-      "title": "Transfer & Access",
+      "title": "Transfer și acces",
       "subtitle": "Tu decizi cine vede ce, pentru cât timp. Poți revoca oricând.",
       "emergencyTitle": "Urgență",
       "emergencySubtitle": "Datele vitale, la un QR distanță.",
@@ -1369,7 +1444,7 @@
         ]
       },
       "transfer": {
-        "title": "Transfer & Access",
+        "title": "Transfer și acces",
         "intro": "Controlezi cine vede datele tale și pentru cât timp.",
         "can": [
           "Generezi un QR de urgență de 5 minute.",
@@ -2129,7 +2204,7 @@
       "pending_one": "{{count}} cerere în așteptare",
       "pending_few": "{{count}} cereri în așteptare",
       "pending_other": "{{count}} de cereri în așteptare",
-      "accept": "Accept",
+      "accept": "Acceptă",
       "propose": "Propun altă oră",
       "reject": "Resping",
       "rejectTitle": "Respingi cererea?",
@@ -2472,7 +2547,7 @@
       "previewWeekly_few": "≈ {{count}} consultații pe săptămână",
       "previewWeekly_other": "≈ {{count}} de consultații pe săptămână",
       "previewNone": "Nicio zi de lucru selectată.",
-      "slotsCount_one": "{{count}} slot",
+      "slotsCount_one": "{{count}} interval",
       "slotsCount_few": "{{count}} sloturi",
       "slotsCount_other": "{{count}} de sloturi",
       "tz": "Fus orar: {{tz}}.",
@@ -2878,5 +2953,17 @@
     "setupTitle": "Hai să completăm datele tale",
     "setupIntro": "Numele, data nașterii și sexul sunt necesare pentru dosarul medical și pașaportul de urgență. Le poți modifica oricând din profil.",
     "continue": "Continuă"
+  },
+  "voiceTranslation": {
+    "detected": "Limba detectată: {{language}}",
+    "notDetected": "Limba vorbită nu a putut fi identificată.",
+    "title": "Traducere în {{language}}",
+    "originalKept": "Transcrierea originală rămâne neschimbată, mai sus.",
+    "uncertain": "Traducerea poate fi inexactă. Verifică pasajele de mai jos înainte să o folosești.",
+    "unknownLanguage": "Limba nu a putut fi identificată sigur. Traducerea (dacă apare) poate fi greșită.",
+    "unavailable": "Traducerea nu este disponibilă acum. Folosește transcrierea originală sau scrie textul.",
+    "check": "De verificat: {{parts}}",
+    "translate": "Tradu în limba aplicației",
+    "useTranslation": "Folosește traducerea în câmp"
   }
 }

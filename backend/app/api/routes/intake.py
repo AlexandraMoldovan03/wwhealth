@@ -1,6 +1,8 @@
 from starlette.concurrency import run_in_threadpool
 
-from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
+from typing import Literal
+
+from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
 
 from app.api.supabase_errors import supabase_errors
 from app.core.config import settings
@@ -16,6 +18,7 @@ MAX_AUDIO_BYTES = 25 * 1024 * 1024
 @router.post("/voice", response_model=IntakeForm)
 async def voice_intake(
     file: UploadFile = File(...),
+    language: Literal["ro", "en"] = Form("ro"),  # app language: structured form + translation are written in it
     user: CurrentUser = Depends(get_current_user),
 ) -> IntakeForm:
     if settings.supabase_enabled:
@@ -29,5 +32,5 @@ async def voice_intake(
     if len(audio) > MAX_AUDIO_BYTES:
         raise HTTPException(413, "Audio file too large (max 25 MiB)")
     return await build_form(
-        audio, file.filename or "recording.m4a", file.content_type or "application/octet-stream"
+        audio, file.filename or "recording.m4a", file.content_type or "application/octet-stream", language
     )

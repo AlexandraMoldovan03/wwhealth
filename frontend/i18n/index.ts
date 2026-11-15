@@ -4,10 +4,11 @@
  *   const { t } = useTranslation();   t('settings.title')       // in components (re-renders on change)
  *   import { i18n } from './.';    i18n.t('validation.x')    // in plain functions
  *
- * Language: saved English or Romanian preference, defaulting to English.
+ * Language: the user's saved choice; otherwise the phone language when it is Romanian or English; otherwise English.
  * Only UI text is translated — never user-entered medical data or technical values from the API.
  */
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getLocales } from 'expo-localization';
 import { createInstance } from 'i18next';
 import { initReactI18next } from 'react-i18next';
 
@@ -23,11 +24,24 @@ export type Language = (typeof LANGUAGES)[number]['code'];
 const STORAGE_KEY = 'wwhealth.language';
 const isLanguage = (value: unknown): value is Language => LANGUAGES.some((l) => l.code === value);
 
+/** Phone language → 'ro' | 'en' (any other language falls back to English). */
+export function deviceLanguage(): Language {
+  try {
+    for (const locale of getLocales()) {
+      const code = locale.languageCode?.toLowerCase();
+      if (isLanguage(code)) return code;
+    }
+  } catch {
+    // expo-localization unavailable (tests): English
+  }
+  return 'en';
+}
+
 const i18n = createInstance();
 
 i18n.use(initReactI18next).init({
   resources: { en: { translation: en }, ro: { translation: ro } },
-  lng: 'en',
+  lng: deviceLanguage(),
   fallbackLng: 'en',
   interpolation: { escapeValue: false }, // React already escapes
 });
@@ -36,9 +50,9 @@ i18n.use(initReactI18next).init({
 export async function getLanguagePreference(): Promise<Language> {
   try {
     const saved = await AsyncStorage.getItem(STORAGE_KEY);
-    return isLanguage(saved) ? saved : 'en';
+    return isLanguage(saved) ? saved : deviceLanguage();
   } catch {
-    return 'en';
+    return deviceLanguage();
   }
 }
 

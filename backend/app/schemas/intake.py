@@ -1,6 +1,7 @@
 from typing import Literal
 
 from app.schemas.base import CamelModel
+from app.services.voice_translation import VoiceTranslation
 
 
 class Symptom(CamelModel):
@@ -20,6 +21,8 @@ class IntakeDetails(CamelModel):
 
 class IntakeForm(IntakeDetails):
     transcript: str
-    language: str | None = None
+    language: str | None = None             # detected by ElevenLabs Scribe (any supported language)
+    language_probability: float | None = None
+    translation: VoiceTranslation | None = None  # into the app language; the transcript above stays original
     is_demo: bool = False
     disclaimer: str = "AI structures what the patient said. It does not diagnose. In an emergency call 112."

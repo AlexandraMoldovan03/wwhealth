@@ -140,3 +140,12 @@ def test_doctor_exports_need_consent_and_stay_within_scopes():
 def test_doctor_cannot_export_another_patient():
     grant(["profile", "labs", "documents"])
     assert client.get(f"{API}/doctor/patients/other-patient/export/fhir").status_code == 403
+
+
+def test_pdf_follows_app_language():
+    assert set(export_service.PDF_TEXT["ro"]) == set(export_service.PDF_TEXT["en"])
+    assert set(export_service.PDF_TEXT["ro"]["groups"]) == set(export_service.PDF_TEXT["en"]["groups"])
+    for lang in ("ro", "en"):
+        res = client.get(f"{API}/export/summary.pdf", params={"lang": lang})
+        assert res.status_code == 200 and res.content.startswith(b"%PDF")
+    assert client.get(f"{API}/export/summary.pdf", params={"lang": "de"}).status_code == 422

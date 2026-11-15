@@ -93,7 +93,7 @@ const RED_FLAGS: [string, RegExp][] = [
 
 export const mockSmartCare: Pick<
   WWHealthApi,
-  | 'listSpecialties' | 'transcribeSymptoms' | 'triageSymptoms' | 'listSpecialtyDoctors' | 'listDoctorSlots' | 'requestAppointment' | 'listMyAppointments'
+  | 'listSpecialties' | 'transcribeSymptoms' | 'translateTranscript' | 'triageSymptoms' | 'listSpecialtyDoctors' | 'listDoctorSlots' | 'requestAppointment' | 'listMyAppointments'
   | 'updateMyAppointment' | 'listDoctorAppointments' | 'respondAppointment' | 'listMyAvailability' | 'listMyFreeSlots'
   | 'addAvailability' | 'deleteAvailability'
 > = {
@@ -108,6 +108,12 @@ export const mockSmartCare: Pick<
   async transcribeSymptoms() {
     await delay(MOCK_DELAY_MS);
     return { transcript: 'Tusesc de două săptămâni, mai ales noaptea, și obosesc repede.', language: 'ro', isDemo: true };
+  },
+
+  // Translation runs on the backend (Gemini) only — never simulated.
+  async translateTranscript() {
+    await delay(MOCK_DELAY_MS);
+    throw new ApiError('Document scanning needs the backend (set EXPO_PUBLIC_USE_MOCKS=false).', 503);
   },
 
   async triageSymptoms(request) {

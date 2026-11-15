@@ -40,6 +40,7 @@ export const ENDPOINTS = {
   aiPatientGenerate: (patientId: string) => `/api/v1/intelligence/patients/${encodeURIComponent(patientId)}/generate`,
   careSpecialties: '/api/v1/smart-care/specialties',
   careTranscribe: '/api/v1/smart-care/transcribe',
+  careTranslate: '/api/v1/smart-care/translate',
   careTriage: '/api/v1/smart-care/triage',
   careSpecialtyDoctors: (id: string) => `/api/v1/smart-care/specialties/${encodeURIComponent(id)}/doctors`,
   careDoctorSlots: (id: string) => `/api/v1/smart-care/doctors/${encodeURIComponent(id)}/slots`,

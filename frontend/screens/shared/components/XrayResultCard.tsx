@@ -35,9 +35,9 @@ export function XrayResultCard({ result, showHeatmap = true }: { result: XrayAna
       <PredictionCards predictions={result.predictions} />
 
       <AppText variant="caption" color="textSubtle">
-        {result.modelVersion.replace(/-demo$/i, '')} · {result.processingTimeMs} ms · {formatDateTime(result.createdAt)}
+        {result.modelVersion} · {result.processingTimeMs} ms · {formatDateTime(result.createdAt)}
       </AppText>
-      <DemoNotice message={result.disclaimer.replace(/^DEMO\s*[—–-]\s*/i, '')} />
+      <DemoNotice message={t('xray.disclaimer')} />
     </AppCard>
   );
 }

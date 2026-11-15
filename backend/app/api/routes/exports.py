@@ -6,7 +6,9 @@ consent check and FHIR export log as GET /care/doctor/patients/{id}/fhir. Every 
 """
 from collections.abc import Callable
 
-from fastapi import APIRouter, Depends, HTTPException, Response
+from typing import Literal
+
+from fastapi import APIRouter, Depends, HTTPException, Query, Response
 
 from app.api.routes.care_journey import _doctor_data, _own_data, _run
 from app.core.config import settings
@@ -15,6 +17,7 @@ from app.services import doctor_access_service, document_storage, export_service
 from app.services.emergency_passport import build_passport, profile_dict
 
 router = APIRouter(prefix="/care", tags=["exports"])
+Lang = Literal["ro", "en"]  # language of the PDF text (patient data is never translated)
 KINDS = {"fhir": ("application/fhir+json", "wwhealth-fhir.json"),
          "emergency-summary": ("application/fhir+json", "wwhealth-emergency-summary.json"),
          "labs.csv": ("text/csv; charset=utf-8", "wwhealth-analize.csv"),
@@ -30,13 +33,13 @@ def _respond(kind: str, body: bytes | str) -> Response:
 
 
 def _build(kind: str, patient_id: str, record, documents, labs, plans, appts, facts,
-           fetch: Callable[[str], tuple[bytes, str, str] | None] | None) -> bytes | str:
+           fetch: Callable[[str], tuple[bytes, str, str] | None] | None, lang: str = "ro") -> bytes | str:
     import json
     if kind == "labs.csv":
         return export_service.labs_csv(labs)
     passport = build_passport(profile_dict(record), facts=facts, labs=labs or [])
     if kind == "summary.pdf":
-        return export_service.summary_pdf(record, passport, labs)
+        return export_service.summary_pdf(record, passport, labs, lang)
     summary = export_service.emergency_summary(patient_id, record, labs, facts, passport)
     if kind == "emergency-summary":
         return json.dumps(summary, ensure_ascii=False)
@@ -44,7 +47,7 @@ def _build(kind: str, patient_id: str, record, documents, labs, plans, appts, fa
     if kind == "fhir":
         return json.dumps(bundle, ensure_ascii=False)
     return export_service.archive_zip(bundle, summary, export_service.labs_csv(labs),
-                                      export_service.summary_pdf(record, passport, labs), documents, fetch)
+                                      export_service.summary_pdf(record, passport, labs, lang), documents, fetch)
 
 
 def _guard(fn: Callable[[], bytes | str], kind: str) -> Response:
@@ -54,7 +57,7 @@ def _guard(fn: Callable[[], bytes | str], kind: str) -> Response:
         raise HTTPException(status_code=500, detail="export_validation_failed") from exc
 
 
-def _own(user: CurrentUser, kind: str) -> bytes | str:
+def _own(user: CurrentUser, kind: str, lang: str = "ro") -> bytes | str:
     record, documents, labs, plans, appts = _own_data(user, "en")
     if settings.supabase_enabled:
         supabase_repo.log_fhir_export(user, user.id)
@@ -63,10 +66,10 @@ def _own(user: CurrentUser, kind: str) -> bytes | str:
         def fetch(doc_id: str):
             local = document_storage.get_document_file(user.id, doc_id)
             return (local[0].read_bytes(), local[1], local[0].name) if local else None
-    return _build(kind, user.id, record, documents, labs, plans, appts, import_repo.facts_or_empty(user), fetch)
+    return _build(kind, user.id, record, documents, labs, plans, appts, import_repo.facts_or_empty(user), fetch, lang)
 
 
-def _doctor(doctor: CurrentUser, patient_id: str, kind: str) -> bytes | str:
+def _doctor(doctor: CurrentUser, patient_id: str, kind: str, lang: str = "ro") -> bytes | str:
     o, record, documents, labs, plans, appts = _doctor_data(doctor, patient_id)  # 403 without an active grant
     scopes = o.get("scopes") or []
     if settings.supabase_enabled:
@@ -77,17 +80,17 @@ def _doctor(doctor: CurrentUser, patient_id: str, kind: str) -> bytes | str:
         return found if status == "ok" else None
     return _build(kind, patient_id, record, documents, labs, plans, appts,
                   doctor_access_service.documented_facts(doctor, patient_id, scopes),
-                  fetch if "documents" in scopes else None)
+                  fetch if "documents" in scopes else None, lang)
 
 
 def _register(kind: str) -> None:
     @router.get(f"/export/{kind}", name=f"export_{kind}")
-    def own(user: CurrentUser = Depends(get_current_user)) -> Response:
-        return _guard(lambda: _run(_own, user, kind), kind)
+    def own(lang: Lang = Query("ro"), user: CurrentUser = Depends(get_current_user)) -> Response:
+        return _guard(lambda: _run(_own, user, kind, lang), kind)
 
     @router.get(f"/doctor/patients/{{patient_id}}/export/{kind}", name=f"doctor_export_{kind}")
-    def doctor(patient_id: str, doctor: CurrentUser = Depends(get_current_doctor)) -> Response:
-        return _guard(lambda: _run(_doctor, doctor, patient_id, kind), kind)
+    def doctor(patient_id: str, lang: Lang = Query("ro"), doctor: CurrentUser = Depends(get_current_doctor)) -> Response:
+        return _guard(lambda: _run(_doctor, doctor, patient_id, kind, lang), kind)
 
 
 for _kind in KINDS:

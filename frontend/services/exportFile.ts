@@ -1,3 +1,4 @@
+import { i18n } from '@/i18n';
 import { File, Paths } from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 import { Platform } from 'react-native';
@@ -19,8 +20,8 @@ export const EXPORT_FILES: Record<ExportKind, { filename: string; mimeType: stri
 /** Own export, or (doctor) the export of a patient who granted access. The backend enforces consent. */
 export const exportPath = (kind: ExportKind, patientId?: string) =>
   patientId
-    ? `/api/v1/care/doctor/patients/${encodeURIComponent(patientId)}/export/${kind}`
-    : `/api/v1/care/export/${kind}`;
+    ? `/api/v1/care/doctor/patients/${encodeURIComponent(patientId)}/export/${kind}?lang=${i18n.language === 'ro' ? 'ro' : 'en'}`
+    : `/api/v1/care/export/${kind}?lang=${i18n.language === 'ro' ? 'ro' : 'en'}`;
 
 /**
  * Downloads an export with the user's session and opens the share sheet (native) or saves it (web).

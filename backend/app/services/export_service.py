@@ -213,11 +213,30 @@ def _latin(text: object) -> str:
 PDF_GROUPS = {"allergy": "Alergii", "condition": "Afectiuni", "medication": "Medicatie", "lab": "Analize",
               "blood_type": "Grupa sanguina", "history": "Antecedente", "procedure": "Interventii chirurgicale"}
 
+# PDF text in the user's app language (ro / en). Patient-entered medical data is never translated.
+PDF_TEXT = {
+    "ro": {"title": "WWHealth - Rezumat medical structurat", "generated": "Generat", "dob": "Data nasterii",
+           "disclaimer": "Generat din date confirmate de pacient. Nu este un diagnostic si nu inlocuieste documentele medicale oficiale.",
+           "unknown_allergies": "Alergii: ALERGII NECUNOSCUTE (nicio informatie inregistrata)", "none": "Nicio informatie.",
+           "critical_value": "VALOARE CRITICA", "needs_confirmation": "NECESITA CONFIRMARE", "conflict": "SURSE CONTRADICTORII",
+           "p1": "P1 - Critic pentru urgenta", "p2": "P2 - Informatii esentiale", "p3": "P3 - Rezultate anormale",
+           "labs": "Istoric analize", "cols": ("Analiza", "Valoare", "Referinta", "", "Data", "Sursa"), "groups": PDF_GROUPS},
+    "en": {"title": "WWHealth - Structured medical summary", "generated": "Generated", "dob": "Date of birth",
+           "disclaimer": "Generated from patient-confirmed data. Not a diagnosis and not a replacement for official medical documents.",
+           "unknown_allergies": "Allergies: UNKNOWN ALLERGIES (nothing recorded)", "none": "No information.",
+           "critical_value": "CRITICAL VALUE", "needs_confirmation": "NEEDS CONFIRMATION", "conflict": "CONFLICTING SOURCES",
+           "p1": "P1 - Critical for emergencies", "p2": "P2 - Essential information", "p3": "P3 - Abnormal results",
+           "labs": "Lab history", "cols": ("Test", "Value", "Reference", "", "Date", "Source"),
+           "groups": {"allergy": "Allergies", "condition": "Conditions", "medication": "Medication", "lab": "Labs",
+                      "blood_type": "Blood type", "history": "History", "procedure": "Surgical procedures"}},
+}
 
-def summary_pdf(record, passport: PrioritizedPassport, labs: list[dict] | None) -> bytes:
+
+def summary_pdf(record, passport: PrioritizedPassport, labs: list[dict] | None, lang: str = "ro") -> bytes:
     from fpdf import FPDF
     from fpdf.enums import XPos, YPos
 
+    tx = PDF_TEXT.get(lang, PDF_TEXT["ro"])
     pdf = FPDF(format="A4")
     pdf.set_auto_page_break(auto=True, margin=15)
     pdf.add_page()
@@ -234,19 +253,19 @@ def summary_pdf(record, passport: PrioritizedPassport, labs: list[dict] | None) 
         pdf.set_font("Helvetica", "B" if bold else "", 10)
         pdf.multi_cell(width, 5, _latin(text), **nl)
 
-    heading("WWHealth - Rezumat medical structurat", 16)
-    line(f"Generat: {datetime.now(UTC).strftime('%Y-%m-%d %H:%M')} UTC")
+    heading(tx["title"], 16)
+    line(f"{tx['generated']}: {datetime.now(UTC).strftime('%Y-%m-%d %H:%M')} UTC")
     if record is not None:
-        line(" · ".join(x for x in (record.full_name, f"Data nasterii: {record.date_of_birth}" if record.date_of_birth else None) if x))
-    line("Generat din date confirmate de pacient. Nu este un diagnostic si nu inlocuieste documentele medicale oficiale.")
+        line(" · ".join(x for x in (record.full_name, f"{tx['dob']}: {record.date_of_birth}" if record.date_of_birth else None) if x))
+    line(tx["disclaimer"])
 
     def items(title: str, entries: list[PassportItem], unknown_allergies: bool = False) -> None:
         heading(title)
         if unknown_allergies:
-            line("Alergii: ALERGII NECUNOSCUTE (nicio informatie inregistrata)", bold=True)
+            line(tx["unknown_allergies"], bold=True)
         if not entries and not unknown_allergies:
-            line("Nicio informatie.")
-        for kind, label in PDF_GROUPS.items():
+            line(tx["none"])
+        for kind, label in tx["groups"].items():
             group = [i for i in entries if i.kind == kind]
             if not group:
                 continue
@@ -255,27 +274,27 @@ def summary_pdf(record, passport: PrioritizedPassport, labs: list[dict] | None) 
                 text = i.label
                 if i.lab:
                     text += f": {i.lab.value} {i.lab.unit or ''}".rstrip() + (f" (ref. {i.lab.reference_range})" if i.lab.reference_range else "")
-                    text += " - VALOARE CRITICA" if i.lab.critical else ""
+                    text += f" - {tx['critical_value']}" if i.lab.critical else ""
                 if i.detail:
                     text += f" - {i.detail}"
                 if i.severity:
                     text += f" [{i.severity}]"
                 if not i.confirmed:
-                    text += " [NECESITA CONFIRMARE]"
+                    text += f" [{tx['needs_confirmation']}]"
                 if i.conflict:
-                    text += " [SURSE CONTRADICTORII: " + " / ".join(i.conflict_values) + "]"
+                    text += f" [{tx['conflict']}: " + " / ".join(i.conflict_values) + "]"
                 line("  - " + text)
 
-    items("P1 - Critic pentru urgenta", passport.critical, passport.allergies_status == "unknown")
-    items("P2 - Informatii esentiale", passport.essential)
+    items(tx["p1"], passport.critical, passport.allergies_status == "unknown")
+    items(tx["p2"], passport.essential)
     if passport.investigations:
-        items("P3 - Rezultate anormale", passport.investigations)
+        items(tx["p3"], passport.investigations)
 
     rows = sorted((r for r in labs or [] if r.get("name")), key=lambda r: (str(r["name"]).lower(),
                                                                          str(r.get("measured_at") or r.get("document_date") or "")))
     if rows:
-        heading("Istoric analize")
-        cols = [("Analiza", 0.28), ("Valoare", 0.16), ("Referinta", 0.18), ("", 0.05), ("Data", 0.13), ("Sursa", 0.20)]
+        heading(tx["labs"])
+        cols = list(zip(tx["cols"], (0.28, 0.16, 0.18, 0.05, 0.13, 0.20), strict=True))
         pdf.set_font("Helvetica", "B", 9)
         for name, w in cols:
             pdf.cell(width * w, 6, _latin(name), border=1)

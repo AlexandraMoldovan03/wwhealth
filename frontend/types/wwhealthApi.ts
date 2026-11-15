@@ -1,3 +1,4 @@
+import type { VoiceTranslation } from './intake';
 import type { UploadFile } from './api';
 import type { IntakeForm } from './intake';
 import type { AccessOverview, DoctorGrant, DoctorIdentity, DoctorPatient, GrantRequest, MedicalSummary, PatientAccessView, VerifiedDoctor } from './consent';
@@ -67,6 +68,7 @@ export interface WWHealthApi {
   uploadDocument(file: UploadFile, documentType: DocumentType, title: string): Promise<DocumentUploadResponse>;
   analyzeDocument(file: UploadFile, documentType: DocumentType, title: string): Promise<DocumentAnalyzeResponse>;
   analyzeXray(file: UploadFile): Promise<XrayAnalysis>;
+  /** Voice intake: transcript in the spoken language + form and translation in the app language. */
   analyzeIntake(file: UploadFile): Promise<IntakeForm>;
   /** LungVision (real model on the backend) — POST /api/ai/lung/analyze. */
   analyzeLung(file: UploadFile): Promise<LungAnalysis>;
@@ -130,6 +132,8 @@ export interface WWHealthApi {
   listSpecialties(query: string, language: Language): Promise<Specialty[]>;
   /** Voice → text with ElevenLabs only, after the patient's explicit confirmation. */
   transcribeSymptoms(file: UploadFile): Promise<Transcript>;
+  /** Gemini translation of a voice transcript into the app language (explicit tap). */
+  translateTranscript(text: string, sourceLanguage: string | null): Promise<VoiceTranslation>;
   /** Emergency rules first (no AI); Gemini only with AI consent. Not stored. */
   triageSymptoms(request: TriageRequest): Promise<TriageResult>;
   listSpecialtyDoctors(specialtyId: string): Promise<CareDoctor[]>;

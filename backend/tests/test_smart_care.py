@@ -390,12 +390,13 @@ def test_transcribe_uses_only_elevenlabs(monkeypatch):
 
     async def fake(audio, name, ctype):
         calls.append(name)
-        return "Tuse de o săptămână", "ro"
+        return intake_service.Transcription("Tuse de o săptămână", "ro", 0.98)
 
     monkeypatch.setattr(intake_service, "transcribe", fake)
     monkeypatch.setattr(intake_service, "structure", lambda *_: (_ for _ in ()).throw(AssertionError("no Gemini")))
     body = client.post(f"{API}/transcribe", files={"file": ("v.m4a", b"x", "audio/mp4")}, data={"elevenlabsConsent": "true"}).json()
-    assert body == {"transcript": "Tuse de o săptămână", "language": "ro", "isDemo": False} and calls == ["v.m4a"]
+    assert body == {"transcript": "Tuse de o săptămână", "language": "ro", "languageProbability": 0.98,
+                    "isDemo": False} and calls == ["v.m4a"]
 
 
 

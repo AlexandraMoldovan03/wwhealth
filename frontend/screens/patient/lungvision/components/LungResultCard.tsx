@@ -209,7 +209,7 @@ function TechnicalDetails({ result }: { result: LungAnalysis }) {
             </View>
           ))}
           <AppText variant="caption" color="textSubtle">
-            {result.disclaimer}
+            {t('lung.resultDisclaimer')}
           </AppText>
         </View>
       )}

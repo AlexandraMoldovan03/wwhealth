@@ -43,12 +43,12 @@ function friendlyError(message: string, code?: string): Error {
   const m = message.toLowerCase();
   if (code === 'over_email_send_rate_limit' || m.includes('rate limit'))
     return new Error(i18n.t('auth.errors.rateLimit'));
-  if (code === 'weak_password') return new Error(message);
+  if (code === 'weak_password') return new Error(i18n.t('auth.errors.weakPassword'));
   if (m.includes('invalid login credentials')) return new Error(i18n.t('auth.errors.wrongCredentials'));
   if (m.includes('email not confirmed')) return new Error(i18n.t('auth.errors.emailNotConfirmed'));
   if (m.includes('already registered') || m.includes('already been registered'))
     return new Error(i18n.t('auth.errors.alreadyRegistered'));
-  if (m.includes('password')) return new Error(message);
+  if (m.includes('password')) return new Error(i18n.t('auth.errors.weakPassword'));
   if (m.includes('network') || m.includes('fetch')) return new Error(i18n.t('auth.errors.network'));
   return new Error(i18n.t('auth.errors.generic'));
 }

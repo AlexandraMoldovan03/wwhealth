@@ -1,3 +1,4 @@
+import { i18n } from '@/i18n';
 import { createContext, type PropsWithChildren, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { useCurrentUser } from '@/services/auth/useCurrentUser';
@@ -30,7 +31,7 @@ export function EmergencyTokenProvider({ children }: PropsWithChildren) {
   }, [user?.id]);
 
   const saveToken = useCallback(async (token: EmergencyTokenResponse) => {
-    if (!user?.id) throw new Error('Your signed-in account is not ready yet. Please try again.');
+    if (!user?.id) throw new Error(i18n.t('errors.accountNotReady'));
     const ownerId = user.id;
     setSnapshot({ ownerId, token });
     await saveEmergencyToken(ownerId, token);

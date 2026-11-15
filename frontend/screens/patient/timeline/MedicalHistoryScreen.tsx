@@ -173,7 +173,7 @@ function SavedIntakeCard({ entry }: { entry: SavedIntake }) {
           <AppText>{t('voiceIntake.allergies')}: {form.allergiesMentioned.join(', ') || t('voiceIntake.none')}</AppText>
           <AppText variant="subheading">{t('voiceIntake.transcript')}</AppText>
           <AppText selectable>{form.transcript}</AppText>
-          <AppText variant="caption" color="textMuted">{form.disclaimer}</AppText>
+          <AppText variant="caption" color="textMuted">{t('voiceIntake.disclaimer')}</AppText>
         </View>
       )}
     </AppCard>

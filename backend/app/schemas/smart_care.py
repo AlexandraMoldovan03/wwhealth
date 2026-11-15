@@ -51,7 +51,15 @@ class TriageRequest(CamelModel):
 class Transcript(CamelModel):
     transcript: str
     language: str | None = None
+    language_probability: float | None = None
     is_demo: bool = False
+
+
+class TranslateRequest(CamelModel):
+    """Translate a (checked / edited) voice transcript into the app language. Explicit user action only."""
+    text: str = Field(min_length=1, max_length=2000)
+    source_language: str | None = Field(default=None, max_length=12)
+    target_language: Literal["ro", "en"]
 
 
 class SuggestedSpecialty(CamelModel):

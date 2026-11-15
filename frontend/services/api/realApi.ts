@@ -1,4 +1,5 @@
 /** API mode — real HTTP calls to FastAPI. One method per endpoint in docs/API_CONTRACT.md. */
+import { i18n } from '@/i18n';
 import type { JsonValue, WWHealthApi } from '@/types';
 
 import { apiClient } from './client';
@@ -8,6 +9,9 @@ import { ENDPOINTS } from './endpoints';
 const AI_TIMEOUT_MS = 60_000;
 /** Typed object → JsonValue (drops undefined fields). */
 const json = (value: unknown) => JSON.parse(JSON.stringify(value)) as JsonValue;
+/** App language for voice structuring / translation (any other phone language uses English). */
+const appLanguage = () => (i18n.language === 'ro' ? 'ro' : 'en');
+
 export const realApi: WWHealthApi = {
   health: () => apiClient.get(ENDPOINTS.health, { timeoutMs: 5_000 }),
 
@@ -27,7 +31,8 @@ export const realApi: WWHealthApi = {
   // Model + Grad-CAM run on CPU; the first call also loads the model.
   analyzeLung: (file) => apiClient.upload(ENDPOINTS.lungAnalyze, { file }, {}, { timeoutMs: 60_000 }),
 
-  analyzeIntake: (file) => apiClient.upload(ENDPOINTS.voiceIntake, { file }, {}, { timeoutMs: 190_000 }),
+  analyzeIntake: (file) =>
+    apiClient.upload(ENDPOINTS.voiceIntake, { file }, { language: appLanguage() }, { timeoutMs: 190_000 }),
 
   voiceSummary: (request) =>
     apiClient.post(ENDPOINTS.voiceSummary, { patientId: request.patientId, language: request.language }),
@@ -79,6 +84,8 @@ export const realApi: WWHealthApi = {
   listSpecialties: (query, language) => apiClient.get(ENDPOINTS.careSpecialties, { params: { q: query, lang: language } }),
   transcribeSymptoms: (file) =>
     apiClient.upload(ENDPOINTS.careTranscribe, { file }, { elevenlabsConsent: 'true' }, { timeoutMs: 150_000 }),
+  translateTranscript: (text, sourceLanguage) =>
+    apiClient.post(ENDPOINTS.careTranslate, { text, sourceLanguage, targetLanguage: appLanguage() }, { timeoutMs: AI_TIMEOUT_MS }),
   triageSymptoms: (request) =>
     apiClient.post(ENDPOINTS.careTriage, JSON.parse(JSON.stringify(request)) as JsonValue, { timeoutMs: AI_TIMEOUT_MS }),
   listSpecialtyDoctors: (specialtyId) => apiClient.get(ENDPOINTS.careSpecialtyDoctors(specialtyId)),

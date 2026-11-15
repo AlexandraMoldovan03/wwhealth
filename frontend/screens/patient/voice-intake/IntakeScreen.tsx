@@ -11,6 +11,7 @@ import { RecordingFeedback } from './RecordingFeedback';
 import { saveIntake } from './intakeStorage';
 import { useVoiceIntake } from './useVoiceIntake';
 import { useSubmit } from '@/hooks/useSubmit';
+import { VoiceTranslationPanel } from '@/screens/shared/components/VoiceTranslationPanel';
 import type { IntakeForm, Symptom } from '@/types';
 
 const EMPTY_SYMPTOM: Symptom = { name: '', duration: null, severity: null, notes: null };
@@ -151,6 +152,7 @@ function IntakeEditor({ initialForm, disabled, userId }: { initialForm: IntakeFo
       <AppText variant="subheading">{t('voiceIntake.transcript')}</AppText>
       <View accessible={false} style={{ height: 2, backgroundColor: colors.primary }} />
       <AppText color="textMuted" selectable>{form.transcript}</AppText>
+      {!form.isDemo && <VoiceTranslationPanel language={form.language} translation={form.translation} />}
       {save.error && <AppText color="danger" accessibilityRole="alert">{save.error}</AppText>}
       {save.data ? (
         <AppText color="primary" accessibilityRole="alert">{t('voiceIntake.saved')}</AppText>

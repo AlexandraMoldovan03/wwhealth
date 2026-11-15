@@ -27,6 +27,7 @@ export interface TriageRequest {
 export interface Transcript {
   transcript: string;
   language: string | null;
+  languageProbability?: number | null;
   isDemo: boolean;
 }
 

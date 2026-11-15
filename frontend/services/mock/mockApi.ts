@@ -3,6 +3,7 @@
  * Uploads are added to the in-memory record, so new items show up in lists
  * until the app reloads. All AI output is marked isDemo: true.
  */
+import { i18n } from '@/i18n';
 import { MEDICAL_DISCLAIMER, MOCK_DELAY_MS } from '@/config/config';
 import { MOCK_PATIENT } from './mockPatient';
 import type {
@@ -221,9 +222,7 @@ export const mockApi: WWHealthApi = {
   // No simulated LungVision scores: the real model only runs on the backend.
   async analyzeLung() {
     await delay(MOCK_DELAY_MS);
-    throw new Error(
-      'LungVision needs the backend model. Set EXPO_PUBLIC_USE_MOCKS=false in .env, start the backend and restart Expo.',
-    );
+    throw new Error(i18n.t('errors.api.lungNeedsBackend'));
   },
 
   // No text extraction in MOCK mode (it runs on the backend) — never invent values.
