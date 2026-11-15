@@ -2,7 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Platform, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import Svg, { Defs, Image, LinearGradient, Mask, Rect, Stop } from 'react-native-svg';
+import Svg, { Defs, Image, LinearGradient, Mask, RadialGradient, Rect, Stop } from 'react-native-svg';
 
 import Animated, { Easing, Keyframe, ReduceMotion } from 'react-native-reanimated';
 
@@ -61,7 +61,19 @@ export function MedicalProfileScreen() {
                 <AppText variant="caption" color="textMuted">{t('home.snapshot')}</AppText>
                 <AppText variant="heading" accessibilityRole="header">{data.fullName}</AppText>
               </View>
-              <View style={[styles.bloodType, { backgroundColor: colors.coralMuted }]}>
+              <View style={styles.bloodType}>
+                <View pointerEvents="none" style={StyleSheet.absoluteFill}>
+                  <Svg width="100%" height="100%" viewBox="0 0 240 52" preserveAspectRatio="none">
+                    <Defs>
+                      <RadialGradient id="blood-type-aura" cx="50%" cy="50%" rx="50%" ry="50%">
+                        <Stop offset="0" stopColor={colors.coral} stopOpacity={isDark ? 0.40 : 0.62} />
+                        <Stop offset="0.64" stopColor={colors.coral} stopOpacity={isDark ? 0.27 : 0.43} />
+                        <Stop offset="1" stopColor={colors.coral} stopOpacity={0} />
+                      </RadialGradient>
+                    </Defs>
+                    <Rect width={240} height={52} fill="url(#blood-type-aura)" />
+                  </Svg>
+                </View>
                 <Ionicons name="water-outline" size={22} color={colors.danger} />
                 <AppText variant="body">{t('profile.bloodType')}</AppText>
                 <AppText variant="subheading">{data.bloodType || '—'}</AppText>
