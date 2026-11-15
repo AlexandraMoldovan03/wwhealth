@@ -11,6 +11,7 @@ from app.api.routes import (
     intake,
     intelligence,
     patients,
+    security,
     smart_care,
     smart_import,
     voice,
@@ -18,5 +19,5 @@ from app.api.routes import (
 )
 
 api_v1 = APIRouter(prefix="/api/v1")
-for module in (patients, documents, xray, doctor_access, intelligence, emergency, emergency_guardians, emergency_passport, voice, intake, smart_care, care_journey, exports, smart_import):
+for module in (patients, documents, xray, doctor_access, intelligence, emergency, emergency_guardians, emergency_passport, voice, intake, smart_care, care_journey, exports, smart_import, security):
     api_v1.include_router(module.router)

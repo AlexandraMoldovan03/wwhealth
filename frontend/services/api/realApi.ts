@@ -3,6 +3,7 @@ import { i18n } from '@/i18n';
 import type { JsonValue, WWHealthApi } from '@/types';
 
 import { apiClient } from './client';
+import { confirmSensitiveAction, reasons } from '@/services/security/sensitiveAction';
 import { ENDPOINTS } from './endpoints';
 
 
@@ -54,8 +55,11 @@ export const realApi: WWHealthApi = {
   getEmergencyGuardians: () => apiClient.get(ENDPOINTS.emergencyGuardians),
   getEmergencyPassportPreview: () => apiClient.get(ENDPOINTS.emergencyPassport),
   getDocumentSummary: (documentId) => apiClient.get(ENDPOINTS.documentSummary(documentId)),
-  inviteEmergencyGuardian: (request) =>
-    apiClient.post(ENDPOINTS.emergencyGuardians, { email: request.email, relation: request.relation }),
+  // High-risk: Face ID / passcode first (if enabled); the server also requires a recent sign-in.
+  inviteEmergencyGuardian: async (request) => {
+    await confirmSensitiveAction(reasons.guardian());
+    return apiClient.post(ENDPOINTS.emergencyGuardians, { email: request.email, relation: request.relation });
+  },
   revokeEmergencyGuardian: (id) => apiClient.post(ENDPOINTS.emergencyGuardianAction(id, 'revoke')),
   respondEmergencyGuardian: (id, accept) =>
     apiClient.post(ENDPOINTS.emergencyGuardianAction(id, accept ? 'accept' : 'decline')),
@@ -65,7 +69,10 @@ export const realApi: WWHealthApi = {
   getMySummary: () => apiClient.get(ENDPOINTS.patientsMeSummary),
   searchDoctors: (query) => apiClient.get(ENDPOINTS.doctorAccessDoctors, { params: { q: query } }),
   getDoctorAccess: () => apiClient.get(ENDPOINTS.doctorAccessGrants),
-  grantDoctorAccess: (request) => apiClient.post(ENDPOINTS.doctorAccessGrants, JSON.parse(JSON.stringify(request)) as JsonValue),
+  grantDoctorAccess: async (request) => {
+    await confirmSensitiveAction(reasons.share());
+    return apiClient.post(ENDPOINTS.doctorAccessGrants, JSON.parse(JSON.stringify(request)) as JsonValue);
+  },
   revokeDoctorAccess: (grantId) => apiClient.post(ENDPOINTS.doctorAccessRevoke(grantId)),
   getDoctorIdentity: () => apiClient.get(ENDPOINTS.doctorAccessMe),
   listDoctorPatients: (query = '') => apiClient.get(ENDPOINTS.doctorAccessPatients, { params: { q: query } }),

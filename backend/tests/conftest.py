@@ -9,3 +9,13 @@ def _demo_mode(monkeypatch):
     monkeypatch.setattr(settings, "supabase_url", "")
     monkeypatch.setattr(settings, "supabase_publishable_key", "")
     monkeypatch.setattr(settings, "supabase_secret_key", "")
+
+
+@pytest.fixture(autouse=True)
+def _fresh_rate_limits():
+    from app.core import rate_limit
+    from app.core.security import invalidate_factor_cache
+    rate_limit.reset()
+    invalidate_factor_cache()
+    yield
+    rate_limit.reset()

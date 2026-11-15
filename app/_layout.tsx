@@ -16,6 +16,8 @@ import { ThemeProvider } from '@/design-system/ThemeContext';
 import { HelpProvider } from '@/help';
 import { EmergencyTokenProvider } from '@/services/EmergencyTokenProvider';
 import { useSignedIn } from '@/services/auth/useSignedIn';
+import { AppLockProvider } from '@/services/security/AppLockProvider';
+import { useMfaPending } from '@/services/security/useMfaPending';
 import { useTheme } from '@/design-system/useTheme';
 import { useTranslation } from 'react-i18next';
 
@@ -24,12 +26,15 @@ function useAuthGuard() {
   const segments = useSegments();
   const router = useRouter();
   const signedIn = useSignedIn(); // null = restoring the saved session
+  const mfaPending = useMfaPending(signedIn); // password OK, TOTP code still missing
 
   useEffect(() => {
     if (signedIn === null) return;
     const onAuthScreen = segments[0] === 'login' || segments[0] === 'register' || segments[0] === 'auth';
     if (!signedIn && !onAuthScreen) router.replace('/login');
-  }, [signedIn, segments, router]);
+    const onChallenge = segments[0] === 'security' && (segments as string[])[1] === 'mfa-challenge';
+    if (signedIn && mfaPending && !onChallenge) router.replace('/security/mfa-challenge');
+  }, [signedIn, mfaPending, segments, router]);
 }
 
 const SHEET_SCREENS = new Set(['patient/emergency', 'patient/upload-document', 'patient/edit-profile', 'patient/lab-review/[id]']);
@@ -107,7 +112,9 @@ export default function RootLayout() {
     <ThemeProvider>
       <EmergencyTokenProvider>
         <HelpProvider>
-          <RootNavigator />
+          <AppLockProvider>
+            <RootNavigator />
+          </AppLockProvider>
         </HelpProvider>
       </EmergencyTokenProvider>
     </ThemeProvider>

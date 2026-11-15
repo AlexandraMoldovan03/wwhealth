@@ -8,14 +8,24 @@
  * EXPO_PUBLIC_USE_MOCKS=false → realApi (FastAPI at EXPO_PUBLIC_API_BASE_URL)
  */
 import { USE_MOCKS } from '@/config/config';
-import { getAccessToken } from './auth/authService';
+import { getAccessToken, handleUnauthorized } from './auth/authService';
 import type { WWHealthApi } from '@/types';
 
-import { setAuthTokenProvider } from './api/client';
+import { setAuthTokenProvider, setSecurityHandlers } from './api/client';
+import { parseStepUp } from './security/mfaLogic';
+import { openStepUp } from './security/sensitiveAction';
 import { realApi } from './api/realApi';
 import { mockApi } from './mock/mockApi';
 
 // Every request carries the logged-in user's token; the backend scopes medical data to that user.
 setAuthTokenProvider(getAccessToken);
+// 401 → refresh once or sign in again; 403 + step-up → re-authentication / TOTP code screen.
+setSecurityHandlers({
+  onUnauthorized: () => void handleUnauthorized(),
+  onStepUp: (header) => {
+    const kind = parseStepUp(header);
+    if (kind) openStepUp(kind);
+  },
+});
 
 export const api: WWHealthApi = USE_MOCKS ? mockApi : realApi;

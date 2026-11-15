@@ -26,3 +26,9 @@ export async function loadIntakes(userId: string): Promise<SavedIntake[]> {
   return entries.flatMap(([, value]) => value ? [JSON.parse(value) as SavedIntake] : [])
     .sort((a, b) => b.savedAt.localeCompare(a.savedAt));
 }
+
+/** Logout: voice intakes are medical data kept only on this phone → removed with the session. */
+export async function clearIntakes(userId: string): Promise<void> {
+  const keys = (await AsyncStorage.getAllKeys()).filter((key) => key.startsWith(PREFIX + userId + ':'));
+  if (keys.length) await AsyncStorage.multiRemove(keys);
+}

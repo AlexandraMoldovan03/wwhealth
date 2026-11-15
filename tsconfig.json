@@ -9,7 +9,8 @@
       "@/*": [
         "./frontend/*"
       ]
-    }
+    },
+    "allowImportingTsExtensions": true
   },
   "include": [
     "**/*.ts",

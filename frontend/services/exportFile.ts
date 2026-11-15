@@ -6,6 +6,7 @@ import { Platform } from 'react-native';
 import { USE_MOCKS } from '@/config/config';
 import { ApiError } from '@/services/api/ApiError';
 import { getAuthHeaders, resolveApiUrl } from '@/services/api/client';
+import { confirmSensitiveAction, ensureServerStepUp, reasons } from '@/services/security/sensitiveAction';
 
 export type ExportKind = 'fhir' | 'emergency-summary' | 'labs.csv' | 'summary.pdf' | 'archive.zip';
 
@@ -29,13 +30,16 @@ export const exportPath = (kind: ExportKind, patientId?: string) =>
  */
 export async function downloadAndShare(kind: ExportKind, patientId?: string): Promise<void> {
   if (USE_MOCKS) throw new ApiError('Export is available with the WWHealth server only.', 503);
+  // High-risk: local confirmation, then the server's own step-up rules (recent sign-in, TOTP).
+  await confirmSensitiveAction(reasons.export());
+  await ensureServerStepUp();
   const { filename, mimeType } = EXPORT_FILES[kind];
   const url = resolveApiUrl(exportPath(kind, patientId));
   const headers = await getAuthHeaders();
 
   if (Platform.OS === 'web') {
     const res = await fetch(url, { headers });
-    if (!res.ok) throw new ApiError(`Export failed (${res.status})`, res.status);
+    if (!res.ok) throw new ApiError(res.headers.get('X-WWHealth-Step-Up') ? 'Recent sign-in required' : `Export failed (${res.status})`, res.status);
     const blob = URL.createObjectURL(await res.blob());
     const a = globalThis.document.createElement('a');
     a.href = blob;

@@ -2,7 +2,9 @@
 from fastapi import APIRouter, Depends, HTTPException, Query, Response
 
 from app.api.supabase_errors import supabase_errors
-from app.core.security import CurrentUser, get_current_doctor, get_current_user
+from app.core.security import CurrentUser, get_current_doctor, get_current_user, get_sensitive_user
+from app.core import rate_limit
+from app.core.config import settings
 from app.schemas.doctor_access import (
     AccessOverview,
     DoctorGrant,
@@ -34,8 +36,10 @@ def my_grants(user: CurrentUser = Depends(get_current_user)) -> AccessOverview:
 
 
 @router.post("/grants", response_model=DoctorGrant, status_code=201)
-def create_grant(body: GrantRequest, user: CurrentUser = Depends(get_current_user)) -> DoctorGrant:
-    """The signed-in user shares THEIR OWN data. Replaces an active grant to the same doctor (never stacks)."""
+def create_grant(body: GrantRequest, user: CurrentUser = Depends(get_sensitive_user)) -> DoctorGrant:
+    """The signed-in user shares THEIR OWN data. Replaces an active grant to the same doctor (never stacks).
+    High-risk: needs a recent sign-in (and TOTP when enabled). Revoking stays one tap, without step-up."""
+    rate_limit.hit(f"grant:{user.id}", settings.doctor_grants_per_hour, 3600)
     if bool(body.doctor_id) == bool(body.doctor_code):
         raise HTTPException(status_code=422, detail="Choose a doctor or enter a doctor code")
     try:

@@ -22,6 +22,24 @@ interface RequestOptions {
   timeoutMs?: number;
 }
 
+/**
+ * Security hooks set once at startup (frontend/services/backend.ts):
+ * - onUnauthorized: the backend rejected the token (401) → refresh once or send the user to sign in.
+ * - onStepUp: the backend asks for a recent sign-in / the TOTP code (403 + X-WWHealth-Step-Up).
+ */
+type StepUpHandler = (kind: string) => void;
+let onUnauthorized: (() => void) | null = null;
+let onStepUp: StepUpHandler | null = null;
+export function setSecurityHandlers(handlers: { onUnauthorized: () => void; onStepUp: StepUpHandler }): void {
+  onUnauthorized = handlers.onUnauthorized;
+  onStepUp = handlers.onStepUp;
+}
+
+function securitySignals(status: number, stepUp: string | null, hadToken: boolean): void {
+  if (status === 401 && hadToken) onUnauthorized?.();
+  if (status === 403 && stepUp) onStepUp?.(stepUp);
+}
+
 /** Optional auth token provider (e.g. Supabase session). Set once at startup. */
 let getAuthToken: (() => Promise<string | null>) | null = null;
 export function setAuthTokenProvider(provider: () => Promise<string | null>): void {
@@ -75,7 +93,10 @@ async function request<T>(
       signal: controller.signal,
     });
     const data = await parseBody(response);
-    if (!response.ok) throw new ApiError(extractErrorMessage(data, response.status), response.status, data);
+    if (!response.ok) {
+      securitySignals(response.status, response.headers.get('X-WWHealth-Step-Up'), !!headers.Authorization);
+      throw new ApiError(extractErrorMessage(data, response.status), response.status, data);
+    }
     return data as T;
   } catch (error) {
     if (error instanceof ApiError) throw error;
@@ -137,7 +158,10 @@ async function uploadNative<T>(path: string, form: FormData, options: RequestOpt
         }
       }
       if (xhr.status >= 200 && xhr.status < 300) resolve(data as T);
-      else reject(new ApiError(extractErrorMessage(data, xhr.status), xhr.status, data));
+      else {
+        securitySignals(xhr.status, xhr.getResponseHeader('X-WWHealth-Step-Up'), !!headers.Authorization);
+        reject(new ApiError(extractErrorMessage(data, xhr.status), xhr.status, data));
+      }
     };
     xhr.onerror = () => reject(networkError('POST', url, 'XHR network error'));
     xhr.ontimeout = () => reject(networkError('POST', url, 'timeout'));

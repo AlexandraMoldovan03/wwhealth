@@ -12,7 +12,8 @@ from fastapi import APIRouter, Depends, HTTPException, Query, Response
 
 from app.api.routes.care_journey import _doctor_data, _own_data, _run
 from app.core.config import settings
-from app.core.security import CurrentUser, get_current_doctor, get_current_user
+from app.core.security import CurrentUser, get_sensitive_doctor, get_sensitive_user
+from app.core import rate_limit
 from app.services import doctor_access_service, document_storage, export_service, fhir_service, import_repo, supabase_repo
 from app.services.emergency_passport import build_passport, profile_dict
 
@@ -85,11 +86,13 @@ def _doctor(doctor: CurrentUser, patient_id: str, kind: str, lang: str = "ro") -
 
 def _register(kind: str) -> None:
     @router.get(f"/export/{kind}", name=f"export_{kind}")
-    def own(lang: Lang = Query("ro"), user: CurrentUser = Depends(get_current_user)) -> Response:
+    def own(lang: Lang = Query("ro"), user: CurrentUser = Depends(get_sensitive_user)) -> Response:
+        rate_limit.hit(f"export:{user.id}", settings.exports_per_hour, 3600)
         return _guard(lambda: _run(_own, user, kind, lang), kind)
 
     @router.get(f"/doctor/patients/{{patient_id}}/export/{kind}", name=f"doctor_export_{kind}")
-    def doctor(patient_id: str, lang: Lang = Query("ro"), doctor: CurrentUser = Depends(get_current_doctor)) -> Response:
+    def doctor(patient_id: str, lang: Lang = Query("ro"), doctor: CurrentUser = Depends(get_sensitive_doctor)) -> Response:
+        rate_limit.hit(f"export:{doctor.id}", settings.exports_per_hour, 3600)
         return _guard(lambda: _run(_doctor, doctor, patient_id, kind, lang), kind)
 
 
