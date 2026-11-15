@@ -30,7 +30,7 @@ export const exportPath = (kind: ExportKind, patientId?: string) =>
  */
 export async function downloadAndShare(kind: ExportKind, patientId?: string): Promise<void> {
   if (USE_MOCKS) throw new ApiError('Export is available with the WWHealth server only.', 503);
-  // High-risk: local confirmation, then the server's own step-up rules (recent sign-in, TOTP).
+  // High-risk: local confirmation, then the server's own step-up rule (recent sign-in).
   await confirmSensitiveAction(reasons.export());
   await ensureServerStepUp();
   const { filename, mimeType } = EXPORT_FILES[kind];

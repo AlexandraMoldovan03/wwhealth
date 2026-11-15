@@ -6,11 +6,10 @@ import { AppButton, AppCard, AppText, ErrorState, IconBadge, ScreenContainer } f
 import { PasswordInput } from '@/screens/auth/components/PasswordInput';
 import { hasPasswordIdentity, reauthenticateWithPassword, signInWithGoogle } from '@/services/auth/authService';
 import { useCurrentUser } from '@/services/auth/useCurrentUser';
-import { mfaPendingNow } from '@/services/security/mfa';
 
 /**
  * "Confirm it's you" before a high-risk action: a real sign-in (password or Google). Face ID alone is not
- * enough here — the server needs a fresh sign-in time. MFA accounts then enter their code.
+ * enough here — the server needs a fresh sign-in time.
  */
 export function ReauthScreen() {
   const { t } = useTranslation();
@@ -25,8 +24,7 @@ export function ReauthScreen() {
   }, []);
 
   const finish = async () => {
-    if (await mfaPendingNow()) router.replace({ pathname: '/security/mfa-challenge', params: { then: 'back' } });
-    else if (router.canGoBack()) router.back();
+    if (router.canGoBack()) router.back();
     else router.replace('/');
   };
 

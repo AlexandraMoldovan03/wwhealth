@@ -198,7 +198,7 @@ export function handleUnauthorized(): Promise<void> {
 
 /**
  * Re-authentication for high-risk actions: a real password sign-in (fresh `amr` time on the server).
- * A Face ID unlock does not count. MFA accounts are then asked for their code (session back to aal1).
+ * A Face ID unlock does not count.
  */
 export async function reauthenticateWithPassword(password: string): Promise<void> {
   if (!supabase) return;
@@ -218,7 +218,7 @@ export async function hasPasswordIdentity(): Promise<boolean> {
 
 /**
  * Changes the password. The current password is checked first with a separate, immediately revoked
- * sign-in (the current session — possibly aal2 — stays as it is). Supabase may additionally demand a
+ * sign-in (the current session stays as it is). Supabase may additionally demand a
  * recent sign-in ("Secure password change") → the user is sent to re-authenticate.
  */
 export async function changePassword(currentPassword: string, newPassword: string): Promise<void> {

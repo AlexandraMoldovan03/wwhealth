@@ -1,5 +1,5 @@
-"""Security hardening: MFA gate (aal2), recent sign-in for high-risk actions, doctor MFA policy,
-rate limits / replay protection on the emergency QR, and the account security status endpoint."""
+"""Security hardening: recent sign-in for high-risk actions, role checks, rate limits / replay protection
+on the emergency QR, and the account security status endpoint. MFA is not offered (no aal2 gate)."""
 import time
 
 import httpx
@@ -9,6 +9,7 @@ from fastapi.testclient import TestClient
 from app.core import rate_limit, security
 from app.core.config import settings
 from app.main import app
+from app.schemas.patient import PatientRecord
 from app.services import emergency_guardian_service as guardians
 from app.services import emergency_service as es
 from app.services import supabase_repo
@@ -16,8 +17,8 @@ from tests.test_supabase_auth import auth, make_token, supabase_mode  # noqa: F4
 
 client = TestClient(app)
 STALE = [{"method": "password", "timestamp": int(time.time()) - 3 * 86400}]
-FRESH_TOTP = [{"method": "password", "timestamp": int(time.time()) - 600},
-              {"method": "totp", "timestamp": int(time.time()) - 60}]
+FRESH = [{"method": "password", "timestamp": int(time.time()) - 600},
+         {"method": "oauth", "timestamp": int(time.time()) - 60}]
 
 
 @pytest.fixture(autouse=True)
@@ -25,76 +26,32 @@ def fresh_store(monkeypatch):
     monkeypatch.setattr(es, "_store", es._Store())
 
 
-def enrolled(monkeypatch, value: bool = True):
-    monkeypatch.setattr(security, "has_verified_factor", lambda _user: value)
-
-
-# ─────────────────────────────────────────────── claims
+# ─────────────────────────────────────────────── claims / no MFA gate
 
 def test_auth_time_is_the_newest_sign_in_step():
-    assert security.auth_time_from_claims({"amr": FRESH_TOTP}) == FRESH_TOTP[1]["timestamp"]
+    assert security.auth_time_from_claims({"amr": FRESH}) == FRESH[1]["timestamp"]
     assert security.auth_time_from_claims({"amr": "password"}) is None
     assert security.auth_time_from_claims({"amr": [{"method": "password", "timestamp": True}]}) is None
     assert security.auth_time_from_claims({}) is None
 
 
-# ─────────────────────────────────────────────── MFA (aal2)
-
-def test_mfa_account_at_aal1_is_refused_everywhere(supabase_mode, monkeypatch):
-    enrolled(monkeypatch)
-    called = []
-    monkeypatch.setattr(supabase_repo, "get_record", lambda user: called.append(user))
-    res = supabase_mode.get("/api/v1/patients/me", headers=auth(make_token(aal="aal1")))
-    assert res.status_code == 403 and res.headers["x-wwhealth-step-up"] == "mfa" and not called
-    # a forged "aal2" is impossible (signature), and an unknown value is treated as aal1
-    assert supabase_mode.get("/api/v1/patients/me", headers=auth(make_token(aal="aal3"))).status_code == 403
-
-
-def test_mfa_account_at_aal2_passes(supabase_mode, monkeypatch):
-    from app.schemas.patient import PatientRecord
-    enrolled(monkeypatch)
+def test_password_session_is_enough_and_auth_service_is_not_called(supabase_mode, monkeypatch):
+    def no_network(*_a, **_k):
+        raise AssertionError("Supabase Auth must not be queried per request")
+    monkeypatch.setattr(httpx, "get", no_network)
     monkeypatch.setattr(supabase_repo, "get_record", lambda user: PatientRecord(id=user.id, full_name="A"))
-    res = supabase_mode.get("/api/v1/patients/me", headers=auth(make_token(aal="aal2", amr=FRESH_TOTP)))
-    assert res.status_code == 200
+    for token in (make_token(), make_token(aal="aal1"), make_token(aal="aal2")):
+        assert supabase_mode.get("/api/v1/patients/me", headers=auth(token)).status_code == 200
 
 
-def test_factor_lookup_fails_closed(supabase_mode, monkeypatch):
-    monkeypatch.undo()  # restore the real lookup, keep a fake network
-    monkeypatch.setattr(settings, "supabase_url", "https://example-project.supabase.co")
-    monkeypatch.setattr(settings, "supabase_publishable_key", "sb_publishable_test")
-    user = security.CurrentUser(id="u1", role="patient", access_token="t")
-
-    def down(*_a, **_k):
-        raise httpx.ConnectError("offline")
-    monkeypatch.setattr(httpx, "get", down)
-    with pytest.raises(Exception) as exc:
-        security.has_verified_factor(user)
-    assert getattr(exc.value, "status_code", None) == 503
-
-    monkeypatch.setattr(httpx, "get", lambda *_a, **_k: httpx.Response(200, json={"factors": [
-        {"factor_type": "totp", "status": "unverified"}, {"factor_type": "recovery_code", "status": "verified"}]}))
-    security.invalidate_factor_cache()
-    assert security.has_verified_factor(user) is False
-    monkeypatch.setattr(httpx, "get", lambda *_a, **_k: httpx.Response(200, json={"factors": [
-        {"factor_type": "totp", "status": "verified"}]}))
-    security.invalidate_factor_cache()
-    assert security.has_verified_factor(user) is True
-    monkeypatch.setattr(httpx, "get", lambda *_a, **_k: httpx.Response(401, json={}))
-    security.invalidate_factor_cache()
-    with pytest.raises(Exception) as exc:
-        security.has_verified_factor(user)
-    assert getattr(exc.value, "status_code", None) == 401
-
-
-def test_security_status_works_for_an_unfinished_mfa_login(supabase_mode, monkeypatch):
-    enrolled(monkeypatch)
-    res = supabase_mode.get("/api/v1/security/status", headers=auth(make_token(aal="aal1")))
+def test_security_status(supabase_mode):
+    res = supabase_mode.get("/api/v1/security/status", headers=auth(make_token()))
     body = res.json()
     assert res.status_code == 200 and res.headers["cache-control"].startswith("no-store")
-    assert body["mfaEnrolled"] is True and body["mfaSatisfied"] is False and body["recentAuth"] is True
-    assert "token" not in res.text.lower()
+    assert body["recentAuth"] is True and set(body) == {"authAgeSeconds", "recentAuth", "reauthMaxAgeSeconds"}
     stale = supabase_mode.get("/api/v1/security/status", headers=auth(make_token(amr=STALE))).json()
     assert stale["recentAuth"] is False
+    assert supabase_mode.get("/api/v1/security/status").status_code == 401
 
 
 # ─────────────────────────────────────────────── recent sign-in for high-risk actions
@@ -139,20 +96,22 @@ def test_emergency_qr_never_needs_a_recent_sign_in(supabase_mode, monkeypatch):
     assert res.status_code == 200
 
 
-# ─────────────────────────────────────────────── doctor MFA policy
+# ─────────────────────────────────────────────── roles (unchanged by removing MFA)
 
-def test_doctor_mfa_policy(supabase_mode, monkeypatch):
+def test_patient_cannot_use_doctor_endpoints(supabase_mode, monkeypatch):
+    monkeypatch.setattr(supabase_repo, "get_role", lambda _user: "patient")
+    # even with a fresh sign-in and a forged "doctor" in the editable metadata
+    token = auth(make_token(user_metadata={"role": "doctor"}))
+    for method, url in (("get", "/api/v1/emergency/my-accesses"), ("get", "/api/v1/care/doctor/patients/p1/export/fhir"),
+                        ("get", "/api/v1/doctor-access/patients")):
+        assert getattr(supabase_mode, method)(url, headers=token).status_code == 403, url
+    assert supabase_mode.post("/api/v1/emergency/redeem", json={"token": es.new_token()}, headers=token).status_code == 403
+
+
+def test_verified_doctor_passes_role_checks(supabase_mode, monkeypatch):
     monkeypatch.setattr(supabase_repo, "get_role", lambda _user: "doctor")
     monkeypatch.setattr(supabase_repo, "emergency_doctor_accesses", lambda _user: [])
-    url = "/api/v1/emergency/my-accesses"
-    assert supabase_mode.get(url, headers=auth(make_token())).status_code == 200  # policy off by default
-    monkeypatch.setattr(settings, "doctor_mfa_required", True)
-    res = supabase_mode.get(url, headers=auth(make_token()))
-    assert res.status_code == 403 and res.headers["x-wwhealth-step-up"] == "mfa-enroll"
-    assert supabase_mode.get(url, headers=auth(make_token(aal="aal2", amr=FRESH_TOTP))).status_code == 200
-    # patients are not affected by the doctor policy
-    monkeypatch.setattr(supabase_repo, "emergency_audit", lambda _user: [])
-    assert supabase_mode.get("/api/v1/emergency/audit", headers=auth(make_token())).status_code == 200
+    assert supabase_mode.get("/api/v1/emergency/my-accesses", headers=auth(make_token())).status_code == 200
 
 
 # ─────────────────────────────────────────────── emergency QR: replay, brute force, no session

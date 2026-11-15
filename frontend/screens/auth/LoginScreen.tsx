@@ -6,7 +6,6 @@ import { AppButton, AppCard, AppInput, AppText, DemoNotice, ErrorState, ScreenCo
 import { SUPABASE_ENABLED } from '@/config/config';
 import { spacing } from '@/design-system/theme';
 import { login } from '@/services/auth/authService';
-import { mfaPendingNow } from '@/services/security/mfa';
 import { AuthHeader } from './components/AuthHeader';
 import { GoogleSignInButton } from './components/GoogleSignInButton';
 import { PasswordInput } from './components/PasswordInput';
@@ -28,8 +27,7 @@ export function LoginScreen() {
     setShowErrors(true);
     if (!isValid(errors)) return;
     const res = await submit.run({ email: email.trim().toLowerCase(), password });
-    // Accounts with two-step verification enter their code first; Home shows the role's dashboard.
-    if (res) router.replace((await mfaPendingNow()) ? '/security/mfa-challenge' : '/');
+    if (res) router.replace('/'); // Home shows the dashboard of the role from Supabase
   };
 
   return (

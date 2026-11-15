@@ -36,8 +36,6 @@ const KNOWN_DETAILS: readonly [string, string][] = [
   ['Export is available with the WWHealth server only', 'errors.api.needsBackend'],
   ['Sharing is not available', 'errors.api.sharingUnavailable'],
   ['Recent sign-in required', 'errors.api.reauthRequired'],
-  ['Two-factor verification required', 'errors.api.mfaRequired'],
-  ['Two-factor authentication required for doctor accounts', 'errors.api.doctorMfaRequired'],
   ['Confirmation cancelled', 'errors.api.confirmationCancelled'],
   ['Authentication service unavailable', 'errors.api.authUnavailable'],
 ];

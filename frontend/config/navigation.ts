@@ -46,8 +46,6 @@ export const STACK_SCREENS: { name: string; title: string }[] = [
   { name: 'register', title: 'Create account' },
   { name: 'auth/callback', title: 'Signing in' },
   { name: 'security/index', title: 'Security' },
-  { name: 'security/mfa-setup', title: 'Two-step verification' },
-  { name: 'security/mfa-challenge', title: 'Verification code' },
   { name: 'security/reauth', title: 'Confirm it is you' },
   { name: 'history/[id]', title: 'Details' },
   // Patient

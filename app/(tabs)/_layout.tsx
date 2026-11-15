@@ -7,7 +7,6 @@ import { TABS } from '@/config/navigation';
 import { useCurrentUser, useRole } from '@/services/auth/useCurrentUser';
 import { useNeedsProfileSetup } from '@/services/profileSetup';
 import { useSignedIn } from '@/services/auth/useSignedIn';
-import { useMfaPending } from '@/services/security/useMfaPending';
 import { useTheme } from '@/design-system/useTheme';
 import { useTranslation } from 'react-i18next';
 
@@ -17,15 +16,11 @@ export default function TabsLayout() {
   const { t } = useTranslation();
   const role = useRole();
   const user = useCurrentUser();
-  const mfaPending = useMfaPending(signedIn);
   const needsSetup = useNeedsProfileSetup(signedIn && user?.role === 'patient' ? user.id : undefined);
 
   // Don't mount the tabs (they fetch /patients/me) before the saved session is restored → no token-less 401.
   if (signedIn === null) return null;
   if (!signedIn) return <Redirect href="/login" />;
-  // Accounts with two-step verification enter their code before any medical data is loaded.
-  if (mfaPending === null) return null;
-  if (mfaPending) return <Redirect href="/security/mfa-challenge" />;
   // New patient accounts fill in name, birth date and sex first.
   if (needsSetup) return <Redirect href="/patient/setup" />;
 

@@ -59,10 +59,8 @@ class Settings(BaseSettings):
 
     # ── Security hardening
     # High-risk actions (exports, sharing with a doctor, adding an emergency contact) need a sign-in
-    # (password / OAuth / MFA) at most this old. 0 disables the check.
+    # (password / OAuth) at most this old. 0 disables the check.
     sensitive_reauth_max_age_minutes: int = 1440
-    # Doctor accounts must finish TOTP (aal2) before using doctor endpoints. Off until tested on real accounts.
-    doctor_mfa_required: bool = False
     # In-memory, per-process rate limits (one uvicorn worker; use a shared store behind several workers).
     rate_limit_enabled: bool = True
     emergency_redeem_per_minute: int = 10       # per doctor, every attempt

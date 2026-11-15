@@ -1,2 +1,2 @@
-// Route "/security" → Settings → Security (biometric lock, two-step verification, password, sessions).
+// Route "/security" → Settings → Security (biometric lock, password, sessions).
 export { SecurityScreen as default } from '@/screens/shared/security';

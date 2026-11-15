@@ -182,8 +182,6 @@
     "doctor/treatment": "Tratament",
     "patient/import/[id]": "Verifică importul",
     "security/index": "Securitate",
-    "security/mfa-setup": "Verificare în doi pași",
-    "security/mfa-challenge": "Cod de verificare",
     "security/reauth": "Confirmă că ești tu"
   },
   "settings": {
@@ -645,8 +643,6 @@
       "gone": "Elementul nu mai este valabil.",
       "notSetUp": "Această funcție nu este configurată încă pe server.",
       "reauthRequired": "Pentru siguranță, confirmă din nou parola ca să continui.",
-      "mfaRequired": "Introdu codul din aplicația de autentificare ca să continui.",
-      "doctorMfaRequired": "Conturile de medic au nevoie de verificare în doi pași. Activeaz-o din Setări → Securitate.",
       "confirmationCancelled": "Confirmare anulată. Nu s-a modificat nimic.",
       "authUnavailable": "Serviciul de autentificare nu răspunde. Încearcă din nou peste puțin timp."
     }
@@ -2985,7 +2981,6 @@
       "export": "Confirmă exportul dosarului medical",
       "share": "Confirmă partajarea dosarului cu medicul",
       "guardian": "Confirmă adăugarea unei persoane de urgență",
-      "mfaOff": "Confirmă dezactivarea verificării în doi pași",
       "password": "Confirmă schimbarea parolei",
       "lock": "Deblochează WWHealth"
     },
@@ -3010,39 +3005,6 @@
         "iris": "iris",
         "passcode": "cod",
         "none": "biometrie"
-      }
-    },
-    "mfa": {
-      "title": "Verificare în doi pași",
-      "status": "Stare",
-      "on": "Activă",
-      "off": "Inactivă",
-      "explain": "După parolă, autentificarea cere și un cod de 6 cifre dintr-o aplicație Authenticator (Google Authenticator, Microsoft Authenticator, 1Password…).",
-      "doctorRecommended": "Recomandată insistent pentru conturile de medic.",
-      "enable": "Activează",
-      "disable": "Dezactivează",
-      "disableTitle": "Dezactivezi verificarea în doi pași?",
-      "disableBody": "Contul va fi protejat doar de parolă.",
-      "recovery": "Ai pierdut telefonul? Autentifică-te de pe un dispozitiv care are încă aplicația Authenticator sau contactează administratorul WWHealth pentru verificarea identității și resetarea pasului al doilea. Păstrează cheia de configurare într-un loc sigur.",
-      "setupTitle": "Configurează verificarea în doi pași",
-      "setupStep1": "1. Scanează codul QR cu aplicația Authenticator sau introdu cheia de mai jos.",
-      "setupStep2": "2. Introdu codul de 6 cifre afișat de aplicație.",
-      "qrLabel": "Cod QR pentru aplicația Authenticator",
-      "manualKey": "Cheie de configurare",
-      "code": "Cod de 6 cifre",
-      "verify": "Verifică",
-      "enabledTitle": "Verificarea în doi pași este activă",
-      "challengeTitle": "Introdu codul",
-      "challengeSubtitle": "Deschide aplicația Authenticator și introdu codul de 6 cifre pentru WWHealth.",
-      "lostDevice": "Nu ai acces la aplicația Authenticator? Contactează administratorul WWHealth pentru verificarea identității.",
-      "errors": {
-        "invalidCode": "Codul nu este corect. Verifică ora telefonului și încearcă din nou.",
-        "expired": "Codul a expirat. Introdu noul cod din aplicație.",
-        "tooMany": "Prea multe încercări. Așteaptă un minut și încearcă din nou.",
-        "needsCode": "Introdu mai întâi codul curent.",
-        "notEnabled": "Verificarea în doi pași nu este activată pentru acest proiect.",
-        "format": "Introdu cele 6 cifre.",
-        "generic": "Verificarea a eșuat. Încearcă din nou."
       }
     },
     "password": {

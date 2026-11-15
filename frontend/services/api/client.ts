@@ -25,7 +25,7 @@ interface RequestOptions {
 /**
  * Security hooks set once at startup (frontend/services/backend.ts):
  * - onUnauthorized: the backend rejected the token (401) → refresh once or send the user to sign in.
- * - onStepUp: the backend asks for a recent sign-in / the TOTP code (403 + X-WWHealth-Step-Up).
+ * - onStepUp: the backend asks for a recent sign-in (403 + X-WWHealth-Step-Up).
  */
 type StepUpHandler = (kind: string) => void;
 let onUnauthorized: (() => void) | null = null;

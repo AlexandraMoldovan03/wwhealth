@@ -12,14 +12,14 @@ import { getAccessToken, handleUnauthorized } from './auth/authService';
 import type { WWHealthApi } from '@/types';
 
 import { setAuthTokenProvider, setSecurityHandlers } from './api/client';
-import { parseStepUp } from './security/mfaLogic';
+import { parseStepUp } from './security/stepUp';
 import { openStepUp } from './security/sensitiveAction';
 import { realApi } from './api/realApi';
 import { mockApi } from './mock/mockApi';
 
 // Every request carries the logged-in user's token; the backend scopes medical data to that user.
 setAuthTokenProvider(getAccessToken);
-// 401 → refresh once or sign in again; 403 + step-up → re-authentication / TOTP code screen.
+// 401 → refresh once or sign in again; 403 + step-up → re-authentication screen.
 setSecurityHandlers({
   onUnauthorized: () => void handleUnauthorized(),
   onStepUp: (header) => {
