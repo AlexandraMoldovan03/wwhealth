@@ -96,9 +96,13 @@ def _demo_revoke(user: CurrentUser, link_id: str) -> bool:
     with _store.lock:
         for link in _store.links:
             if link.id == link_id and link.patient_id == user.id and _open(link):
-                link.status = "revoked"
-                return True
-    return False
+                was_active, link.status = link.status == "active", "revoked"
+                break
+        else:
+            return False
+    if was_active and link.guardian_id:
+        es.demo_revoke_by_actor(link.patient_id, link.guardian_id)
+    return True
 
 
 def _demo_respond(user: CurrentUser, link_id: str, accept: bool) -> dict:
@@ -114,9 +118,22 @@ def _demo_respond(user: CurrentUser, link_id: str, accept: bool) -> dict:
                 link.guardian_name = _name(user.id) or None
                 return {"status": "ok"}
             if not accept and (invited or (link.status == "active" and link.guardian_id == user.id)):
+                was_active = link.status == "active"
                 link.status, link.responded_at = "declined", now
-                return {"status": "ok"}
-    return {"status": "not_found"}
+                break
+        else:
+            return {"status": "not_found"}
+    if was_active:
+        es.demo_revoke_by_actor(link.patient_id, user.id)
+    return {"status": "ok"}
+
+
+def _latest_declined(link: _Link, links: list[_Link]) -> bool:
+    """A declined invitation stays visible to the patient until a newer one is sent to the same email."""
+    if link.status != "declined":
+        return False
+    same = [x for x in links if x.patient_id == link.patient_id and x.invite_email == link.invite_email]
+    return same[-1] is link
 
 
 def _demo_overview(user: CurrentUser) -> dict:
@@ -128,7 +145,7 @@ def _demo_overview(user: CurrentUser) -> dict:
             "id": x.id, "email": x.invite_email, "relation": x.relation, "status": x.status,
             "guardian_name": x.guardian_name if x.status == "active" else None,
             "created_at": x.created_at, "responded_at": x.responded_at,
-        } for x in reversed(links) if x.patient_id == user.id and _open(x)],
+        } for x in reversed(links) if x.patient_id == user.id and (_open(x) or _latest_declined(x, links))],
         "invitations": [{
             "id": x.id, "patient_name": x.patient_name, "relation": x.relation, "created_at": x.created_at,
         } for x in reversed(links)
@@ -207,7 +224,7 @@ def overview(user: CurrentUser) -> GuardianOverview:
     return GuardianOverview(
         guardians=[GuardianLink.model_validate({**r, "created_at": str(r["created_at"]),
                                                 "responded_at": str(r["responded_at"]) if r.get("responded_at") else None})
-                   for r in raw.get("guardians") or [] if r.get("status") in ("pending", "active")],
+                   for r in raw.get("guardians") or [] if r.get("status") in ("pending", "active", "declined")],
         invitations=[GuardianInvitation.model_validate({**r, "patient_name": r.get("patient_name") or "",
                                                         "created_at": str(r["created_at"])})
                      for r in raw.get("invitations") or []],

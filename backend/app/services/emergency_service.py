@@ -97,6 +97,7 @@ def _log(event: str, token: _Token | None, actor_id: str, reason: str | None = N
     _store.log.append({
         "id": str(len(_store.log) + 1), "event": event, "reason": reason, "actor_id": actor_id,
         "actor_name": actor_name, "patient_id": token.patient_id if token else patient_id,
+        "token_id": token.id if token else None,
         "created_at": datetime.now(UTC).isoformat(),
     })
 
@@ -112,6 +113,17 @@ def demo_create(patient_id: str, token_hash: str, actor_id: str | None = None, a
         _store.tokens[token_hash] = token
         _log("created", token, actor_id or patient_id, actor_name=actor_name)
     return {"token_id": token.id, "expires_at": token.expires_at.isoformat()}
+
+
+def demo_revoke_by_actor(patient_id: str, actor_id: str) -> None:
+    """Guardian access withdrawn → their still-unused QR codes for this patient stop working."""
+    now = datetime.now(UTC)
+    with _store.lock:
+        created = {e.get("token_id") for e in _store.log if e["event"] == "created" and e["actor_id"] == actor_id}
+        for t in _store.tokens.values():
+            if t.patient_id == patient_id and t.id in created and not t.used_at and not t.revoked_at and t.expires_at > now:
+                t.revoked_at = now
+        _log("revoked", None, actor_id, "guardian_access", patient_id=patient_id)
 
 
 def demo_revoke(patient_id: str, token_id: str) -> bool:

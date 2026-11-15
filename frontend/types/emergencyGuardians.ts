@@ -7,12 +7,12 @@ export interface GuardianInviteRequest {
   relation: string;
 }
 
-/** Patient side: someone I invited (pending) or who accepted (active). */
+/** Patient side: someone I invited (pending), who accepted (active) or who declined (shown until re-invited). */
 export interface GuardianLink {
   id: string;
   email: string;
   relation: string;
-  status: 'pending' | 'active';
+  status: 'pending' | 'active' | 'declined';
   guardianName: string | null;
   createdAt: string;
   respondedAt: string | null;

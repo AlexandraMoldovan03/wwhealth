@@ -150,6 +150,10 @@ export interface PatientRecord extends PatientProfile {
 export interface HealthResponse {
   status: 'ok';
   version: string;
+  /** "supabase" = shared database; "demo" = in-memory on that server only (nothing syncs between phones). */
+  dataMode?: 'supabase' | 'demo';
+  /** Supabase project ref the server uses — must match the app's EXPO_PUBLIC_SUPABASE_URL. */
+  supabaseProject?: string | null;
 }
 
 export interface DocumentAnalyzeResponse {

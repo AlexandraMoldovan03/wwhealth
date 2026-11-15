@@ -11,7 +11,7 @@ interface AsyncState<T> {
   isLoading: boolean;
 }
 
-interface UseAsyncResult<T> extends AsyncState<T> {
+export interface UseAsyncResult<T> extends AsyncState<T> {
   /** Re-run the request (e.g. pull-to-refresh or "Try again"). Ignored while one is in flight. */
   reload: () => Promise<void>;
 }

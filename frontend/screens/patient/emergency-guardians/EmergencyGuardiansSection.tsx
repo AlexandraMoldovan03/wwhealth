@@ -5,21 +5,26 @@ import { useTranslation } from 'react-i18next';
 import { AppButton, AppCard, AppInput, AppText, ErrorState, ListRow, SectionHeader, tapFeedback } from '@/design-system';
 import { spacing } from '@/design-system/theme';
 import { useTheme } from '@/design-system/useTheme';
-import { useAsync } from '@/hooks/useAsync';
+import { type UseAsyncResult, useAsync } from '@/hooks/useAsync';
 import { validateEmail } from '@/screens/auth/validation';
 import { api } from '@/services/backend';
+import type { GuardianOverview } from '@/types';
 import { getErrorMessage } from '@/utils/errors';
 
 const loadOverview = () => api.getEmergencyGuardians();
+
+type Overview = Pick<UseAsyncResult<GuardianOverview>, 'data' | 'error' | 'isLoading' | 'reload'>;
 
 /**
  * Patient side: who can open my emergency passport (confirmed accounts only) + invite / revoke.
  * The link becomes active only when the invited account accepts (backend checks its confirmed email).
  */
-export function EmergencyGuardiansSection() {
+/** `overview`: pass one shared loader when both guardian sections are on the same screen (Family tab). */
+export function EmergencyGuardiansSection({ overview: shared }: { overview?: Overview } = {}) {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const overview = useAsync(loadOverview, { refetchOnFocus: true });
+  const own = useAsync(loadOverview, { refetchOnFocus: !shared, immediate: !shared });
+  const overview = shared ?? own;
   const [email, setEmail] = useState('');
   const [relation, setRelation] = useState('');
   const [emailError, setEmailError] = useState<string | undefined>();
@@ -69,12 +74,12 @@ export function EmergencyGuardiansSection() {
           {guardians.map((g, index) => (
             <ListRow
               key={g.id}
-              icon={g.status === 'active' ? 'shield-checkmark-outline' : 'mail-outline'}
-              iconColor={g.status === 'active' ? colors.success : colors.textMuted}
+              icon={g.status === 'active' ? 'shield-checkmark-outline' : g.status === 'declined' ? 'close-circle-outline' : 'mail-outline'}
+              iconColor={g.status === 'active' ? colors.success : g.status === 'declined' ? colors.danger : colors.textMuted}
               title={g.guardianName || g.email}
               subtitle={[g.relation, g.guardianName ? g.email : null, t(`guardians.${g.status}`)].filter(Boolean).join(' · ')}
               enterIndex={index}
-              right={
+              right={g.status === 'declined' ? undefined : (
                 <AppButton
                   title={t(g.status === 'active' ? 'guardians.revoke' : 'guardians.cancelInvite')}
                   variant="outline"
@@ -83,7 +88,7 @@ export function EmergencyGuardiansSection() {
                   disabled={busyId !== null}
                   onPress={() => void run(g.id, () => api.revokeEmergencyGuardian(g.id))}
                 />
-              }
+              )}
             />
           ))}
         </View>

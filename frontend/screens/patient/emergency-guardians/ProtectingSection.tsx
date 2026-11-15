@@ -6,21 +6,26 @@ import { useTranslation } from 'react-i18next';
 import { AppButton, AppCard, AppText, ErrorState, ListRow, SectionHeader } from '@/design-system';
 import { spacing } from '@/design-system/theme';
 import { useTheme } from '@/design-system/useTheme';
-import { useAsync } from '@/hooks/useAsync';
+import { type UseAsyncResult, useAsync } from '@/hooks/useAsync';
 import { api } from '@/services/backend';
+import type { GuardianOverview } from '@/types';
 import { getErrorMessage } from '@/utils/errors';
 
 const loadOverview = () => api.getEmergencyGuardians();
+
+type Overview = Pick<UseAsyncResult<GuardianOverview>, 'data' | 'error' | 'isLoading' | 'reload'>;
 
 /**
  * Guardian side: invitations sent to my confirmed email + "I am an emergency contact for…".
  * Renders nothing when the signed-in account has neither (most accounts).
  */
-export function ProtectingSection() {
+/** `overview`: shared loader (Family tab); `showEmpty`: explain where invitations appear instead of rendering nothing. */
+export function ProtectingSection({ overview: shared, showEmpty = false }: { overview?: Overview; showEmpty?: boolean } = {}) {
   const { t } = useTranslation();
   const { colors } = useTheme();
   const router = useRouter();
-  const overview = useAsync(loadOverview, { refetchOnFocus: true });
+  const own = useAsync(loadOverview, { refetchOnFocus: !shared, immediate: !shared });
+  const overview = shared ?? own;
   const [busyId, setBusyId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -39,7 +44,15 @@ export function ProtectingSection() {
 
   const invitations = overview.data?.invitations ?? [];
   const protecting = overview.data?.protecting ?? [];
-  if (invitations.length === 0 && protecting.length === 0 && !error) return null;
+  const loadError = overview.error;
+  if (invitations.length === 0 && protecting.length === 0 && !error && !loadError) {
+    return showEmpty && !overview.isLoading ? (
+      <View style={styles.section}>
+        <SectionHeader title={t('guardians.protectingTitle')} />
+        <AppText variant="caption" color="textMuted">{t('guardians.noInvitations')}</AppText>
+      </View>
+    ) : null;
+  }
 
   return (
     <View style={styles.wrap}>
@@ -100,6 +113,7 @@ export function ProtectingSection() {
         </View>
       )}
       {error && <ErrorState message={error} />}
+      {loadError && <ErrorState message={loadError} onRetry={overview.reload} />}
     </View>
   );
 }

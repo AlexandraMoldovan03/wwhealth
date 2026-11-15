@@ -2708,6 +2708,21 @@
     "titleRequired": "Titlul este obligatoriu."
   },
   "guardians": {
+    "declined": "A refuzat invitația",
+    "familyTitle": "Familie",
+    "familyIntro": "Persoanele de urgență pot vedea doar pașaportul tău de urgență și pot genera QR-ul tău pentru un medic. Relația e într-un singur sens: dacă inviți pe cineva, nu primești acces la datele lui.",
+    "noInvitations": "Nicio invitație. Când cineva te adaugă ca persoană de urgență pe emailul acestui cont (confirmat), invitația apare aici.",
+    "myQrTitle": "QR-ul meu de urgență",
+    "myQrIntro": "Generează QR-ul tău de 5 minute pentru un medic.",
+    "myQrOpen": "Deschide QR-ul meu",
+    "qrReplaces": "Un pacient are un singur QR activ: un cod nou (generat de tine sau de o persoană de urgență) îl anulează pe cel anterior. Revocarea accesului anulează și codurile generate de acea persoană.",
+    "sync": {
+      "title": "Datele nu se sincronizează",
+      "mock": "Aplicația rulează în mod demo (EXPO_PUBLIC_USE_MOCKS nu e false): invitațiile rămân doar pe acest telefon.",
+      "serverDemo": "Serverul backend rulează fără Supabase (mod demo, în memorie): celălalt telefon nu vede aceste invitații. Completează backend/.env.",
+      "mismatch": "Aplicația folosește proiectul Supabase {{app}}, dar serverul folosește {{server}}. Ambele telefoane trebuie să folosească același proiect.",
+      "ok": "Sincronizat prin Supabase · proiect {{project}}"
+    },
     "title": "Persoane de urgență",
     "intro": "Invită un membru al familiei după emailul contului său WWHealth. După ce acceptă, poate deschide doar datele tale de urgență și îți poate genera QR-ul pentru un medic. Poți revoca accesul oricând.",
     "emailLabel": "Emailul contului",

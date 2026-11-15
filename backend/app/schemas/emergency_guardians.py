@@ -19,7 +19,7 @@ class GuardianLink(CamelModel):
     id: str
     email: str
     relation: str = ""
-    status: Literal["pending", "active"]
+    status: Literal["pending", "active", "declined"]
     guardian_name: str | None = None
     created_at: str
     responded_at: str | None = None

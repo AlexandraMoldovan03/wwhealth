@@ -32,7 +32,7 @@ export function GuardianPassportScreen() {
   const router = useRouter();
   const { patientId } = useLocalSearchParams<{ patientId: string }>();
   const load = useCallback(() => api.getGuardianEmergencyView(String(patientId ?? '')), [patientId]);
-  const view = useAsync(load);
+  const view = useAsync(load, { refetchOnFocus: true });
   const [code, setCode] = useState<EmergencyTokenResponse | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -123,6 +123,7 @@ export function GuardianPassportScreen() {
         ) : (
           <>
             <AppText color="textMuted">{t('guardians.qrIntro')}</AppText>
+            <AppText variant="caption" color="textMuted">{t('guardians.qrReplaces')}</AppText>
             <AppButton
               title={t('guardians.generateQr')}
               icon="qr-code-outline"

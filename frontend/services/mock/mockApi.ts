@@ -97,7 +97,7 @@ function fakePredictions() {
 export const mockApi: WWHealthApi = {
   async health() {
     await delay(200);
-    return { status: 'ok', version: 'mock' };
+    return { status: 'ok', version: 'mock', dataMode: 'demo', supabaseProject: null };
   },
 
   async getMyPatient() {

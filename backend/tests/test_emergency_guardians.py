@@ -139,7 +139,10 @@ def test_decline_pending_invitation():
     assert client.post(f"{API}/{link_id}/decline").status_code == 204
     assert client.post(f"{API}/{link_id}/accept").status_code == 404
     as_user(PATIENT)
-    assert client.get(API).json()["guardians"] == []
+    # the patient sees the refusal (no access, no revoke button) and may invite the same email again
+    assert [(g["id"], g["status"]) for g in client.get(API).json()["guardians"]] == [(link_id, "declined")]
+    new_id = invite().json()["id"]
+    assert [(g["id"], g["status"]) for g in client.get(API).json()["guardians"]] == [(new_id, "pending")]
 
 
 @pytest.mark.parametrize(("email", "code"), [
@@ -180,3 +183,99 @@ def test_supabase_mode_uses_rpcs_and_masks_missing_migration(supabase_mode, monk
 
     monkeypatch.setattr(supabase_repo, "my_emergency_guardians", missing)
     assert client.get(API, headers=auth(make_token())).status_code == 503
+
+
+# ─────────────────────────────────────────────── two distinct patient accounts (A invites B)
+
+ANA = CurrentUser(id=DEMO_PATIENT_ID, role="patient", email="ana@example.test")      # A: has a medical record
+BOGDAN = CurrentUser(id="user_bogdan", role="patient", email="bogdan@example.test")  # B: a separate patient account
+DOCTOR_API = "/api/v1/emergency"
+
+
+def _token(user: CurrentUser, path: str) -> dict:
+    as_user(user)
+    res = client.post(path)
+    assert res.status_code == 200, res.text
+    return res.json()
+
+
+def _status(token_id: str) -> str:
+    as_user(ANA)
+    return client.get(f"{DOCTOR_API}/tokens/{token_id}/status").json()["status"]
+
+
+def test_two_accounts_link_is_one_directional():
+    as_user(ANA)
+    link_id = client.post(API, json={"email": "BOGDAN@example.test", "relation": "Frate"}).json()["id"]
+    as_user(BOGDAN)
+    assert [i["id"] for i in client.get(API).json()["invitations"]] == [link_id]
+    assert client.post(f"{API}/{link_id}/accept").status_code == 204
+    assert client.get(f"{API}/patients/{ANA.id}").status_code == 200        # B sees A's emergency passport
+    assert client.get(API).json()["guardians"] == []                        # B invited nobody
+
+    as_user(ANA)
+    overview = client.get(API).json()
+    assert [(g["email"], g["status"]) for g in overview["guardians"]] == [("bogdan@example.test", "active")]
+    assert overview["protecting"] == [] and overview["invitations"] == []   # A gets nothing from B
+    assert client.get(f"{API}/patients/{BOGDAN.id}").status_code == 404
+    assert client.post(f"{API}/patients/{BOGDAN.id}/tokens").status_code == 404
+
+
+def test_patient_and_guardian_both_generate_qr_newest_wins_and_is_logged():
+    as_user(ANA)
+    link_id = client.post(API, json={"email": "bogdan@example.test"}).json()["id"]
+    as_user(BOGDAN)
+    client.post(f"{API}/{link_id}/accept")
+
+    own = _token(ANA, f"{DOCTOR_API}/tokens")                             # A: own QR
+    by_guardian = _token(BOGDAN, f"{API}/patients/{ANA.id}/tokens")       # B: A's QR
+    bogdan_own = _token(BOGDAN, f"{DOCTOR_API}/tokens")                   # B: own QR, separate patient
+    assert _status(own["tokenId"]) == "revoked"                           # one active QR per patient
+    assert _status(by_guardian["tokenId"]) == "active"
+    assert es._store.tokens[es.hash_token(bogdan_own["token"])].patient_id == BOGDAN.id
+
+    created = [e for e in es._store.log if e["event"] == "created" and e["patient_id"] == ANA.id]
+    assert [e["actor_id"] for e in created] == [ANA.id, BOGDAN.id]       # who generated each code
+
+    as_user(DOCTOR)
+    redeemed = client.post(f"{DOCTOR_API}/redeem", json={"token": by_guardian["qrPayload"]})
+    assert redeemed.status_code == 200
+    for forbidden in ("documents", "xrays", "dateOfBirth"):
+        assert forbidden not in redeemed.text                               # emergency data only
+
+
+def test_revoke_blocks_generation_and_cancels_guardian_qr():
+    as_user(ANA)
+    link_id = client.post(API, json={"email": "bogdan@example.test"}).json()["id"]
+    as_user(BOGDAN)
+    client.post(f"{API}/{link_id}/accept")
+    by_guardian = _token(BOGDAN, f"{API}/patients/{ANA.id}/tokens")
+
+    as_user(ANA)
+    assert client.post(f"{API}/{link_id}/revoke").status_code == 204
+    assert _status(by_guardian["tokenId"]) == "revoked"
+    assert any(e["event"] == "revoked" and e["reason"] == "guardian_access" for e in es._store.log)
+
+    as_user(BOGDAN)
+    assert client.post(f"{API}/patients/{ANA.id}/tokens").status_code == 404
+    assert client.get(f"{API}/patients/{ANA.id}").status_code == 404
+    as_user(DOCTOR)
+    assert client.post(f"{DOCTOR_API}/redeem", json={"token": by_guardian["qrPayload"]}).status_code != 200
+
+
+def test_guardian_stepping_down_cancels_their_qr_but_not_the_patients():
+    as_user(ANA)
+    link_id = client.post(API, json={"email": "bogdan@example.test"}).json()["id"]
+    as_user(BOGDAN)
+    client.post(f"{API}/{link_id}/accept")
+    by_guardian = _token(BOGDAN, f"{API}/patients/{ANA.id}/tokens")
+    as_user(BOGDAN)
+    assert client.post(f"{API}/{link_id}/decline").status_code == 204
+    assert _status(by_guardian["tokenId"]) == "revoked"
+    own = _token(ANA, f"{DOCTOR_API}/tokens")
+    assert _status(own["tokenId"]) == "active"
+
+
+def test_health_reports_data_mode():
+    body = client.get("/health").json()
+    assert body["dataMode"] == "demo" and body["supabaseProject"] is None
