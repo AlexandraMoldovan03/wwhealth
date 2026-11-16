@@ -6,6 +6,7 @@ import type { Allergy, Diagnosis, MedicalDocument, Surgery, Treatment } from './
 import type { DoctorScope } from './consent';
 import type { PatientLabValue } from './labs';
 import type { Appointment, EmergencyGuidance } from './smartCare';
+import type { DocumentFact } from './smartImport';
 
 // ───────── schedule (doctor)
 export interface WeeklyHours {
@@ -184,6 +185,8 @@ export interface TreatmentOverview {
   finished: TreatmentPlan[];
   /** Declared by the patient in the medical profile (not prescribed in WWHealth). */
   declared: Treatment[];
+  /** Medication confirmed from imported documents: historical, no doses or reminders. */
+  imported: DocumentFact[];
   isDemo: boolean;
 }
 

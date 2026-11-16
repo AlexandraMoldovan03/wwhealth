@@ -340,7 +340,7 @@ export function createMockCareJourney(deps: Deps): Pick<WWHealthApi,
       const upcoming = events(list, now, new Date(now.getTime() + 7 * 86_400_000));
       return { timezone, today: events(list, start, end), nextDose: upcoming.find((e) => e.status === 'pending') ?? null,
         active: list.filter((p) => p.status === 'ACTIVE'), upcoming: list.filter((p) => p.status === 'UPCOMING'),
-        finished: list.filter((p) => ['COMPLETED', 'DISCONTINUED', 'CANCELLED'].includes(p.status)), declared: deps.record().treatments, isDemo: true };
+        finished: list.filter((p) => ['COMPLETED', 'DISCONTINUED', 'CANCELLED'].includes(p.status)), declared: deps.record().treatments, imported: [], isDemo: true };
     },
     async getMyTreatment(planId) {
       await delay(150);

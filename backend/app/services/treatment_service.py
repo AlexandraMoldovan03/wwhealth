@@ -32,6 +32,7 @@ from app.schemas.care import (
     TreatmentUpdate,
     TreatmentVersion,
 )
+from app.schemas.smart_import import DocumentFact
 from app.services import doctor_access_service, patient_service, supabase_repo
 from app.services.schedule_service import InvalidSchedule, zone
 
@@ -319,7 +320,16 @@ def overview(user: CurrentUser, tz_name: str = DEFAULT_TZ) -> TreatmentOverview:
         upcoming=[p for p in plans if p.status == "UPCOMING"],
         finished=[p for p in plans if p.status in ("COMPLETED", "DISCONTINUED", "CANCELLED")],
         declared=[t for t in (record.treatments if record else [])],
+        imported=_imported_medication(user),
         is_demo=not settings.supabase_enabled)
+
+
+def _imported_medication(user: CurrentUser) -> list[DocumentFact]:
+    """Medication the patient confirmed from imported documents. Shown apart: historical, no doses / reminders."""
+    from app.services import smart_import_service  # local import: smart import already depends on treatment data
+
+    meds = [f for f in smart_import_service.facts(user) if f.kind == "medication"]
+    return sorted(meds, key=lambda f: f.event_date or "", reverse=True)
 
 
 def reminder_schedule(user: CurrentUser, tz_name: str = DEFAULT_TZ) -> DoseSchedule:

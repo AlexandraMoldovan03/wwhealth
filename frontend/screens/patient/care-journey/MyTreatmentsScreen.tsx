@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { RefreshControl, StyleSheet, Switch, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import { router } from 'expo-router';
 
 import { AppButton, AppCard, AppText, Badge, DemoNotice, EmptyState, ErrorState, ListRow, LoadingState, ScreenContainer, SectionHeader } from '@/design-system';
 import { spacing } from '@/design-system/theme';
@@ -12,7 +13,7 @@ import { TreatmentCard, TreatmentHistory } from '@/screens/shared/components/Tre
 import { api } from '@/services/backend';
 import { deviceTimezone, remindersEnabled, remindersSupported, setRemindersEnabled, snoozeReminder, syncReminders } from '@/services/medicationReminders';
 import type { DoseEvent, TreatmentPlan } from '@/types';
-import { formatTime } from '@/utils/format';
+import { formatDate, formatTime } from '@/utils/format';
 
 const SNOOZE_MINUTES = 15;
 
@@ -88,7 +89,7 @@ export function MyTreatmentsScreen() {
       {mark.error && <ErrorState compact message={mark.error} />}
       {!!notice && <AppText variant="caption" color="textMuted">{notice}</AppText>}
 
-      {data && !hasPlans && data.declared.length === 0 && (
+      {data && !hasPlans && data.declared.length === 0 && data.imported.length === 0 && (
         <EmptyState icon="medkit-outline" title={t('cj.treat.empty')} message={t('cj.treat.emptyHint')} />
       )}
 
@@ -134,6 +135,18 @@ export function MyTreatmentsScreen() {
           {data.declared.map((m) => (
             <ListRow key={m.id} icon="person-outline" title={m.name} subtitle={[m.dosage, m.frequency].filter(Boolean).join(' · ')}
               right={<Badge label={t('cj.record.verification.patient_declared')} color={colors.warning} />} />
+          ))}
+        </View>
+      )}
+
+      {data && data.imported.length > 0 && (
+        <View style={styles.section}>
+          <SectionHeader title={t('cj.treat.section.imported')} subtitle={t('cj.treat.importedHint')} />
+          {data.imported.map((m) => (
+            <ListRow key={m.id} icon="document-text-outline" title={m.label}
+              subtitle={[m.detail, m.documentTitle, m.eventDate && formatDate(m.eventDate)].filter(Boolean).join(' · ')}
+              right={m.status ? <Badge label={t(`smart.itemStatus.${m.status}`, { defaultValue: m.status })} color={colors.info} /> : undefined}
+              onPress={() => router.push({ pathname: '/patient/document/[id]', params: { id: m.documentId } })} />
           ))}
         </View>
       )}

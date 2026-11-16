@@ -2320,7 +2320,7 @@
     },
     "treat": {
       "empty": "Niciun tratament încă",
-      "emptyHint": "Aici apar tratamentele prescrise de medic în WWHealth.",
+      "emptyHint": "Aici apar tratamentele prescrise de medic, medicația din profil și cea din documentele importate.",
       "nextDose": "URMĂTOAREA DOZĂ",
       "today": "Dozele de azi",
       "history": "Istoricul modificărilor",
@@ -2374,7 +2374,8 @@
         "active": "Active",
         "upcoming": "Urmează",
         "finished": "Încheiate",
-        "declared": "Declarate de tine"
+        "declared": "Declarate de tine",
+        "imported": "Din documente importate"
       },
       "f": {
         "medicationName": "Medicament",
@@ -2395,7 +2396,8 @@
         "times": "Scrie orele ca HH:MM, ex. 08:00, 20:00.",
         "dates": "Verifică datele (AAAA-LL-ZZ, sfârșitul după început).",
         "dose": "Doza trebuie să fie un număr pozitiv."
-      }
+      },
+      "importedHint": "Preluate din documentele confirmate de tine. Sunt istoric: nu înseamnă că le iei acum și nu au remindere."
     },
     "dose": {
       "pending": "De luat",
@@ -2711,7 +2713,8 @@
       "unknown": "Necunoscut",
       "stopped": "Oprit",
       "differential": "Diagnostic diferențial",
-      "resolved": "Rezolvat"
+      "resolved": "Rezolvat",
+      "during_stay": "În timpul internării"
     },
     "uncertain": "De verificat",
     "edited": "Editat",

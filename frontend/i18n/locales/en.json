@@ -2300,7 +2300,7 @@
     },
     "treat": {
       "empty": "No treatments yet",
-      "emptyHint": "Treatments prescribed by your doctor in WWHealth appear here.",
+      "emptyHint": "Treatments prescribed by a doctor, medication in your profile and from imported documents appear here.",
       "nextDose": "NEXT DOSE",
       "today": "Today's doses",
       "history": "Change history",
@@ -2354,7 +2354,8 @@
         "active": "Active",
         "upcoming": "Upcoming",
         "finished": "Finished",
-        "declared": "Declared by you"
+        "declared": "Declared by you",
+        "imported": "From imported documents"
       },
       "f": {
         "medicationName": "Medication",
@@ -2375,7 +2376,8 @@
         "times": "Enter the times as HH:MM, e.g. 08:00, 20:00.",
         "dates": "Check the dates (YYYY-MM-DD, end after start).",
         "dose": "The dose must be a positive number."
-      }
+      },
+      "importedHint": "Taken from documents you confirmed. Historical: it does not mean you take them now, and there are no reminders."
     },
     "dose": {
       "pending": "Due",
@@ -2683,7 +2685,8 @@
       "unknown": "Unknown",
       "stopped": "Stopped",
       "differential": "Differential",
-      "resolved": "Resolved"
+      "resolved": "Resolved",
+      "during_stay": "During the stay"
     },
     "uncertain": "To verify",
     "edited": "Edited",

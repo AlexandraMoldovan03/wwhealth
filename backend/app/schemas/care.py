@@ -9,6 +9,7 @@ from app.schemas.doctor_access import DoctorScope
 from app.schemas.document import MedicalDocument, PatientLabValue
 from app.schemas.patient import Allergy, Diagnosis, Surgery, Treatment
 from app.schemas.smart_care import Appointment, EmergencyGuidance
+from app.schemas.smart_import import DocumentFact
 
 TIME_RE = r"^([01]\d|2[0-3]):[0-5]\d$"
 DATE_RE = r"^\d{4}-\d{2}-\d{2}$"
@@ -238,6 +239,7 @@ class TreatmentOverview(CamelModel):
     upcoming: list[TreatmentPlan] = []
     finished: list[TreatmentPlan] = []  # completed / discontinued / cancelled (kept in the history)
     declared: list[Treatment] = []      # medication declared by the patient (not prescribed in WWHealth)
+    imported: list[DocumentFact] = []   # medication confirmed from imported documents (historical, never "active today")
     is_demo: bool = False
 
 

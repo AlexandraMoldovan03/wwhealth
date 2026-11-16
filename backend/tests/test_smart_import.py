@@ -181,6 +181,12 @@ def test_confirm_integrates_as_historical_never_active():
     history = client.get("/api/v1/patients/me").json()["history"]
     assert any(e.get("documentId") == p["documentId"] and e["date"].startswith("2023-06-12") for e in history)
 
+    # "My treatments" lists them apart from prescribed plans: historical, no doses or reminders
+    treat = client.get("/api/v1/care/treatments").json()
+    assert {m["label"] for m in treat["imported"]} == {"Lisinopril", "Hydrochlorothiazide"}
+    assert all(m["documentId"] == p["documentId"] and m["status"] != "active" for m in treat["imported"])
+    assert not any(e["medicationName"] in {"Lisinopril", "Hydrochlorothiazide"} for e in treat["today"])
+
 
 def test_confirm_twice_is_idempotent_and_corrections_are_kept():
     p = upload(F_HTA).json()
